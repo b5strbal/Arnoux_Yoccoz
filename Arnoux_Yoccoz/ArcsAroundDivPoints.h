@@ -80,7 +80,9 @@
 
 #include <iostream>
 #include <vector>
-#include "Arc.h"
+#include <cassert>
+#include "CirclePoint.h"
+//#include "Arc.h"
 
 /**
  * @brief   A collection of arcs around a set of points on the circle of circumference 1.
@@ -115,32 +117,44 @@
  * @see     CirclePoint, Arc, FoliationDisk
  */
 
+class Foliation{
+public:
+    int getNumDivPoints() const { return m_NumDivPoints; }
+    
+private:
+    int m_NumDivPoints;
+};
+
 
 class ArcsAroundDivPoints{
 public:
     /**
      * @brief   Constructor of empty object.
-     * @param DivPoints     The division points have to be regular (not generalized) CirclePoints. 
+     * @param ShiftedDivPoints     The division points have to be regular (not generalized) CirclePoints. 
      *                      Also, there has to be at least one division point.
      */
-    ArcsAroundDivPoints(const std::vector<CirclePoint>& DivPoints);
+    ArcsAroundDivPoints(const Foliation* foliation) :
+        m_CuttingPoints(foliation->getNumDivPoints(), std::vector<CirclePoint>(0)),
+        m_Foliation(foliation)
+    {
+    }
 
     /**
      * @brief   Decides whether the object is empty, i.e. there are no cutting points yet.
      */
-    inline bool IsEmpty() const { return m_Arcs.size() == 0; }
+    //inline bool IsEmpty() const { return m_Arcs.size() == 0; }
     
     /**
      * @brief   Inserts a new cutting point and updates the Arcs.
      * @param NewCuttingPoint   It must not coincide with any of the division points, because in that case case the operation won't be
      *                          well-defined.
      */
-    void InsertPoint(const CirclePoint& NewCuttingPoint);
+    void InsertPoint(const CirclePoint& NewCuttingPoint, int IndexOfInterval);
     
     /**
      * @brief   Decides if a point is contained in any of the Arcs.
      */
-    bool ContainsQ(const CirclePoint& cp) const;
+    bool ContainsQ(const CirclePoint& cp, int IndexOfInterval) const;
     
     /**
      * @brief   Takes the intersection of two ArcsAroundDivPoints objects.
@@ -159,23 +173,21 @@ public:
      * @brief   Returns true if the an Arc is contained in any of the member Arcs and it passes through the division point contained in the
      *          member Arc.
      */
-    bool ContainsArcThroughADivPointQ(const Arc& arc) const;
+    bool ContainsArcThroughADivPointQ(const CirclePoint& LeftEndPoint, int LeftIndexOfInterval,
+                                      const CirclePoint& RightEndPoint, int RightIndexOfInterval) const;
     
     /**
      * @brief   Prints out the division points and all the Arcs.
      */
-    friend std::ostream& operator<<(std::ostream& Out, const ArcsAroundDivPoints& adp); 
+    //friend std::ostream& operator<<(std::ostream& Out, const ArcsAroundDivPoints& adp);
 
 private:
     /**
-     * @brief   The division points.
+     * @brief   
      */
-    const std::vector<CirclePoint>& m_DivPoints;
     
-    /**
-     * @brief   The Arcs around the division points.
-     */
-    std::vector<Arc> m_Arcs;
+    const Foliation* m_Foliation;
+    std::vector<std::vector<CirclePoint>> m_CuttingPoints;
 };
 
 

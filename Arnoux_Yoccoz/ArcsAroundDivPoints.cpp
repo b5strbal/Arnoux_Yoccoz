@@ -3,29 +3,28 @@
 #include "ArcsAroundDivPoints.h"
 
 
-ArcsAroundDivPoints::ArcsAroundDivPoints(const std::vector<CirclePoint>& DivPoints) : m_DivPoints(DivPoints){
-    for (int i = 0; i < DivPoints.size(); i++) {
-        assert(DivPoints[i].GetSide() == CENTER);
-    }
-    assert(DivPoints.size() > 0);
-}
 
 
-
-
-void ArcsAroundDivPoints::InsertPoint(const CirclePoint& NewCuttingPoint){
-    if (IsEmpty()) {
-        for (int i = 0; i < m_DivPoints.size(); i++) {
-            assert(m_DivPoints[i] != NewCuttingPoint);
-        }
-        m_Arcs.resize(m_DivPoints.size(), Arc(NewCuttingPoint, NewCuttingPoint));
-        
-    } else { 
-        for (int i = 0; i < m_DivPoints.size(); i++) {
-            // In this case we don't check if the NewCuttingPoint is different from the division points, because Arc::CutOff will do the assertion.
+void ArcsAroundDivPoints::InsertPoint(const CirclePoint& NewCuttingPoint, int IndexOfInterval){
+    switch (m_CuttingPoints[IndexOfInterval].size()) {
+        case 0:
+            m_CuttingPoints[IndexOfInterval].push_back(NewCuttingPoint);
+            break;
             
-            m_Arcs[i].CutOff(m_DivPoints[i], NewCuttingPoint);
-        }
+        case 1:
+            if (m_CuttingPoints[IndexOfInterval][0] < NewCuttingPoint){
+                m_CuttingPoints[IndexOfInterval].push_back(NewCuttingPoint);
+            } else {
+                m_CuttingPoints[IndexOfInterval].insert(m_CuttingPoints[IndexOfInterval].begin(), NewCuttingPoint);
+            }
+            break;
+            
+        case 2:
+            if (NewCuttingPoint < m_CuttingPoints[IndexOfInterval][0]) {
+                m_CuttingPoints[IndexOfInterval][0] = NewCuttingPoint;
+            } else if (m_CuttingPoints[IndexOfInterval][1] < NewCuttingPoint){
+                m_CuttingPoints[IndexOfInterval][1] = NewCuttingPoint;
+            }
     }
 }
 
@@ -33,16 +32,12 @@ void ArcsAroundDivPoints::InsertPoint(const CirclePoint& NewCuttingPoint){
 
 
 
-bool ArcsAroundDivPoints::ContainsQ(const CirclePoint& c) const{
-    if (IsEmpty()) {    // For an empty object, there is the whole Circle around each point, therefore it contains everything.
-        return true;
+bool ArcsAroundDivPoints::ContainsQ(const CirclePoint& c, int IndexOfInterval) const{
+    if (m_CuttingPoints[IndexOfInterval].size() == 2 && m_CuttingPoints[IndexOfInterval][0] < c && c < m_CuttingPoints[IndexOfInterval][1])
+    {
+        return false;
     }
-    for (int i = 0; i < m_DivPoints.size(); i++) {
-        if (m_Arcs[i].ContainsQ(c)) {
-            return true;
-        }
-    }
-    return false; 
+    return true;
 }
 
 
@@ -52,13 +47,30 @@ bool ArcsAroundDivPoints::ContainsQ(const CirclePoint& c) const{
 
 
 
-bool ArcsAroundDivPoints::ContainsArcThroughADivPointQ(const Arc& arc) const{
-    for (int i = 0; i < m_DivPoints.size(); i++) {
-        if (arc.ContainsQ(m_DivPoints[i]))
-            return (arc.ContainsQ(m_Arcs[i].GetLeftEndpoint()) || arc.ContainsQ(m_Arcs[i].GetRightEndpoint())) ? false : true;
+bool ArcsAroundDivPoints::ContainsArcThroughADivPointQ(const CirclePoint& LeftEndPoint, int LeftIndexOfInterval,
+                                                       const CirclePoint& RightEndPoint, int RightIndexOfInterval) const{
+    
+    if (LeftIndexOfInterval == RightIndexOfInterval) {
+        return false;
     }
-    return false;
- }
+    if (m_CuttingPoints[LeftIndexOfInterval].size() > 0 && LeftEndPoint < m_CuttingPoints[LeftIndexOfInterval].back()) {
+        return false;
+    }
+    if (m_CuttingPoints[RightIndexOfInterval].size() > 0 && m_CuttingPoints[RightIndexOfInterval].front() < RightEndPoint) {
+        return false;
+    }
+    int i;
+    for (i = LeftIndexOfInterval + 1; i != RightIndexOfInterval; i = (i + 1) % m_Foliation->getNumDivPoints()) {
+        if (m_CuttingPoints[i].empty()) {
+            break;
+        }
+    }
+    if (i != RightIndexOfInterval) {
+        return false;
+    }
+    return true;
+    
+}
 
 
 
@@ -67,8 +79,29 @@ bool ArcsAroundDivPoints::ContainsArcThroughADivPointQ(const Arc& arc) const{
 
 
 
+ArcsAroundDivPoints Intersect(const ArcsAroundDivPoints& adp1, const ArcsAroundDivPoints& adp2)
+{
+    assert(adp1.m_Foliation == adp2.m_Foliation);
+    
+    ArcsAroundDivPoints adp = adp1;
+    for (int i = 0; i < adp1.m_Foliation->getNumDivPoints(); i++) {
+        if (adp1.m_CuttingPoints[i].empty()) {
+            adp.m_CuttingPoints[i] = adp2.m_CuttingPoints[i];
+        } else if (adp2.m_CuttingPoints[i].empty()){
+        } else {
+            adp.m_CuttingPoints[i] = { std::min(adp1.m_CuttingPoints[i].front(), adp2.m_CuttingPoints[i].front()),
+                                       std::max(adp1.m_CuttingPoints[i].back(), adp2.m_CuttingPoints[i].back())};
+        }
+    }
+    return adp;
+}
 
 
+
+
+
+
+/*
 std::ostream& operator<<(std::ostream& Out, const ArcsAroundDivPoints& adp){
     using namespace std;
     
@@ -88,73 +121,13 @@ std::ostream& operator<<(std::ostream& Out, const ArcsAroundDivPoints& adp){
     }
     return Out;
 }
+*/
 
 
 
 
-
-
-ArcsAroundDivPoints Intersect(const ArcsAroundDivPoints& adp1, const ArcsAroundDivPoints& adp2)
-{
-    assert(adp1.m_DivPoints == adp2.m_DivPoints);
-     
-    if (adp1.IsEmpty()) { // if one object is empty, it does not add new intersection point, so we return the other object.
-        return adp2;
-    }
-    if (adp2.IsEmpty()) {
-        return adp1;
-    }
-    const std::vector<CirclePoint>& DivPoints = adp1.m_DivPoints;
-    ArcsAroundDivPoints adp = adp1;
-    for (int i = 0; i < DivPoints.size(); i++) {
-        adp.m_Arcs[i].CutOff(DivPoints[i], adp2.m_Arcs[i].GetLeftEndpoint());
-        adp.m_Arcs[i].CutOff(DivPoints[i], adp2.m_Arcs[i].GetRightEndpoint());
-    }
-    
-    return adp;
-}
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
- bool ArcsAroundDivPoints::ContainsADivPoint(const Arc& arc) const{
- for (int i = 0; i < m_DivPoints.size(); i++) {
- if (arc.ContainsQ(m_DivPoints[i])) {
- return true;
- }
- }
- return false;
- }
  
- 
- 
- 
- 
- bool ArcsAroundDivPoints::ContainsArcQ(const Arc& arc) const{
- for (int i = 0; i < m_DivPoints.size(); i++) {
- if (arc.ContainsQ(m_Arcs[i].GetLeftEndpoint()) || arc.ContainsQ(m_Arcs[i].GetRightEndpoint())) {
- return false;
- }
- }
- for (int i = 0; i < m_DivPoints.size(); i++) {
- if (m_Arcs[i].ContainsQ(arc.GetRightEndpoint())) {
- return true;
- }
- }
- return false;
- }
- */
+
 
 
 
