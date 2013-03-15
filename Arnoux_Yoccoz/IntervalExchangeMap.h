@@ -15,16 +15,26 @@
 #include "UnitIntervalPoint.h"
 #include "global.h"
 
+
+
+
+template <typename Type>
+std::ostream& operator<<(std::ostream& Out, const std::vector<Type>& vec);
+
+
+
+
 class Permutation{
 public:
-    Permutation(const std::vector<unsigned long> functionValues);
-    inline unsigned long size() const{ return m_functionValues.size(); }
+    Permutation(){};
+    Permutation(const std::vector<int> functionValues);
+    inline int size() const{ return static_cast<int>(m_functionValues.size()); }
     Permutation inverse() const;
-    unsigned long operator[](unsigned long index){ return m_functionValues[index]; }
+    int operator[](int index){ return m_functionValues[index]; }
     friend std::ostream& operator<<(std::ostream& Out, const Permutation& permutation);
 
 private:
-    std::vector<unsigned long> m_functionValues;
+    std::vector<int> m_functionValues;
 };
 
 
@@ -41,14 +51,17 @@ private:
 
 
 
-class TwistedIntervalExchange{
+class IntervalExchangeMap{
 public:
-    TwistedIntervalExchange(const std::vector<floating_point_type> lengths, const Permutation permutation, floating_point_type twist = 0);
+    IntervalExchangeMap(const std::vector<floating_point_type> lengths, const Permutation permutation);
+    IntervalExchangeMap(const std::vector<floating_point_type> lengths, const Permutation permutation, floating_point_type twist);
+
     inline int size() const { return static_cast<int>(m_lengths.size()); }
     
     UnitIntervalPoint applyTo(const UnitIntervalPoint& point);
     UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& point);
     
+    friend std::ostream& operator<<(std::ostream& Out, const IntervalExchangeMap intervalExchange);
     
 protected:
     template <typename Type>
@@ -59,12 +72,14 @@ protected:
 private:
     std::vector<floating_point_type> m_lengths;
     Permutation m_permutation;
-    floating_point_type m_twist;
     Permutation m_inversePermutation;
     std::vector<UnitIntervalPoint> m_divPoints;
     std::vector<UnitIntervalPoint> m_divPointsAfterExchange;
     std::vector<floating_point_type> m_translations;
 
+    void assertValidInput(const std::vector<floating_point_type> lengths, const Permutation permutation);
+    void setLengthsAndDivPoints(const std::vector<floating_point_type> lengths);
+    void init(const std::vector<floating_point_type> lengths, const Permutation permutation);
     
     template <typename Type>
     static int findInterval(const std::vector<Type>& separatingPoints, const Type& point, int start, int end);

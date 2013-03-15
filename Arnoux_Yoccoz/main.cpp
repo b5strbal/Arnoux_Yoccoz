@@ -22,10 +22,10 @@ using namespace std;
 int main (int argc, const char * argv[])
 {
     
+
+    IntervalExchangeMap map({0.5, 0.5, 0.5, 0.5}, Permutation({3, 2, 1, 0}), 0.1);
     
-    TwistedIntervalExchange map({0.5, 0.5, 0.5, 0.5}, Permutation({3, 2, 1, 0}));
-    
-    
+    cout << map;
     
     
     /*

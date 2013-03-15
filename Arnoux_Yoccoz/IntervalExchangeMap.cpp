@@ -10,12 +10,22 @@
 #include "IntervalExchangeMap.h"
 
 
-Permutation::Permutation(const std::vector<unsigned long> functionValues)
+template <typename Type>
+std::ostream& operator<<(std::ostream& Out, const std::vector<Type>& vec){
+    for (int i = 0; i < vec.size(); i++) {
+        Out << vec[i] << " ";
+    }
+    return Out;
+}
+
+
+
+Permutation::Permutation(const std::vector<int> functionValues)
     : m_functionValues(functionValues)
 {
     assert(size() > 0);
     std::vector<char> isInTheRange(size(), 0);
-    for (long i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); i++) {
         assert(m_functionValues[i] < size());
         assert(isInTheRange[m_functionValues[i]] == 0);
         isInTheRange[m_functionValues[i]] = 1;
@@ -25,8 +35,8 @@ Permutation::Permutation(const std::vector<unsigned long> functionValues)
 
 
 Permutation Permutation::inverse() const{
-    std::vector<unsigned long> newFunctionValues(size());
-    for (long i = 0; i < size(); i++) {
+    std::vector<int> newFunctionValues(size());
+    for (int i = 0; i < size(); i++) {
         newFunctionValues[m_functionValues[i]] = i;
     }
     return Permutation(newFunctionValues);
@@ -54,28 +64,89 @@ std::ostream& operator<<(std::ostream& Out, const Permutation& permutation){
 
 
 
-
-TwistedIntervalExchange::TwistedIntervalExchange(const std::vector<floating_point_type> lengths,
-                                                 const Permutation permutation,
-                                                 floating_point_type twist) :
-    m_lengths(lengths),
-    m_permutation(permutation),
-    m_twist(twist),
-    m_inversePermutation(permutation.inverse()),
-    m_divPoints(size()),
-    m_divPointsAfterExchange(size()),
-    m_translations(size())
+IntervalExchangeMap::IntervalExchangeMap(const std::vector<floating_point_type> lengths,
+                                         const Permutation permutation) 
 {
+    init(lengths, permutation);
+}
+
+
+
+
+
+IntervalExchangeMap::IntervalExchangeMap(const std::vector<floating_point_type> lengths,
+                                         const Permutation permutation,
+                                         floating_point_type twist) 
+{
+    init(lengths, permutation);
+    assert(twist > 0 && twist < 1);
+    UnitIntervalPoint newDivPoint = applyInverseTo(UnitIntervalPoint(1 - twist));
+    int intervalOfNewDivPoint = containingInterval(m_divPoints, newDivPoint);
+    int intervalOfOneMinusTwist = containingInterval(m_divPointsAfterExchange, UnitIntervalPoint(1 - twist));
+    
+    // Finding the new lengths
+    std::vector<floating_point_type> newLengths(m_lengths);
+    floating_point_type smallerLength = newDivPoint.getPosition() - m_divPoints[intervalOfNewDivPoint].getPosition();
+    newLengths.insert(newLengths.begin() + intervalOfNewDivPoint + 1, newLengths[intervalOfNewDivPoint] - smallerLength);
+    newLengths[intervalOfNewDivPoint] = smallerLength;
+    
+    // Finding the new permutation
+    std::vector<int> permutationInput(size() + 1);
+    for (int i = 0; i < intervalOfNewDivPoint; i++) {
+        if (m_permutation[i] < intervalOfOneMinusTwist) {
+            permutationInput[i] = m_permutation[i] + size() - intervalOfOneMinusTwist;
+        } else
+            permutationInput[i] -= m_permutation[i] - intervalOfOneMinusTwist;
+    }
+    permutationInput[intervalOfNewDivPoint] = size();
+    permutationInput[intervalOfNewDivPoint + 1] = 0;
+    for (int i = intervalOfNewDivPoint + 2; i <= size(); i++) {
+        if (m_permutation[i - 1] < intervalOfOneMinusTwist) {
+            permutationInput[i] = m_permutation[i - 1] + size() - intervalOfOneMinusTwist;
+        } else
+            permutationInput[i] -= m_permutation[i - 1] - intervalOfOneMinusTwist;
+    }
+    init(newLengths, Permutation(permutationInput));
+}
+
+
+
+
+
+void IntervalExchangeMap::init(const std::vector<floating_point_type> lengths, const Permutation permutation){
     assert(lengths.size() == permutation.size());
-    assert(size() > 0);
-    for (long i = 0; i < size(); i++) {
+    int size = static_cast<int>(lengths.size());
+    assert(size > 0);
+    for (int i = 0; i < size; i++) {
         assert(lengths[i] > 0);
     }
-    for (long i = 1; i < size(); i++) {
+
+    floating_point_type total = 0;
+    for (int i = 0; i < size; i++) {
+        total += lengths[i];
+    }
+    
+    m_lengths.resize(size);
+    for (int i = 0; i < size; i++) {
+        m_lengths[i] = lengths[i]/total;
+    }
+    
+    m_divPoints.resize(size);
+    m_divPoints[0] = 0;
+    for (int i = 1; i < size; i++) {
         m_divPoints[i] = m_divPoints[i - 1] + m_lengths[i - 1];
+    }
+    
+    m_permutation = permutation;
+    m_inversePermutation = permutation.inverse();
+    
+    m_divPointsAfterExchange.resize(size);
+    for (int i = 1; i < size; i++) {
         m_divPointsAfterExchange[i] = m_divPointsAfterExchange[i - 1] + m_lengths[m_inversePermutation[i - 1]];
     }
-    for (long i = 0; i < size(); i++) {
+    
+    m_translations.resize(size);
+    for (int i = 0; i < size; i++) {
         m_translations[i] = m_divPointsAfterExchange[m_permutation[i]].getPosition() - m_divPoints[i].getPosition();
     }
 }
@@ -84,12 +155,27 @@ TwistedIntervalExchange::TwistedIntervalExchange(const std::vector<floating_poin
 
 
 
-UnitIntervalPoint TwistedIntervalExchange::applyTo(const UnitIntervalPoint& point){
+std::ostream& operator<<(std::ostream& Out, const IntervalExchangeMap intervalExchange){
+    Out << "Permutation: " << intervalExchange.m_permutation << "\n";
+    Out << "Lenghts: " << intervalExchange.m_lengths;
+    return Out;
+}
+
+
+
+
+
+
+
+
+
+
+UnitIntervalPoint IntervalExchangeMap::applyTo(const UnitIntervalPoint& point){
     return point + m_translations[containingInterval(m_divPoints, point)];
 }
 
 
-UnitIntervalPoint TwistedIntervalExchange::applyInverseTo(const UnitIntervalPoint& point){
+UnitIntervalPoint IntervalExchangeMap::applyInverseTo(const UnitIntervalPoint& point){
     return point - m_translations[m_inversePermutation[containingInterval(m_divPointsAfterExchange, point)]];
 }
 
@@ -100,7 +186,7 @@ UnitIntervalPoint TwistedIntervalExchange::applyInverseTo(const UnitIntervalPoin
 
 
 template <typename Type>
-int TwistedIntervalExchange::findInterval(const std::vector<Type>& separatingPoints,
+int IntervalExchangeMap::findInterval(const std::vector<Type>& separatingPoints,
                                       const Type& point,
                                       int start,
                                       int end)
