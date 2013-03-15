@@ -79,10 +79,15 @@ IntervalExchangeMap::IntervalExchangeMap(const std::vector<floating_point_type> 
                                          floating_point_type twist) 
 {
     init(lengths, permutation);
-    assert(twist > 0 && twist < 1);
+    if(twist <= 0 || twist >= 1)
+        throw std::runtime_error("The twist must be strictly between 0 and 1");
     UnitIntervalPoint newDivPoint = applyInverseTo(UnitIntervalPoint(1 - twist));
     int intervalOfNewDivPoint = containingInterval(m_divPoints, newDivPoint);
     int intervalOfOneMinusTwist = containingInterval(m_divPointsAfterExchange, UnitIntervalPoint(1 - twist));
+    
+    if (m_divPoints[intervalOfNewDivPoint] == newDivPoint) {
+        throw std::runtime_error("A twisted interval exchange must not be a regular interval exchange.");
+    }
     
     // Finding the new lengths
     std::vector<floating_point_type> newLengths(m_lengths);
@@ -114,11 +119,14 @@ IntervalExchangeMap::IntervalExchangeMap(const std::vector<floating_point_type> 
 
 
 void IntervalExchangeMap::init(const std::vector<floating_point_type> lengths, const Permutation permutation){
-    assert(lengths.size() == permutation.size());
+    if(lengths.size() != permutation.size()){
+        throw std::runtime_error("The number of intervals is ambiguous.");
+    }
     int size = static_cast<int>(lengths.size());
-    assert(size > 0);
+    if (size == 0) throw std::runtime_error("The number of intervals must be at least 1.");
     for (int i = 0; i < size; i++) {
-        assert(lengths[i] > 0);
+        if (lengths[i] <= 0)
+            throw std::runtime_error("The length parameters an interval exchange map must be positive.");
     }
 
     floating_point_type total = 0;
