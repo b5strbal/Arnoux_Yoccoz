@@ -7,14 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		753C7C1F16F24E8300165E34 /* Foliation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 753C7C1D16F24E8300165E34 /* Foliation.cpp */; };
+		753C7C2216F2577C00165E34 /* IntervalExchangeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 753C7C2016F2577C00165E34 /* IntervalExchangeMap.cpp */; };
 		75D839A416F158F600672E20 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D839A316F158F600672E20 /* main.cpp */; };
 		75D839A616F158F600672E20 /* Arnoux_Yoccoz.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75D839A516F158F600672E20 /* Arnoux_Yoccoz.1 */; };
 		75D83B0116F1597100672E20 /* AlmostPFMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D839AC16F1597100672E20 /* AlmostPFMatrix.cpp */; };
-		75D83B0216F1597100672E20 /* Arc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D839AE16F1597100672E20 /* Arc.cpp */; };
 		75D83B0316F1597100672E20 /* ArcsAroundDivPoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D839B016F1597100672E20 /* ArcsAroundDivPoints.cpp */; };
-		75D83B0416F1597100672E20 /* CirclePoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D839B216F1597100672E20 /* CirclePoint.cpp */; };
-		75D83B0516F1597100672E20 /* FoliationDisk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D83AF916F1597100672E20 /* FoliationDisk.cpp */; };
-		75D83B0616F1597100672E20 /* FoliationRP2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D83AFB16F1597100672E20 /* FoliationRP2.cpp */; };
+		75D83B0416F1597100672E20 /* UnitIntervalPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D839B216F1597100672E20 /* UnitIntervalPoint.cpp */; };
 		75D83B0716F1597100672E20 /* WeighedTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D83AFF16F1597100672E20 /* WeighedTree.cpp */; };
 /* End PBXBuildFile section */
 
@@ -32,17 +31,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		753C7C1D16F24E8300165E34 /* Foliation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Foliation.cpp; sourceTree = "<group>"; };
+		753C7C1E16F24E8300165E34 /* Foliation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Foliation.h; sourceTree = "<group>"; };
+		753C7C2016F2577C00165E34 /* IntervalExchangeMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntervalExchangeMap.cpp; sourceTree = "<group>"; };
+		753C7C2116F2577C00165E34 /* IntervalExchangeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntervalExchangeMap.h; sourceTree = "<group>"; };
 		75D839A016F158F600672E20 /* Arnoux_Yoccoz */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Arnoux_Yoccoz; sourceTree = BUILT_PRODUCTS_DIR; };
 		75D839A316F158F600672E20 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		75D839A516F158F600672E20 /* Arnoux_Yoccoz.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Arnoux_Yoccoz.1; sourceTree = "<group>"; };
 		75D839AC16F1597100672E20 /* AlmostPFMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlmostPFMatrix.cpp; sourceTree = "<group>"; };
 		75D839AD16F1597100672E20 /* AlmostPFMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlmostPFMatrix.h; sourceTree = "<group>"; };
-		75D839AE16F1597100672E20 /* Arc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Arc.cpp; sourceTree = "<group>"; };
-		75D839AF16F1597100672E20 /* Arc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Arc.h; sourceTree = "<group>"; };
 		75D839B016F1597100672E20 /* ArcsAroundDivPoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArcsAroundDivPoints.cpp; sourceTree = "<group>"; };
 		75D839B116F1597100672E20 /* ArcsAroundDivPoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArcsAroundDivPoints.h; sourceTree = "<group>"; };
-		75D839B216F1597100672E20 /* CirclePoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CirclePoint.cpp; sourceTree = "<group>"; };
-		75D839B316F1597100672E20 /* CirclePoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CirclePoint.h; sourceTree = "<group>"; };
+		75D839B216F1597100672E20 /* UnitIntervalPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnitIntervalPoint.cpp; sourceTree = "<group>"; };
+		75D839B316F1597100672E20 /* UnitIntervalPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitIntervalPoint.h; sourceTree = "<group>"; };
 		75D839B516F1597100672E20 /* Array */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Array; sourceTree = "<group>"; };
 		75D839B616F1597100672E20 /* Cholesky */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cholesky; sourceTree = "<group>"; };
 		75D839B716F1597100672E20 /* CholmodSupport */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CholmodSupport; sourceTree = "<group>"; };
@@ -355,12 +356,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		753C7C2316F2600000165E34 /* old */ = {
+			isa = PBXGroup;
+			children = (
+				75D83AFC16F1597100672E20 /* FoliationRP2.h */,
+				75D83AF916F1597100672E20 /* FoliationDisk.cpp */,
+				75D83AFA16F1597100672E20 /* FoliationDisk.h */,
+				75D83AFB16F1597100672E20 /* FoliationRP2.cpp */,
+				75D83AFE16F1597100672E20 /* io.h */,
+			);
+			name = old;
+			path = Arnoux_Yoccoz;
+			sourceTree = "<group>";
+		};
 		75D8399716F158F600672E20 = {
 			isa = PBXGroup;
 			children = (
 				75D839B416F1597100672E20 /* Eigen */,
 				75D839A216F158F600672E20 /* Arnoux_Yoccoz */,
 				75D839A116F158F600672E20 /* Products */,
+				753C7C2316F2600000165E34 /* old */,
 			);
 			sourceTree = "<group>";
 		};
@@ -375,23 +390,20 @@
 		75D839A216F158F600672E20 /* Arnoux_Yoccoz */ = {
 			isa = PBXGroup;
 			children = (
-				75D839A316F158F600672E20 /* main.cpp */,
-				75D839AC16F1597100672E20 /* AlmostPFMatrix.cpp */,
-				75D839AD16F1597100672E20 /* AlmostPFMatrix.h */,
-				75D839AE16F1597100672E20 /* Arc.cpp */,
-				75D839AF16F1597100672E20 /* Arc.h */,
+				75D83AFD16F1597100672E20 /* global.h */,
+				75D839B216F1597100672E20 /* UnitIntervalPoint.cpp */,
+				75D839B316F1597100672E20 /* UnitIntervalPoint.h */,
 				75D839B016F1597100672E20 /* ArcsAroundDivPoints.cpp */,
 				75D839B116F1597100672E20 /* ArcsAroundDivPoints.h */,
-				75D839B216F1597100672E20 /* CirclePoint.cpp */,
-				75D839B316F1597100672E20 /* CirclePoint.h */,
-				75D83AF916F1597100672E20 /* FoliationDisk.cpp */,
-				75D83AFA16F1597100672E20 /* FoliationDisk.h */,
-				75D83AFB16F1597100672E20 /* FoliationRP2.cpp */,
-				75D83AFC16F1597100672E20 /* FoliationRP2.h */,
-				75D83AFD16F1597100672E20 /* global.h */,
-				75D83AFE16F1597100672E20 /* io.h */,
+				753C7C2016F2577C00165E34 /* IntervalExchangeMap.cpp */,
+				753C7C2116F2577C00165E34 /* IntervalExchangeMap.h */,
+				753C7C1D16F24E8300165E34 /* Foliation.cpp */,
+				753C7C1E16F24E8300165E34 /* Foliation.h */,
 				75D83AFF16F1597100672E20 /* WeighedTree.cpp */,
 				75D83B0016F1597100672E20 /* WeighedTree.h */,
+				75D839AC16F1597100672E20 /* AlmostPFMatrix.cpp */,
+				75D839AD16F1597100672E20 /* AlmostPFMatrix.h */,
+				75D839A316F158F600672E20 /* main.cpp */,
 				75D839A516F158F600672E20 /* Arnoux_Yoccoz.1 */,
 			);
 			path = Arnoux_Yoccoz;
@@ -1013,12 +1025,11 @@
 			files = (
 				75D839A416F158F600672E20 /* main.cpp in Sources */,
 				75D83B0116F1597100672E20 /* AlmostPFMatrix.cpp in Sources */,
-				75D83B0216F1597100672E20 /* Arc.cpp in Sources */,
 				75D83B0316F1597100672E20 /* ArcsAroundDivPoints.cpp in Sources */,
-				75D83B0416F1597100672E20 /* CirclePoint.cpp in Sources */,
-				75D83B0516F1597100672E20 /* FoliationDisk.cpp in Sources */,
-				75D83B0616F1597100672E20 /* FoliationRP2.cpp in Sources */,
+				75D83B0416F1597100672E20 /* UnitIntervalPoint.cpp in Sources */,
 				75D83B0716F1597100672E20 /* WeighedTree.cpp in Sources */,
+				753C7C1F16F24E8300165E34 /* Foliation.cpp in Sources */,
+				753C7C2216F2577C00165E34 /* IntervalExchangeMap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1117,6 +1128,7 @@
 				75D839AB16F158F600672E20 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -13,7 +13,7 @@
 #include <deque>
 #include <vector>
 #include "Eigen/Eigenvalues"
-#include "CirclePoint.h"
+#include "global.h"
 
 class AlmostPFMatrix{
 public:

@@ -5,7 +5,7 @@
 
 
 
-void ArcsAroundDivPoints::InsertPoint(const CirclePoint& NewCuttingPoint, int IndexOfInterval){
+void Foliation::ArcsAroundDivPoints::InsertPoint(const UnitIntervalPoint& NewCuttingPoint, int IndexOfInterval){
     switch (m_CuttingPoints[IndexOfInterval].size()) {
         case 0:
             m_CuttingPoints[IndexOfInterval].push_back(NewCuttingPoint);
@@ -32,7 +32,7 @@ void ArcsAroundDivPoints::InsertPoint(const CirclePoint& NewCuttingPoint, int In
 
 
 
-bool ArcsAroundDivPoints::ContainsQ(const CirclePoint& c, int IndexOfInterval) const{
+bool Foliation::ArcsAroundDivPoints::ContainsQ(const UnitIntervalPoint& c, int IndexOfInterval) const{
     if (m_CuttingPoints[IndexOfInterval].size() == 2 && m_CuttingPoints[IndexOfInterval][0] < c && c < m_CuttingPoints[IndexOfInterval][1])
     {
         return false;
@@ -47,8 +47,8 @@ bool ArcsAroundDivPoints::ContainsQ(const CirclePoint& c, int IndexOfInterval) c
 
 
 
-bool ArcsAroundDivPoints::ContainsArcThroughADivPointQ(const CirclePoint& LeftEndPoint, int LeftIndexOfInterval,
-                                                       const CirclePoint& RightEndPoint, int RightIndexOfInterval) const{
+bool Foliation::ArcsAroundDivPoints::ContainsArcThroughADivPointQ(const UnitIntervalPoint& LeftEndPoint, int LeftIndexOfInterval,
+                                                       const UnitIntervalPoint& RightEndPoint, int RightIndexOfInterval) const{
     
     if (LeftIndexOfInterval == RightIndexOfInterval) {
         return false;
@@ -60,7 +60,7 @@ bool ArcsAroundDivPoints::ContainsArcThroughADivPointQ(const CirclePoint& LeftEn
         return false;
     }
     int i;
-    for (i = LeftIndexOfInterval + 1; i != RightIndexOfInterval; i = (i + 1) % m_Foliation->getNumDivPoints()) {
+    for (i = LeftIndexOfInterval + 1; i != RightIndexOfInterval; i = (i + 1) % m_Foliation->m_numDivPoints) {
         if (m_CuttingPoints[i].empty()) {
             break;
         }
@@ -76,15 +76,22 @@ bool ArcsAroundDivPoints::ContainsArcThroughADivPointQ(const CirclePoint& LeftEn
 
 
 
-
-
-
-ArcsAroundDivPoints Intersect(const ArcsAroundDivPoints& adp1, const ArcsAroundDivPoints& adp2)
+/**
+ * @details The intersection of the two Arcs corresponding to each division point is taken and that is assigned to the division point
+ *          it the intersection. The operation is well-defined, because although in general the intersection of two arcs on the circle
+ *          might not be a single arc, in our case it can't happen because of the properties the Arcs in an ArcAroundDivPoints object
+ *          have to satisfy.
+ *
+ *          The motivation for this operation is to take the union of two sets of cutting points. A set of cutting points determines
+ *          an ArcsAroundDivPoints, another set determines another one, and the union of the two sets determines exactly the
+ *          intersection of the two objects.
+ */
+Foliation::ArcsAroundDivPoints Foliation::Intersect(const ArcsAroundDivPoints& adp1, const ArcsAroundDivPoints& adp2)
 {
     assert(adp1.m_Foliation == adp2.m_Foliation);
     
     ArcsAroundDivPoints adp = adp1;
-    for (int i = 0; i < adp1.m_Foliation->getNumDivPoints(); i++) {
+    for (int i = 0; i < adp1.m_Foliation->m_numDivPoints; i++) {
         if (adp1.m_CuttingPoints[i].empty()) {
             adp.m_CuttingPoints[i] = adp2.m_CuttingPoints[i];
         } else if (adp2.m_CuttingPoints[i].empty()){

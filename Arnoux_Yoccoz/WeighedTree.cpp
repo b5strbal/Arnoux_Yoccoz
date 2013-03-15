@@ -41,7 +41,7 @@ void WeighedTree::Init(std::vector<floating_point_type> Weights){
 
 void WeighedTree::GenerateRandomWeights(std::vector<floating_point_type>& Weights, int NumEdges){
     assert(NumEdges >= 3);
-/*    std::default_random_engine generator(static_cast<int>(time(NULL)));
+    std::default_random_engine generator(static_cast<int>(time(NULL)));
     std::uniform_real_distribution<floating_point_type> RealDistribution(0,1);
     Weights.clear();
     Weights.push_back(RealDistribution(generator));
@@ -71,7 +71,7 @@ void WeighedTree::GenerateRandomWeights(std::vector<floating_point_type>& Weight
         }
         Weights.push_back(0);
         Remains -= NextSequence;
-    }*/
+    }
 }
 
 

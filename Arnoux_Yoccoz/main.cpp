@@ -8,7 +8,8 @@
 
 #include <iostream>
 #include <time.h>
-#include "io.h"
+#include "IntervalExchangeMap.h"
+//#include "io.h"
 
 using namespace std;
 
@@ -20,6 +21,12 @@ using namespace std;
 
 int main (int argc, const char * argv[])
 {
+    
+    
+    TwistedIntervalExchange map({0.5, 0.5, 0.5, 0.5}, Permutation({3, 2, 1, 0}));
+    
+    
+    
     
     /*
      // double alpha = 0.5436890126920764; // The stretch factor of the Arnoux-Yoccoz pseudo-anosov.
@@ -54,7 +61,7 @@ int main (int argc, const char * argv[])
     
     
     
-    
+    /*
     
     Greetings();
     FoliationRP2* Foliation;
@@ -72,6 +79,7 @@ int main (int argc, const char * argv[])
         }
     }
     delete Foliation;
+    */
     
     
     return 0;

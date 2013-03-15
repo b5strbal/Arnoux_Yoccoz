@@ -81,19 +81,19 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
-#include "CirclePoint.h"
-//#include "Arc.h"
+#include "UnitIntervalPoint.h"
+#include "Foliation.h"
 
 /**
  * @brief   A collection of arcs around a set of points on the circle of circumference 1.
  * @author  Balazs Strenner, strenner@math.wisc.edu
  * @date    March 6, 2013
- * @details Given a set of CirclePoints on the circle of circumference 1, called the "division points", an ArcAroundDivPoints object
+ * @details Given a set of UnitIntervalPoints on the circle of circumference 1, called the "division points", an ArcAroundDivPoints object
  *          is just a collection of arcs around the division points with some properties:
  *        
  *          1) There is one Arc assigned to each division point, so the number of Arcs and division points are equal.
  *
- *          2) The division points are ordinary CirclePoints.
+ *          2) The division points are ordinary UnitIntervalPoints.
  *
  *          3) Each division point is contained in the inside of the corresponding Arc.
  *
@@ -108,33 +108,26 @@
  *          Then, we start to add "cutting points" to the picture. When a cutting point is added, each Arc that contains it is cut in half
  *          along it, and the smaller Arcs obtained which do not contain any division points are discarded. In other words, we look at 
  *          each division point and their corresponding Arc in order, and we try to cut the Arcs in two by the cutting point and keep the
- *          Arc that contains the division point. Since the cutting points are always generalized CirclePoints, one can see that the above
+ *          Arc that contains the division point. Since the cutting points are always generalized UnitIntervalPoints, one can see that the above
  *          properties are satisfied.
  *
  *          In particular, when a cutting point is inserted in an empty object, then the whole circle has to be divided along the cutting
  *          point, the Arc of length 1, both endpoints being the cutting point will the Arc that is assigned to each division point.
  *
- * @see     CirclePoint, Arc, FoliationDisk
+ * @see     UnitIntervalPoint, Arc, FoliationDisk
  */
 
-class Foliation{
-public:
-    int getNumDivPoints() const { return m_NumDivPoints; }
-    
-private:
-    int m_NumDivPoints;
-};
 
 
-class ArcsAroundDivPoints{
+class Foliation::ArcsAroundDivPoints{
 public:
     /**
      * @brief   Constructor of empty object.
-     * @param ShiftedDivPoints     The division points have to be regular (not generalized) CirclePoints. 
+     * @param ShiftedDivPoints     The division points have to be regular (not generalized) UnitIntervalPoints. 
      *                      Also, there has to be at least one division point.
      */
     ArcsAroundDivPoints(const Foliation* foliation) :
-        m_CuttingPoints(foliation->getNumDivPoints(), std::vector<CirclePoint>(0)),
+        m_CuttingPoints(foliation->m_numDivPoints, std::vector<UnitIntervalPoint>(0)),
         m_Foliation(foliation)
     {
     }
@@ -149,32 +142,24 @@ public:
      * @param NewCuttingPoint   It must not coincide with any of the division points, because in that case case the operation won't be
      *                          well-defined.
      */
-    void InsertPoint(const CirclePoint& NewCuttingPoint, int IndexOfInterval);
+    void InsertPoint(const UnitIntervalPoint& NewCuttingPoint, int IndexOfInterval);
     
     /**
      * @brief   Decides if a point is contained in any of the Arcs.
      */
-    bool ContainsQ(const CirclePoint& cp, int IndexOfInterval) const;
+    bool ContainsQ(const UnitIntervalPoint& cp, int IndexOfInterval) const;
     
-    /**
-     * @brief   Takes the intersection of two ArcsAroundDivPoints objects.
-     * @details The intersection of the two Arcs corresponding to each division point is taken and that is assigned to the division point
-     *          it the intersection. The operation is well-defined, because although in general the intersection of two arcs on the circle
-     *          might not be a single arc, in our case it can't happen because of the properties the Arcs in an ArcAroundDivPoints object
-     *          have to satisfy.
-     *
-     *          The motivation for this operation is to take the union of two sets of cutting points. A set of cutting points determines
-     *          an ArcsAroundDivPoints, another set determines another one, and the union of the two sets determines exactly the 
-     *          intersection of the two objects.
-     */
-    friend ArcsAroundDivPoints Intersect(const ArcsAroundDivPoints& adp1, const ArcsAroundDivPoints& adp2);
+    
+    friend Foliation::ArcsAroundDivPoints Foliation::Intersect(const ArcsAroundDivPoints& adp1, const ArcsAroundDivPoints& adp2);
+
+    
     
     /**
      * @brief   Returns true if the an Arc is contained in any of the member Arcs and it passes through the division point contained in the
      *          member Arc.
      */
-    bool ContainsArcThroughADivPointQ(const CirclePoint& LeftEndPoint, int LeftIndexOfInterval,
-                                      const CirclePoint& RightEndPoint, int RightIndexOfInterval) const;
+    bool ContainsArcThroughADivPointQ(const UnitIntervalPoint& LeftEndPoint, int LeftIndexOfInterval,
+                                      const UnitIntervalPoint& RightEndPoint, int RightIndexOfInterval) const;
     
     /**
      * @brief   Prints out the division points and all the Arcs.
@@ -187,23 +172,12 @@ private:
      */
     
     const Foliation* m_Foliation;
-    std::vector<std::vector<CirclePoint>> m_CuttingPoints;
+    std::vector<std::vector<UnitIntervalPoint>> m_CuttingPoints;
 };
 
 
 
 
-
-
-/*
- * @brief   Decides if an Arc contains any of the division points.
- */
-//bool ContainsADivPoint(const Arc& arc) const;
-
-/*
- * @brief   Decides if any of the member Arcs contains the specified Arc.
- */
-//bool ContainsArcQ(const Arc& arc) const;
 
 
 

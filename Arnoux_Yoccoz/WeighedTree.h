@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include <vector>
-//#include <random>
+#include <random>
 #include <stdlib.h>
 #include "global.h"
 #include <cassert>
