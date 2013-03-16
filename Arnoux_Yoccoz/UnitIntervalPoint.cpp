@@ -8,9 +8,12 @@
 #include "UnitIntervalPoint.h"
 
 
+const floating_point_type UnitIntervalPoint::PRECISION = 0.00000000001L;
+
+
 
 UnitIntervalPoint operator+(const UnitIntervalPoint& p1, floating_point_type distance){
-    return UnitIntervalPoint(UnitIntervalPoint::FracPart(p1.m_position + distance));
+    return UnitIntervalPoint(FracPart(p1.m_position + distance));
 }
 
 
@@ -22,16 +25,21 @@ UnitIntervalPoint operator-(const UnitIntervalPoint& p1, floating_point_type dis
 
 
 bool operator<(const UnitIntervalPoint& p1, const UnitIntervalPoint& p2){
-    if(p1.m_position < p2.m_position)
-        return true;
-    if(p1.m_position > p2.m_position)
-        return false;
-    if(p1.m_epsilon < p2.m_epsilon)
+    if(p1.m_positionPlusPrecision < p2.m_position)
         return true;
     return false;
 }
 
 
+
+floating_point_type DistanceBetween(const UnitIntervalPoint& p1, const UnitIntervalPoint& p2)
+{
+    return p1.m_position <= p2.m_position ? p2.m_position - p1.m_position : p2.m_position - p1.m_position + 1;
+}
+
+
+
+/*
 
 bool IsBetween(const UnitIntervalPoint& cLeft, const UnitIntervalPoint& cRight, const UnitIntervalPoint& cThird)
 {
@@ -43,9 +51,4 @@ bool IsBetween(const UnitIntervalPoint& cLeft, const UnitIntervalPoint& cRight, 
     }
     return false;
 }
-
-
-floating_point_type DistanceBetween(const UnitIntervalPoint& p1, const UnitIntervalPoint& p2)
-{
-    return p1.m_position <= p2.m_position ? p2.m_position - p1.m_position : p2.m_position - p1.m_position + 1;
-}
+*/

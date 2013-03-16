@@ -111,6 +111,7 @@ private:
     Permutation m_originalPermutation;
     floating_point_type m_twist;
     int m_indexOfFakeDivPoint;
+    std::vector<UnitIntervalPoint> m_realSeparatingPoints;
     
     void init(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
     
@@ -128,8 +129,6 @@ public:
     
     UnitIntervalPoint applyTo(const UnitIntervalPoint& point);
     
-    bool isTooCloseToDivPoint(const UnitIntervalPoint& point);
-
     friend std::ostream& operator<<(std::ostream& Out, const IntervalExchangeFoliationDisk intervalExchange);
 
 };

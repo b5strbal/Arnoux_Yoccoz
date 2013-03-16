@@ -11,17 +11,22 @@
 
 #include <vector>
 #include <cassert>
+#include <cmath>
 
 /**
  * @brief   The floating point type used throughout the program for the calculations.
  */
 typedef long double floating_point_type;
 
-const floating_point_type PRECISION = 0.0000000001L;
 
+const int CONTAINING_INTERVAL_NOT_UNIQUE = -100;
 
 int integerMod(int a, int b);
 
+/**
+ * @brief   Calculates the fractional part of a real number. E.g. FracPart(2.3) = 0.3, FracPart(-1.8) = 0.2.
+ */
+floating_point_type FracPart(floating_point_type x);
 
 
 template <typename Type>
@@ -38,7 +43,11 @@ int findInterval(const std::vector<Type>& separatingPoints,
                                       int end)
 {
     if (start == end){
-        return start;
+        if (separatingPoints[start] < point)
+            return start;
+        else
+            return CONTAINING_INTERVAL_NOT_UNIQUE;
+        
     }
     int mid = (start + end + 1) / 2;
     if (point < separatingPoints[mid]) {

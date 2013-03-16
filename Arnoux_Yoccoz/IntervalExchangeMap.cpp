@@ -184,9 +184,12 @@ void IntervalExchangeBase::init(const std::vector<floating_point_type>& lengths,
     }
     
     m_divPoints.resize(size);
-    m_divPoints[0] = 0;
+    m_divPoints[0] = UnitIntervalPoint(0);
     for (int i = 1; i < size; i++) {
         m_divPoints[i] = m_divPoints[i - 1] + m_lengths[i - 1];
+        if (!(m_divPoints[i - 1] < m_divPoints[i])) {
+            throw std::runtime_error("At least one interval in the interval exchange is too short.");
+        }
     }
     
     m_permutation = permutation;
@@ -248,7 +251,6 @@ std::ostream& operator<<(std::ostream& Out, const IntervalExchangeMap intervalEx
 
 
 
-
 UnitIntervalPoint IntervalExchangeMap::applyTo(const UnitIntervalPoint& point){
     return point + m_translations[containingInterval(m_divPoints, point)];
 }
@@ -292,16 +294,17 @@ TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<floatin
 
 
 void TwistedIntervalExchangeMap::init(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist){
-    if(twist <= 0 || twist >= 1)
-        throw std::runtime_error("The twist must be strictly between 0 and 1");
-    UnitIntervalPoint newDivPoint = applyInverseTo(UnitIntervalPoint(1 - twist));
+    int originalSize = static_cast<int>(lengths.size());
+    UnitIntervalPoint oneMinusTwist(FracPart(1 - twist));
+    UnitIntervalPoint newDivPoint = applyInverseTo(oneMinusTwist);
     int intervalOfNewDivPoint = containingInterval(m_divPoints, newDivPoint);
-    int intervalOfOneMinusTwist = containingInterval(m_divPointsAfterExchange, UnitIntervalPoint(1 - twist));
+    if (intervalOfNewDivPoint == CONTAINING_INTERVAL_NOT_UNIQUE) {
+        throw std::runtime_error("The specified data results in an immediate saddle connection of the foliation constructed by the\
+                                 twisted interval exchange map.");
+    }
+    int intervalOfOneMinusTwist = containingInterval(m_divPointsAfterExchange, oneMinusTwist);
     m_indexOfFakeDivPoint = intervalOfNewDivPoint + 1;
     
-    if (m_divPoints[intervalOfNewDivPoint] == newDivPoint) {
-        throw std::runtime_error("A twisted interval exchange must not be a regular interval exchange.");
-    }
     
     // Finding the new lengths
     std::vector<floating_point_type> newLengths(m_lengths);
@@ -310,22 +313,47 @@ void TwistedIntervalExchangeMap::init(const std::vector<floating_point_type>& le
     newLengths[intervalOfNewDivPoint] = smallerLength;
     
     // Finding the new permutation
-    std::vector<int> permutationInput(size() + 1);
+    std::vector<int> permutationInput(originalSize + 1);
     for (int i = 0; i < intervalOfNewDivPoint; i++) {
         if (m_permutation[i] < intervalOfOneMinusTwist) {
-            permutationInput[i] = m_permutation[i] + size() - intervalOfOneMinusTwist;
+            permutationInput[i] = m_permutation[i] + originalSize - intervalOfOneMinusTwist;
         } else
-            permutationInput[i] -= m_permutation[i] - intervalOfOneMinusTwist;
+            permutationInput[i] = m_permutation[i] - intervalOfOneMinusTwist;
     }
-    permutationInput[intervalOfNewDivPoint] = size();
+    permutationInput[intervalOfNewDivPoint] = originalSize;
     permutationInput[intervalOfNewDivPoint + 1] = 0;
-    for (int i = intervalOfNewDivPoint + 2; i <= size(); i++) {
+    for (int i = intervalOfNewDivPoint + 2; i <= originalSize; i++) {
         if (m_permutation[i - 1] < intervalOfOneMinusTwist) {
-            permutationInput[i] = m_permutation[i - 1] + size() - intervalOfOneMinusTwist;
+            permutationInput[i] = m_permutation[i - 1] + originalSize - intervalOfOneMinusTwist;
         } else
-            permutationInput[i] -= m_permutation[i - 1] - intervalOfOneMinusTwist;
+            permutationInput[i] = m_permutation[i - 1] - intervalOfOneMinusTwist;
     }
     IntervalExchangeBase::init(newLengths, Permutation(permutationInput));
+    
+    
+    m_realSeparatingPoints.clear();
+    int firstindex = 0;
+    int secondindex = 1;
+    while (firstindex + secondindex < 2 * originalSize + 2) {
+        if (secondindex == originalSize + 1 || (firstindex < originalSize + 1 &&
+                                                       m_divPoints[firstindex] < m_divPointsAfterExchange[secondindex])) {
+            if (m_permutation[firstindex] == 0) {   // this is the fake DivPoint
+                firstindex++;
+            } else {
+                m_realSeparatingPoints.push_back(m_divPoints[firstindex]);
+                firstindex++;
+            }
+        } else {
+            m_realSeparatingPoints.push_back(m_divPointsAfterExchange[secondindex]);
+            secondindex++;
+        }
+    }
+    for (int i = 1; i < 2 * originalSize; i++) {
+        if (!(m_realSeparatingPoints[i - 1] < m_realSeparatingPoints[i])) {
+            throw std::runtime_error("The specified data results in an immediate saddle connection of the foliation constructed by the\
+                                     twisted interval exchange map.");
+        }
+    }
 }
 
 
@@ -368,20 +396,11 @@ IntervalExchangeFoliationDisk::IntervalExchangeFoliationDisk(const WeighedTree& 
 
 UnitIntervalPoint IntervalExchangeFoliationDisk::applyTo(const UnitIntervalPoint& point){
     int interval = containingInterval(m_divPoints, point);
-    return m_divPoints[m_permutation[interval]].getPosition() + m_lengths[interval] - (m_divPoints[interval].getPosition() - point.getPosition());
+    return UnitIntervalPoint(m_divPoints[m_permutation[interval]].getPosition() + m_lengths[interval] - (m_divPoints[interval].getPosition() - point.getPosition()));
 }
 
 
 
-bool IntervalExchangeFoliationDisk::isTooCloseToDivPoint(const UnitIntervalPoint& point){
-    int interval = containingInterval(m_divPoints, point);
-    if (fabs(m_divPoints[interval + 1].getPosition() - point.getPosition()) < PRECISION ||
-        fabs(point.getPosition() - m_divPoints[interval].getPosition()) < PRECISION)
-    {
-        return true;
-    }
-    return false;
-}
 
 
 std::ostream& operator<<(std::ostream& Out, const IntervalExchangeFoliationDisk intervalExchange){

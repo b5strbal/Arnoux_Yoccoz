@@ -15,7 +15,7 @@
 #include "IntervalExchangeMap.h"
 
 
-class Foliation{
+class Foliation : public TwistedIntervalExchangeMap{
     
 public:
     Foliation(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
@@ -23,8 +23,6 @@ public:
     
 private:
     int m_numSeparatrices;
-    std::vector<UnitIntervalPoint> m_shiftedSeparatrixPoints;
-    TwistedIntervalExchangeMap m_intervalExchange;
     
     
     class ArcsAroundDivPoints;

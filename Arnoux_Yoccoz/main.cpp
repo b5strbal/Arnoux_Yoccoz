@@ -24,7 +24,7 @@ int main (int argc, const char * argv[])
 {
     
     try {
-        FoliationRP2 f(WeighedTree({0.5, 0.5, 0.5, 0.1, 0, 1, 2, 0}));
+        Foliation f({0.5, 0.5, 0.3, 0.3, 0.2, 0.2}, Permutation({1, 0, 3, 2, 5, 4}), 0.53);
         cout << f << endl;
     } catch (const std::exception& ex) {
         cout << ex.what();

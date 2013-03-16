@@ -14,3 +14,6 @@ int integerMod(int a, int b){
     int result = a % b;
     return result >= 0 ? result : result + b;
 }
+
+
+floating_point_type FracPart(floating_point_type x){ return x - floor(x); }
