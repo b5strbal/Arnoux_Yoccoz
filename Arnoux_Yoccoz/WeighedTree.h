@@ -33,6 +33,29 @@
  */
 
 class WeighedTree{
+private:
+    /**
+     * @brief
+     */
+    struct Node{
+        floating_point_type m_Weight = 0;
+        Node* m_Parent = NULL;
+        int m_NumChildren = 0;
+        Node* m_Children = NULL;
+        int m_NumDescendants = 0;
+        
+        ~Node();
+        
+        inline Node* FirstChild() { return m_NumChildren == 0 ? NULL : m_Children; }
+        inline Node* LastChild() { return m_NumChildren == 0 ? NULL : m_Children + (m_NumChildren - 1); }
+        inline Node* FirstSibling() { return IsRoot() ? this : m_Parent->FirstChild(); };
+        //Node* Root();
+        
+        inline bool IsRoot() { return m_Parent == NULL ? true : false; }
+        bool IsLastSibling() { return IsRoot() || m_Parent->LastChild() == this ? true : false; }
+        int GetNumberOfSiblings(){ return IsRoot() ? 1 : m_Parent->m_NumChildren; }
+    };
+    
 public:
     /**
      * @brief   Constructor taking the list of weights separated by zeroes as arguments.
@@ -57,30 +80,19 @@ public:
      */
     ~WeighedTree();
     
-    /**
-     * @brief   
-     */
-    struct Node{
-        floating_point_type m_Weight = 0;
-        Node* m_Parent = NULL;
-        int m_NumChildren = 0;
-        Node* m_Children = NULL;
-        int m_NumDescendants = 0;
-        
-        ~Node();
-        
-        inline Node* FirstChild() { return m_NumChildren == 0 ? NULL : m_Children; }
-        inline Node* LastChild() { return m_NumChildren == 0 ? NULL : m_Children + (m_NumChildren - 1); }
-        inline Node* FirstSibling() { return IsRoot() ? this : m_Parent->FirstChild(); };
-        //Node* Root();
-        
-        inline bool IsRoot() { return m_Parent == NULL ? true : false; }
-        bool IsLastSibling() { return IsRoot() || m_Parent->LastChild() == this ? true : false; }
-        int GetNumberOfSiblings(){ return IsRoot() ? 1 : m_Parent->m_NumChildren; }
-    };
-
-    Node* m_Root;
+    int getNumEdges() const { return m_Root->m_NumDescendants; }
+    
+    
+    void generateLengthsAndPairing(std::vector<floating_point_type>& lengths, std::vector<int>& pairing) const;
+    
+    void getDegrees(std::vector<int>& degrees) const;
+    
 private:
+    Node* m_Root;
+    
+    void fillInLengthsAndPairing(std::vector<floating_point_type>& lengths, std::vector<int>& pairing, int StartingIndex, Node* pNode) const;
+
+    
     /**
      * @brief   Initializes the object for the list of weights separated by zeroes as the argument. Called by the constructors.
      */
@@ -94,6 +106,8 @@ private:
     Node* NextNode(Node*);
     void CreateChildren(std::vector<floating_point_type>::iterator itBegin, std::vector<floating_point_type>::iterator itEnd, Node* pNode);
     void SetNumDescendants(Node* pNode);
+    
+    void getDegreesRecursive(std::vector<int>& degrees, Node* node) const;
     
     WeighedTree(const WeighedTree&);
     WeighedTree& operator=(const WeighedTree&);

@@ -60,7 +60,7 @@ bool Foliation::ArcsAroundDivPoints::ContainsArcThroughADivPointQ(const UnitInte
         return false;
     }
     int i;
-    for (i = LeftIndexOfInterval + 1; i != RightIndexOfInterval; i = (i + 1) % m_Foliation->m_numDivPoints) {
+    for (i = LeftIndexOfInterval + 1; i != RightIndexOfInterval; i = (i + 1) % m_Foliation->m_numSeparatrices) {
         if (m_CuttingPoints[i].empty()) {
             break;
         }
@@ -91,7 +91,7 @@ Foliation::ArcsAroundDivPoints Foliation::Intersect(const ArcsAroundDivPoints& a
     assert(adp1.m_Foliation == adp2.m_Foliation);
     
     ArcsAroundDivPoints adp = adp1;
-    for (int i = 0; i < adp1.m_Foliation->m_numDivPoints; i++) {
+    for (int i = 0; i < adp1.m_Foliation->m_numSeparatrices; i++) {
         if (adp1.m_CuttingPoints[i].empty()) {
             adp.m_CuttingPoints[i] = adp2.m_CuttingPoints[i];
         } else if (adp2.m_CuttingPoints[i].empty()){

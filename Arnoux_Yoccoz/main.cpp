@@ -8,8 +8,9 @@
 
 #include <iostream>
 #include <time.h>
-#include "IntervalExchangeMap.h"
+#include "Foliation.h"
 //#include "io.h"
+#include "FoliationRP2.h"
 
 using namespace std;
 
@@ -23,8 +24,8 @@ int main (int argc, const char * argv[])
 {
     
     try {
-        IntervalExchangeMap map({0.5, 0.5, 0.5, 0.5}, Permutation({3, 2, 1, 0}), 0.5);
-        cout << map;
+        FoliationRP2 f(WeighedTree({0.5, 0.5, 0.5, 0.1, 0, 1, 2, 0}));
+        cout << f;
     } catch (const std::exception& ex) {
         cout << ex.what();
     }

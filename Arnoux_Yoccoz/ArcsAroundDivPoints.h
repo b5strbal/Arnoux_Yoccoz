@@ -127,7 +127,7 @@ public:
      *                      Also, there has to be at least one division point.
      */
     ArcsAroundDivPoints(const Foliation* foliation) :
-        m_CuttingPoints(foliation->m_numDivPoints, std::vector<UnitIntervalPoint>(0)),
+        m_CuttingPoints(foliation->m_numSeparatrices, std::vector<UnitIntervalPoint>(0)),
         m_Foliation(foliation)
     {
     }

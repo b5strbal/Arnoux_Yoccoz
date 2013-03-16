@@ -9,12 +9,52 @@
 #ifndef Arnoux_Yoccoz_global_h
 #define Arnoux_Yoccoz_global_h
 
+#include <vector>
 
 /**
  * @brief   The floating point type used throughout the program for the calculations.
  */
 typedef long double floating_point_type;
 
+const floating_point_type PRECISION = 0.0000000001L;
+
+template <typename Type>
+static int containingInterval(const std::vector<Type>& separatingPoints, Type point){
+    return findInterval(separatingPoints, point, -1, static_cast<int>(separatingPoints.size())  - 1);
+}
+
+
+
+template <typename Type>
+int findInterval(const std::vector<Type>& separatingPoints,
+                                      const Type& point,
+                                      int start,
+                                      int end)
+{
+    if (start == end){
+        return start;
+    }
+    int mid = (start + end + 1) / 2;
+    if (point < separatingPoints[mid]) {
+        return findInterval(separatingPoints, point, start, mid - 1);
+    } else
+        return findInterval(separatingPoints, point, mid, end);
+}
+
+
+
+
+template <typename Type>
+std::ostream& operator<<(std::ostream& Out, const std::vector<Type>& vec){
+    for (int i = 0; i < vec.size(); i++) {
+        Out << vec[i] << " ";
+        }
+    return Out;
+}
+
+
+
+
+
 
 #endif
- 

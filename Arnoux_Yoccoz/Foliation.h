@@ -16,23 +16,15 @@
 
 
 class Foliation{
+    
 public:
-    Foliation(const std::vector<floating_point_type> lengths){
+    Foliation(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
     
-    }
-    
-    
-    //int getNumDivPoints() const { return m_NumIntervals; }
     
 private:
-    int m_numIntervals;
-    int m_numDivPoints;
-    std::vector<floating_point_type> m_lengths;
-    std::vector<floating_point_type> m_translations;
-    std::vector<UnitIntervalPoint> m_divPoints;
-    std::vector<UnitIntervalPoint> m_shiftedDivPoints;
-    
-    
+    int m_numSeparatrices;
+    std::vector<UnitIntervalPoint> m_shiftedSeparatrixPoints;
+    IntervalExchangeMap m_intervalExchange;
     
     
     class ArcsAroundDivPoints;
@@ -43,6 +35,23 @@ private:
     ArcsAroundDivPoints Intersect(const ArcsAroundDivPoints& adp1, const ArcsAroundDivPoints& adp2);
 };
 
+
+
+
+
+
+
+
+
+
+class FoliationFromRP2 : public Foliation{
+public:
+    FoliationFromRP2();
+
+
+
+
+};
 
 
 

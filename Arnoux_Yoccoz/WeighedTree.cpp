@@ -39,6 +39,32 @@ void WeighedTree::Init(std::vector<floating_point_type> Weights){
 
 
 
+void WeighedTree::generateLengthsAndPairing(std::vector<floating_point_type>& lengths, std::vector<int>& pairing) const{
+    lengths.resize(2 * getNumEdges());
+    pairing.resize(2 * getNumEdges());
+    fillInLengthsAndPairing(lengths, pairing, 0, m_Root);
+}
+
+
+
+void WeighedTree::fillInLengthsAndPairing(std::vector<floating_point_type>& lengths,
+                                          std::vector<int>& pairing, int StartingIndex, Node* pNode) const{
+    int ChildrenStartingIndex = StartingIndex;
+    for (int i = 0; i < pNode->m_NumChildren; i++) {
+        int pair = ChildrenStartingIndex + 2 * pNode->m_Children[i].m_NumDescendants + 1;
+        lengths[ChildrenStartingIndex] = lengths[pair] = pNode->m_Children[i].m_Weight;
+        pairing[ChildrenStartingIndex] = pair;
+        pairing[pair] = ChildrenStartingIndex;
+        fillInLengthsAndPairing(lengths, pairing, ChildrenStartingIndex + 1, pNode->m_Children + i);
+        ChildrenStartingIndex = pair + 1;
+    }
+}
+
+
+
+
+
+
 void WeighedTree::GenerateRandomWeights(std::vector<floating_point_type>& Weights, int NumEdges){
     assert(NumEdges >= 3);
     std::default_random_engine generator(static_cast<int>(time(NULL)));
@@ -82,18 +108,18 @@ void WeighedTree::CreateChildren(std::vector<floating_point_type>::iterator itBe
     std::vector<floating_point_type>::iterator it = itBegin;
     while (it != itEnd && *it != 0) {
         if (*it < 0) {
-            throw "Weights of weighed trees must be positive.";
+            throw std::runtime_error("Weights of weighed trees must be positive.");
         }
         it++;
     }
     if (pNode->m_Parent == NULL && it - itBegin < 3) {
-        throw "The root of a weighed tree must have at least 3 neighbors.";
+        throw std::runtime_error("The root of a weighed tree must have at least 3 neighbors.)");
     }
 
     if (it != itBegin) {
         pNode->m_NumChildren = static_cast<int>(it - itBegin);
         if (pNode->m_Parent != NULL && pNode->m_NumChildren == 1) {
-            throw "Vertices of degree 2 are not allowed in weighed trees.";
+            throw std::runtime_error("Vertices of degree 2 are not allowed in weighed trees.");
         }
         
         
@@ -107,7 +133,7 @@ void WeighedTree::CreateChildren(std::vector<floating_point_type>::iterator itBe
     if (++it < itEnd) {
         pNode = NextNode(pNode);
         if (pNode->IsRoot()) {
-            throw "Too many arguments provided for the definition of a weighed tree.";
+            throw std::runtime_error("Too many arguments provided for the definition of a weighed tree.");
         } else
             CreateChildren(it, itEnd, pNode);
     }
@@ -123,6 +149,32 @@ void WeighedTree::SetNumDescendants(Node* pNode){
     }
     pNode->m_NumDescendants = CountDescendants + pNode->m_NumChildren;
 }
+
+
+
+void WeighedTree::getDegrees(std::vector<int>& degrees) const{
+    degrees.clear();
+    getDegreesRecursive(degrees, m_Root);
+    degrees[0]--;
+    std::sort(degrees.begin(), degrees.end(), std::greater<int>());
+}
+
+
+
+
+
+void WeighedTree::getDegreesRecursive(std::vector<int>& degrees, Node* node) const{
+    degrees.push_back(node->m_NumChildren + 1);
+    for (int i = 0; i < node->m_NumChildren; i++) {
+        getDegreesRecursive(degrees, node->m_Children + i);
+    }
+}
+
+
+
+
+
+
 
 
 WeighedTree::Node::~Node(){

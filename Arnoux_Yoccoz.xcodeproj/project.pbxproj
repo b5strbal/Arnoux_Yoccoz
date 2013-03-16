@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		753C7C1F16F24E8300165E34 /* Foliation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 753C7C1D16F24E8300165E34 /* Foliation.cpp */; };
 		753C7C2216F2577C00165E34 /* IntervalExchangeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 753C7C2016F2577C00165E34 /* IntervalExchangeMap.cpp */; };
+		753C7C2416F4062600165E34 /* FoliationRP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D83AF916F1597100672E20 /* FoliationRP.cpp */; };
 		75D839A416F158F600672E20 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D839A316F158F600672E20 /* main.cpp */; };
 		75D839A616F158F600672E20 /* Arnoux_Yoccoz.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75D839A516F158F600672E20 /* Arnoux_Yoccoz.1 */; };
 		75D83B0116F1597100672E20 /* AlmostPFMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D839AC16F1597100672E20 /* AlmostPFMatrix.cpp */; };
@@ -335,10 +336,10 @@
 		75D83AF616F1597100672E20 /* SuperLUSupport */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SuperLUSupport; sourceTree = "<group>"; };
 		75D83AF716F1597100672E20 /* SVD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVD; sourceTree = "<group>"; };
 		75D83AF816F1597100672E20 /* UmfPackSupport */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UmfPackSupport; sourceTree = "<group>"; };
-		75D83AF916F1597100672E20 /* FoliationDisk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FoliationDisk.cpp; sourceTree = "<group>"; };
-		75D83AFA16F1597100672E20 /* FoliationDisk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoliationDisk.h; sourceTree = "<group>"; };
-		75D83AFB16F1597100672E20 /* FoliationRP2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FoliationRP2.cpp; sourceTree = "<group>"; };
-		75D83AFC16F1597100672E20 /* FoliationRP2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoliationRP2.h; sourceTree = "<group>"; };
+		75D83AF916F1597100672E20 /* FoliationRP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FoliationRP.cpp; sourceTree = "<group>"; };
+		75D83AFA16F1597100672E20 /* FoliationRP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoliationRP.h; sourceTree = "<group>"; };
+		75D83AFB16F1597100672E20 /* FoliationRP2old.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FoliationRP2old.cpp; sourceTree = "<group>"; };
+		75D83AFC16F1597100672E20 /* FoliationRP2old.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FoliationRP2old.h; sourceTree = "<group>"; };
 		75D83AFD16F1597100672E20 /* global.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = global.h; sourceTree = "<group>"; };
 		75D83AFE16F1597100672E20 /* io.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = io.h; sourceTree = "<group>"; };
 		75D83AFF16F1597100672E20 /* WeighedTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeighedTree.cpp; sourceTree = "<group>"; };
@@ -359,10 +360,8 @@
 		753C7C2316F2600000165E34 /* old */ = {
 			isa = PBXGroup;
 			children = (
-				75D83AFC16F1597100672E20 /* FoliationRP2.h */,
-				75D83AF916F1597100672E20 /* FoliationDisk.cpp */,
-				75D83AFA16F1597100672E20 /* FoliationDisk.h */,
-				75D83AFB16F1597100672E20 /* FoliationRP2.cpp */,
+				75D83AFC16F1597100672E20 /* FoliationRP2old.h */,
+				75D83AFB16F1597100672E20 /* FoliationRP2old.cpp */,
 				75D83AFE16F1597100672E20 /* io.h */,
 			);
 			name = old;
@@ -399,6 +398,8 @@
 				753C7C2116F2577C00165E34 /* IntervalExchangeMap.h */,
 				753C7C1D16F24E8300165E34 /* Foliation.cpp */,
 				753C7C1E16F24E8300165E34 /* Foliation.h */,
+				75D83AF916F1597100672E20 /* FoliationRP.cpp */,
+				75D83AFA16F1597100672E20 /* FoliationRP.h */,
 				75D83AFF16F1597100672E20 /* WeighedTree.cpp */,
 				75D83B0016F1597100672E20 /* WeighedTree.h */,
 				75D839AC16F1597100672E20 /* AlmostPFMatrix.cpp */,
@@ -1030,6 +1031,7 @@
 				75D83B0716F1597100672E20 /* WeighedTree.cpp in Sources */,
 				753C7C1F16F24E8300165E34 /* Foliation.cpp in Sources */,
 				753C7C2216F2577C00165E34 /* IntervalExchangeMap.cpp in Sources */,
+				753C7C2416F4062600165E34 /* FoliationRP.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
