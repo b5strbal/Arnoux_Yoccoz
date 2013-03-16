@@ -25,11 +25,12 @@ int main (int argc, const char * argv[])
     
     try {
         FoliationRP2 f(WeighedTree({0.5, 0.5, 0.5, 0.1, 0, 1, 2, 0}));
-        cout << f;
+        cout << f << endl;
     } catch (const std::exception& ex) {
         cout << ex.what();
     }
     
+    cout << rotatingPermutation(6, 100);
     
     
     /*

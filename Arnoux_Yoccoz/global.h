@@ -10,6 +10,7 @@
 #define Arnoux_Yoccoz_global_h
 
 #include <vector>
+#include <cassert>
 
 /**
  * @brief   The floating point type used throughout the program for the calculations.
@@ -18,8 +19,13 @@ typedef long double floating_point_type;
 
 const floating_point_type PRECISION = 0.0000000001L;
 
+
+int integerMod(int a, int b);
+
+
+
 template <typename Type>
-static int containingInterval(const std::vector<Type>& separatingPoints, Type point){
+int containingInterval(const std::vector<Type>& separatingPoints, Type point){
     return findInterval(separatingPoints, point, -1, static_cast<int>(separatingPoints.size())  - 1);
 }
 
@@ -52,6 +58,8 @@ std::ostream& operator<<(std::ostream& Out, const std::vector<Type>& vec){
     return Out;
 }
 
+        
+    
 
 
 

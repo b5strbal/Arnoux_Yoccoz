@@ -30,6 +30,24 @@ Permutation::Permutation(const std::vector<int> functionValues)
 
 
 
+
+
+
+Permutation operator*(const Permutation& p1, const Permutation& p2){
+    if (p1.size() != p2.size()) {
+        throw std::runtime_error("Two permutations must act on the same set in order to be composable.");
+    }
+    std::vector<int> compositionValues(p1.size());
+    for (int i = 0 ; i < p1.size(); i++) {
+        compositionValues[i] = p1[p2[i]];
+    }
+    return Permutation(compositionValues);
+}
+
+
+
+
+
 Permutation Permutation::inverse() const{
     std::vector<int> newFunctionValues(size());
     for (int i = 0; i < size(); i++) {
@@ -46,6 +64,17 @@ std::ostream& operator<<(std::ostream& Out, const Permutation& permutation){
 }
 
 
+Permutation rotatingPermutation(int size, int rotationAmount){
+    std::vector<int> functionValues(size);
+    int normalizedAmount = integerMod(rotationAmount, size);
+    for (int i = 0; i < size - normalizedAmount; i++) {
+        functionValues[i] = i + normalizedAmount;
+    }
+    for (int i = size - normalizedAmount; i < size; i++) {
+        functionValues[i] = i + normalizedAmount - size;
+    }
+    return Permutation(functionValues);
+}
 
 
 
@@ -54,6 +83,8 @@ std::ostream& operator<<(std::ostream& Out, const Permutation& permutation){
 
 
 
+
+/*
 FoliationDiskPairing::FoliationDiskPairing(const std::vector<int> functionValues) : Permutation(functionValues){
     for (int i = 0; i < size(); i++) {
         if (m_functionValues[i] == i) {
@@ -87,6 +118,7 @@ void FoliationDiskPairing::assertRangeIsClosedUnderPair(const std::vector<int>& 
     }
 }
 
+*/
 
 
 
@@ -94,6 +126,16 @@ void FoliationDiskPairing::assertRangeIsClosedUnderPair(const std::vector<int>& 
 
 
 
+
+
+
+
+
+
+
+//----------------------//
+// IntervalExchangeBase //
+//----------------------//
 
 
 IntervalExchangeBase::IntervalExchangeBase(const WeighedTree& wt){
@@ -169,57 +211,25 @@ void IntervalExchangeBase::init(const std::vector<floating_point_type>& lengths,
 
 
 
+
+
+
+
+
+
+
+
+
+//---------------------//
+// IntervalExchangeMap //
+//---------------------//
+
+
+
 IntervalExchangeMap::IntervalExchangeMap(const std::vector<floating_point_type>& lengths, const Permutation& permutation) :
     IntervalExchangeBase(lengths, permutation)
 {
 }
-
-
-
-
-
-
-
-IntervalExchangeMap::IntervalExchangeMap(const std::vector<floating_point_type>& lengths,
-                                         const Permutation& permutation,
-                                         floating_point_type twist) :
-    IntervalExchangeBase(lengths, permutation)
-{
-    if(twist <= 0 || twist >= 1)
-        throw std::runtime_error("The twist must be strictly between 0 and 1");
-    UnitIntervalPoint newDivPoint = applyInverseTo(UnitIntervalPoint(1 - twist));
-    int intervalOfNewDivPoint = containingInterval(m_divPoints, newDivPoint);
-    int intervalOfOneMinusTwist = containingInterval(m_divPointsAfterExchange, UnitIntervalPoint(1 - twist));
-    
-    if (m_divPoints[intervalOfNewDivPoint] == newDivPoint) {
-        throw std::runtime_error("A twisted interval exchange must not be a regular interval exchange.");
-    }
-    
-    // Finding the new lengths
-    std::vector<floating_point_type> newLengths(m_lengths);
-    floating_point_type smallerLength = newDivPoint.getPosition() - m_divPoints[intervalOfNewDivPoint].getPosition();
-    newLengths.insert(newLengths.begin() + intervalOfNewDivPoint + 1, newLengths[intervalOfNewDivPoint] - smallerLength);
-    newLengths[intervalOfNewDivPoint] = smallerLength;
-    
-    // Finding the new permutation
-    std::vector<int> permutationInput(size() + 1);
-    for (int i = 0; i < intervalOfNewDivPoint; i++) {
-        if (m_permutation[i] < intervalOfOneMinusTwist) {
-            permutationInput[i] = m_permutation[i] + size() - intervalOfOneMinusTwist;
-        } else
-            permutationInput[i] -= m_permutation[i] - intervalOfOneMinusTwist;
-    }
-    permutationInput[intervalOfNewDivPoint] = size();
-    permutationInput[intervalOfNewDivPoint + 1] = 0;
-    for (int i = intervalOfNewDivPoint + 2; i <= size(); i++) {
-        if (m_permutation[i - 1] < intervalOfOneMinusTwist) {
-            permutationInput[i] = m_permutation[i - 1] + size() - intervalOfOneMinusTwist;
-        } else
-            permutationInput[i] -= m_permutation[i - 1] - intervalOfOneMinusTwist;
-    }
-    init(newLengths, Permutation(permutationInput));
-}
-
 
 
 
@@ -257,6 +267,97 @@ UnitIntervalPoint IntervalExchangeMap::applyInverseTo(const UnitIntervalPoint& p
 
 
 
+
+
+
+
+
+
+//----------------------------//
+// TwistedIntervalExchangeMap //
+//----------------------------//
+
+
+TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<floating_point_type>& lengths,
+                                                       const Permutation& permutation,
+                                                       floating_point_type twist) :
+    IntervalExchangeMap(lengths, permutation),
+    m_originalLengths(m_lengths),
+    m_originalPermutation(permutation),
+    m_twist(twist)
+{
+    init(lengths, permutation, twist);
+}
+
+
+
+void TwistedIntervalExchangeMap::init(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist){
+    if(twist <= 0 || twist >= 1)
+        throw std::runtime_error("The twist must be strictly between 0 and 1");
+    UnitIntervalPoint newDivPoint = applyInverseTo(UnitIntervalPoint(1 - twist));
+    int intervalOfNewDivPoint = containingInterval(m_divPoints, newDivPoint);
+    int intervalOfOneMinusTwist = containingInterval(m_divPointsAfterExchange, UnitIntervalPoint(1 - twist));
+    m_indexOfFakeDivPoint = intervalOfNewDivPoint + 1;
+    
+    if (m_divPoints[intervalOfNewDivPoint] == newDivPoint) {
+        throw std::runtime_error("A twisted interval exchange must not be a regular interval exchange.");
+    }
+    
+    // Finding the new lengths
+    std::vector<floating_point_type> newLengths(m_lengths);
+    floating_point_type smallerLength = newDivPoint.getPosition() - m_divPoints[intervalOfNewDivPoint].getPosition();
+    newLengths.insert(newLengths.begin() + intervalOfNewDivPoint + 1, newLengths[intervalOfNewDivPoint] - smallerLength);
+    newLengths[intervalOfNewDivPoint] = smallerLength;
+    
+    // Finding the new permutation
+    std::vector<int> permutationInput(size() + 1);
+    for (int i = 0; i < intervalOfNewDivPoint; i++) {
+        if (m_permutation[i] < intervalOfOneMinusTwist) {
+            permutationInput[i] = m_permutation[i] + size() - intervalOfOneMinusTwist;
+        } else
+            permutationInput[i] -= m_permutation[i] - intervalOfOneMinusTwist;
+    }
+    permutationInput[intervalOfNewDivPoint] = size();
+    permutationInput[intervalOfNewDivPoint + 1] = 0;
+    for (int i = intervalOfNewDivPoint + 2; i <= size(); i++) {
+        if (m_permutation[i - 1] < intervalOfOneMinusTwist) {
+            permutationInput[i] = m_permutation[i - 1] + size() - intervalOfOneMinusTwist;
+        } else
+            permutationInput[i] -= m_permutation[i - 1] - intervalOfOneMinusTwist;
+    }
+    IntervalExchangeBase::init(newLengths, Permutation(permutationInput));
+}
+
+
+
+
+void TwistedIntervalExchangeMap::rotateBy(int rotationAmount){
+    int normalizedAmount = integerMod(rotationAmount, originalSize());
+    Permutation rotation = rotatingPermutation(originalSize(), normalizedAmount);
+    m_originalPermutation = rotation * m_originalPermutation * rotation.inverse();
+  //  m_originalLengths
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//-------------------------------//
+// IntervalExchangeFoliationDisk //
+//-------------------------------//
 
 
 IntervalExchangeFoliationDisk::IntervalExchangeFoliationDisk(const WeighedTree& wt) :

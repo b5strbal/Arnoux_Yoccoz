@@ -30,24 +30,27 @@ public:
     Permutation(const std::vector<int> functionValues);
     inline int size() const{ return static_cast<int>(m_functionValues.size()); }
     Permutation inverse() const;
-    int operator[](int index){ return m_functionValues[index]; }
+
+    friend Permutation operator*(const Permutation& p1, const Permutation& p2);
+    int operator[](int index) const { return m_functionValues[index]; }
     friend std::ostream& operator<<(std::ostream& Out, const Permutation& permutation);
 
 protected:
     std::vector<int> m_functionValues;
 };
 
+Permutation rotatingPermutation(int size, int rotationAmount);
 
 
 
-
+/*
 class FoliationDiskPairing : public Permutation{
 public:
     FoliationDiskPairing(const std::vector<int> functionValues);
 private:
     void assertRangeIsClosedUnderPair(const std::vector<int>& functionValues, int begin, int end);
 };
-
+*/
 
 
 
@@ -84,17 +87,36 @@ private:
 
 
 class IntervalExchangeMap : public IntervalExchangeBase{
-    friend class Foliation;
     
 public:
     IntervalExchangeMap(const std::vector<floating_point_type>& lengths, const Permutation& permutation);
-    IntervalExchangeMap(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
 
     UnitIntervalPoint applyTo(const UnitIntervalPoint& point);
     UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& point);
     
     friend std::ostream& operator<<(std::ostream& Out, const IntervalExchangeMap intervalExchange);
 };
+
+
+
+
+
+class TwistedIntervalExchangeMap : public IntervalExchangeMap{
+    friend class Foliation;
+public:
+    TwistedIntervalExchangeMap(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
+    void rotateBy(int rotationAmount);
+private:
+    std::vector<floating_point_type> m_originalLengths;
+    Permutation m_originalPermutation;
+    floating_point_type m_twist;
+    int m_indexOfFakeDivPoint;
+    
+    void init(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
+    
+    int originalSize() const{ return size() - 1; }
+};
+
 
 
 

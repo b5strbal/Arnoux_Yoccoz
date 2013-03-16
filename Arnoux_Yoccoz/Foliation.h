@@ -24,7 +24,7 @@ public:
 private:
     int m_numSeparatrices;
     std::vector<UnitIntervalPoint> m_shiftedSeparatrixPoints;
-    IntervalExchangeMap m_intervalExchange;
+    TwistedIntervalExchangeMap m_intervalExchange;
     
     
     class ArcsAroundDivPoints;
