@@ -23,7 +23,7 @@ Permutation::Permutation(const std::vector<int> functionValues)
         if(m_functionValues[i] >= size() || m_functionValues[i] < 0)
             throw std::runtime_error("A permutation must be specified by integers between 0 and n-1.");
         if (isInTheRange[m_functionValues[i]] == 1)
-            throw std::runtime_error("Permutations are one-to-one maps.");
+            throw std::runtime_error("A permutation should be a one-to-one map.");
         isInTheRange[m_functionValues[i]] = 1;
     }
 }
@@ -283,10 +283,7 @@ UnitIntervalPoint IntervalExchangeMap::applyInverseTo(const UnitIntervalPoint& p
 TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<floating_point_type>& lengths,
                                                        const Permutation& permutation,
                                                        floating_point_type twist) :
-    IntervalExchangeMap(lengths, permutation),
-    m_originalLengths(m_lengths),
-    m_originalPermutation(permutation),
-    m_twist(twist)
+    IntervalExchangeMap(lengths, permutation)
 {
     init(lengths, permutation, twist);
 }
@@ -294,6 +291,11 @@ TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<floatin
 
 
 void TwistedIntervalExchangeMap::init(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist){
+    m_originalLengths = m_lengths;
+    m_originalPermutation = permutation;
+    m_twist = twist;
+    
+    
     int originalSize = static_cast<int>(lengths.size());
     UnitIntervalPoint oneMinusTwist(FracPart(1 - twist));
     UnitIntervalPoint newDivPoint = applyInverseTo(oneMinusTwist);
@@ -337,7 +339,7 @@ void TwistedIntervalExchangeMap::init(const std::vector<floating_point_type>& le
     while (firstindex + secondindex < 2 * originalSize + 2) {
         if (secondindex == originalSize + 1 || (firstindex < originalSize + 1 &&
                                                        m_divPoints[firstindex] < m_divPointsAfterExchange[secondindex])) {
-            if (m_permutation[firstindex] == 0) {   // this is the fake DivPoint
+            if (firstindex == m_indexOfFakeDivPoint) {  
                 firstindex++;
             } else {
                 m_realSeparatingPoints.push_back(m_divPoints[firstindex]);
@@ -361,13 +363,36 @@ void TwistedIntervalExchangeMap::init(const std::vector<floating_point_type>& le
 
 void TwistedIntervalExchangeMap::rotateBy(int rotationAmount){
     int normalizedAmount = integerMod(rotationAmount, originalSize());
-    Permutation rotation = rotatingPermutation(originalSize(), normalizedAmount);
-    m_originalPermutation = rotation * m_originalPermutation * rotation.inverse();
-  //  m_originalLengths
+    if (normalizedAmount == 0) {
+        return;
+    }
+    std::vector<floating_point_type> newLengths(originalSize());
+    std::rotate_copy(m_originalLengths.begin(), m_originalLengths.end() - normalizedAmount, m_originalLengths.end(), newLengths.begin());
+
+    // Postcomposing the original permutation by a rotation results in the same twisted interval exchange map if we modify the twist accordingly.
+    // When the length vector is rotated, we must therefore precompose the original permutation by a rotation. By the previous remark,
+    // postcomposing is not important as long as we choose the rigth twist.
+
+    Permutation newPermutation = m_originalPermutation * rotatingPermutation(originalSize(), - normalizedAmount);
+
+    int indexOfDivPointGoingToZero = m_indexOfFakeDivPoint + normalizedAmount < size() ? size() - normalizedAmount : size() - normalizedAmount - 1;
+    floating_point_type rotationDistance = 1 - m_divPoints[indexOfDivPointGoingToZero].getPosition();
+    floating_point_type newTwist = m_twist + rotationDistance;
+    
+    IntervalExchangeBase::init(newLengths, newPermutation);
+    init(newLengths, newPermutation, newTwist);
 }
 
 
 
+
+std::ostream& operator<<(std::ostream& Out, const TwistedIntervalExchangeMap twistedIntervalExchange){
+    Out << "Lengths: " << twistedIntervalExchange.m_lengths << "\n";
+    Out << "Original lenghts: " << twistedIntervalExchange.m_originalLengths << "\n";
+    Out << "Translations: " << twistedIntervalExchange.m_translations << "\n";
+    
+    return Out;
+}
 
 
 

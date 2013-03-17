@@ -106,6 +106,7 @@ class TwistedIntervalExchangeMap : public IntervalExchangeMap{
 public:
     TwistedIntervalExchangeMap(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
     void rotateBy(int rotationAmount);
+    friend std::ostream& operator<<(std::ostream& Out, const TwistedIntervalExchangeMap twistedIntervalExchange);
 private:
     std::vector<floating_point_type> m_originalLengths;
     Permutation m_originalPermutation;

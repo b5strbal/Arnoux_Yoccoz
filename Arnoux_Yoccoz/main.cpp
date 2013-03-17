@@ -24,13 +24,15 @@ int main (int argc, const char * argv[])
 {
     
     try {
-        Foliation f({0.5, 0.5, 0.3, 0.3, 0.2, 0.2}, Permutation({1, 0, 3, 2, 5, 4}), 0.53);
-        cout << f << endl;
+        Foliation f({0.5, 0.5, 0.5, 0.5}, Permutation({1, 0, 3, 2}), 0.1);
+        for (int i = 0; i < 5; i++) {
+            cout << f << endl;
+            f.rotateBy(-1);
+        }
     } catch (const std::exception& ex) {
-        cout << ex.what();
+        cout << "Error: " << ex.what();
     }
     
-    cout << rotatingPermutation(6, 100);
     
     
     /*
