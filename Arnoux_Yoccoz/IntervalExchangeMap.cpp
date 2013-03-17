@@ -442,7 +442,7 @@ void TwistedIntervalExchangeMap::invert(){
 
 std::ostream& operator<<(std::ostream& Out, const TwistedIntervalExchangeMap twistedIntervalExchange){
     Out << "Lengths: " << twistedIntervalExchange.m_lengths << "\n";
-    Out << "Original lenghts: " << twistedIntervalExchange.m_originalLengths << "\n";
+    Out << "Original lengths: " << twistedIntervalExchange.m_originalLengths << "\n";
     Out << "Translations: " << twistedIntervalExchange.m_translations << "\n";
     
     return Out;

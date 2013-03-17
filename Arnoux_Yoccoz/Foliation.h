@@ -13,6 +13,7 @@
 #include <vector>
 #include "UnitIntervalPoint.h"
 #include "IntervalExchangeMap.h"
+#include "AlmostPFMatrix.h"
 
 
 class Foliation : public TwistedIntervalExchangeMap{
@@ -33,6 +34,8 @@ private:
     ArcsAroundDivPoints Intersect(const ArcsAroundDivPoints& adp1, const ArcsAroundDivPoints& adp2);
 };
 
+
+Foliation arnouxYoccozFoliation(int genus);
 
 
 

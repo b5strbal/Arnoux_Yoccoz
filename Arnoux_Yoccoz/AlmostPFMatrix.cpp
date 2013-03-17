@@ -134,7 +134,7 @@ std::ostream& operator<<(std::ostream& Out, const AlmostPFMatrix& Matrix){
 
 
 
-AlmostPFMatrix ArnouxYoccozMatrix(int genus){
+floating_point_type arnouxYoccozStretchFactor(int genus){
     std::vector<std::vector<int>> Matrix(genus, std::vector<int>(genus));
     
     Matrix[0][0] = 1;
@@ -145,6 +145,6 @@ AlmostPFMatrix ArnouxYoccozMatrix(int genus){
     for (int i = 0; i < genus - 1; i++) {
         Matrix[genus - 1][i] = 1;
     }
-    return AlmostPFMatrix(Matrix);
+    return AlmostPFMatrix(Matrix).GetPFEigenvalue();
 }
 

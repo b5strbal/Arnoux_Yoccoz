@@ -16,5 +16,23 @@ Foliation::Foliation(const std::vector<floating_point_type>& lengths, const Perm
     TwistedIntervalExchangeMap(lengths, permutation, twist),
     m_numSeparatrices(2 * static_cast<int>(lengths.size()))
 {
-
 }
+
+
+
+Foliation arnouxYoccozFoliation(int genus){
+    std::vector<int> permutationInput(2 * genus);
+    std::vector<floating_point_type> lengths(2 * genus);
+    floating_point_type shrinkingNumber = 1/arnouxYoccozStretchFactor(genus);
+    floating_point_type currentLength = shrinkingNumber;
+    for (int i = 0; i < genus; i++) {
+        permutationInput[2 * i] = 2 * i + 1;
+        permutationInput[2 * i + 1] = 2 * i;
+        lengths[2 * i] = lengths[2 * i + 1] = currentLength;
+        currentLength *= shrinkingNumber;
+    }
+    return Foliation(lengths, Permutation(permutationInput), 0.5);
+}
+
+
+

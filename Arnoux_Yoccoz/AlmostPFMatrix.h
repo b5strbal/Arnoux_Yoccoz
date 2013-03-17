@@ -40,7 +40,7 @@ private:
     bool IsEveryVertexReachableFrom(int Vertex) const;
 };
 
-AlmostPFMatrix ArnouxYoccozMatrix(int genus);
+floating_point_type arnouxYoccozStretchFactor(int genus);
 
 
 #endif /* defined(__Arnoux_Yoccoz__AlmostPFMatrix__) */
