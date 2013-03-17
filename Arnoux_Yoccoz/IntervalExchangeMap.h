@@ -30,6 +30,9 @@ public:
     Permutation(const std::vector<int> functionValues);
     inline int size() const{ return static_cast<int>(m_functionValues.size()); }
     Permutation inverse() const;
+    
+    template <typename Type>
+    std::vector<Type> applyAndCreateCopy(const std::vector<Type>& vec);
 
     friend Permutation operator*(const Permutation& p1, const Permutation& p2);
     int operator[](int index) const { return m_functionValues[index]; }
@@ -40,7 +43,7 @@ protected:
 };
 
 Permutation rotatingPermutation(int size, int rotationAmount);
-
+Permutation reversingPermutation(int size);
 
 
 /*
@@ -106,6 +109,8 @@ class TwistedIntervalExchangeMap : public IntervalExchangeMap{
 public:
     TwistedIntervalExchangeMap(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
     void rotateBy(int rotationAmount);
+    void reflect();
+    void invert();
     friend std::ostream& operator<<(std::ostream& Out, const TwistedIntervalExchangeMap twistedIntervalExchange);
 private:
     std::vector<floating_point_type> m_originalLengths;

@@ -29,6 +29,21 @@ Permutation::Permutation(const std::vector<int> functionValues)
 }
 
 
+template <typename Type>
+std::vector<Type> Permutation::applyAndCreateCopy(const std::vector<Type>& vec){
+    if (size() != vec.size()) {
+        throw std::runtime_error("A permutation can't act on a vector if the sizes are different.");
+    }
+    std::vector<Type> newVector(size());
+    for (int i = 0; i < size(); i++) {
+        newVector[m_functionValues[i]] = vec[i];
+    }
+    return newVector;
+}
+
+
+
+
 
 
 
@@ -72,6 +87,15 @@ Permutation rotatingPermutation(int size, int rotationAmount){
     }
     for (int i = size - normalizedAmount; i < size; i++) {
         functionValues[i] = i + normalizedAmount - size;
+    }
+    return Permutation(functionValues);
+}
+
+
+Permutation reversingPermutation(int size){
+    std::vector<int> functionValues(size);
+    for (int i = 0 ; i < size; i++) {
+        functionValues[i] = size - 1 - i;
     }
     return Permutation(functionValues);
 }
@@ -382,6 +406,36 @@ void TwistedIntervalExchangeMap::rotateBy(int rotationAmount){
     IntervalExchangeBase::init(newLengths, newPermutation);
     init(newLengths, newPermutation, newTwist);
 }
+
+
+void TwistedIntervalExchangeMap::reflect(){
+    std::vector<floating_point_type> newLengths(originalSize());
+    std::reverse_copy(m_originalLengths.begin(), m_originalLengths.end(), newLengths.begin());
+    
+    // Now, in contract to rotateBy, we have to pre- and post-compose our premutation
+    
+    Permutation reverse = reversingPermutation(originalSize());
+    Permutation newPermutation = reverse * m_originalPermutation * reverse;
+
+    // It is not hard to see that after reflecting the whole picture, the new twist is simply the negative of the old one.
+    
+    floating_point_type newTwist = -m_twist;
+    IntervalExchangeBase::init(newLengths, newPermutation);
+    init(newLengths, newPermutation, newTwist);
+}
+
+
+
+void TwistedIntervalExchangeMap::invert(){
+    std::vector<floating_point_type> newLengths(m_originalPermutation.applyAndCreateCopy(m_originalLengths));
+    Permutation newPermutation = m_originalPermutation.inverse();
+    floating_point_type newTwist = -m_twist;
+    
+    IntervalExchangeBase::init(newLengths, newPermutation);
+    init(newLengths, newPermutation, newTwist);
+}
+
+
 
 
 
