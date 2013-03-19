@@ -70,7 +70,7 @@ public:
      *          Example: the sequence 0.1 0.2 0.3 0 0.1 0.2 0.3 0 0.5 0.6 0 0.9 0.5 encodes a weighed tree with 11 vertices, 
      *          7 of them are leaves, 3 vertices are of degree 3, one vertex is of degree 4.
      */
-    WeighedTree(std::vector<floating_point_type> Weights);
+    WeighedTree(const std::vector<floating_point_type>& definingList);
     
     /**
      * @brief   Constructor for a random tree with prescribed number of edges, with weights being in the interval (0,1].
@@ -90,8 +90,8 @@ public:
 
     
 private:
-    Node* m_Root;
     std::vector<floating_point_type> m_definingList;
+    Node* m_Root;
     
     void fillInLengthsAndPairing(std::vector<floating_point_type>& lengths, std::vector<int>& pairing, int StartingIndex, Node* pNode) const;
 
@@ -105,7 +105,7 @@ private:
      * @brief   Generates a random list of weights that is used to construct a random object. 
      *          It is guaranteed that a valid sequence is produced, no further assertions are needed.
      */
-    void GenerateRandomWeights(std::vector<floating_point_type>& Weights, int NumEdges);
+    std::vector<floating_point_type> randomDefiningList(int NumEdges);
     Node* NextNode(Node*);
     void CreateChildren(std::vector<floating_point_type>::iterator itBegin, std::vector<floating_point_type>::iterator itEnd, Node* pNode);
     void SetNumDescendants(Node* pNode);

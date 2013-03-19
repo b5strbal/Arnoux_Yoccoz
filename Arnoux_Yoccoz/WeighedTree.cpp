@@ -10,10 +10,10 @@
 
 
 
-WeighedTree::WeighedTree(std::vector<floating_point_type> Weights) :
-    m_definingList(Weights)
+WeighedTree::WeighedTree(const std::vector<floating_point_type>& definingList) :
+    m_definingList(definingList)
 {
-    Init(Weights);
+    Init(m_definingList);
 }
 
 
@@ -26,11 +26,10 @@ WeighedTree::WeighedTree(const WeighedTree& wt) :
 
 
 
-WeighedTree::WeighedTree(int NumEdges){
-    std::vector<floating_point_type> Weights;
-    GenerateRandomWeights(Weights, NumEdges);
-    m_definingList = Weights;
-    Init(Weights);
+WeighedTree::WeighedTree(int NumEdges) :
+    m_definingList(randomDefiningList(NumEdges))
+{
+    Init(m_definingList);
 }
 
 WeighedTree::~WeighedTree(){
@@ -53,14 +52,17 @@ void WeighedTree::Init(std::vector<floating_point_type> Weights){
 
 
 
-void WeighedTree::GenerateRandomWeights(std::vector<floating_point_type>& Weights, int NumEdges){
-    assert(NumEdges >= 3);
+std::vector<floating_point_type> randomDefiningList(int numEdges){
+    if (numEdges < 3) {
+        throw std::runtime_error("A weighed tree must have at least three edges.");
+    }
+    std::vector<floating_point_type> definingList;
+    
     std::default_random_engine generator(static_cast<int>(time(NULL)));
     std::uniform_real_distribution<floating_point_type> RealDistribution(0,1);
-    Weights.clear();
-    Weights.push_back(RealDistribution(generator));
+    definingList.push_back(RealDistribution(generator));
 
-    int Remains = NumEdges - 1;
+    int Remains = numEdges - 1;
     while (Remains > 0) {
         // Now we are generating a random integer between 0 and Remains, excluding 1 and Remains - 1.
         // 1 is excluded, because a sequence of length 1 means there is a single child which results in a degree 2 vertex.
@@ -81,12 +83,15 @@ void WeighedTree::GenerateRandomWeights(std::vector<floating_point_type>& Weight
             while (RandomReal == 0) {                   // making sure the random real generator didn't give us 0
                 RandomReal = RealDistribution(generator);
             }
-            Weights.push_back(RandomReal);
+            definingList.push_back(RandomReal);
         }
-        Weights.push_back(0);
+        definingList.push_back(0);
         Remains -= NextSequence;
     }
+    return definingList;
 }
+
+
 
 
 

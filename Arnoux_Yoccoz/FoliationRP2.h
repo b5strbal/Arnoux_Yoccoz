@@ -46,35 +46,62 @@ cout << "Each vertex of the tree corresponds to a singularity of the foliation, 
 #include <vector>
 #include <cassert>
 #include "IntervalExchangeMap.h"
-#include "Foliation.h"
 
 const int THE_POINT_IS_A_DIVPOINT = -1;
+
+
+class FoliationDisk
+{
+    FoliationDisk(const WeighedTree& wt);
+   
+    const WeighedTree& weighedTree() const { return m_weighedTree; }
+    const IntervalExchangeFoliationDisk& intervalPairing() const { return m_intervalPairing; }
+
+    friend std::ostream& operator<<(std::ostream& Out, const FoliationDisk& f);
+private:
+    IntervalExchangeFoliationDisk m_intervalPairing;
+    WeighedTree m_weighedTree;
+
+};
+
+
+
 
 
 class FoliationRP2
 {
 public:
-    FoliationRP2(const WeighedTree& wt);
+    FoliationRP2(const FoliationDisk&);
+    
     //void Rotate();
     //void Reflect();
     
-    friend std::ostream& operator<<(std::ostream& Out, FoliationRP2 fd);
+    friend std::ostream& operator<<(std::ostream& Out, const FoliationRP2&);
     
     
-protected:
+private:
+    FoliationDisk m_foliationDisk;
     
     //inline int IncreaseIndex(int SeparatrixIndex) const{ return SeparatrixIndex < m_NumSeparatrices - 1 ? SeparatrixIndex + 1 : 0; }
     //inline int DecreaseIndex(int SeparatrixIndex) const{ return SeparatrixIndex > 0 ? SeparatrixIndex - 1 : m_NumSeparatrices - 1; }
     //inline int ReflectIndex(int SeparatrixIndex) const{ return m_NumSeparatrices - 1 - SeparatrixIndex; }
     //int SeparatrixIndexOfPair(int SeparatrixIndex, LeftOrRight Side);
 
-private:
-    IntervalExchangeFoliationDisk m_intervalPairing;
-    WeighedTree m_weighedTree;
-    Foliation m_liftedFoliation;
-    
 };
 
+
+
+
+class FoliationSphere{
+public:
+    FoliationSphere(const FoliationDisk& topFoliation, const FoliationDisk& bottomFoliation, floating_point_type twist);
+    
+private:
+    FoliationDisk m_topFoliation;
+    FoliationDisk m_bottomFoliation;
+    floating_point_type m_twist;
+
+};
 
 
 

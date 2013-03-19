@@ -13,7 +13,7 @@
 
 
 
-FoliationRP2::FoliationRP2(const WeighedTree& wt):
+FoliationDisk::FoliationDisk(const WeighedTree& wt):
     m_intervalPairing(wt),
     m_weighedTree(wt)
 {
@@ -23,7 +23,17 @@ FoliationRP2::FoliationRP2(const WeighedTree& wt):
 
 
 
+std::ostream& operator<<(std::ostream& Out, const FoliationDisk& fd){
+    using namespace std;
 
+    Out << fd.m_intervalPairing << endl;
+    
+    std::vector<int> singularityType;
+    fd.m_weighedTree.getDegrees(singularityType);
+    Out << "Singularity type: " << singularityType;
+
+    return Out;
+}
 
 
 
@@ -32,28 +42,39 @@ FoliationRP2::FoliationRP2(const WeighedTree& wt):
 
 
 /*
-int FoliationRP2::SeparatrixIndexOfPair(int SeparatrixIndex, LeftOrRight Side){
-    return Side == RIGHT ? IncreaseIndex(m_Pair[SeparatrixIndex]) : m_Pair[DecreaseIndex(SeparatrixIndex)] ;
+ int FoliationRP2::SeparatrixIndexOfPair(int SeparatrixIndex, LeftOrRight Side){
+ return Side == RIGHT ? IncreaseIndex(m_Pair[SeparatrixIndex]) : m_Pair[DecreaseIndex(SeparatrixIndex)] ;
+ }
+ */
+
+FoliationRP2::FoliationRP2(const FoliationDisk& fd) :
+    m_foliationDisk(fd)
+{
 }
-*/
 
 
 
 
-
-
-
-std::ostream& operator<<(std::ostream& Out, FoliationRP2 f){
-    using namespace std;
-
-    Out << f.m_intervalPairing << endl;
-    
-    std::vector<int> singularityType;
-    f.m_weighedTree.getDegrees(singularityType);
-    Out << "Singularity type: " << singularityType;
-
+std::ostream& operator<<(std::ostream& Out, const FoliationRP2& f){
+    Out << f.m_foliationDisk;
     return Out;
 }
+
+
+
+
+
+
+
+FoliationSphere::FoliationSphere(const FoliationDisk& topFoliation, const FoliationDisk& bottomFoliation, floating_point_type twist) :
+    m_topFoliation(topFoliation),
+    m_bottomFoliation(bottomFoliation),
+    m_twist(twist)
+{
+}
+
+
+
 
 
 

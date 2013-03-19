@@ -26,6 +26,7 @@
 
 class Permutation{
 public:
+    Permutation() : m_functionValues(1, 0) {}
     Permutation(const std::vector<int> functionValues);    
     inline int size() const{ return static_cast<int>(m_functionValues.size()); }
     Permutation inverse() const;
@@ -39,7 +40,6 @@ public:
 
 private:
     std::vector<int> m_functionValues;
-
 };
 
 Permutation rotatingPermutation(int size, int rotationAmount);
@@ -109,8 +109,9 @@ class InitArguments_TwistedIntervalExchangeMap{
                                              const Permutation& permutation,
                                              floating_point_type twist);
 
-    static std::vector<floating_point_type>* arg_lengths;
-    static Permutation* arg_permutation;
+    static std::vector<floating_point_type> arg_lengths;
+    static Permutation arg_permutation;
+    static std::vector<floating_point_type> arg_normalizedOriginalLengths;
 };
 
 
@@ -149,8 +150,8 @@ class InitArguments_IntervalExchangeFoliationDisk{
     void fillInLengthsAndPairing(std::vector<floating_point_type>& lengths,
                                  std::vector<int>& pairing, int StartingIndex, WeighedTree::Node* pNode) const;
     
-    static std::vector<floating_point_type>* arg_lengths;
-    static Permutation* arg_permutation;
+    static std::vector<floating_point_type> arg_lengths;
+    static Permutation arg_permutation;
 };
 
 

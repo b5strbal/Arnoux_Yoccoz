@@ -14,16 +14,25 @@
 #include "UnitIntervalPoint.h"
 #include "IntervalExchangeMap.h"
 #include "AlmostPFMatrix.h"
+#include "FoliationRP2.h"
 
 
-class Foliation : public TwistedIntervalExchangeMap{
+class Foliation{
     
 public:
     Foliation(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
+    Foliation rotateBy(int rotationAmount) const;
+    Foliation reflect() const;
+    Foliation flipOver() const;
     
+    friend std::ostream& operator<<(std::ostream& Out, Foliation f);
     
 private:
+    Foliation(const TwistedIntervalExchangeMap&);
+    
+    TwistedIntervalExchangeMap m_twistedIntervalExchange;
     int m_numSeparatrices;
+
     
     
     class ArcsAroundDivPoints;
@@ -44,17 +53,54 @@ Foliation arnouxYoccozFoliation(int genus);
 
 
 
+class InitArguments_FoliationFromRP2{
+    friend class FoliationFromRP2;
 
-class FoliationFromRP2 : public Foliation{
+    InitArguments_FoliationFromRP2(const FoliationRP2& foliationRP2);
+    static std::vector<floating_point_type> arg_lengths;
+    static Permutation arg_permutation;
+};
+
+
+
+
+class FoliationFromRP2 : private InitArguments_FoliationFromRP2,
+                         public Foliation
+{
 public:
-    FoliationFromRP2();
-
-
+    FoliationFromRP2(const FoliationRP2& foliationRP2);
 
 
 };
 
 
+
+
+
+
+
+
+
+class InitArguments_FoliationFromSphere{
+    friend class FoliationFromSphere;
+    
+    InitArguments_FoliationFromSphere(const FoliationSphere& foliationSphere);
+    static std::vector<floating_point_type> arg_lengths;
+    static Permutation arg_permutation;
+    static floating_point_type arg_twist;
+};
+
+
+
+
+class FoliationFromSphere : private InitArguments_FoliationFromSphere,
+                            public Foliation
+{
+public:
+    FoliationFromSphere(const FoliationSphere& foliationSphere);
+
+
+};
 
 
 

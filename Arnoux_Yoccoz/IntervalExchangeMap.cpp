@@ -250,22 +250,17 @@ UnitIntervalPoint IntervalExchangeMap::applyInverseTo(const UnitIntervalPoint& p
 //------------------------------------------//
 
 
-std::vector<floating_point_type>* InitArguments_TwistedIntervalExchangeMap::arg_lengths = NULL;
-Permutation* InitArguments_TwistedIntervalExchangeMap::arg_permutation = NULL;
-
+std::vector<floating_point_type> InitArguments_TwistedIntervalExchangeMap::arg_lengths(0);
+Permutation InitArguments_TwistedIntervalExchangeMap::arg_permutation;
+std::vector<floating_point_type> InitArguments_TwistedIntervalExchangeMap::arg_normalizedOriginalLengths(0);
 
 
 InitArguments_TwistedIntervalExchangeMap::InitArguments_TwistedIntervalExchangeMap(const std::vector<floating_point_type>& lengths,
                                                                                    const Permutation& permutation,
                                                                                    floating_point_type twist){
-    if (arg_permutation != NULL) {
-        delete arg_permutation;
-    }
-    if (arg_lengths != NULL) {
-        delete arg_lengths;
-    }
-    
+
     IntervalExchangeMap originalIntExchange(lengths, permutation);
+    arg_normalizedOriginalLengths = originalIntExchange.lengths();
     
     int originalSize = static_cast<int>(lengths.size());
     UnitIntervalPoint oneMinusTwist(FracPart(1 - twist));
@@ -278,10 +273,10 @@ InitArguments_TwistedIntervalExchangeMap::InitArguments_TwistedIntervalExchangeM
     int intervalOfOneMinusTwist = containingInterval(originalIntExchange.divPointsAfterExchange(), oneMinusTwist);
         
     // Finding the new lengths
-    arg_lengths = new std::vector<floating_point_type>(lengths);
+    arg_lengths = arg_normalizedOriginalLengths;
     floating_point_type smallerLength = newDivPoint.getPosition() - originalIntExchange.divPoints()[intervalOfNewDivPoint].getPosition();
-    arg_lengths->insert(arg_lengths->begin() + intervalOfNewDivPoint + 1, (*arg_lengths)[intervalOfNewDivPoint] - smallerLength);
-    (*arg_lengths)[intervalOfNewDivPoint] = smallerLength;
+    arg_lengths.insert(arg_lengths.begin() + intervalOfNewDivPoint + 1, arg_lengths[intervalOfNewDivPoint] - smallerLength);
+    arg_lengths[intervalOfNewDivPoint] = smallerLength;
     
     // Finding the new permutation
     std::vector<int> permutationInput(originalSize + 1);
@@ -299,7 +294,7 @@ InitArguments_TwistedIntervalExchangeMap::InitArguments_TwistedIntervalExchangeM
         } else
             permutationInput[i] = permutation[i - 1] - intervalOfOneMinusTwist;
     }
-    arg_permutation = new Permutation(permutationInput);
+    arg_permutation = Permutation(permutationInput);
 }
 
 
@@ -316,9 +311,9 @@ TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<floatin
                                                        floating_point_type twist) :
     InitArguments_TwistedIntervalExchangeMap(lengths, permutation, twist),
     m_originalPermutation(permutation),
-    m_originalLengths(lengths),
+    m_originalLengths(arg_normalizedOriginalLengths),
     m_twist(twist),
-    m_intervalExchangeAfterTwist(*arg_lengths, *arg_permutation),
+    m_intervalExchangeAfterTwist(arg_lengths, arg_permutation),
     m_indexOfFakeDivPoint(m_intervalExchangeAfterTwist.inversePermutation()[0])
 {
     /*
@@ -427,20 +422,14 @@ std::ostream& operator<<(std::ostream& Out, const TwistedIntervalExchangeMap twi
 // InitArguments_IntervalExchangeFoliationDisk //
 //---------------------------------------------//
 
-std::vector<floating_point_type>* InitArguments_IntervalExchangeFoliationDisk::arg_lengths = NULL;
-Permutation* InitArguments_IntervalExchangeFoliationDisk::arg_permutation = NULL;
+std::vector<floating_point_type> InitArguments_IntervalExchangeFoliationDisk::arg_lengths(0);
+Permutation InitArguments_IntervalExchangeFoliationDisk::arg_permutation;
 
 InitArguments_IntervalExchangeFoliationDisk::InitArguments_IntervalExchangeFoliationDisk(const WeighedTree& wt){
-    if (arg_lengths != NULL) {
-        delete arg_lengths;
-    }
-    if (arg_permutation != NULL) {
-        delete arg_permutation;
-    }
-    arg_lengths = new std::vector<floating_point_type>(2 * wt.getNumEdges());
+    arg_lengths.resize(2 * wt.getNumEdges());
     std::vector<int> pairing(2 * wt.getNumEdges());
-    fillInLengthsAndPairing(*arg_lengths, pairing, 0, wt.m_Root);
-    arg_permutation = new Permutation(pairing);
+    fillInLengthsAndPairing(arg_lengths, pairing, 0, wt.m_Root);
+    arg_permutation = Permutation(pairing);
 }
 
 
@@ -472,7 +461,7 @@ void InitArguments_IntervalExchangeFoliationDisk::fillInLengthsAndPairing(std::v
 
 IntervalExchangeFoliationDisk::IntervalExchangeFoliationDisk(const WeighedTree& wt) :
     InitArguments_IntervalExchangeFoliationDisk(wt),
-    IntervalExchangeBase(*arg_lengths, *arg_permutation)
+    IntervalExchangeBase(arg_lengths, arg_permutation)
 {
 }
 
