@@ -33,11 +33,13 @@
  */
 
 class WeighedTree{
+    friend class InitArguments_IntervalExchangeFoliationDisk;
 private:
     /**
      * @brief
      */
     struct Node{
+        
         floating_point_type m_Weight = 0;
         Node* m_Parent = NULL;
         int m_NumChildren = 0;
@@ -80,15 +82,16 @@ public:
      */
     ~WeighedTree();
     
+    WeighedTree(const WeighedTree&);
+
     int getNumEdges() const { return m_Root->m_NumDescendants; }
-    
-    
-    void generateLengthsAndPairing(std::vector<floating_point_type>& lengths, std::vector<int>& pairing) const;
-    
+        
     void getDegrees(std::vector<int>& degrees) const;
+
     
 private:
     Node* m_Root;
+    std::vector<floating_point_type> m_definingList;
     
     void fillInLengthsAndPairing(std::vector<floating_point_type>& lengths, std::vector<int>& pairing, int StartingIndex, Node* pNode) const;
 
@@ -109,7 +112,6 @@ private:
     
     void getDegreesRecursive(std::vector<int>& degrees, Node* node) const;
     
-    WeighedTree(const WeighedTree&);
     WeighedTree& operator=(const WeighedTree&);
 };
 

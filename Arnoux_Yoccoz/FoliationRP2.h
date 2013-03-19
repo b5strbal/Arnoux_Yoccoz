@@ -46,6 +46,7 @@ cout << "Each vertex of the tree corresponds to a singularity of the foliation, 
 #include <vector>
 #include <cassert>
 #include "IntervalExchangeMap.h"
+#include "Foliation.h"
 
 const int THE_POINT_IS_A_DIVPOINT = -1;
 
@@ -69,7 +70,8 @@ protected:
 
 private:
     IntervalExchangeFoliationDisk m_intervalPairing;
-    std::vector<int> m_singularityType;
+    WeighedTree m_weighedTree;
+    Foliation m_liftedFoliation;
     
 };
 

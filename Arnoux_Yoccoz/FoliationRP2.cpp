@@ -14,9 +14,9 @@
 
 
 FoliationRP2::FoliationRP2(const WeighedTree& wt):
-    m_intervalPairing(wt)
+    m_intervalPairing(wt),
+    m_weighedTree(wt)
 {
-    wt.getDegrees(m_singularityType);
 }
 
 
@@ -48,7 +48,9 @@ std::ostream& operator<<(std::ostream& Out, FoliationRP2 f){
 
     Out << f.m_intervalPairing << endl;
     
-    Out << "Singularity type: " << f.m_singularityType;
+    std::vector<int> singularityType;
+    f.m_weighedTree.getDegrees(singularityType);
+    Out << "Singularity type: " << singularityType;
 
     return Out;
 }

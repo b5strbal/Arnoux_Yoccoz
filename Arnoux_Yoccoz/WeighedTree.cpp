@@ -10,15 +10,26 @@
 
 
 
-WeighedTree::WeighedTree(std::vector<floating_point_type> Weights){
+WeighedTree::WeighedTree(std::vector<floating_point_type> Weights) :
+    m_definingList(Weights)
+{
     Init(Weights);
 }
+
+
+WeighedTree::WeighedTree(const WeighedTree& wt) :
+    m_definingList(wt.m_definingList)
+{
+    Init(m_definingList);
+}
+
 
 
 
 WeighedTree::WeighedTree(int NumEdges){
     std::vector<floating_point_type> Weights;
     GenerateRandomWeights(Weights, NumEdges);
+    m_definingList = Weights;
     Init(Weights);
 }
 
@@ -36,29 +47,6 @@ void WeighedTree::Init(std::vector<floating_point_type> Weights){
 }
 
 
-
-
-
-void WeighedTree::generateLengthsAndPairing(std::vector<floating_point_type>& lengths, std::vector<int>& pairing) const{
-    lengths.resize(2 * getNumEdges());
-    pairing.resize(2 * getNumEdges());
-    fillInLengthsAndPairing(lengths, pairing, 0, m_Root);
-}
-
-
-
-void WeighedTree::fillInLengthsAndPairing(std::vector<floating_point_type>& lengths,
-                                          std::vector<int>& pairing, int StartingIndex, Node* pNode) const{
-    int ChildrenStartingIndex = StartingIndex;
-    for (int i = 0; i < pNode->m_NumChildren; i++) {
-        int pair = ChildrenStartingIndex + 2 * pNode->m_Children[i].m_NumDescendants + 1;
-        lengths[ChildrenStartingIndex] = lengths[pair] = pNode->m_Children[i].m_Weight;
-        pairing[ChildrenStartingIndex] = pair;
-        pairing[pair] = ChildrenStartingIndex;
-        fillInLengthsAndPairing(lengths, pairing, ChildrenStartingIndex + 1, pNode->m_Children + i);
-        ChildrenStartingIndex = pair + 1;
-    }
-}
 
 
 
