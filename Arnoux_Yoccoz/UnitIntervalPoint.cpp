@@ -6,7 +6,7 @@
  */
 
 #include "UnitIntervalPoint.h"
-
+ 
 
 const floating_point_type UnitIntervalPoint::PRECISION = 0.00000000001L;
 
