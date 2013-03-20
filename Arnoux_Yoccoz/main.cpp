@@ -26,9 +26,9 @@ int main (int argc, const char * argv[])
 
     try {
       //  Foliation f({0.21, 0.21, 0.11, 0.11, 0.17, 0.17}, Permutation({1, 0, 3, 2, 5, 4}), 0.5);
-        for (int i = 3; i < 50; i++) {
-            arnouxYoccozFoliation(i);
-            cout << i << endl;
+        for (int i = 3; i < 200; i++) {
+            cout << i << " ";   arnouxYoccozStretchFactor(i);
+            cout << endl;
         }
     } catch (const std::exception& ex) {
         cout << "Error: " << ex.what();

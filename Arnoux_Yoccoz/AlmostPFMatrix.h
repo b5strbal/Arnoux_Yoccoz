@@ -12,32 +12,100 @@
 #include <iostream>
 #include <deque>
 #include <vector>
-#include "Eigen/Eigenvalues"
+//#include "Eigen/Eigenvalues"
 #include "global.h"
+#include <limits>
 
-class AlmostPFMatrix{
+template <typename Type>
+class SquareMatrix;
+
+
+
+template <typename Type>
+class Vector{
 public:
-    AlmostPFMatrix(const std::vector<std::vector<int>>& Matrix);
-    // AlmostPFMatrix(int Size) : m_data(Size, std::vector<int>(Size, 0)), m_PFEigenvector(0), m_PFEigenvalue(0) {}
-   // void SetEntry(int i, int j, int Value) { m_data[i][j] = Value; }
-   // int GetEntry(int i, int j) const { return m_data[i][j]; }
-    bool IsPerronFrobenius() const { return m_PFEigenvector.size() != 0; }
-    int Size() const { return static_cast<int>(m_data.size()); }
-    std::vector<floating_point_type> GetPFEigenvector() const { return m_PFEigenvector; }
-    floating_point_type GetPFEigenvalue() const { return m_PFEigenvalue; }
+    Vector(const std::vector<Type>& vector);
+    Vector(int size);
     
-    friend std::ostream& operator<<(std::ostream& Out, const AlmostPFMatrix& Matrix);
+    template <typename OtherType>
+    Vector(const Vector<OtherType>&);
+    
+    std::vector<Type> toStandardVector() const { return m_entries; }
+    int size() const { return static_cast<int>(m_entries.size()); }
+    Type getEntry(int i) const { return m_entries[i]; }
+    void setEntry(int i, const Type& value) { m_entries[i] = value; }
+    Type maxEntry() const;
+    
+    template <typename myType>
+    friend Vector<myType> operator*(const SquareMatrix<myType>& matrix, const Vector<myType>& vector);
+private:
+    std::vector<Type> m_entries;
+    static const floating_point_type ALLOWED_ERROR;
+    
+    template <typename myType>
+    friend bool isCloseEnough(const Vector<myType>& vector1, const Vector<myType>& vector2);
+
+};
+
+
+void normalize(Vector<floating_point_type>&);
+
+
+
+
+template <typename Type>
+class SquareMatrix{
+public:
+    SquareMatrix(int size);
+    SquareMatrix(const std::vector<std::vector<Type>>& entries);
+    
+    template <typename OtherType>
+    SquareMatrix(const SquareMatrix<OtherType>&);
+    
+    int size() const { return static_cast<int>(m_entries.size()); }
+    Type getEntry(int i, int j) const { return m_entries[i][j]; }
+    void setEntry(int i, int j, const Type& value) { m_entries[i][j] = value; }
+    Type maxEntry() const;
+    Vector<Type> column(int i) const;
+    
+    SquareMatrix<Type> transpose() const;
+
+    template <typename myType>
+    friend SquareMatrix<myType> operator*(const SquareMatrix<myType>& m1, const SquareMatrix<myType>& m2);
+
+    template <typename myType>
+    friend Vector<myType> operator*(const SquareMatrix<myType>& matrix, const Vector<myType>& vector);
+    friend std::ostream& operator<<(std::ostream& Out, const SquareMatrix<Type>& matrix);
+
+protected:
+    std::vector<std::vector<Type>> m_entries;
+};
+
+
+
+
+class PerronFrobeniusMatrix{
+public:
+    PerronFrobeniusMatrix(const std::vector<std::vector<long>>& entries);
+    PerronFrobeniusMatrix(const SquareMatrix<long>& intSquareMatrix);
+    int size() const{ return m_squareMatrix.size(); }
+    long getEntry(int i, int j) const { return m_squareMatrix.getEntry(i, j); }
+    PerronFrobeniusMatrix transpose() const { return PerronFrobeniusMatrix(m_squareMatrix.transpose()); }
+    bool IsPerronFrobenius() const { return m_perronFrobEigenvector.size() != 0; }
+    std::vector<floating_point_type> perronFrobEigenvector();
+    floating_point_type perronFrobEigenvalue();
+    
     
 private:
-    std::vector<std::vector<int>> m_data;
-    std::vector<floating_point_type> m_PFEigenvector;
-    floating_point_type m_PFEigenvalue;
+    SquareMatrix<long> m_squareMatrix;
+    std::vector<floating_point_type> m_perronFrobEigenvector;
+    floating_point_type m_perronFrobEigenvalue;
     
-    void Transpose();
-    void InitEigenData();
-    bool IsPerronFrobenius_Init() {return IsEveryVertexReachableFrom(0) && IsReachableFromEveryVertex(0); }
-    bool IsReachableFromEveryVertex(int Vertex);
-    bool IsEveryVertexReachableFrom(int Vertex) const;
+    SquareMatrix<long> powerUp();
+    void initEigenData();
+    bool isEigenDataDefined() const { return m_perronFrobEigenvalue != 0; }
+    bool isReachableFromEveryVertex(int vertex, const SquareMatrix<long>&) const;
+    bool isEveryVertexReachableFrom(int vertex, const SquareMatrix<long>&) const;
 };
 
 floating_point_type arnouxYoccozStretchFactor(int genus);
