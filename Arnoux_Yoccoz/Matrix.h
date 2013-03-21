@@ -18,6 +18,7 @@
 static const floating_point_type ALLOWED_ERROR = 0.0000000000000001;
 
 
+
 template <typename Type>
 class Vector;
 
