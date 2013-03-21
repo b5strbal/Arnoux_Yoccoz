@@ -11,7 +11,7 @@
 #include "Foliation.h"
 //#include "io.h"
 #include "FoliationRP2.h"
-#include "AlmostPFMatrix.h"
+#include "PerronFrobenius.h"
 
 using namespace std;
 
@@ -23,7 +23,20 @@ using namespace std;
 
 int main (int argc, const char * argv[])
 {
-
+    /*
+    clock_t t1, t2;
+    t1 = clock();
+    
+    SquareMatrix<int> matrix(200);
+    for (int i = 0; i < 20; i++) {
+        matrix * matrix;
+    }
+    
+    t2 = clock();
+    float seconds = ((float)t2 - (float)t1)/CLOCKS_PER_SEC;
+    cout << seconds;*/
+    
+    
     try {
       //  Foliation f({0.21, 0.21, 0.11, 0.11, 0.17, 0.17}, Permutation({1, 0, 3, 2, 5, 4}), 0.5);
         for (int i = 3; i < 200; i++) {

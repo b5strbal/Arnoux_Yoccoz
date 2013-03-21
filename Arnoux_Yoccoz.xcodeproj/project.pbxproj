@@ -11,9 +11,11 @@
 		753C7C2216F2577C00165E34 /* IntervalExchangeMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 753C7C2016F2577C00165E34 /* IntervalExchangeMap.cpp */; };
 		753C7C2416F4062600165E34 /* FoliationRP2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D83AF916F1597100672E20 /* FoliationRP2.cpp */; };
 		753C7C2616F4E75000165E34 /* global.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 753C7C2516F4E75000165E34 /* global.cpp */; };
+		758102E316FBC06700004EE2 /* Matrix.hpp in Sources */ = {isa = PBXBuildFile; fileRef = 758102E116FBC06700004EE2 /* Matrix.hpp */; };
+		758102E516FBC57D00004EE2 /* Matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 758102E416FBC57D00004EE2 /* Matrix.cpp */; };
 		75D839A416F158F600672E20 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D839A316F158F600672E20 /* main.cpp */; };
 		75D839A616F158F600672E20 /* Arnoux_Yoccoz.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75D839A516F158F600672E20 /* Arnoux_Yoccoz.1 */; };
-		75D83B0116F1597100672E20 /* AlmostPFMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D839AC16F1597100672E20 /* AlmostPFMatrix.cpp */; };
+		75D83B0116F1597100672E20 /* PerronFrobenius.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D839AC16F1597100672E20 /* PerronFrobenius.cpp */; };
 		75D83B0316F1597100672E20 /* ArcsAroundDivPoints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D839B016F1597100672E20 /* ArcsAroundDivPoints.cpp */; };
 		75D83B0416F1597100672E20 /* UnitIntervalPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D839B216F1597100672E20 /* UnitIntervalPoint.cpp */; };
 		75D83B0716F1597100672E20 /* WeighedTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75D83AFF16F1597100672E20 /* WeighedTree.cpp */; };
@@ -38,11 +40,14 @@
 		753C7C2016F2577C00165E34 /* IntervalExchangeMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntervalExchangeMap.cpp; sourceTree = "<group>"; };
 		753C7C2116F2577C00165E34 /* IntervalExchangeMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntervalExchangeMap.h; sourceTree = "<group>"; };
 		753C7C2516F4E75000165E34 /* global.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = global.cpp; sourceTree = "<group>"; };
+		758102E116FBC06700004EE2 /* Matrix.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Matrix.hpp; sourceTree = "<group>"; };
+		758102E216FBC06700004EE2 /* Matrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix.h; sourceTree = "<group>"; };
+		758102E416FBC57D00004EE2 /* Matrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Matrix.cpp; sourceTree = "<group>"; };
 		75D839A016F158F600672E20 /* Arnoux_Yoccoz */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Arnoux_Yoccoz; sourceTree = BUILT_PRODUCTS_DIR; };
 		75D839A316F158F600672E20 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		75D839A516F158F600672E20 /* Arnoux_Yoccoz.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Arnoux_Yoccoz.1; sourceTree = "<group>"; };
-		75D839AC16F1597100672E20 /* AlmostPFMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlmostPFMatrix.cpp; sourceTree = "<group>"; };
-		75D839AD16F1597100672E20 /* AlmostPFMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlmostPFMatrix.h; sourceTree = "<group>"; };
+		75D839AC16F1597100672E20 /* PerronFrobenius.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerronFrobenius.cpp; sourceTree = "<group>"; };
+		75D839AD16F1597100672E20 /* PerronFrobenius.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerronFrobenius.h; sourceTree = "<group>"; };
 		75D839B016F1597100672E20 /* ArcsAroundDivPoints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArcsAroundDivPoints.cpp; sourceTree = "<group>"; };
 		75D839B116F1597100672E20 /* ArcsAroundDivPoints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArcsAroundDivPoints.h; sourceTree = "<group>"; };
 		75D839B216F1597100672E20 /* UnitIntervalPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnitIntervalPoint.cpp; sourceTree = "<group>"; };
@@ -405,8 +410,11 @@
 				75D83AFA16F1597100672E20 /* FoliationRP2.h */,
 				75D83AFF16F1597100672E20 /* WeighedTree.cpp */,
 				75D83B0016F1597100672E20 /* WeighedTree.h */,
-				75D839AC16F1597100672E20 /* AlmostPFMatrix.cpp */,
-				75D839AD16F1597100672E20 /* AlmostPFMatrix.h */,
+				75D839AC16F1597100672E20 /* PerronFrobenius.cpp */,
+				75D839AD16F1597100672E20 /* PerronFrobenius.h */,
+				758102E116FBC06700004EE2 /* Matrix.hpp */,
+				758102E216FBC06700004EE2 /* Matrix.h */,
+				758102E416FBC57D00004EE2 /* Matrix.cpp */,
 				75D839A316F158F600672E20 /* main.cpp */,
 				75D839A516F158F600672E20 /* Arnoux_Yoccoz.1 */,
 			);
@@ -1028,7 +1036,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				75D839A416F158F600672E20 /* main.cpp in Sources */,
-				75D83B0116F1597100672E20 /* AlmostPFMatrix.cpp in Sources */,
+				75D83B0116F1597100672E20 /* PerronFrobenius.cpp in Sources */,
 				75D83B0316F1597100672E20 /* ArcsAroundDivPoints.cpp in Sources */,
 				75D83B0416F1597100672E20 /* UnitIntervalPoint.cpp in Sources */,
 				75D83B0716F1597100672E20 /* WeighedTree.cpp in Sources */,
@@ -1036,6 +1044,8 @@
 				753C7C2216F2577C00165E34 /* IntervalExchangeMap.cpp in Sources */,
 				753C7C2416F4062600165E34 /* FoliationRP2.cpp in Sources */,
 				753C7C2616F4E75000165E34 /* global.cpp in Sources */,
+				758102E316FBC06700004EE2 /* Matrix.hpp in Sources */,
+				758102E516FBC57D00004EE2 /* Matrix.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

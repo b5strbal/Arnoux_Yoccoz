@@ -52,6 +52,10 @@ void WeighedTree::Init(std::vector<floating_point_type> Weights){
 
 
 
+
+
+
+
 std::vector<floating_point_type> WeighedTree::randomDefiningList(int numEdges){
     if (numEdges < 3) {
         throw std::runtime_error("A weighed tree must have at least three edges.");
