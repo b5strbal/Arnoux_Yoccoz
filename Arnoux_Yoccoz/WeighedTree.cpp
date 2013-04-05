@@ -9,6 +9,8 @@
 #include "WeighedTree.h"
 
 
+std::default_random_engine WeighedTree::generator(static_cast<int>(time(NULL)));
+
 
 WeighedTree::WeighedTree(const std::vector<floating_point_type>& definingList) :
     m_definingList(definingList)
@@ -25,7 +27,6 @@ WeighedTree::WeighedTree(const WeighedTree& wt) :
 
 
 
-
 WeighedTree::WeighedTree(int NumEdges) :
     m_definingList(randomDefiningList(NumEdges))
 {
@@ -39,7 +40,7 @@ WeighedTree::~WeighedTree(){
 
 
 
-void WeighedTree::Init(std::vector<floating_point_type> Weights){
+void WeighedTree::Init(const std::vector<floating_point_type>& Weights){
     m_Root = new Node;
     CreateChildren(Weights.begin(), Weights.end(), m_Root);
     SetNumDescendants(m_Root);
@@ -57,30 +58,32 @@ void WeighedTree::Init(std::vector<floating_point_type> Weights){
 
 
 std::vector<floating_point_type> WeighedTree::randomDefiningList(int numEdges){
+    if (numEdges == 1) {    // there is only one tree with one edge
+        return std::vector<floating_point_type>(1, 1);
+    }
+    
     if (numEdges < 3) {
-        throw std::runtime_error("A weighed tree must have at least three edges.");
+        throw std::runtime_error("A weighed tree must have one or at least three edges.");
     }
     std::vector<floating_point_type> definingList;
     
-    std::default_random_engine generator(static_cast<int>(time(NULL)));
     std::uniform_real_distribution<floating_point_type> RealDistribution(0,1);
-    definingList.push_back(RealDistribution(generator));
+    definingList.push_back(RealDistribution(generator)); // creating the first child of the root
 
-    int Remains = numEdges - 1;
-    while (Remains > 0) {
+    int remains = numEdges - 1;
+    int unVisitedLeaves = 2; // the root also have to be considered is unvisited here
+    while (remains > 0) {
         // Now we are generating a random integer between 0 and Remains, excluding 1 and Remains - 1.
         // 1 is excluded, because a sequence of length 1 means there is a single child which results in a degree 2 vertex.
         // Remains - 1 is excluded because after that we would have a single slot left which would result in an only child later.
-        // So we generates a ranodm integer between 1 and Remains - 1 and then if we replace 1 by 0, and Remains-1 by Remains.
-        std::uniform_int_distribution<int> IntDistribution(1, Remains - 1);
-        int NextSequence = IntDistribution(generator);
-        if (NextSequence == 1) {
-            NextSequence = 0;
-        } else
-            if (NextSequence == Remains - 1) {
-                NextSequence = Remains;
-            }
+        // Also, if there is only one unvisited leaf, then it must have children to complete the tree
+        std::uniform_int_distribution<int> IntDistribution(0, remains);
+        int NextSequence;
+        do {
+            NextSequence = IntDistribution(generator);
+        } while (NextSequence == 1 || NextSequence == remains - 1 || (unVisitedLeaves == 1 && NextSequence == 0));
         
+
         // Now generating the right number of weights.
         for (int i = 0; i < NextSequence; i++) {
             floating_point_type RandomReal = 0;
@@ -90,7 +93,10 @@ std::vector<floating_point_type> WeighedTree::randomDefiningList(int numEdges){
             definingList.push_back(RandomReal);
         }
         definingList.push_back(0);
-        Remains -= NextSequence;
+        remains -= NextSequence;
+        unVisitedLeaves += NextSequence - 1;
+
+
     }
     return definingList;
 }
@@ -101,16 +107,18 @@ std::vector<floating_point_type> WeighedTree::randomDefiningList(int numEdges){
 
 
 
-void WeighedTree::CreateChildren(std::vector<floating_point_type>::iterator itBegin, std::vector<floating_point_type>::iterator itEnd, Node* pNode){
-    std::vector<floating_point_type>::iterator it = itBegin;
+void WeighedTree::CreateChildren(std::vector<floating_point_type>::const_iterator itBegin,
+                                 std::vector<floating_point_type>::const_iterator itEnd,
+                                 Node* pNode){
+    std::vector<floating_point_type>::const_iterator it = itBegin;
     while (it != itEnd && *it != 0) {
         if (*it < 0) {
             throw std::runtime_error("Weights of weighed trees must be positive.");
         }
         it++;
     }
-    if (pNode->m_Parent == NULL && it - itBegin < 3) {
-        throw std::runtime_error("The root of a weighed tree must have at least 3 neighbors.)");
+    if (pNode->m_Parent == NULL && (it - itBegin == 0 || it - itBegin == 2)) {
+        throw std::runtime_error("The root of a weighed tree must have 1 or at least 3 neighbors.)");
     }
 
     if (it != itBegin) {
@@ -149,11 +157,12 @@ void WeighedTree::SetNumDescendants(Node* pNode){
 
 
 
-void WeighedTree::getDegrees(std::vector<int>& degrees) const{
-    degrees.clear();
+std::vector<int> WeighedTree::getDegrees() const{
+    std::vector<int> degrees;
     getDegreesRecursive(degrees, m_Root);
     degrees[0]--;
     std::sort(degrees.begin(), degrees.end(), std::greater<int>());
+    return degrees;
 }
 
 

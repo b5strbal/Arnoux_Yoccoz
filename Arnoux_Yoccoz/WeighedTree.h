@@ -27,7 +27,7 @@
  *
  *          1) The degree of every vertex is either 1 or greater than 3. Vertices of degree 2 are not allowed.
  *
- *          2) The tree has to have at least 4 vertices.
+ *          2) The tree has to have at least 1 edge.
  *
  * @see     FoliationDisk
  */
@@ -86,12 +86,18 @@ public:
 
     int getNumEdges() const { return m_Root->m_NumDescendants; }
         
-    void getDegrees(std::vector<int>& degrees) const;
+    std::vector<int> getDegrees() const;
 
     
 private:
     std::vector<floating_point_type> m_definingList;
     Node* m_Root;
+    
+    static std::default_random_engine generator;
+    
+
+    
+    
     
     void fillInLengthsAndPairing(std::vector<floating_point_type>& lengths, std::vector<int>& pairing, int StartingIndex, Node* pNode) const;
 
@@ -99,7 +105,7 @@ private:
     /**
      * @brief   Initializes the object for the list of weights separated by zeroes as the argument. Called by the constructors.
      */
-    void Init(std::vector<floating_point_type> Weights);
+    void Init(const std::vector<floating_point_type>& Weights);
     
     /**
      * @brief   Generates a random list of weights that is used to construct a random object. 
@@ -107,7 +113,9 @@ private:
      */
     std::vector<floating_point_type> randomDefiningList(int NumEdges);
     Node* NextNode(Node*);
-    void CreateChildren(std::vector<floating_point_type>::iterator itBegin, std::vector<floating_point_type>::iterator itEnd, Node* pNode);
+    void CreateChildren(std::vector<floating_point_type>::const_iterator itBegin,
+                        std::vector<floating_point_type>::const_iterator itEnd,
+                        Node* pNode);
     void SetNumDescendants(Node* pNode);
     
     void getDegreesRecursive(std::vector<int>& degrees, Node* node) const;

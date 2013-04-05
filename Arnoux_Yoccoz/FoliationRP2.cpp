@@ -28,8 +28,8 @@ std::ostream& operator<<(std::ostream& Out, const FoliationDisk& fd){
 
     Out << fd.m_intervalPairing << endl;
     
-    std::vector<int> singularityType;
-    fd.m_weighedTree.getDegrees(singularityType);
+    std::vector<int> singularityType = fd.m_weighedTree.getDegrees();
+    
     Out << "Singularity type: " << singularityType;
 
     return Out;

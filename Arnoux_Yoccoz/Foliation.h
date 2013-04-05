@@ -16,6 +16,10 @@
 #include "PerronFrobenius.h"
 #include "FoliationRP2.h"
 
+//-----------//
+// Foliation //
+//-----------//
+
 
 class Foliation{
     
@@ -49,7 +53,9 @@ Foliation arnouxYoccozFoliation(int genus);
 
 
 
-
+//--------------------------------//
+// InitArguments_FoliationFromRP2 //
+//--------------------------------//
 
 
 
@@ -63,14 +69,16 @@ class InitArguments_FoliationFromRP2{
 
 
 
+//------------------//
+// FoliationFromRP2 //
+//------------------//
+
 
 class FoliationFromRP2 : private InitArguments_FoliationFromRP2,
                          public Foliation
 {
 public:
     FoliationFromRP2(const FoliationRP2& foliationRP2);
-
-
 };
 
 
@@ -78,7 +86,9 @@ public:
 
 
 
-
+//-----------------------------------//
+// InitArguments_FoliationFromSphere //
+//-----------------------------------//
 
 
 class InitArguments_FoliationFromSphere{
@@ -91,15 +101,15 @@ class InitArguments_FoliationFromSphere{
 };
 
 
-
+//---------------------//
+// FoliationFromSphere //
+//---------------------//
 
 class FoliationFromSphere : private InitArguments_FoliationFromSphere,
                             public Foliation
 {
 public:
     FoliationFromSphere(const FoliationSphere& foliationSphere);
-
-
 };
 
 

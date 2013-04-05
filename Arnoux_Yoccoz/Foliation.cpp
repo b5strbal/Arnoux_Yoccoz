@@ -118,7 +118,7 @@ floating_point_type InitArguments_FoliationFromSphere::arg_twist;
 
 InitArguments_FoliationFromSphere::InitArguments_FoliationFromSphere(const FoliationSphere& foliationSphere)
 {
-
+    std::vector<floating_point_type> upperDivPoints;
 }
 
 

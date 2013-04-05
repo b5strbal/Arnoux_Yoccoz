@@ -26,7 +26,7 @@
 
 class Permutation{
 public:
-    Permutation() : m_functionValues(1, 0) {}
+    Permutation() : m_functionValues(1, 0) {} // trivial permutation on one element
     Permutation(const std::vector<int> functionValues);    
     inline int size() const{ return static_cast<int>(m_functionValues.size()); }
     Permutation inverse() const;
