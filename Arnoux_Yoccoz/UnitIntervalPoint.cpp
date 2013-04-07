@@ -32,7 +32,7 @@ bool operator<(const UnitIntervalPoint& p1, const UnitIntervalPoint& p2){
 
 
 
-floating_point_type DistanceBetween(const UnitIntervalPoint& p1, const UnitIntervalPoint& p2)
+floating_point_type distanceBetween(const UnitIntervalPoint& p1, const UnitIntervalPoint& p2)
 {
     return p1.m_position <= p2.m_position ? p2.m_position - p1.m_position : p2.m_position - p1.m_position + 1;
 }

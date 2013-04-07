@@ -96,8 +96,9 @@ Foliation::ArcsAroundDivPoints Foliation::Intersect(const ArcsAroundDivPoints& a
             adp.m_CuttingPoints[i] = adp2.m_CuttingPoints[i];
         } else if (adp2.m_CuttingPoints[i].empty()){
         } else {
-            adp.m_CuttingPoints[i] = { std::min(adp1.m_CuttingPoints[i].front(), adp2.m_CuttingPoints[i].front()),
-                                       std::max(adp1.m_CuttingPoints[i].back(), adp2.m_CuttingPoints[i].back())};
+            adp.m_CuttingPoints[i].resize(2); 
+            adp.m_CuttingPoints[i][0] = std::min(adp1.m_CuttingPoints[i].front(), adp2.m_CuttingPoints[i].front());
+            adp.m_CuttingPoints[i][1] = std::max(adp1.m_CuttingPoints[i].back(), adp2.m_CuttingPoints[i].back());
         }
     }
     return adp;

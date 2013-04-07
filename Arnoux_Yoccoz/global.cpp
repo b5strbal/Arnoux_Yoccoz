@@ -16,4 +16,12 @@ int integerMod(int a, int b){
 }
 
 
+
+int modAdd(int x, int y, int mod){
+    assert(mod > 0);
+    return integerMod(x + y, mod);
+}
+
+
+
 floating_point_type FracPart(floating_point_type x){ return x - floor(x); }

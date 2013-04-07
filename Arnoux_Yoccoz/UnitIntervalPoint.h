@@ -62,7 +62,7 @@ public:
      * @details It looks for c2 on the RIGHT of c1, so the return value may be bigger than 0.5. Ignored the shifts for generalized points.
      *          E.g. DistaceBetween(UnitIntervalPoint(0.8, LEFT), UnitIntervalPoint(0.1)) is 0.3.
      */
-    friend floating_point_type DistanceBetween(const UnitIntervalPoint& c1, const UnitIntervalPoint& c2);
+    friend floating_point_type distanceBetween(const UnitIntervalPoint& c1, const UnitIntervalPoint& c2);
     
     
 
@@ -102,6 +102,11 @@ public:
  //   inline friend bool operator!=(const UnitIntervalPoint& c1, const UnitIntervalPoint& c2){ return c1 == c2 ? false : true; }
     
     
+    friend std::ostream& operator<<(std::ostream& Out, const UnitIntervalPoint& p){
+        Out << p.m_position;
+        return Out;
+    }
+
 
     
     

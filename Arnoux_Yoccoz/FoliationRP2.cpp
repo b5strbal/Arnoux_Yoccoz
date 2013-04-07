@@ -61,6 +61,12 @@ std::ostream& operator<<(std::ostream& Out, const FoliationRP2& f){
 }
 
 
+FoliationRP2 arnouxYoccozRP2(){
+    floating_point_type alpha = 1/arnouxYoccozStretchFactor(3);
+    std::vector<floating_point_type> weighedTreeInput = { alpha + pow(alpha,2), pow(alpha,2) + pow(alpha, 3), pow(alpha, 3) + alpha };
+    
+    return FoliationRP2(WeighedTree(weighedTreeInput));
+}
 
 
 
@@ -74,6 +80,20 @@ FoliationSphere::FoliationSphere(const FoliationDisk& topFoliation, const Foliat
 }
 
 
+FoliationSphere::FoliationSphere(const FoliationRP2& foliationRP2) :
+    FoliationSphere(foliationRP2.m_foliationDisk, foliationRP2.m_foliationDisk, 0.5)
+{
+}
+
+
+
+std::ostream& operator<<(std::ostream& Out, const FoliationSphere& f){
+    Out << "(Top Disk) " << f.topFoliation() << std::endl;
+    Out << "(Bottom Disk) " << f.bottomFoliation() << std::endl;
+    Out << "Twist: " << f.twist();
+    
+    return Out;
+}
 
 
 

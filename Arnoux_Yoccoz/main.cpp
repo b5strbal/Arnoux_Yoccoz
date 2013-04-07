@@ -37,6 +37,12 @@ int main (int argc, const char * argv[])
     cout << seconds;*/
     
 
+    cout << arnouxYoccozRP2() << endl << endl;
+    cout << FoliationSphere (arnouxYoccozRP2()) << endl << endl;
+    cout << Foliation( arnouxYoccozRP2() ) << endl;
+    cout << arnouxYoccozFoliation(3);
+    
+    /*
     try {
         for (int i = 0; i < 100; i++) {
             cout << FoliationDisk(WeighedTree(3)) << endl;
@@ -44,7 +50,7 @@ int main (int argc, const char * argv[])
     } catch (const std::exception& ex) {
         cout << "Error: " << ex.what();
     }
-    
+    */
     
     
     return 0;

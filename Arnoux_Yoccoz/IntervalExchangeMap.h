@@ -55,8 +55,8 @@ Permutation reversingPermutation(int size);
 class IntervalExchangeBase{
 public:
     inline int size() const { return static_cast<int>(m_lengths.size()); }
-    virtual UnitIntervalPoint applyTo(const UnitIntervalPoint& point) = 0;
-    virtual UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& point) = 0;
+    virtual UnitIntervalPoint applyTo(const UnitIntervalPoint& point) const = 0;
+    virtual UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& point) const = 0;
     const std::vector<floating_point_type>& lengths() const { return m_lengths; }
     const Permutation& permutation() const { return m_permutation; }
     const Permutation& inversePermutation() const { return m_inversePermutation; }
@@ -85,11 +85,11 @@ class IntervalExchangeMap : public IntervalExchangeBase{
 public:
     IntervalExchangeMap(const std::vector<floating_point_type>& lengths, const Permutation& permutation);
 
-    UnitIntervalPoint applyTo(const UnitIntervalPoint& point);
-    UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& point);
+    UnitIntervalPoint applyTo(const UnitIntervalPoint& point) const;
+    UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& point) const;
     const std::vector<floating_point_type>& translations() const { return m_translations; }
     
-    friend std::ostream& operator<<(std::ostream& Out, const IntervalExchangeMap intervalExchange);
+    friend std::ostream& operator<<(std::ostream& Out, const IntervalExchangeMap& intervalExchange);
 
 private:
     std::vector<floating_point_type> m_translations;
@@ -123,7 +123,7 @@ public:
     TwistedIntervalExchangeMap rotateBy(int rotationAmount) const;
     TwistedIntervalExchangeMap reflect() const;
     TwistedIntervalExchangeMap invert() const;
-    friend std::ostream& operator<<(std::ostream& Out, const TwistedIntervalExchangeMap twistedIntervalExchange);
+    friend std::ostream& operator<<(std::ostream& Out, const TwistedIntervalExchangeMap& twistedIntervalExchange);
 private:
     IntervalExchangeMap m_intervalExchangeAfterTwist;
     std::vector<floating_point_type> m_originalLengths;
@@ -164,11 +164,11 @@ class IntervalExchangeFoliationDisk : private InitArguments_IntervalExchangeFoli
 public:
     IntervalExchangeFoliationDisk(const WeighedTree& wt);
     
-    UnitIntervalPoint applyTo(const UnitIntervalPoint& point);
-    UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& point) { return applyTo(point); }
+    UnitIntervalPoint applyTo(const UnitIntervalPoint& point) const;
+    UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& point) const { return applyTo(point); }
 
     
-    friend std::ostream& operator<<(std::ostream& Out, const IntervalExchangeFoliationDisk intervalExchange);
+    friend std::ostream& operator<<(std::ostream& Out, const IntervalExchangeFoliationDisk& intervalExchange);
 
 };
 

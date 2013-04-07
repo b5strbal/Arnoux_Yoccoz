@@ -60,12 +60,12 @@ PerronFrobeniusMatrix::PerronFrobeniusMatrix(const SquareMatrix<long>& intSquare
 
 SquareMatrix<long> PerronFrobeniusMatrix::powerUp(){
     SquareMatrix<long> bigMatrix(m_squareMatrix);
-    int count = 0;
+    //int count = 0;
     while (bigMatrix.maxEntry()< sqrt(LONG_MAX/size())) {
         bigMatrix = bigMatrix * bigMatrix;
-        count++;
+      //  count++;
     }
-    std::cout << " " << count << " ";
+    // std::cout << " " << count << " ";
     return bigMatrix;
 }
 
@@ -111,7 +111,7 @@ void PerronFrobeniusMatrix::initEigenData(){
         normalize(convergingVector);
         count++;
     }
-    std::cout << count;
+   // std::cout << count;
     m_perronFrobEigenvector = convergingVector.toStandardVector();
     
     m_perronFrobEigenvalue = (SquareMatrix<floating_point_type>(m_squareMatrix) * convergingVector).getEntry(0, 0) / convergingVector.getEntry(0);

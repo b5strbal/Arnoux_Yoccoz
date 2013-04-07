@@ -218,7 +218,7 @@ IntervalExchangeMap::IntervalExchangeMap(const std::vector<floating_point_type>&
 
 
 
-std::ostream& operator<<(std::ostream& Out, const IntervalExchangeMap intervalExchange){
+std::ostream& operator<<(std::ostream& Out, const IntervalExchangeMap& intervalExchange){
     Out << "Permutation: " << intervalExchange.m_permutation << "\n";
     Out << "Lengths: " << intervalExchange.m_lengths;
     return Out;
@@ -229,12 +229,12 @@ std::ostream& operator<<(std::ostream& Out, const IntervalExchangeMap intervalEx
 
 
 
-UnitIntervalPoint IntervalExchangeMap::applyTo(const UnitIntervalPoint& point){
+UnitIntervalPoint IntervalExchangeMap::applyTo(const UnitIntervalPoint& point) const{
     return point + m_translations[containingInterval(m_divPoints, point)];
 }
 
 
-UnitIntervalPoint IntervalExchangeMap::applyInverseTo(const UnitIntervalPoint& point){
+UnitIntervalPoint IntervalExchangeMap::applyInverseTo(const UnitIntervalPoint& point) const{
     return point - m_translations[m_inversePermutation[containingInterval(m_divPointsAfterExchange, point)]];
 }
 
@@ -399,7 +399,7 @@ TwistedIntervalExchangeMap TwistedIntervalExchangeMap::invert() const{
 
 
 
-std::ostream& operator<<(std::ostream& Out, const TwistedIntervalExchangeMap twistedIntervalExchange){
+std::ostream& operator<<(std::ostream& Out, const TwistedIntervalExchangeMap& twistedIntervalExchange){
     Out << "Lengths: " << twistedIntervalExchange.m_intervalExchangeAfterTwist.lengths() << "\n";
     Out << "Original lengths: " << twistedIntervalExchange.m_originalLengths << "\n";
     Out << "Translations: " << twistedIntervalExchange.m_intervalExchangeAfterTwist.translations() << "\n";
@@ -466,16 +466,19 @@ IntervalExchangeFoliationDisk::IntervalExchangeFoliationDisk(const WeighedTree& 
 }
 
 
-UnitIntervalPoint IntervalExchangeFoliationDisk::applyTo(const UnitIntervalPoint& point){
+UnitIntervalPoint IntervalExchangeFoliationDisk::applyTo(const UnitIntervalPoint& point) const{
     int interval = containingInterval(m_divPoints, point);
-    return UnitIntervalPoint(m_divPoints[m_permutation[interval]].getPosition() + m_lengths[interval] - (m_divPoints[interval].getPosition() - point.getPosition()));
+    if (interval == CONTAINING_INTERVAL_NOT_UNIQUE) {
+        throw std::runtime_error("IntervalExchangeFoliationDisk: Can't apply interval exchange, the point is very close to a division points.");
+    }
+    return UnitIntervalPoint(m_divPoints[m_permutation[interval]].getPosition() + m_lengths[interval] + (m_divPoints[interval].getPosition() - point.getPosition()));
 }
 
 
 
 
 
-std::ostream& operator<<(std::ostream& Out, const IntervalExchangeFoliationDisk intervalExchange){
+std::ostream& operator<<(std::ostream& Out, const IntervalExchangeFoliationDisk& intervalExchange){
     Out << "Lengths: " << intervalExchange.m_lengths << "\n";
     Out << "Pairing: " << intervalExchange.m_permutation;
     return Out;

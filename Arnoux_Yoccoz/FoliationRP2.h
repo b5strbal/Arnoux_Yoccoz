@@ -46,6 +46,7 @@ cout << "Each vertex of the tree corresponds to a singularity of the foliation, 
 #include <vector>
 #include <cassert>
 #include "IntervalExchangeMap.h"
+#include "PerronFrobenius.h"
 
 const int THE_POINT_IS_A_DIVPOINT = -1;
 
@@ -58,7 +59,7 @@ public:
     const WeighedTree& weighedTree() const { return m_weighedTree; }
     const IntervalExchangeFoliationDisk& intervalPairing() const { return m_intervalPairing; }
     int numSeparatrices() const { return m_intervalPairing.size(); }
-    int numRealSeparatrices() const { return <#expression#>}
+    const std::vector<UnitIntervalPoint>& divPoints() const { return m_intervalPairing.divPoints(); }
     
     friend std::ostream& operator<<(std::ostream& Out, const FoliationDisk& f);
 private:
@@ -73,6 +74,8 @@ private:
 
 class FoliationRP2
 {
+    friend class FoliationSphere;
+    
 public:
     FoliationRP2(const FoliationDisk&);
     
@@ -93,14 +96,20 @@ private:
 };
 
 
+FoliationRP2 arnouxYoccozRP2();
 
 
+// Both foliations are seen from above.
+// The top foliation is fixed in the standard position, and the bottom foliation is twisted.
 class FoliationSphere{
 public:
     FoliationSphere(const FoliationDisk& topFoliation, const FoliationDisk& bottomFoliation, floating_point_type twist);
+    FoliationSphere(const FoliationRP2& foliationRP2);
     const FoliationDisk& topFoliation() const { return m_topFoliation; }
     const FoliationDisk& bottomFoliation() const { return m_bottomFoliation; }
     floating_point_type twist() const { return m_twist; }
+    
+    friend std::ostream& operator<<(std::ostream& Out, const FoliationSphere&);
     
 private:
     FoliationDisk m_topFoliation;
