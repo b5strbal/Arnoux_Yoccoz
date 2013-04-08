@@ -316,6 +316,7 @@ TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<floatin
     m_intervalExchangeAfterTwist(arg_lengths, arg_permutation),
     m_indexOfFakeDivPoint(m_intervalExchangeAfterTwist.inversePermutation()[0])
 {
+        
     /*
     m_realSeparatingPoints.clear();
     int firstindex = 0;

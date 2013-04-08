@@ -123,6 +123,9 @@ public:
     TwistedIntervalExchangeMap rotateBy(int rotationAmount) const;
     TwistedIntervalExchangeMap reflect() const;
     TwistedIntervalExchangeMap invert() const;
+    UnitIntervalPoint applyTo(const UnitIntervalPoint& p) const { return m_intervalExchangeAfterTwist.applyTo(p); }
+    UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& p) const { return m_intervalExchangeAfterTwist.applyInverseTo(p); }
+
     friend std::ostream& operator<<(std::ostream& Out, const TwistedIntervalExchangeMap& twistedIntervalExchange);
 private:
     IntervalExchangeMap m_intervalExchangeAfterTwist;
@@ -130,8 +133,7 @@ private:
     Permutation m_originalPermutation;
     floating_point_type m_twist;
     int m_indexOfFakeDivPoint;
-   // std::vector<UnitIntervalPoint> m_realSeparatingPoints;
-    
+
     
     int sizeBeforeTwist() const{ return m_originalPermutation.size(); }
     int sizeAfterTwist() const{ return m_intervalExchangeAfterTwist.size(); }

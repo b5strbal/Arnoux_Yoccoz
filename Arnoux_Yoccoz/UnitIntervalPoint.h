@@ -43,9 +43,10 @@ public:
     /**
      * @brief   
      */
-    explicit UnitIntervalPoint(floating_point_type position = 0) :
+    explicit UnitIntervalPoint(floating_point_type position = 0, int epsilon = 0) :
         m_position(position),
-        m_positionPlusPrecision(position + PRECISION)
+        m_positionPlusPrecision(position + PRECISION),
+        m_epsilon(epsilon)
     {
         assert(0 <= position && position < 1);
     }
@@ -104,6 +105,10 @@ public:
     
     friend std::ostream& operator<<(std::ostream& Out, const UnitIntervalPoint& p){
         Out << p.m_position;
+        if(p.m_epsilon > 0)
+            Out << "(+" << p.m_epsilon << "eps)";
+        else if(p.m_epsilon < 0)
+            Out << "(" << p.m_epsilon << "eps)";
         return Out;
     }
 
@@ -116,7 +121,8 @@ protected:
      */
     floating_point_type m_position;
     floating_point_type m_positionPlusPrecision;
-    
+    int m_epsilon;
+
     
 private:
     static const floating_point_type PRECISION;
@@ -131,86 +137,10 @@ private:
      */
    // inline friend bool operator<=(const UnitIntervalPoint& c1, const UnitIntervalPoint& c2){ return c1 < c2 || c1 == c2 ? true : false;}
 
-    /// @endcond
 };
         
         
         
-        
-        
-        
-        
-        
-class GeneralizedUnitIntervalPoint : public UnitIntervalPoint{
-public:
-    /**
-     * @brief
-     */
-    GeneralizedUnitIntervalPoint(floating_point_type position = 0, int epsilon = 0) : UnitIntervalPoint(position) , m_epsilon(epsilon) {
-        assert(0 <= position && position < 1);
-    }
-    
-    
-
-    
-    /**
-     *  @brief
-     */
-    inline GeneralizedUnitIntervalPoint ShiftToRight() const{ return GeneralizedUnitIntervalPoint(m_position, m_epsilon + 1); }
-  
-    
-    /**
-     * @brief   Decides if a point is between other two.
-     * @details Decides if cThird is contained in the closed arc lying on the right side of cLeft and the left side of cRight.
-     *          E.g. IsBetween(UnitIntervalPoint(0.5), UnitIntervalPoint(0.2), UnitIntervalPoint(0.2, LEFT or CENTER)) returns true, but
-     *          IsBetween(UnitIntervalPoint(0.5), UnitIntervalPoint(0.2), UnitIntervalPoint(0.2, RIGHT)) returns false.
-     *
-     *          Although it is not the main use of generalized points, notice, that they can be used to with the IsBetween function to
-     *          check containments in open intervals.
-     *          For example, IsBetween(UnitIntervalPoint(0.3, RIGHT), UnitIntervalPoint(0.6, LEFT), UnitIntervalPoint(x)) returns true if and only if
-     *          x is in the open interval (0.3, 0.6).
-     */
-    // friend bool IsBetween(const UnitIntervalPoint& cLeft, const UnitIntervalPoint& cRight, const UnitIntervalPoint& cThird);
-private:
-    /**
-     * @brief   If its value is CENTER, the point is an ordinary point, otherwise it is a generalized point shifted in the appropriate
-     *          direction by a very small amount.
-     */
-    int m_epsilon;
-    
-    
-    
-
-    
-    
-    
-    /**
-     * @brief   Prints out a GeneralizedUnitIntervalPoint.
-     */
-    friend std::ostream& operator<<(std::ostream& Out, const GeneralizedUnitIntervalPoint& p){
-        Out << p.m_position;
-        if (p.m_epsilon > 0)
-            Out << "(+" << p.m_epsilon << "eps)";
-        else if (p.m_epsilon < 0)
-            Out << "(" << p.m_epsilon << "eps)";
-        return Out;
-    }
-};
-
-
-        
-        
-        
-        
-
-
-    
-
-
-
-
-
-
-
-
 #endif
+        
+        

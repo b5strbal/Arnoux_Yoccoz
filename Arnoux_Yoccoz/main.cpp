@@ -39,7 +39,7 @@ int main (int argc, const char * argv[])
 
     cout << arnouxYoccozRP2() << endl << endl;
     cout << FoliationSphere (arnouxYoccozRP2()) << endl << endl;
-    cout << Foliation( arnouxYoccozRP2() ) << endl;
+    cout << Foliation( arnouxYoccozRP2() ).rotateBy(1) << endl;
     cout << arnouxYoccozFoliation(3);
     
     /*

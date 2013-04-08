@@ -13,7 +13,7 @@ const floating_point_type UnitIntervalPoint::PRECISION = 0.00000000001L;
 
 
 UnitIntervalPoint operator+(const UnitIntervalPoint& p1, floating_point_type distance){
-    return UnitIntervalPoint(FracPart(p1.m_position + distance));
+    return UnitIntervalPoint(FracPart(p1.m_position + distance), p1.m_epsilon);
 }
 
 
@@ -25,7 +25,7 @@ UnitIntervalPoint operator-(const UnitIntervalPoint& p1, floating_point_type dis
 
 
 bool operator<(const UnitIntervalPoint& p1, const UnitIntervalPoint& p2){
-    if(p1.m_positionPlusPrecision < p2.m_position)
+    if(p1.m_positionPlusPrecision < p2.m_position || (p1.m_position == p2.m_position && p1.m_epsilon < p2.m_epsilon))
         return true;
     return false;
 }

@@ -111,6 +111,162 @@ void InitArguments_Foliation::generateBottomConnectingPairs(const FoliationSpher
 
 
 
+
+//-------------------------------//
+// Foliation::ArcAroundDivPoints //
+//-------------------------------//
+
+void Foliation::ArcsAroundDivPoints::InsertPoint(const UnitIntervalPoint& NewCuttingPoint, int IndexOfInterval){
+    switch (m_cuttingPoints[IndexOfInterval].size()) {
+        case 0:
+            m_cuttingPoints[IndexOfInterval].push_back(NewCuttingPoint);
+            break;
+            
+        case 1:
+            if (m_cuttingPoints[IndexOfInterval][0] < NewCuttingPoint){
+                m_cuttingPoints[IndexOfInterval].push_back(NewCuttingPoint);
+            } else {
+                m_cuttingPoints[IndexOfInterval].insert(m_cuttingPoints[IndexOfInterval].begin(), NewCuttingPoint);
+            }
+            break;
+            
+        case 2:
+            if (NewCuttingPoint < m_cuttingPoints[IndexOfInterval][0]) {
+                m_cuttingPoints[IndexOfInterval][0] = NewCuttingPoint;
+            } else if (m_cuttingPoints[IndexOfInterval][1] < NewCuttingPoint){
+                m_cuttingPoints[IndexOfInterval][1] = NewCuttingPoint;
+            }
+    }
+}
+
+
+
+
+
+bool Foliation::ArcsAroundDivPoints::ContainsQ(const UnitIntervalPoint& c, int IndexOfInterval) const{
+    if (m_cuttingPoints[IndexOfInterval].size() == 2 && m_cuttingPoints[IndexOfInterval][0] < c && c < m_cuttingPoints[IndexOfInterval][1])
+    {
+        return false;
+    }
+    return true;
+}
+
+
+
+
+
+
+
+
+bool Foliation::ArcsAroundDivPoints::ContainsArcThroughADivPointQ(const UnitIntervalPoint& LeftEndPoint, int LeftIndexOfInterval,
+                                                                  const UnitIntervalPoint& RightEndPoint, int RightIndexOfInterval) const{
+    
+    if (LeftIndexOfInterval == RightIndexOfInterval) {
+        return false;
+    }
+    if (m_cuttingPoints[LeftIndexOfInterval].size() > 0 && LeftEndPoint < m_cuttingPoints[LeftIndexOfInterval].back()) {
+        return false;
+    }
+    if (m_cuttingPoints[RightIndexOfInterval].size() > 0 && m_cuttingPoints[RightIndexOfInterval].front() < RightEndPoint) {
+        return false;
+    }
+    int i;
+    for (i = LeftIndexOfInterval + 1; i != RightIndexOfInterval; i = (i + 1) % m_numDivPoints) {
+        if (m_cuttingPoints[i].empty()) {
+            break;
+        }
+    }
+    if (i != RightIndexOfInterval) {
+        return false;
+    }
+    return true;
+    
+}
+
+
+
+
+
+/**
+ * @details The intersection of the two Arcs corresponding to each division point is taken and that is assigned to the division point
+ *          it the intersection. The operation is well-defined, because although in general the intersection of two arcs on the circle
+ *          might not be a single arc, in our case it can't happen because of the properties the Arcs in an ArcAroundDivPoints object
+ *          have to satisfy.
+ *
+ *          The motivation for this operation is to take the union of two sets of cutting points. A set of cutting points determines
+ *          an ArcsAroundDivPoints, another set determines another one, and the union of the two sets determines exactly the
+ *          intersection of the two objects.
+ */
+Foliation::ArcsAroundDivPoints Foliation::Intersect(const ArcsAroundDivPoints& adp1, const ArcsAroundDivPoints& adp2)
+{    
+    ArcsAroundDivPoints adp = adp1;
+    for (int i = 0; i < adp1.m_numDivPoints; i++) {
+        if (adp1.m_cuttingPoints[i].empty()) {
+            adp.m_cuttingPoints[i] = adp2.m_cuttingPoints[i];
+        } else if (adp2.m_cuttingPoints[i].empty()){
+        } else {
+            adp.m_cuttingPoints[i].resize(2);
+            adp.m_cuttingPoints[i][0] = std::min(adp1.m_cuttingPoints[i].front(), adp2.m_cuttingPoints[i].front());
+            adp.m_cuttingPoints[i][1] = std::max(adp1.m_cuttingPoints[i].back(), adp2.m_cuttingPoints[i].back());
+        }
+    }
+    return adp;
+}
+
+
+
+
+
+
+/*
+ std::ostream& operator<<(std::ostream& Out, const ArcsAroundDivPoints& adp){
+ using namespace std;
+ 
+ Out << "Division points: ";
+ for (int i = 0; i < adp.m_DivPoints.size(); i++) {
+ Out << adp.m_DivPoints[i] << " ";
+ }
+ Out << endl << "Intervals: ";
+ for (int i = 0; i < adp.m_DivPoints.size(); i++) {
+ cout << endl;
+ cout << i << ": ";
+ if (adp.IsEmpty()) {
+ cout << "whole circle";
+ } else {
+ cout << adp.m_Arcs[i];
+ }
+ }
+ return Out;
+ }
+ */
+
+
+
+
+
+Foliation::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, int startingSingularity, bool isGoingUp) :
+    m_foliation(foliation),
+    m_startingSingularity(startingSingularity),
+    m_isGoingUp(isGoingUp),
+    m_depth(1),
+    m_intervalIntersectionCount(std::vector<int>(foliation.m_numIntervals, 0)),
+    m_arcsAroundDivPoints(foliation.m_numSeparatrices)
+{
+    if (isGoingUp) {
+        m_endpoint = UnitIntervalPoint( foliation.m_bottomRealDivPoints[foliation.m_pairOfTopDivPoints[startingSingularity]].getPosition(), 1);
+    } else
+        m_endpoint = UnitIntervalPoint( foliation.m_topRealDivPoints[startingSingularity].getPosition(), 1);
+    
+    m_smallContainingInterval = containingInterval(foliation.m_allRealDivPoints, m_endpoint);
+    std::cout << m_smallContainingInterval << " ";
+}
+
+
+
+
+
+
+
 //-----------//
 // Foliation //
 //-----------//
@@ -118,9 +274,9 @@ void InitArguments_Foliation::generateBottomConnectingPairs(const FoliationSpher
 
 Foliation::Foliation(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist) :
     InitArguments_Foliation(),
-    m_twistedIntervalExchange(lengths, permutation, twist),
-    m_numSeparatrices(2 * m_twistedIntervalExchange.sizeBeforeTwist())
+    m_twistedIntervalExchange(lengths, permutation, twist)
 {
+    Init();
 }
 
 Foliation::Foliation(const FoliationRP2& foliationRP2) :
@@ -130,19 +286,98 @@ Foliation::Foliation(const FoliationRP2& foliationRP2) :
 
 Foliation::Foliation(const FoliationSphere& foliationSphere) :
     InitArguments_Foliation(foliationSphere),
-    m_twistedIntervalExchange(arg_lengths, arg_permutation, arg_twist),
-    m_numSeparatrices(2 * m_twistedIntervalExchange.sizeBeforeTwist()){
+    m_twistedIntervalExchange(arg_lengths, arg_permutation, arg_twist)
+{
+    Init();
 }
 
 
 
 Foliation::Foliation(const TwistedIntervalExchangeMap& twistedintervalExchange) :
     InitArguments_Foliation(),
-    m_twistedIntervalExchange(twistedintervalExchange),
-    m_numSeparatrices(2 * m_twistedIntervalExchange.sizeBeforeTwist())
+    m_twistedIntervalExchange(twistedintervalExchange)
 {
+    Init();
 }
 
+
+
+void Foliation::Init(){
+    m_numIntervals = m_twistedIntervalExchange.sizeBeforeTwist();
+    m_numSeparatrices = 2 * m_numIntervals;
+    
+    struct DivPoint{
+        UnitIntervalPoint m_point;
+        bool m_isTopPoint;
+    };
+    
+    std::vector<DivPoint> divPoints;
+    divPoints.reserve(m_numSeparatrices);
+    
+    m_topRealDivPoints.reserve(m_numIntervals);
+    m_pairOfTopDivPoints.reserve(m_numIntervals);
+    for (int i = 0; i < m_numIntervals + 1; i++) {
+        if (i != m_twistedIntervalExchange.m_indexOfFakeDivPoint) {
+            m_topRealDivPoints.push_back(m_twistedIntervalExchange.m_intervalExchangeAfterTwist.divPoints()[i]);
+            m_pairOfTopDivPoints.push_back(m_twistedIntervalExchange.m_intervalExchangeAfterTwist.permutation()[i] - 1);
+
+            DivPoint divpoint;
+            divpoint.m_point = m_twistedIntervalExchange.m_intervalExchangeAfterTwist.divPoints()[i];
+            divpoint.m_isTopPoint = true;
+            divPoints.push_back(divpoint);
+        }
+    }
+    
+    m_bottomRealDivPoints.reserve(m_numIntervals);
+    auto temp = m_twistedIntervalExchange.m_intervalExchangeAfterTwist.divPointsAfterExchange();
+    for(auto it = temp.begin() + 1; it != temp.end(); it++)
+        m_bottomRealDivPoints.push_back(*it);
+    
+    
+    for (int i = 1; i < m_numIntervals + 1; i++) {
+        DivPoint divpoint;
+        divpoint.m_point = m_twistedIntervalExchange.m_intervalExchangeAfterTwist.divPointsAfterExchange()[i];
+        divpoint.m_isTopPoint = false;
+        divPoints.push_back(divpoint);
+    }
+    
+    std::inplace_merge(divPoints.begin(), divPoints.begin() + m_numIntervals, divPoints.end(), [] (const DivPoint& p1, const DivPoint& p2)
+                       {
+                           return p1.m_point < p2.m_point;
+                       } );
+    
+    m_allRealDivPoints.reserve(m_numSeparatrices);
+    m_isTopDivPoint.reserve(m_numSeparatrices);
+    for (auto p : divPoints) {
+        m_allRealDivPoints.push_back(p.m_point);
+        m_isTopDivPoint.push_back(p.m_isTopPoint);
+    }
+    
+    
+    for (auto it = m_allRealDivPoints.begin() + 1; it != m_allRealDivPoints.end(); it++) {
+        if (!(*(it - 1) < *it)) {
+            throw std::runtime_error("Foliation: The foliation has an immediate saddle connection");
+        }
+    }
+    std::cout << m_isTopDivPoint << std::endl;
+    std::cout << m_allRealDivPoints << std::endl;
+    std::cout << m_topRealDivPoints << std::endl;
+    std::cout << m_bottomRealDivPoints << std::endl;
+    std::cout << m_pairOfTopDivPoints << std::endl;
+
+    m_currentSepSegmentsUp.reserve(m_numIntervals);
+    m_currentSepSegmentsDown.reserve(m_numIntervals);
+    m_goodShiftedSeparatrixSegmentsUp.resize(m_numIntervals);
+    m_goodShiftedSeparatrixSegmentsDown.resize(m_numIntervals);
+    for (int i = 0; i < m_numIntervals; i++) {
+        m_currentSepSegmentsDown.emplace_back(*this, i, false);
+        m_currentSepSegmentsUp.emplace_back(*this, i, true);
+        m_goodShiftedSeparatrixSegmentsDown[i].push_back(m_currentSepSegmentsDown.back());
+        m_goodShiftedSeparatrixSegmentsUp[i].push_back(m_currentSepSegmentsUp.back());
+    }
+    
+    
+}
 
 
 
