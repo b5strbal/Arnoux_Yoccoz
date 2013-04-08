@@ -180,7 +180,8 @@ private:
     std::list<TransverseCurve> m_transverseCurves;
     
     
-    
+// MEMBER FUNCTIONS
+    void findNextSepSegment(std::vector<SeparatrixSegment>& currentSepSegments, int index);
     
     
     

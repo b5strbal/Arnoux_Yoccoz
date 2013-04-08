@@ -258,7 +258,6 @@ Foliation::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, int 
         m_endpoint = UnitIntervalPoint( foliation.m_topRealDivPoints[startingSingularity].getPosition(), 1);
     
     m_smallContainingInterval = containingInterval(foliation.m_allRealDivPoints, m_endpoint);
-    std::cout << m_smallContainingInterval << " ";
 }
 
 
@@ -381,6 +380,27 @@ void Foliation::Init(){
 
 
 
+
+void Foliation::findNextSepSegment(std::vector<SeparatrixSegment>& currentSepSegments, int index){
+    assert(currentSepSegments[index].m_smallContainingInterval != CONTAINING_INTERVAL_NOT_UNIQUE);
+    
+    currentSepSegments[index].m_intervalIntersectionCount[containingInterval(m_topRealDivPoints, currentSepSegments[index].m_endpoint)]++;
+    currentSepSegments[index].m_arcsAroundDivPoints.InsertPoint(currentSepSegments[index].m_endpoint, currentSepSegments[index].m_smallContainingInterval);
+    currentSepSegments[index].m_depth++;
+    currentSepSegments[index].m_endpoint = currentSepSegments[index].m_isGoingUp ? m_twistedIntervalExchange.applyTo(currentSepSegments[index].m_endpoint) : m_twistedIntervalExchange.applyInverseTo(currentSepSegments[index].m_endpoint);
+    currentSepSegments[index].m_smallContainingInterval = containingInterval(m_allRealDivPoints, currentSepSegments[index].m_endpoint);
+}
+
+
+
+
+
+
+
+
+
+
+
 Foliation Foliation::rotateBy(int rotationAmount) const{
     return Foliation(m_twistedIntervalExchange.rotateBy(rotationAmount));
 }
@@ -394,6 +414,9 @@ Foliation Foliation::reflect() const{
 Foliation Foliation::flipOver() const{
     return Foliation(m_twistedIntervalExchange.invert().reflect());
 }
+
+
+
 
 
 

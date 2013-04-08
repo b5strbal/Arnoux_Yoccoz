@@ -85,6 +85,8 @@ class IntervalExchangeMap : public IntervalExchangeBase{
 public:
     IntervalExchangeMap(const std::vector<floating_point_type>& lengths, const Permutation& permutation);
 
+    // Notice: even from a generalized UnitIntervalPoint, applyTo and applyInverseTo create a non-generalized UnitIntervalPoint!
+    // So the shift is lost. In general, this is what we want.
     UnitIntervalPoint applyTo(const UnitIntervalPoint& point) const;
     UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& point) const;
     const std::vector<floating_point_type>& translations() const { return m_translations; }
