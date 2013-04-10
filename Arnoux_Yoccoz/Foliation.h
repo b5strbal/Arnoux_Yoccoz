@@ -204,7 +204,6 @@ private:
     std::vector<UnitIntervalPoint> m_bottomRealDivPoints;
     std::vector<int> m_pairOfTopDivPoints;
     
-    std::array<std::vector<SeparatrixSegment>, 2> m_currentSepSegments;
     std::array<std::vector<std::vector<SeparatrixSegment>>, 2> m_goodShiftedSeparatrixSegments;
 
     std::set<TransverseCurve> m_transverseCurves;
@@ -214,6 +213,7 @@ private:
     void findNextSepSegment(Direction direction, int index);
     const SeparatrixSegment& getFirstIntersection(Direction direction, int index, const DisjointIntervals& intervals);
     void checkPointsAreNotTooClose(const std::vector<UnitIntervalPoint>& points);
+    bool reachedSaddleConnection(Direction direction, int index) const; 
     
 public:
     Foliation(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
