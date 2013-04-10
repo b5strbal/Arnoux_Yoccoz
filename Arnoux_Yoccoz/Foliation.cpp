@@ -159,7 +159,8 @@ bool Foliation::ArcsAroundDivPoints::ContainsQ(const UnitIntervalPoint& c, int I
 
 
 bool Foliation::ArcsAroundDivPoints::ContainsArcThroughADivPointQ(const UnitIntervalPoint& LeftEndPoint, int LeftIndexOfInterval,
-                                                                  const UnitIntervalPoint& RightEndPoint, int RightIndexOfInterval) const{
+                                                                  const UnitIntervalPoint& RightEndPoint, int RightIndexOfInterval,
+                                                                  bool throughTopDivPointQ) const{
     
     if (LeftIndexOfInterval == RightIndexOfInterval) {
         return false;
@@ -171,16 +172,19 @@ bool Foliation::ArcsAroundDivPoints::ContainsArcThroughADivPointQ(const UnitInte
         return false;
     }
     int i;
-    for (i = LeftIndexOfInterval + 1; i != RightIndexOfInterval; i = (i + 1) % m_numDivPoints) {
-        if (m_cuttingPoints[i].empty()) {
+    bool foundGoodDivPoint = false;
+    for (i = LeftIndexOfInterval + 1; i != RightIndexOfInterval; i = (i + 1) % m_foliation.m_numSeparatrices) {
+        if ((throughTopDivPointQ && m_foliation.m_isTopDivPoint[i]) || (!throughTopDivPointQ && !m_foliation.m_isTopDivPoint[i])) {
+            foundGoodDivPoint = true;
+        }
+        if (!m_cuttingPoints[i].empty()) {
             break;
         }
     }
-    if (i != RightIndexOfInterval) {
+    if (i != RightIndexOfInterval || !foundGoodDivPoint) {
         return false;
     }
     return true;
-    
 }
 
 
@@ -197,17 +201,22 @@ bool Foliation::ArcsAroundDivPoints::ContainsArcThroughADivPointQ(const UnitInte
  *          an ArcsAroundDivPoints, another set determines another one, and the union of the two sets determines exactly the
  *          intersection of the two objects.
  */
-Foliation::ArcsAroundDivPoints Foliation::Intersect(const ArcsAroundDivPoints& adp1, const ArcsAroundDivPoints& adp2)
-{    
-    ArcsAroundDivPoints adp = adp1;
-    for (int i = 0; i < adp1.m_numDivPoints; i++) {
-        if (adp1.m_cuttingPoints[i].empty()) {
-            adp.m_cuttingPoints[i] = adp2.m_cuttingPoints[i];
-        } else if (adp2.m_cuttingPoints[i].empty()){
-        } else {
-            adp.m_cuttingPoints[i].resize(2);
-            adp.m_cuttingPoints[i][0] = std::min(adp1.m_cuttingPoints[i].front(), adp2.m_cuttingPoints[i].front());
-            adp.m_cuttingPoints[i][1] = std::max(adp1.m_cuttingPoints[i].back(), adp2.m_cuttingPoints[i].back());
+Foliation::ArcsAroundDivPoints Foliation::intersect(const std::vector<const ArcsAroundDivPoints*>& adpVector) const
+{
+    assert(adpVector.size() >= 2);
+    ArcsAroundDivPoints adp = *adpVector[0];
+    for (int i = 0; i < m_numSeparatrices; i++) {
+        for (auto it = adpVector.begin() + 1; it != adpVector.end(); it++) {
+            if (adp.m_cuttingPoints[i].empty()) {
+                adp.m_cuttingPoints[i] = (*it)->m_cuttingPoints[i];
+            } else if ((*it)->m_cuttingPoints[i].empty()){
+            } else {
+                if (adp.m_cuttingPoints[i].size() == 1) {
+                    adp.m_cuttingPoints[i].push_back(adp.m_cuttingPoints[i].front());
+                }
+                adp.m_cuttingPoints[i][0] = std::min(adp.m_cuttingPoints[i].front(), (*it)->m_cuttingPoints[i].front());
+                adp.m_cuttingPoints[i][1] = std::max(adp.m_cuttingPoints[i].back(), (*it)->m_cuttingPoints[i].back());
+            }
         }
     }
     return adp;
@@ -244,15 +253,15 @@ Foliation::ArcsAroundDivPoints Foliation::Intersect(const ArcsAroundDivPoints& a
 
 
 
-Foliation::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, int startingSingularity, bool isGoingUp) :
+Foliation::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, int startingSingularity, Direction direction) :
     m_foliation(foliation),
     m_startingSingularity(startingSingularity),
-    m_isGoingUp(isGoingUp),
+    m_direction(direction),
     m_depth(1),
     m_intervalIntersectionCount(std::vector<int>(foliation.m_numIntervals, 0)),
-    m_arcsAroundDivPoints(foliation.m_numSeparatrices)
+    m_arcsAroundDivPoints(foliation)
 {
-    if (isGoingUp) {
+    if (direction == UPWARDS) {
         m_endpoint = UnitIntervalPoint( foliation.m_bottomRealDivPoints[foliation.m_pairOfTopDivPoints[startingSingularity]].getPosition(), 1);
     } else
         m_endpoint = UnitIntervalPoint( foliation.m_topRealDivPoints[startingSingularity].getPosition(), 1);
@@ -261,7 +270,68 @@ Foliation::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, int 
 }
 
 
+//----------------------------//
+// Foliation::TransverseCurve //
+//----------------------------//
 
+
+
+Foliation::TransverseCurve::TransverseCurve(const Foliation& foliation, const std::vector<SeparatrixSegment>& segments, bool wrapsAroundZero) :
+    m_foliation(foliation)
+{
+    assert(segments.size() % 2 == 0);
+    assert(segments.size() >= 2);
+    std::vector<short> singularities(foliation.m_numIntervals, 0);
+    for (int i = 0; i < segments.size()/2; i++){
+        assert(segments[2 * i].m_startingSingularity == segments[2 * i + 1].m_startingSingularity);
+        assert(singularities[segments[2 * i].m_startingSingularity] == 0);
+        singularities[segments[2 * i].m_startingSingularity] = 1;
+        assert(segments[2 * i].m_direction != segments[2 * i + 1].m_direction);
+    }
+    
+    std::vector<std::pair<UnitIntervalPoint, int>> endpointsAndIndices;
+    endpointsAndIndices.reserve(segments.size());
+    for (int i = 0; i < segments.size(); i++){
+        endpointsAndIndices.push_back(std::make_pair(segments[i].m_endpoint, i));
+    }
+    std::sort(endpointsAndIndices.begin(), endpointsAndIndices.end());
+    for (auto it = endpointsAndIndices.begin() + 1; it != endpointsAndIndices.end(); it++) {
+        if (!((it - 1)->first < it->first)) {
+            throw std::runtime_error("Some points are so close that we can't distinguish them.");
+        }
+    }
+    
+    std::vector<const ArcsAroundDivPoints*> adpVector;
+    adpVector.reserve(segments.size());
+    for (auto &ps : segments)
+        adpVector.push_back(&ps.m_arcsAroundDivPoints);
+    ArcsAroundDivPoints adpIntersection = m_foliation.intersect(adpVector);
+    
+    int startindex = wrapsAroundZero ? 1 : 0;
+    for (int i = startindex; i != startindex; i = (i + 2) % segments.size()) {
+        bool throughTopDivPoint = segments[endpointsAndIndices[i].second].m_direction == DOWNWARDS &&
+                                    segments[endpointsAndIndices[i + 1].second].m_direction == DOWNWARDS ? true : false;
+            
+    
+        if (!adpIntersection.ContainsArcThroughADivPointQ(endpointsAndIndices[i].first,
+                                                         segments[endpointsAndIndices[i].second].m_smallContainingInterval,
+                                                         endpointsAndIndices[i + 1].first,
+                                                         segments[endpointsAndIndices[i + 1].second].m_smallContainingInterval,
+                                                         throughTopDivPoint))
+        {
+            throw std::runtime_error("No transverse curve can be constructed from the given separatrix segments.");
+        }
+    }
+
+    std::vector<UnitIntervalPoint> endpoints;
+    endpoints.reserve(endpointsAndIndices.size());
+    for (auto& x : endpointsAndIndices) {
+        endpoints.push_back(x.first);
+    }
+    
+    m_disjointIntervals = DisjointIntervals(endpoints, wrapsAroundZero);
+    m_separatrixSegments = segments; // We will probably have to find a more cleverly sorted way of storing the segments later.
+}
 
 
 
@@ -352,27 +422,25 @@ void Foliation::Init(){
         m_isTopDivPoint.push_back(p.m_isTopPoint);
     }
     
-    
-    for (auto it = m_allRealDivPoints.begin() + 1; it != m_allRealDivPoints.end(); it++) {
-        if (!(*(it - 1) < *it)) {
-            throw std::runtime_error("Foliation: The foliation has an immediate saddle connection");
-        }
-    }
+///////////
+    checkPointsAreNotTooClose(m_allRealDivPoints);
+  /*
     std::cout << m_isTopDivPoint << std::endl;
     std::cout << m_allRealDivPoints << std::endl;
     std::cout << m_topRealDivPoints << std::endl;
     std::cout << m_bottomRealDivPoints << std::endl;
     std::cout << m_pairOfTopDivPoints << std::endl;
-
-    m_currentSepSegmentsUp.reserve(m_numIntervals);
-    m_currentSepSegmentsDown.reserve(m_numIntervals);
-    m_goodShiftedSeparatrixSegmentsUp.resize(m_numIntervals);
-    m_goodShiftedSeparatrixSegmentsDown.resize(m_numIntervals);
+*/
+    
+    m_currentSepSegments[UPWARDS].reserve(m_numIntervals);
+    m_currentSepSegments[DOWNWARDS].reserve(m_numIntervals);
+    m_goodShiftedSeparatrixSegments[UPWARDS].reserve(m_numIntervals);
+    m_goodShiftedSeparatrixSegments[DOWNWARDS].reserve(m_numIntervals);
     for (int i = 0; i < m_numIntervals; i++) {
-        m_currentSepSegmentsDown.emplace_back(*this, i, false);
-        m_currentSepSegmentsUp.emplace_back(*this, i, true);
-        m_goodShiftedSeparatrixSegmentsDown[i].push_back(m_currentSepSegmentsDown.back());
-        m_goodShiftedSeparatrixSegmentsUp[i].push_back(m_currentSepSegmentsUp.back());
+        m_currentSepSegments[DOWNWARDS].emplace_back(*this, i, DOWNWARDS);
+        m_currentSepSegments[UPWARDS].emplace_back(*this, i, UPWARDS);
+        m_goodShiftedSeparatrixSegments[DOWNWARDS][i].push_back(m_currentSepSegments[DOWNWARDS].back());
+        m_goodShiftedSeparatrixSegments[UPWARDS][i].push_back(m_currentSepSegments[UPWARDS].back());
     }
     
     
@@ -381,17 +449,72 @@ void Foliation::Init(){
 
 
 
-void Foliation::findNextSepSegment(std::vector<SeparatrixSegment>& currentSepSegments, int index){
-    assert(currentSepSegments[index].m_smallContainingInterval != CONTAINING_INTERVAL_NOT_UNIQUE);
+void Foliation::findNextSepSegment(Direction direction, int index){
+    assert(m_currentSepSegments[direction][index].m_smallContainingInterval != CONTAINING_INTERVAL_NOT_UNIQUE);
     
-    currentSepSegments[index].m_intervalIntersectionCount[containingInterval(m_topRealDivPoints, currentSepSegments[index].m_endpoint)]++;
-    currentSepSegments[index].m_arcsAroundDivPoints.InsertPoint(currentSepSegments[index].m_endpoint, currentSepSegments[index].m_smallContainingInterval);
-    currentSepSegments[index].m_depth++;
-    currentSepSegments[index].m_endpoint = currentSepSegments[index].m_isGoingUp ? m_twistedIntervalExchange.applyTo(currentSepSegments[index].m_endpoint) : m_twistedIntervalExchange.applyInverseTo(currentSepSegments[index].m_endpoint);
-    currentSepSegments[index].m_smallContainingInterval = containingInterval(m_allRealDivPoints, currentSepSegments[index].m_endpoint);
+    SeparatrixSegment& segment = m_currentSepSegments[direction][index];
+    segment.m_intervalIntersectionCount[containingInterval(m_topRealDivPoints, segment.m_endpoint)]++;
+    segment.m_arcsAroundDivPoints.InsertPoint(segment.m_endpoint, segment.m_smallContainingInterval);
+    segment.m_depth++;
+    segment.m_endpoint = segment.m_direction == UPWARDS ? m_twistedIntervalExchange.applyTo(segment.m_endpoint) : m_twistedIntervalExchange.applyInverseTo(segment.m_endpoint);
+    segment.m_smallContainingInterval = containingInterval(m_allRealDivPoints, segment.m_endpoint);
+    
+    if (segment.m_smallContainingInterval != CONTAINING_INTERVAL_NOT_UNIQUE &&
+        segment.m_arcsAroundDivPoints.ContainsQ(segment.m_endpoint, segment.m_smallContainingInterval)) {
+        std::vector<SeparatrixSegment>& goodSegments = m_goodShiftedSeparatrixSegments[direction][index];
+        goodSegments.push_back(segment);
+    //    std::cout << currentSepSegments[index].m_depth << " ";
+    }
 }
 
 
+
+
+void Foliation::generateSepSegments(int depth){
+    for (Direction direction = Direction::UPWARDS; direction <= Direction::DOWNWARDS; direction++) {
+        for (int index = 0; index < m_numIntervals; index++) {
+            while (m_currentSepSegments[direction][index].m_smallContainingInterval != CONTAINING_INTERVAL_NOT_UNIQUE &&
+                   m_currentSepSegments[direction][index].m_depth < depth) {
+                findNextSepSegment(direction, index);
+            }
+    //        std::cout << std::endl << std::endl;
+        }
+    }
+}
+
+
+
+
+// For arbitrary intervals this function finds the first good separatrix segment that intersects the intervals.
+// However, in the appliations, we use a special collection of intervals, in which case the first intersection is always a good one.
+const Foliation::SeparatrixSegment& Foliation::getFirstIntersection(Direction direction,
+                                                                    int index,
+                                                                    const DisjointIntervals& intervals)
+{
+    for (auto &segment : m_goodShiftedSeparatrixSegments[direction][index]) {
+        if (intervals.containsQ(segment.m_endpoint)) { // we are gonna have to catch an error here
+            return segment;
+        }
+    }
+    while (!intervals.containsQ(m_goodShiftedSeparatrixSegments[direction][index].back().m_endpoint)) {
+        if (m_goodShiftedSeparatrixSegments[direction][index].back().m_smallContainingInterval == CONTAINING_INTERVAL_NOT_UNIQUE) {
+            throw std::runtime_error("getFirstIntersection: First intersection cannot be found, because we found a saddle connection.");
+        }
+        findNextSepSegment(direction, index);
+    }
+    return m_goodShiftedSeparatrixSegments[direction][index].back();
+}
+
+
+
+
+void Foliation::checkPointsAreNotTooClose(const std::vector<UnitIntervalPoint>& points){
+    for (auto it = points.begin() + 1; it != points.end(); it++) {
+        if (!(*(it - 1) < *it)) {
+            throw std::runtime_error("Some points are so close that we can't distinguish them.");
+        }
+    }
+}
 
 
 
@@ -461,6 +584,12 @@ Foliation arnouxYoccozFoliation(int genus){
 FoliationFromRP2::FoliationFromRP2(const FoliationRP2& foliationRP2):
     Foliation(foliationRP2)
 {
+}
+
+
+void FoliationFromRP2::generateLiftsOfGoodTransverseCurves(int depth) const{
+
+
 }
 
 

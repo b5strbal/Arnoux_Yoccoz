@@ -23,24 +23,22 @@ using namespace std;
 
 int main (int argc, const char * argv[])
 {
-    /*
+    Foliation f = arnouxYoccozFoliation(3);
+
     clock_t t1, t2;
     t1 = clock();
     
-    SquareMatrix<int> matrix(200);
-    for (int i = 0; i < 20; i++) {
-        matrix * matrix;
-    }
+    f.generateSepSegments(10000);
+
     
     t2 = clock();
     float seconds = ((float)t2 - (float)t1)/CLOCKS_PER_SEC;
-    cout << seconds;*/
+    cout << seconds;
     
 
-    cout << arnouxYoccozRP2() << endl << endl;
-    cout << FoliationSphere (arnouxYoccozRP2()) << endl << endl;
-    cout << Foliation( arnouxYoccozRP2() ).rotateBy(1) << endl;
-    cout << arnouxYoccozFoliation(3);
+  //  cout << arnouxYoccozRP2() << endl << endl;
+  //  cout << FoliationSphere (arnouxYoccozRP2()) << endl << endl;
+  //  cout << Foliation( arnouxYoccozRP2() ).rotateBy(1) << endl;
     
     /*
     try {

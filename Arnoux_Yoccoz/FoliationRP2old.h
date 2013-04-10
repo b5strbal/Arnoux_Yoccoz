@@ -115,8 +115,8 @@ struct ExceptionNoObjectFound {};
 
 class FoliationRP2 : public FoliationDisk {
 public:
-	FoliationRP2(const WeighedTree& wt);
-    FoliationRP2(const std::vector<floating_point_type>& Lengths, const std::vector<int>& Pair);
+/* DONE */	FoliationRP2(const WeighedTree& wt);
+/* DONE */    FoliationRP2(const std::vector<floating_point_type>& Lengths, const std::vector<int>& Pair);
     void PrintGoodShiftedSeparatrixSegmentsVerbose(int Depth);
     void PrintGoodShiftedSeparatrixSegmentsConcise(int Depth);
     void PrintGoodCurves(int Depth);
@@ -129,7 +129,7 @@ private:
 // SeparatrixSegment //
 //-------------------//
     
-    struct SeparatrixSegment{        
+/* DONE */    struct SeparatrixSegment{
         int m_Separatrix;       // which separatrix the segment belongs to
         int m_Depth;            // the depth of the segment
         CirclePoint m_Endpoint;

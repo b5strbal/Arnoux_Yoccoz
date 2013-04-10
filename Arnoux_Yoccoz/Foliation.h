@@ -12,7 +12,7 @@
 #include <iostream>
 #include <vector>
 #include <array>
-#include <list>
+#include <set>
 #include "UnitIntervalPoint.h"
 #include "IntervalExchangeMap.h"
 #include "PerronFrobenius.h"
@@ -52,10 +52,54 @@ class InitArguments_Foliation{
 
 class Foliation : private InitArguments_Foliation{
 private:
+    typedef std::pair<UnitIntervalPoint, UnitIntervalPoint> interval_t;
+    enum Direction{
+        UPWARDS = 0,
+        DOWNWARDS = 1
+    };
+
+    
+    struct DisjointIntervals;
     class ArcsAroundDivPoints;
     struct SeparatrixSegment;
-    struct TransverseCurve;
+    class TransverseCurve;
     
+    
+    
+    class DisjointIntervals{
+    public:
+        DisjointIntervals() {};
+        DisjointIntervals(const std::vector<UnitIntervalPoint>& points, bool wrapsAroundZero) :
+            m_points(points),
+            m_wrapsAroundZero(wrapsAroundZero)
+        {
+            assert(points.size() % 2 == 0);
+            std::sort(m_points.begin(), m_points.end());
+        }
+        const std::vector<UnitIntervalPoint>& point() const { return m_points; }
+        bool wrapsAroundZero() const { return m_wrapsAroundZero; }
+        bool containsQ(const UnitIntervalPoint& point) const {
+            int containingIntervalIndex = containingInterval(m_points, point);
+            if (containingIntervalIndex == CONTAINING_INTERVAL_NOT_UNIQUE) {
+                throw std::runtime_error("DisjointIntervals::containsQ : Containing interval is not unique.");
+            }
+            if ((containingIntervalIndex % 2 == 0 && !m_wrapsAroundZero) || (containingIntervalIndex % 2 == 1 && m_wrapsAroundZero)) {
+                return true;
+            }
+            return false;
+        }
+        floating_point_type totalLength() const {
+            floating_point_type sum = 0;
+            for (int i = 0; i < m_points.size(); i += 2) {
+                sum += distanceBetween(m_points[i], m_points[i + 1]);
+            }
+            return m_wrapsAroundZero ? 1 - sum : sum;
+        }
+        
+    private:
+        std::vector<UnitIntervalPoint> m_points;
+        bool m_wrapsAroundZero;
+    };
     
     
     /**
@@ -98,9 +142,9 @@ private:
          * @param ShiftedDivPoints     The division points have to be regular (not generalized) UnitIntervalPoints.
          *                      Also, there has to be at least one division point.
          */
-        ArcsAroundDivPoints(int numDivPoints) :
-            m_cuttingPoints(numDivPoints, std::vector<UnitIntervalPoint>(0)),
-            m_numDivPoints(numDivPoints)
+        ArcsAroundDivPoints(const Foliation& foliation) :
+            m_cuttingPoints(foliation.m_numSeparatrices, std::vector<UnitIntervalPoint>(0)),
+            m_foliation(foliation)
         {
         }
         
@@ -124,7 +168,8 @@ private:
          *          member Arc.
          */
         bool ContainsArcThroughADivPointQ(const UnitIntervalPoint& LeftEndPoint, int LeftIndexOfInterval,
-                                          const UnitIntervalPoint& RightEndPoint, int RightIndexOfInterval) const;
+                                          const UnitIntervalPoint& RightEndPoint, int RightIndexOfInterval,
+                                          bool throughTopDivPointQ) const;
         
         /**
          * @brief   Prints out the division points and all the Arcs.
@@ -136,8 +181,8 @@ private:
          * @brief   
          */
         
-        int m_numDivPoints;
         std::vector<std::vector<UnitIntervalPoint>> m_cuttingPoints;
+        const Foliation& m_foliation;
     };
 
     
@@ -150,15 +195,22 @@ private:
         int m_smallContainingInterval;
         ArcsAroundDivPoints m_arcsAroundDivPoints;
         std::vector<int> m_intervalIntersectionCount;
-        bool m_isGoingUp;
+        Direction m_direction;
         
-        SeparatrixSegment(const Foliation& foliation, int startingSingularity, bool IsGoingUp);
+        SeparatrixSegment(const Foliation& foliation, int startingSingularity, Direction direction);
     };
     
     
-    struct TransverseCurve{
-        int a;
-    // change it!
+    class TransverseCurve{
+    public:
+        TransverseCurve(const Foliation& foliation, const std::vector<SeparatrixSegment>& separatrixSegments, bool wrapsAroundZero);
+        floating_point_type length() const { return m_disjointIntervals.totalLength(); }
+        
+    private:
+        std::vector<SeparatrixSegment> m_separatrixSegments;
+        DisjointIntervals m_disjointIntervals;
+        const Foliation& m_foliation;
+        
     };
     
     
@@ -173,18 +225,16 @@ private:
     std::vector<UnitIntervalPoint> m_bottomRealDivPoints;
     std::vector<int> m_pairOfTopDivPoints;
     
-    std::vector<SeparatrixSegment> m_currentSepSegmentsUp;
-    std::vector<SeparatrixSegment> m_currentSepSegmentsDown;
-    std::vector<std::list<SeparatrixSegment>> m_goodShiftedSeparatrixSegmentsUp;
-    std::vector<std::list<SeparatrixSegment>> m_goodShiftedSeparatrixSegmentsDown;
-    std::list<TransverseCurve> m_transverseCurves;
+    std::array<std::vector<SeparatrixSegment>, 2> m_currentSepSegments;
+    std::array<std::vector<std::vector<SeparatrixSegment>>, 2> m_goodShiftedSeparatrixSegments;
+
+    std::set<TransverseCurve> m_transverseCurves;
     
     
 // MEMBER FUNCTIONS
-    void findNextSepSegment(std::vector<SeparatrixSegment>& currentSepSegments, int index);
-    
-    
-    
+    void findNextSepSegment(Direction direction, int index);
+    const SeparatrixSegment& getFirstIntersection(Direction direction, int index, const DisjointIntervals& intervals);
+    void checkPointsAreNotTooClose(const std::vector<UnitIntervalPoint>& points);
     
 public:
     Foliation(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
@@ -194,6 +244,8 @@ public:
     Foliation reflect() const;
     Foliation flipOver() const;
     
+    void generateSepSegments(int depth);
+
     friend std::ostream& operator<<(std::ostream& Out, Foliation f);
     
 private:
@@ -203,9 +255,9 @@ private:
     
     
     /**
-     * @brief   Takes the intersection of two ArcsAroundDivPoints objects.
+     * @brief   Takes the intersection of ArcsAroundDivPoints objects.
      */
-    ArcsAroundDivPoints Intersect(const ArcsAroundDivPoints& adp1, const ArcsAroundDivPoints& adp2);
+    ArcsAroundDivPoints intersect(const std::vector<const ArcsAroundDivPoints*>& apdVector) const;
     
     
     
@@ -230,6 +282,8 @@ class FoliationFromRP2 : public Foliation
 {
 public:
     FoliationFromRP2(const FoliationRP2& foliationRP2);
+    
+    void generateLiftsOfGoodTransverseCurves(int depth) const;
 };
 
 

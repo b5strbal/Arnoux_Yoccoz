@@ -22,7 +22,7 @@
 /**************************************************************************************************************/
 
 
-FoliationRP2::SeparatrixSegment::SeparatrixSegment(const std::vector<CirclePoint>& DivPoints) :
+/* DONE */ FoliationRP2::SeparatrixSegment::SeparatrixSegment(const std::vector<CirclePoint>& DivPoints) :
     m_IntervalIntersectionCount(DivPoints.size(), 0),
     m_Depth(1),
     m_ArcsAroundDivPoints(DivPoints),
@@ -36,7 +36,7 @@ FoliationRP2::SeparatrixSegment::SeparatrixSegment(const std::vector<CirclePoint
 
 
 
-LeftOrRight FoliationRP2::SeparatrixSegment::BeginShiftWhenEndpointShiftedTo(LeftOrRight Side) const{
+/* DONE */ LeftOrRight FoliationRP2::SeparatrixSegment::BeginShiftWhenEndpointShiftedTo(LeftOrRight Side) const{
     return (!ReversesOrientationQ() && Side == RIGHT) || (ReversesOrientationQ() && Side == LEFT) ? RIGHT : LEFT;
 }
 
@@ -44,7 +44,7 @@ LeftOrRight FoliationRP2::SeparatrixSegment::BeginShiftWhenEndpointShiftedTo(Lef
 
 
 
-void FoliationRP2::ShiftToSide(SeparatrixSegment& s, LeftOrRight Side){
+/* DONE */ void FoliationRP2::ShiftToSide(SeparatrixSegment& s, LeftOrRight Side){
     assert(s.m_Side == CENTER);
     assert(Side != CENTER);
     
@@ -107,7 +107,7 @@ std::ostream& operator<<(std::ostream& Out, const FoliationRP2::SeparatrixSegmen
 
 
 
-void FoliationRP2::AddToGoodSegmentsIfGood(const SeparatrixSegment& s){
+/* DONE */ void FoliationRP2::AddToGoodSegmentsIfGood(const SeparatrixSegment& s){
     if (s.m_ArcsAroundDivPoints.ContainsQ(s.m_Endpoint)){
         for (LeftOrRight Side = LEFT; Side < 2; Side++) {
             m_GoodShiftedSeparatrixSegments[s.m_Separatrix][Side].push_back(s);
@@ -124,7 +124,7 @@ void FoliationRP2::AddToGoodSegmentsIfGood(const SeparatrixSegment& s){
 
 
 
-void FoliationRP2::Lengthen(int SeparatrixIndex){
+/* DONE */ void FoliationRP2::Lengthen(int SeparatrixIndex){
     SeparatrixSegment& s = m_CurrentSepSegments[SeparatrixIndex];
     assert(!m_FoundSaddleConnectionQ[SeparatrixIndex]);
     if (s.m_Depth > 1) {
@@ -153,7 +153,7 @@ void FoliationRP2::Lengthen(int SeparatrixIndex){
 
 
 
-FoliationRP2::SeparatrixSegment& FoliationRP2::GetGoodSeparatrixSegment(int SeparatrixIndex, int Depth, LeftOrRight Side){
+/* NO NEED */ FoliationRP2::SeparatrixSegment& FoliationRP2::GetGoodSeparatrixSegment(int SeparatrixIndex, int Depth, LeftOrRight Side){
     if (m_CurrentSepSegments[SeparatrixIndex].m_Depth >= Depth) {
         for (std::list<SeparatrixSegment>::iterator it = m_GoodShiftedSeparatrixSegments[SeparatrixIndex][Side].begin();
              it != m_GoodShiftedSeparatrixSegments[SeparatrixIndex][Side].end(); it++) {
@@ -175,7 +175,7 @@ FoliationRP2::SeparatrixSegment& FoliationRP2::GetGoodSeparatrixSegment(int Sepa
 
 
 
-FoliationRP2::SeparatrixSegment& FoliationRP2::GetGoodSeparatrixSegment(SeparatrixSegment& s, LeftOrRight EndpointShiftedTo){
+/* NO NEED */ FoliationRP2::SeparatrixSegment& FoliationRP2::GetGoodSeparatrixSegment(SeparatrixSegment& s, LeftOrRight EndpointShiftedTo){
     if (s.EndpointShiftWhenBeginShiftedTo(s.m_Side) == EndpointShiftedTo) {
         return s;
     }
@@ -188,7 +188,7 @@ FoliationRP2::SeparatrixSegment& FoliationRP2::GetGoodSeparatrixSegment(Separatr
 
 
 
-FoliationRP2::SeparatrixSegment& FoliationRP2::GetFirstIntersection(int SeparatrixIndex, const Arc& arc, const LeftOrRight ReturnSide){
+/* DONE */ FoliationRP2::SeparatrixSegment& FoliationRP2::GetFirstIntersection(int SeparatrixIndex, const Arc& arc, const LeftOrRight ReturnSide){
     for(std::list<SeparatrixSegment>::iterator it = m_GoodShiftedSeparatrixSegments[SeparatrixIndex][ReturnSide].begin();
         it != m_GoodShiftedSeparatrixSegments[SeparatrixIndex][ReturnSide].end(); it++){
         if (arc.ContainsQ(it->m_Endpoint.ShiftTo(CENTER))) {
@@ -287,7 +287,7 @@ void FoliationRP2::BigTransitionMatrix::Reflect(){
 
 
 
-FoliationRP2::GoodOneSidedCurve::GoodOneSidedCurve(const SeparatrixSegment& SegmentShiftedToLeft,
+/* DONE */ FoliationRP2::GoodOneSidedCurve::GoodOneSidedCurve(const SeparatrixSegment& SegmentShiftedToLeft,
                                                    const SeparatrixSegment& SegmentShiftedToRight, const Arc& ConnectingArc) :
     m_SegmentShiftedToLeft(SegmentShiftedToLeft),
     m_SegmentShiftedToRight(SegmentShiftedToRight),
@@ -467,7 +467,7 @@ void FoliationRP2::FindNewPseudoAnosovs(const GoodOneSidedCurve& GoodCurve){
 
 
 
-Arc FoliationRP2::GetClosingArcIfGoodOneSidedCurve(const SeparatrixSegment& Segment1, const SeparatrixSegment& Segment2){
+/* DONE */ Arc FoliationRP2::GetClosingArcIfGoodOneSidedCurve(const SeparatrixSegment& Segment1, const SeparatrixSegment& Segment2){
     ArcsAroundDivPoints Intersection = Intersect(Segment1.m_ArcsAroundDivPoints, Segment2.m_ArcsAroundDivPoints);
     
     Arc Arc1(Segment1.m_Endpoint, Segment2.m_Endpoint);
@@ -488,7 +488,7 @@ Arc FoliationRP2::GetClosingArcIfGoodOneSidedCurve(const SeparatrixSegment& Segm
 
 
 
-bool FoliationRP2::AreDepthsGoodForOneSidedCurve(int Depth1, int Depth2){
+/* NO NEED */ bool FoliationRP2::AreDepthsGoodForOneSidedCurve(int Depth1, int Depth2){
     if (Depth1 % 2 == 1 && abs(Depth1 - Depth2) % 4 == 2) {
         return true;
     }
@@ -629,7 +629,7 @@ AlmostPFMatrix FoliationRP2::GetSmallMatrix(const TransitionData& td){
 
 
 
-FoliationRP2::FoliationRP2(const WeighedTree& wt) :
+/* DONE */FoliationRP2::FoliationRP2(const WeighedTree& wt) :
     FoliationDisk(wt)
 {
     Init();
@@ -638,7 +638,7 @@ FoliationRP2::FoliationRP2(const WeighedTree& wt) :
 
 
 
-FoliationRP2::FoliationRP2(const std::vector<floating_point_type>& Lengths, const std::vector<int>& Pair) :
+/* DONE */FoliationRP2::FoliationRP2(const std::vector<floating_point_type>& Lengths, const std::vector<int>& Pair) :
     FoliationDisk(Lengths, Pair)
 {
     Init();
@@ -650,7 +650,7 @@ FoliationRP2::FoliationRP2(const std::vector<floating_point_type>& Lengths, cons
 
 
 
-void FoliationRP2::Init(){
+/* DONE */ void FoliationRP2::Init(){
     m_GoodShiftedSeparatrixSegments.resize(m_NumSeparatrices);
     m_FoundSaddleConnectionQ.resize(m_NumSeparatrices, 0);
     m_CurrentSepSegments.resize(m_NumSeparatrices, m_DivPoints);
@@ -731,7 +731,7 @@ void FoliationRP2::PrintGoodCurves(int Depth){
 
 
 
-void FoliationRP2::GenerateGoodShiftedSeparatrixSegments(int Depth){
+/* DONE */ void FoliationRP2::GenerateGoodShiftedSeparatrixSegments(int Depth){
     for (int SeparatrixIndex = 0; SeparatrixIndex < m_NumSeparatrices; SeparatrixIndex++) {
         while (!m_FoundSaddleConnectionQ[SeparatrixIndex] && m_CurrentSepSegments[SeparatrixIndex].m_Depth < Depth) {
             Lengthen(SeparatrixIndex);
