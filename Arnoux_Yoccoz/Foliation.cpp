@@ -255,23 +255,23 @@ std::string Foliation::SeparatrixSegment::print(bool verbose) const
 
 
 
-Foliation::TransverseCurve::TransverseCurve(const Foliation& foliation, const std::vector<SeparatrixSegment>& segments, bool wrapsAroundZero) :
+Foliation::TransverseCurve::TransverseCurve(const Foliation& foliation, const std::vector<const SeparatrixSegment*>& segments, bool wrapsAroundZero) :
     m_foliation(foliation)
 {
     assert(segments.size() % 2 == 0);
     assert(segments.size() >= 2);
     std::vector<short> singularities(foliation.m_numIntervals, 0);
     for (int i = 0; i < segments.size()/2; i++){
-        assert(segments[2 * i].m_startingSingularity == segments[2 * i + 1].m_startingSingularity);
-        assert(singularities[segments[2 * i].m_startingSingularity] == 0);
-        singularities[segments[2 * i].m_startingSingularity] = 1;
-        assert(segments[2 * i].m_direction != segments[2 * i + 1].m_direction);
+        assert(segments[2 * i]->m_startingSingularity == segments[2 * i + 1]->m_startingSingularity);
+        assert(singularities[segments[2 * i]->m_startingSingularity] == 0);
+        singularities[segments[2 * i]->m_startingSingularity] = 1;
+        assert(segments[2 * i]->m_direction != segments[2 * i + 1]->m_direction);
     }
     
     std::vector<std::pair<UnitIntervalPoint, int>> endpointsAndIndices;
     endpointsAndIndices.reserve(segments.size());
     for (int i = 0; i < segments.size(); i++){
-        endpointsAndIndices.push_back(std::make_pair(segments[i].m_endpoint, i));
+        endpointsAndIndices.push_back(std::make_pair(segments[i]->m_endpoint, i));
     }
     std::sort(endpointsAndIndices.begin(), endpointsAndIndices.end());
     for (auto it = endpointsAndIndices.begin() + 1; it != endpointsAndIndices.end(); it++) {
@@ -282,20 +282,20 @@ Foliation::TransverseCurve::TransverseCurve(const Foliation& foliation, const st
     
     std::vector<const ArcsAroundDivPoints*> adpVector;
     adpVector.reserve(segments.size());
-    for (auto &ps : segments)
-        adpVector.push_back(&ps.m_arcsAroundDivPoints);
+    for (auto ps : segments)
+        adpVector.push_back(&ps->m_arcsAroundDivPoints);
     ArcsAroundDivPoints adpIntersection = m_foliation.intersect(adpVector);
     
     int startindex = wrapsAroundZero ? 1 : 0;
     for (int i = startindex; i != startindex; i = (i + 2) % segments.size()) {
-        bool throughTopDivPoint = segments[endpointsAndIndices[i].second].m_direction == DOWNWARDS &&
-                                    segments[endpointsAndIndices[i + 1].second].m_direction == DOWNWARDS ? true : false;
+        bool throughTopDivPoint = segments[endpointsAndIndices[i].second]->m_direction == DOWNWARDS &&
+                                    segments[endpointsAndIndices[i + 1].second]->m_direction == DOWNWARDS ? true : false;
             
     
         if (!adpIntersection.ContainsArcThroughADivPointQ(endpointsAndIndices[i].first,
-                                                         segments[endpointsAndIndices[i].second].m_smallContainingInterval,
+                                                         segments[endpointsAndIndices[i].second]->m_smallContainingInterval,
                                                          endpointsAndIndices[i + 1].first,
-                                                         segments[endpointsAndIndices[i + 1].second].m_smallContainingInterval,
+                                                         segments[endpointsAndIndices[i + 1].second]->m_smallContainingInterval,
                                                          throughTopDivPoint))
         {
             throw std::runtime_error("No transverse curve can be constructed from the given separatrix segments.");
@@ -320,8 +320,8 @@ std::string Foliation::TransverseCurve::print() const
 {
     std::ostringstream s;
     s << "Separatrix segments:\n";
-    for (auto &segment : m_separatrixSegments){
-        s << segment.print() << "\n";
+    for (auto segment : m_separatrixSegments){
+        s << segment->print() << "\n";
     }
     s << "Connecting arcs: " << m_disjointIntervals.print() << "\n";
     s << "Length: " << length();
@@ -538,7 +538,6 @@ void Foliation::Init(){
         m_isTopDivPoint.push_back(p.m_isTopPoint);
     }
     
-///////////
     checkPointsAreNotTooClose(m_allRealDivPoints);
   /*
     std::cout << m_isTopDivPoint << std::endl;

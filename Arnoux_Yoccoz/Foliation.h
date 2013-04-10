@@ -181,12 +181,12 @@ private:
     
     class TransverseCurve{
     public:
-        TransverseCurve(const Foliation& foliation, const std::vector<SeparatrixSegment>& separatrixSegments, bool wrapsAroundZero);
+        TransverseCurve(const Foliation& foliation, const std::vector<const SeparatrixSegment*>& separatrixSegments, bool wrapsAroundZero);
         floating_point_type length() const { return m_disjointIntervals.totalLength(); }
         std::string print() const;
         
     private:
-        std::vector<SeparatrixSegment> m_separatrixSegments;
+        std::vector<const SeparatrixSegment*> m_separatrixSegments;
         DisjointIntervals m_disjointIntervals;
         const Foliation& m_foliation;
         
