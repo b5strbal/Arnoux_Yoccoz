@@ -65,7 +65,7 @@
 
 
 
-std::ostream& operator<<(std::ostream& Out, const FoliationRP2::SeparatrixSegment& s)
+/* DONE */ std::ostream& operator<<(std::ostream& Out, const FoliationRP2::SeparatrixSegment& s)
 {    
     Out << "Separatrix Index: " << s.m_Separatrix << std::endl;
     Out << "Depth: " << s.m_Depth << std::endl;
@@ -501,7 +501,7 @@ void FoliationRP2::FindNewPseudoAnosovs(const GoodOneSidedCurve& GoodCurve){
 
 
 
-FoliationRP2::GoodOneSidedCurve FoliationRP2::GetGoodOneSidedCurve(const SeparatrixSegment& SegmentShiftedToLeft,
+/* DONE */ FoliationRP2::GoodOneSidedCurve FoliationRP2::GetGoodOneSidedCurve(const SeparatrixSegment& SegmentShiftedToLeft,
                                                                     const SeparatrixSegment& SegmentShiftedToRight){
     if (AreDepthsGoodForOneSidedCurve(SegmentShiftedToRight.m_Depth, SegmentShiftedToLeft.m_Depth)) {
         Arc myArc = GetClosingArcIfGoodOneSidedCurve(SegmentShiftedToRight, SegmentShiftedToLeft);
@@ -519,7 +519,7 @@ FoliationRP2::GoodOneSidedCurve FoliationRP2::GetGoodOneSidedCurve(const Separat
 
 
 
-bool FoliationRP2::Compare(const GoodOneSidedCurve& c1, const GoodOneSidedCurve& c2){
+/* NO NEED */ bool FoliationRP2::Compare(const GoodOneSidedCurve& c1, const GoodOneSidedCurve& c2){
     if (c1.m_ConnectingArc.GetLength() > c2.m_ConnectingArc.GetLength()) {
         return true;
     }
@@ -533,7 +533,7 @@ bool FoliationRP2::Compare(const GoodOneSidedCurve& c1, const GoodOneSidedCurve&
 
 
 
-std::ostream& operator<<(std::ostream& Out, const FoliationRP2::GoodOneSidedCurve& GoodCurve)
+/* DONE */ std::ostream& operator<<(std::ostream& Out, const FoliationRP2::GoodOneSidedCurve& GoodCurve)
 {    
     Out << "Separatrix segments (separatrix index, depth, endpoint): (" << GoodCurve.m_SegmentShiftedToLeft.m_Separatrix << ", "
     << GoodCurve.m_SegmentShiftedToLeft.m_Depth << ", " << GoodCurve.m_SegmentShiftedToLeft.m_Endpoint << "), (" <<

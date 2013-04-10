@@ -38,6 +38,29 @@ floating_point_type distanceBetween(const UnitIntervalPoint& p1, const UnitInter
 }
 
 
+std::string UnitIntervalPoint::print() const {
+    std::ostringstream s;
+    s << m_position;
+    if(m_epsilon > 0)
+        s << "(+" << m_epsilon << "eps)";
+    else if(m_epsilon < 0)
+        s << "(" << m_epsilon << "eps)";
+    return s.str();
+}
+
+std::ostream& operator<<(std::ostream& Out, const UnitIntervalPoint& p){
+    Out << p.print();
+    return Out;
+}
+
+
+std::string printInterval(const UnitIntervalPoint& p1, const UnitIntervalPoint& p2){
+    std::ostringstream s;
+    s << "[" << p1 << "," << p2 << "]";
+    return s.str();
+}
+
+
 
 /*
 

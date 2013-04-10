@@ -9,105 +9,57 @@
 #include "Foliation.h"
 
 
-//-------------------------//
-// InitArguments_Foliation //
-//-------------------------//
+//------------------------------//
+// Foliation::DisjointIntervals //
+//------------------------------//
 
 
-std::vector<floating_point_type> InitArguments_Foliation::arg_lengths;
-Permutation InitArguments_Foliation::arg_permutation;
-floating_point_type InitArguments_Foliation::arg_twist;
 
-
-InitArguments_Foliation::InitArguments_Foliation(const FoliationSphere& foliationSphere)
+Foliation::DisjointIntervals::DisjointIntervals(const std::vector<UnitIntervalPoint>& points, bool wrapsAroundZero) :
+m_points(points),
+m_wrapsAroundZero(wrapsAroundZero)
 {
-    
-    std::vector<ConnectedPoints> allConnectedPoints;
-    allConnectedPoints.reserve(foliationSphere.topFoliation().numSeparatrices() + foliationSphere.bottomFoliation().numSeparatrices());
-    
-    generateTopConnectingPairs(foliationSphere, allConnectedPoints);
-    generateBottomConnectingPairs(foliationSphere, allConnectedPoints);
-    
-    
-    std::sort(allConnectedPoints.begin(), allConnectedPoints.end(), [] (const ConnectedPoints& cp1, const ConnectedPoints& cp2)
-              {
-                  return cp1.topPoint < cp2.topPoint;
-              } );
-    std::vector<ConnectedPoints>& allConnectedPointsSortedByTop = allConnectedPoints;
-    std::vector<UnitIntervalPoint> allBottomPoints;
-    allBottomPoints.reserve(allConnectedPoints.size());
-    
-    for (ConnectedPoints cp : allConnectedPoints) {
-        allBottomPoints.push_back(cp.bottomPoint);
+    assert(points.size() % 2 == 0);
+    std::sort(m_points.begin(), m_points.end());
+}
+
+
+bool Foliation::DisjointIntervals::containsQ(const UnitIntervalPoint& point) const {
+    int containingIntervalIndex = containingInterval(m_points, point);
+    if (containingIntervalIndex == CONTAINING_INTERVAL_NOT_UNIQUE) {
+        throw std::runtime_error("DisjointIntervals::containsQ : Containing interval is not unique.");
     }
-    
-    std::sort(allBottomPoints.begin(), allBottomPoints.end());
-    
-    arg_lengths.resize(allConnectedPoints.size());
-    for (int i = 0; i < allConnectedPoints.size() - 1; i++) {
-        arg_lengths[i] = distanceBetween( allConnectedPointsSortedByTop[i].topPoint, allConnectedPointsSortedByTop[i + 1].topPoint);
+    if ((containingIntervalIndex % 2 == 0 && !m_wrapsAroundZero) || (containingIntervalIndex % 2 == 1 && m_wrapsAroundZero)) {
+        return true;
     }
-    arg_lengths[allConnectedPoints.size() - 1] = 1 - allConnectedPointsSortedByTop[allConnectedPoints.size() - 1].topPoint.getPosition();
-    
-    std::vector<int> permutationInput(allConnectedPoints.size());
-    for (int i = 0; i < allConnectedPoints.size(); i++) {
-        auto it = std::lower_bound(allBottomPoints.begin(), allBottomPoints.end(), allConnectedPointsSortedByTop[i].bottomPoint);
-        permutationInput[i] = static_cast<int>(it - allBottomPoints.begin()) ;
+    return false;
+}
+
+
+floating_point_type Foliation::DisjointIntervals::totalLength() const {
+    floating_point_type sum = 0;
+    for (int i = 0; i < m_points.size(); i += 2) {
+        sum += distanceBetween(m_points[i], m_points[i + 1]);
     }
-    arg_permutation = Permutation(permutationInput);
-    
-    arg_twist = allBottomPoints[0].getPosition();
+    return m_wrapsAroundZero ? 1 - sum : sum;
+}
+
+
+std::string Foliation::DisjointIntervals::print() const{
+    std::ostringstream s;
+    for (int i = m_wrapsAroundZero ? 1 : 0; i < m_points.size() - 2; i += 2) {
+        s << printInterval(m_points[i], m_points[i + 1]) << " ";
+    }
+    if (m_wrapsAroundZero) {
+        s << printInterval(m_points.back(), m_points.front());
+    } else
+        s << printInterval(m_points[m_points.size() - 2], m_points.back());
+    return s.str();
 }
 
 
 
 
-
-
-void InitArguments_Foliation::generateTopConnectingPairs(const FoliationSphere& foliationSphere,
-                                                      std::vector<ConnectedPoints>& allConnectedPoints)
-{    
-    int numSeparatrices = foliationSphere.topFoliation().intervalPairing().size();
-    for (int i = 0; i < numSeparatrices; i++) {
-        if (foliationSphere.topFoliation().intervalPairing().permutation()[i] != modAdd(i, -1, numSeparatrices) ) {
-            // otherwise the current separatrix emanates from a 1-pronged singularity which is not important
-            
-            ConnectedPoints newConnectedPoints;
-            newConnectedPoints.topPoint = foliationSphere.topFoliation().intervalPairing().divPoints()[i];
-            
-            int indexOfConnectedSeparatrix = modAdd(foliationSphere.topFoliation().intervalPairing().permutation()[i], 1, numSeparatrices);
-            UnitIntervalPoint middlePoint = foliationSphere.topFoliation().intervalPairing().divPoints()[indexOfConnectedSeparatrix];
-            
-            newConnectedPoints.bottomPoint = foliationSphere.bottomFoliation().intervalPairing().applyTo(middlePoint - foliationSphere.twist()) + foliationSphere.twist();
-
-
-            allConnectedPoints.push_back( newConnectedPoints );
-        }
-    }
-}
-
-
-
-void InitArguments_Foliation::generateBottomConnectingPairs(const FoliationSphere& foliationSphere,
-                                                            std::vector<ConnectedPoints>& allConnectedPoints)
-{
-    int numSeparatrices = foliationSphere.bottomFoliation().intervalPairing().size();
-    for (int i = 0; i < numSeparatrices; i++) {
-        if (foliationSphere.bottomFoliation().intervalPairing().permutation()[i] != modAdd(i, -1, numSeparatrices) ) {
-            
-            ConnectedPoints newConnectedPoints;
-            newConnectedPoints.bottomPoint = foliationSphere.bottomFoliation().intervalPairing().divPoints()[i] + foliationSphere.twist();
-            
-            int indexOfConnectedSeparatrix = modAdd(foliationSphere.bottomFoliation().intervalPairing().permutation()[i], 1, numSeparatrices);
-            UnitIntervalPoint middlePoint = foliationSphere.topFoliation().intervalPairing().divPoints()[indexOfConnectedSeparatrix] + foliationSphere.twist();
-            
-            newConnectedPoints.topPoint = foliationSphere.topFoliation().intervalPairing().applyTo(middlePoint);
-
-            allConnectedPoints.push_back( newConnectedPoints );
-        }
-    }
-
-}
 
 
 
@@ -186,6 +138,32 @@ bool Foliation::ArcsAroundDivPoints::ContainsArcThroughADivPointQ(const UnitInte
     }
     return true;
 }
+
+
+
+std::string Foliation::ArcsAroundDivPoints::print() const
+{
+    std::ostringstream s;
+    for (auto& v : m_cuttingPoints){
+        switch (v.size()) {
+            case 0:
+                s << "() ";
+                break;
+                
+            case 1:
+                s << "(" << v[0] << ") ";
+                break;
+                
+            case 2:
+                s << "(" << v[0] << "," << v[1] << ") ";
+        }
+    }
+    
+    return s.str();
+}
+
+
+
 
 
 
@@ -270,6 +248,31 @@ Foliation::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, int 
 }
 
 
+
+
+
+
+std::string Foliation::SeparatrixSegment::print(bool verbose) const
+{
+    std::ostringstream s;
+    s << "SEPARATRIX SEGMENT\n";
+    s << "(" << m_startingSingularity << ", ";
+    s << m_depth << ", ";
+    s << (m_direction == Foliation::DOWNWARDS ? "down" : "up") << ", ";
+    s << m_endpoint << ")\n";
+    if (verbose) {
+        s << "IIC: " << m_intervalIntersectionCount << "\n";
+        s << "AAD: " << m_arcsAroundDivPoints.print();
+    }
+
+    return s.str();
+}
+
+
+
+
+
+
 //----------------------------//
 // Foliation::TransverseCurve //
 //----------------------------//
@@ -332,6 +335,143 @@ Foliation::TransverseCurve::TransverseCurve(const Foliation& foliation, const st
     m_disjointIntervals = DisjointIntervals(endpoints, wrapsAroundZero);
     m_separatrixSegments = segments; // We will probably have to find a more cleverly sorted way of storing the segments later.
 }
+
+
+
+
+
+std::string Foliation::TransverseCurve::print() const
+{
+    std::ostringstream s;
+    s << "Separatrix segments:\n";
+    for (auto &segment : m_separatrixSegments){
+        s << segment.print() << "\n";
+    }
+    s << "Connecting arcs: " << m_disjointIntervals.print() << "\n";
+    s << "Length: " << length();
+    return s.str();
+}
+
+
+
+
+
+
+
+
+
+
+//-------------------------//
+// InitArguments_Foliation //
+//-------------------------//
+
+
+std::vector<floating_point_type> InitArguments_Foliation::arg_lengths;
+Permutation InitArguments_Foliation::arg_permutation;
+floating_point_type InitArguments_Foliation::arg_twist;
+
+
+InitArguments_Foliation::InitArguments_Foliation(const FoliationSphere& foliationSphere)
+{
+    
+    std::vector<ConnectedPoints> allConnectedPoints;
+    allConnectedPoints.reserve(foliationSphere.topFoliation().numSeparatrices() + foliationSphere.bottomFoliation().numSeparatrices());
+    
+    generateTopConnectingPairs(foliationSphere, allConnectedPoints);
+    generateBottomConnectingPairs(foliationSphere, allConnectedPoints);
+    
+    
+    std::sort(allConnectedPoints.begin(), allConnectedPoints.end(), [] (const ConnectedPoints& cp1, const ConnectedPoints& cp2)
+              {
+                  return cp1.topPoint < cp2.topPoint;
+              } );
+    std::vector<ConnectedPoints>& allConnectedPointsSortedByTop = allConnectedPoints;
+    std::vector<UnitIntervalPoint> allBottomPoints;
+    allBottomPoints.reserve(allConnectedPoints.size());
+    
+    for (ConnectedPoints cp : allConnectedPoints) {
+        allBottomPoints.push_back(cp.bottomPoint);
+    }
+    
+    std::sort(allBottomPoints.begin(), allBottomPoints.end());
+    
+    arg_lengths.resize(allConnectedPoints.size());
+    for (int i = 0; i < allConnectedPoints.size() - 1; i++) {
+        arg_lengths[i] = distanceBetween( allConnectedPointsSortedByTop[i].topPoint, allConnectedPointsSortedByTop[i + 1].topPoint);
+    }
+    arg_lengths[allConnectedPoints.size() - 1] = 1 - allConnectedPointsSortedByTop[allConnectedPoints.size() - 1].topPoint.getPosition();
+    
+    std::vector<int> permutationInput(allConnectedPoints.size());
+    for (int i = 0; i < allConnectedPoints.size(); i++) {
+        auto it = std::lower_bound(allBottomPoints.begin(), allBottomPoints.end(), allConnectedPointsSortedByTop[i].bottomPoint);
+        permutationInput[i] = static_cast<int>(it - allBottomPoints.begin()) ;
+    }
+    arg_permutation = Permutation(permutationInput);
+    
+    arg_twist = allBottomPoints[0].getPosition();
+}
+
+
+
+
+
+
+void InitArguments_Foliation::generateTopConnectingPairs(const FoliationSphere& foliationSphere,
+                                                         std::vector<ConnectedPoints>& allConnectedPoints)
+{
+    int numSeparatrices = foliationSphere.topFoliation().intervalPairing().size();
+    for (int i = 0; i < numSeparatrices; i++) {
+        if (foliationSphere.topFoliation().intervalPairing().permutation()[i] != modAdd(i, -1, numSeparatrices) ) {
+            // otherwise the current separatrix emanates from a 1-pronged singularity which is not important
+            
+            ConnectedPoints newConnectedPoints;
+            newConnectedPoints.topPoint = foliationSphere.topFoliation().intervalPairing().divPoints()[i];
+            
+            int indexOfConnectedSeparatrix = modAdd(foliationSphere.topFoliation().intervalPairing().permutation()[i], 1, numSeparatrices);
+            UnitIntervalPoint middlePoint = foliationSphere.topFoliation().intervalPairing().divPoints()[indexOfConnectedSeparatrix];
+            
+            newConnectedPoints.bottomPoint = foliationSphere.bottomFoliation().intervalPairing().applyTo(middlePoint - foliationSphere.twist()) + foliationSphere.twist();
+            
+            
+            allConnectedPoints.push_back( newConnectedPoints );
+        }
+    }
+}
+
+
+
+void InitArguments_Foliation::generateBottomConnectingPairs(const FoliationSphere& foliationSphere,
+                                                            std::vector<ConnectedPoints>& allConnectedPoints)
+{
+    int numSeparatrices = foliationSphere.bottomFoliation().intervalPairing().size();
+    for (int i = 0; i < numSeparatrices; i++) {
+        if (foliationSphere.bottomFoliation().intervalPairing().permutation()[i] != modAdd(i, -1, numSeparatrices) ) {
+            
+            ConnectedPoints newConnectedPoints;
+            newConnectedPoints.bottomPoint = foliationSphere.bottomFoliation().intervalPairing().divPoints()[i] + foliationSphere.twist();
+            
+            int indexOfConnectedSeparatrix = modAdd(foliationSphere.bottomFoliation().intervalPairing().permutation()[i], 1, numSeparatrices);
+            UnitIntervalPoint middlePoint = foliationSphere.topFoliation().intervalPairing().divPoints()[indexOfConnectedSeparatrix] + foliationSphere.twist();
+            
+            newConnectedPoints.topPoint = foliationSphere.topFoliation().intervalPairing().applyTo(middlePoint);
+            
+            allConnectedPoints.push_back( newConnectedPoints );
+        }
+    }
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

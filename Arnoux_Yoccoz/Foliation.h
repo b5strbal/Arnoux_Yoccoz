@@ -69,33 +69,12 @@ private:
     class DisjointIntervals{
     public:
         DisjointIntervals() {};
-        DisjointIntervals(const std::vector<UnitIntervalPoint>& points, bool wrapsAroundZero) :
-            m_points(points),
-            m_wrapsAroundZero(wrapsAroundZero)
-        {
-            assert(points.size() % 2 == 0);
-            std::sort(m_points.begin(), m_points.end());
-        }
+        DisjointIntervals(const std::vector<UnitIntervalPoint>& points, bool wrapsAroundZero);
         const std::vector<UnitIntervalPoint>& point() const { return m_points; }
         bool wrapsAroundZero() const { return m_wrapsAroundZero; }
-        bool containsQ(const UnitIntervalPoint& point) const {
-            int containingIntervalIndex = containingInterval(m_points, point);
-            if (containingIntervalIndex == CONTAINING_INTERVAL_NOT_UNIQUE) {
-                throw std::runtime_error("DisjointIntervals::containsQ : Containing interval is not unique.");
-            }
-            if ((containingIntervalIndex % 2 == 0 && !m_wrapsAroundZero) || (containingIntervalIndex % 2 == 1 && m_wrapsAroundZero)) {
-                return true;
-            }
-            return false;
-        }
-        floating_point_type totalLength() const {
-            floating_point_type sum = 0;
-            for (int i = 0; i < m_points.size(); i += 2) {
-                sum += distanceBetween(m_points[i], m_points[i + 1]);
-            }
-            return m_wrapsAroundZero ? 1 - sum : sum;
-        }
-        
+        bool containsQ(const UnitIntervalPoint& point) const;
+        floating_point_type totalLength() const;
+        std::string print() const;
     private:
         std::vector<UnitIntervalPoint> m_points;
         bool m_wrapsAroundZero;
@@ -171,10 +150,8 @@ private:
                                           const UnitIntervalPoint& RightEndPoint, int RightIndexOfInterval,
                                           bool throughTopDivPointQ) const;
         
-        /**
-         * @brief   Prints out the division points and all the Arcs.
-         */
-        //friend std::ostream& operator<<(std::ostream& Out, const ArcsAroundDivPoints& adp);
+
+        std::string print() const;
         
     private:
         /**
@@ -198,13 +175,15 @@ private:
         Direction m_direction;
         
         SeparatrixSegment(const Foliation& foliation, int startingSingularity, Direction direction);
+        std::string print(bool verbose = false) const;
     };
-    
+
     
     class TransverseCurve{
     public:
         TransverseCurve(const Foliation& foliation, const std::vector<SeparatrixSegment>& separatrixSegments, bool wrapsAroundZero);
         floating_point_type length() const { return m_disjointIntervals.totalLength(); }
+        std::string print() const;
         
     private:
         std::vector<SeparatrixSegment> m_separatrixSegments;

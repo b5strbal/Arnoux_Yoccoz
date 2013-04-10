@@ -14,6 +14,7 @@
 #include <cmath>
 #include <cassert>
 #include "global.h"
+#include <sstream>
 
 
 
@@ -103,17 +104,11 @@ public:
  //   inline friend bool operator!=(const UnitIntervalPoint& c1, const UnitIntervalPoint& c2){ return c1 == c2 ? false : true; }
     
     
-    friend std::ostream& operator<<(std::ostream& Out, const UnitIntervalPoint& p){
-        Out << p.m_position;
-        if(p.m_epsilon > 0)
-            Out << "(+" << p.m_epsilon << "eps)";
-        else if(p.m_epsilon < 0)
-            Out << "(" << p.m_epsilon << "eps)";
-        return Out;
-    }
-
-
+    std::string print() const;
     
+    
+    
+    friend std::ostream& operator<<(std::ostream& Out, const UnitIntervalPoint& p);
     
 protected:
     /**
@@ -130,8 +125,6 @@ private:
     
 
     
-    
-    
     /**
      * @brief   Same as operator<, but allows equality, too.
      */
@@ -139,6 +132,8 @@ private:
 
 };
         
+        
+std::string printInterval(const UnitIntervalPoint& p1, const UnitIntervalPoint& p2);
         
         
 #endif
