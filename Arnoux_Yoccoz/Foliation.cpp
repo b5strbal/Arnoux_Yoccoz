@@ -205,30 +205,6 @@ Foliation::ArcsAroundDivPoints Foliation::intersect(const std::vector<const Arcs
 
 
 
-/*
- std::ostream& operator<<(std::ostream& Out, const ArcsAroundDivPoints& adp){
- using namespace std;
- 
- Out << "Division points: ";
- for (int i = 0; i < adp.m_DivPoints.size(); i++) {
- Out << adp.m_DivPoints[i] << " ";
- }
- Out << endl << "Intervals: ";
- for (int i = 0; i < adp.m_DivPoints.size(); i++) {
- cout << endl;
- cout << i << ": ";
- if (adp.IsEmpty()) {
- cout << "whole circle";
- } else {
- cout << adp.m_Arcs[i];
- }
- }
- return Out;
- }
- */
-
-
-
 
 
 Foliation::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, int startingSingularity, Direction direction) :
@@ -687,6 +663,38 @@ std::ostream& operator<<(std::ostream& Out, Foliation f){
     std::cout << f.m_twistedIntervalExchange;
     return Out;
 }
+
+
+
+
+
+
+
+void Foliation::printGoodSepSegments(int depth, bool verbose){
+    generateSepSegments(depth);
+    for (Direction direction = Direction::UPWARDS; direction <= Direction::DOWNWARDS; direction++) {
+        for (int i = 0; i < m_numIntervals; i++) {
+            std::cout << depth << (direction == UPWARDS ? " UP" : " DOWN") << "\n";
+            for(auto &segment : m_goodShiftedSeparatrixSegments[direction][i])
+            {
+                if (verbose) {
+                    std::cout << segment.print() << "\n\n";
+                } else
+                    std::cout << segment.m_depth << " ";
+            }
+            if (!verbose) {
+                std::cout << "\n\n";
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
 
 
 

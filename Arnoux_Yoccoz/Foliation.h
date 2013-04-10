@@ -224,7 +224,9 @@ public:
     Foliation flipOver() const;
     
     void generateSepSegments(int depth);
+    void printGoodSepSegments(int depth, bool verbose = false);
 
+    
     friend std::ostream& operator<<(std::ostream& Out, Foliation f);
     
 private:

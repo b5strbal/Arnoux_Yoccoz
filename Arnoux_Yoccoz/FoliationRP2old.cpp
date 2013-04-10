@@ -685,7 +685,7 @@ AlmostPFMatrix FoliationRP2::GetSmallMatrix(const TransitionData& td){
 
 
 
-void FoliationRP2::PrintGoodShiftedSeparatrixSegmentsVerbose(int Depth){
+/* DONE */ void FoliationRP2::PrintGoodShiftedSeparatrixSegmentsVerbose(int Depth){
     GenerateGoodShiftedSeparatrixSegments(Depth);
     for (int i = 0; i < m_NumSeparatrices; i++) {
         for (LeftOrRight Side = LEFT; Side < 2; Side++) {
@@ -699,7 +699,7 @@ void FoliationRP2::PrintGoodShiftedSeparatrixSegmentsVerbose(int Depth){
 
 
 
-void FoliationRP2::PrintGoodShiftedSeparatrixSegmentsConcise(int Depth){
+/* DONE */ void FoliationRP2::PrintGoodShiftedSeparatrixSegmentsConcise(int Depth){
     using namespace std;
     GenerateGoodShiftedSeparatrixSegments(Depth);
 
