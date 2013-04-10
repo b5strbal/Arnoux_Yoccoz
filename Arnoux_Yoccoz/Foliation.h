@@ -51,7 +51,7 @@ class InitArguments_Foliation{
  
 
 class Foliation : private InitArguments_Foliation{
-private:
+protected:
     typedef std::pair<UnitIntervalPoint, UnitIntervalPoint> interval_t;
     enum Direction{
         UPWARDS = 0,
@@ -185,6 +185,9 @@ private:
         floating_point_type length() const { return m_disjointIntervals.totalLength(); }
         std::string print() const;
         
+        friend bool operator<(const TransverseCurve& c1, const TransverseCurve& c2)
+            { return c1.length() < c2.length(); }
+        
     private:
         std::vector<const SeparatrixSegment*> m_separatrixSegments;
         DisjointIntervals m_disjointIntervals;
@@ -264,7 +267,9 @@ class FoliationFromRP2 : public Foliation
 public:
     FoliationFromRP2(const FoliationRP2& foliationRP2);
     
-    void generateLiftsOfGoodTransverseCurves(int depth) const;
+    void generateLiftsOfGoodTransverseCurves(int depth);
+private:
+    std::vector<int> m_separatrixPair;
 };
 
 

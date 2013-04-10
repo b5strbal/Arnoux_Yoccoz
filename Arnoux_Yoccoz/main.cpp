@@ -23,13 +23,13 @@ using namespace std;
 
 int main (int argc, const char * argv[])
 {
-    Foliation f = arnouxYoccozFoliation(3);
+    FoliationFromRP2 f = arnouxYoccozRP2();
 
     clock_t t1, t2;
     t1 = clock();
     
-    f.generateSepSegments(10000);
-
+  //  f.generateSepSegments(10000);
+    cout << f;
     
     t2 = clock();
     float seconds = ((float)t2 - (float)t1)/CLOCKS_PER_SEC;
