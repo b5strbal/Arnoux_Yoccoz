@@ -57,7 +57,7 @@ protected:
         UPWARDS = 0,
         DOWNWARDS = 1
     };
-
+    class Exception_CantConstructTransverseCurve : public std::exception {};
     
     struct DisjointIntervals;
     class ArcsAroundDivPoints;
@@ -70,7 +70,7 @@ protected:
     public:
         DisjointIntervals() {};
         DisjointIntervals(const std::vector<UnitIntervalPoint>& points, bool wrapsAroundZero);
-        const std::vector<UnitIntervalPoint>& point() const { return m_points; }
+        const std::vector<UnitIntervalPoint>& points() const { return m_points; }
         bool wrapsAroundZero() const { return m_wrapsAroundZero; }
         bool containsQ(const UnitIntervalPoint& point) const;
         floating_point_type totalLength() const;
@@ -185,8 +185,7 @@ protected:
         floating_point_type length() const { return m_disjointIntervals.totalLength(); }
         std::string print() const;
         
-        friend bool operator<(const TransverseCurve& c1, const TransverseCurve& c2)
-            { return c1.length() < c2.length(); }
+        friend bool operator<(const TransverseCurve& c1, const TransverseCurve& c2);
         
     private:
         std::vector<const SeparatrixSegment*> m_separatrixSegments;
@@ -194,7 +193,8 @@ protected:
         const Foliation& m_foliation;
         
     };
-    
+    friend bool operator<(const TransverseCurve& c1, const TransverseCurve& c2);
+
     
     
 // MEMBER VARIABLES
@@ -257,28 +257,6 @@ Foliation arnouxYoccozFoliation(int genus);
 
 
 
-//------------------//
-// FoliationFromRP2 //
-//------------------//
-
-
-class FoliationFromRP2 : public Foliation
-{
-public:
-    FoliationFromRP2(const FoliationRP2& foliationRP2);
-    
-    void generateLiftsOfGoodTransverseCurves(int depth);
-private:
-    std::vector<int> m_separatrixPair;
-};
-
-
-
-
-
-
-
-
 
 //---------------------//
 // FoliationFromSphere //
@@ -289,6 +267,33 @@ class FoliationFromSphere : public Foliation
 public:
     FoliationFromSphere(const FoliationSphere& foliationSphere);
 };
+
+
+
+
+
+//------------------//
+// FoliationFromRP2 //
+//------------------//
+
+
+class FoliationFromRP2 : public FoliationFromSphere
+{
+public:
+    FoliationFromRP2(const FoliationRP2& foliationRP2);
+    
+    void generateLiftsOfGoodTransverseCurves(int depth);
+    void printLiftsOfGoodTransverseCurves(int depth);
+private:
+    
+    struct TransverseCurveIteratorComp{
+        bool operator()(std::set<TransverseCurve>::const_iterator it1, std::set<TransverseCurve>::const_iterator it2);
+    };
+    
+    std::vector<int> m_separatrixPair;
+    std::set<std::set<TransverseCurve>::const_iterator, TransverseCurveIteratorComp> m_liftsOfGoodTransverseCurves;
+};
+
 
 
 

@@ -120,6 +120,7 @@ class InitArguments_TwistedIntervalExchangeMap{
 
 class TwistedIntervalExchangeMap : private InitArguments_TwistedIntervalExchangeMap{
     friend class Foliation;
+    friend class FoliationFromRP2;
 public:
     TwistedIntervalExchangeMap(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
     TwistedIntervalExchangeMap rotateBy(int rotationAmount) const;

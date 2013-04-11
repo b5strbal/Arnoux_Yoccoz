@@ -298,7 +298,7 @@ Foliation::TransverseCurve::TransverseCurve(const Foliation& foliation, const st
                                                          segments[endpointsAndIndices[i + 1].second]->m_smallContainingInterval,
                                                          throughTopDivPoint))
         {
-            throw std::runtime_error("No transverse curve can be constructed from the given separatrix segments.");
+            throw Exception_CantConstructTransverseCurve();
         }
     }
 
@@ -312,6 +312,25 @@ Foliation::TransverseCurve::TransverseCurve(const Foliation& foliation, const st
     m_separatrixSegments = segments; // We will probably have to find a more cleverly sorted way of storing the segments later.
 }
 
+
+
+bool operator<(const Foliation::TransverseCurve& c1, const Foliation::TransverseCurve& c2) {
+    if (c1.length() > c2.length()) return true;
+    if (c1.length() < c2.length()) return false;
+    auto &points1 = c1.m_disjointIntervals.points();
+    auto &points2 = c2.m_disjointIntervals.points();
+    if (points1.size() < points2.size()) {
+        return true;
+    } else if (points1.size() > points2.size())
+        return false;
+    for (int i = 0; i < points1.size(); i++) {
+        if (points1[i] < points2[i]) {
+            return true;
+        } else if (points2[i] < points1[i])
+            return false;
+    }
+    return true;
+}
 
 
 
@@ -383,7 +402,7 @@ InitArguments_Foliation::InitArguments_Foliation(const FoliationSphere& foliatio
         permutationInput[i] = static_cast<int>(it - allBottomPoints.begin()) ;
     }
     arg_permutation = Permutation(permutationInput);
-    
+   // std::cout << arg_permutation;
     arg_twist = allBottomPoints[0].getPosition();
 }
 
@@ -730,7 +749,7 @@ Foliation arnouxYoccozFoliation(int genus){
 
 
 FoliationFromRP2::FoliationFromRP2(const FoliationRP2& foliationRP2):
-    Foliation(foliationRP2)
+    FoliationFromSphere(foliationRP2)
 {
     m_separatrixPair.resize(m_numIntervals);
     for (int i = 0 ; i < m_numIntervals; i++) {
@@ -742,35 +761,60 @@ FoliationFromRP2::FoliationFromRP2(const FoliationRP2& foliationRP2):
             }
         }
     }
+    std::cout << m_separatrixPair;
 }
+
+bool FoliationFromRP2::TransverseCurveIteratorComp::operator()(std::set<TransverseCurve>::const_iterator it1,
+                                                               std::set<TransverseCurve>::const_iterator it2)
+{
+    return *it1 < *it2;
+}
+
+
 
 
 void FoliationFromRP2::generateLiftsOfGoodTransverseCurves(int depth){
     generateSepSegments(depth);
-
-}
-
-/*
-void FoliationRP2::GenerateGoodCurves(int Depth){
-    GenerateGoodShiftedSeparatrixSegments(Depth);
-    for (int SeparatrixIndex = 0; SeparatrixIndex < m_NumSeparatrices; SeparatrixIndex++) {
-        int IndexOfPair = SeparatrixIndexOfPair(SeparatrixIndex, RIGHT);
-        for (std::list<SeparatrixSegment>::iterator it1 = m_GoodShiftedSeparatrixSegments[SeparatrixIndex][RIGHT].begin();
-             it1 != m_GoodShiftedSeparatrixSegments[SeparatrixIndex][RIGHT].end(); it1++) {
-            for (std::list<SeparatrixSegment>::iterator it2 = m_GoodShiftedSeparatrixSegments[IndexOfPair][LEFT].begin();
-                 it2 != m_GoodShiftedSeparatrixSegments[IndexOfPair][LEFT].end(); it2++) {
-                try {
-                    Save(GetGoodOneSidedCurve(*it2, *it1));
+    for (int index = 0; index < m_numIntervals; index++) {
+        if (index < m_separatrixPair[index]) {
+            for (int downIndex = 0; downIndex < m_goodShiftedSeparatrixSegments[DOWNWARDS][index].size() - 1 &&
+                 m_goodShiftedSeparatrixSegments[DOWNWARDS][index][downIndex].m_depth <= depth; downIndex++) {
+                for (int upIndex = 0; upIndex < m_goodShiftedSeparatrixSegments[UPWARDS][index].size() - 1 &&
+                     m_goodShiftedSeparatrixSegments[UPWARDS][index][upIndex].m_depth <= depth; upIndex++) {
+                    assert(m_goodShiftedSeparatrixSegments[DOWNWARDS][index][downIndex].m_depth ==
+                           m_goodShiftedSeparatrixSegments[UPWARDS][m_separatrixPair[index]][downIndex].m_depth);
+                    assert(m_goodShiftedSeparatrixSegments[UPWARDS][index][upIndex].m_depth ==
+                           m_goodShiftedSeparatrixSegments[DOWNWARDS][m_separatrixPair[index]][upIndex].m_depth);
+                    std::vector<const SeparatrixSegment*> transverseCurveInput = {
+                        &m_goodShiftedSeparatrixSegments[DOWNWARDS][index][downIndex],
+                        &m_goodShiftedSeparatrixSegments[UPWARDS][index][upIndex],
+                        &m_goodShiftedSeparatrixSegments[UPWARDS][m_separatrixPair[index]][downIndex],
+                        &m_goodShiftedSeparatrixSegments[DOWNWARDS][m_separatrixPair[index]][upIndex]
+                    };
+                    try {
+                        auto ret = m_transverseCurves.emplace(*this, transverseCurveInput, true);
+                        if (ret.second) {
+                            m_liftsOfGoodTransverseCurves.insert(ret.first);
+                        }
+                    } catch (const Exception_CantConstructTransverseCurve&) {}
+                    try {
+                        auto ret = m_transverseCurves.emplace(*this, transverseCurveInput, false);
+                        if (ret.second) {
+                            m_liftsOfGoodTransverseCurves.insert(ret.first);
+                        }
+                    } catch (const Exception_CantConstructTransverseCurve&) {}
                 }
-                catch (const ExceptionNoObjectFound&) {}
-                catch (const ExceptionFoundSaddleConnection&) {}
             }
         }
     }
-    m_GoodOneSidedCurves.sort(Compare);
 }
 
-*/
+
+void FoliationFromRP2::printLiftsOfGoodTransverseCurves(int depth){
+    generateLiftsOfGoodTransverseCurves(depth);
+    for (auto it : m_liftsOfGoodTransverseCurves)
+        std::cout << it->print() << "\n\n";
+}
 
 
 
