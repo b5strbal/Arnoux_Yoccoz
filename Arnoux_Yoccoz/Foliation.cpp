@@ -17,10 +17,15 @@
 
 Foliation::DisjointIntervals::DisjointIntervals(const std::vector<UnitIntervalPoint>& points, bool wrapsAroundZero) :
 m_points(points),
-m_wrapsAroundZero(wrapsAroundZero)
+m_wrapsAroundZero(wrapsAroundZero),
+m_totalLength(0)
 {
     assert(points.size() % 2 == 0);
     std::sort(m_points.begin(), m_points.end());
+    for (int i = 0; i < m_points.size(); i += 2) {
+        m_totalLength += distanceBetween(m_points[i], m_points[i + 1]);
+    }
+    m_totalLength = wrapsAroundZero ? 1 - m_totalLength : m_totalLength;
 }
 
 
@@ -36,13 +41,7 @@ bool Foliation::DisjointIntervals::containsQ(const UnitIntervalPoint& point) con
 }
 
 
-floating_point_type Foliation::DisjointIntervals::totalLength() const {
-    floating_point_type sum = 0;
-    for (int i = 0; i < m_points.size(); i += 2) {
-        sum += distanceBetween(m_points[i], m_points[i + 1]);
-    }
-    return m_wrapsAroundZero ? 1 - sum : sum;
-}
+
 
 
 std::string Foliation::DisjointIntervals::print() const{

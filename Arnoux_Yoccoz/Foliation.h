@@ -73,11 +73,12 @@ protected:
         const std::vector<UnitIntervalPoint>& points() const { return m_points; }
         bool wrapsAroundZero() const { return m_wrapsAroundZero; }
         bool containsQ(const UnitIntervalPoint& point) const;
-        floating_point_type totalLength() const;
+        floating_point_type totalLength() const { return m_totalLength; }
         std::string print() const;
     private:
         std::vector<UnitIntervalPoint> m_points;
         bool m_wrapsAroundZero;
+        floating_point_type m_totalLength;
     };
     
     
