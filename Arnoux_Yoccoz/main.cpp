@@ -23,6 +23,9 @@ using namespace std;
 
 int main (int argc, const char * argv[])
 {
+
+    
+    
     Foliation f = arnouxYoccozFoliation(3);
 
     clock_t t1, t2;

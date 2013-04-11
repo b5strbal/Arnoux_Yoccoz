@@ -39,7 +39,7 @@ PerronFrobeniusMatrix::PerronFrobeniusMatrix(const SquareMatrix<long>& intSquare
             }
         }
     }
-    if (!m_squareMatrix.isGraphStronglyConnected()) {
+    if (!m_squareMatrix.isPrimitive()) {
         throw std::runtime_error("The matrix is not Perron-Frobenius.");
     }
 }

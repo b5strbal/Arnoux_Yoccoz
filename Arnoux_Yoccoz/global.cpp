@@ -15,6 +15,11 @@ int integerMod(int a, int b){
     return result >= 0 ? result : result + b;
 }
 
+int gcd(int a, int b){
+    return b == 0 ? a : gcd(b, a % b);
+}
+
+
 
 
 int modAdd(int x, int y, int mod){

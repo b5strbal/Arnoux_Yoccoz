@@ -104,11 +104,12 @@ public:
     
     int size() const { return this->height(); }
     SquareMatrix<Type> transpose() const { return Matrix<Type>::transpose(); }
-    bool isGraphStronglyConnected() const { return isReachableFromEveryVertex(0) && isEveryVertexReachableFrom(0);}
+    bool isIrreducible() const;
+    bool isPrimitive() const;
 private:
     const Matrix<Type>& assertSquareMatrix(const Matrix<Type>& matrix);
-    bool isReachableFromEveryVertex(int vertex) const;
-    bool isEveryVertexReachableFrom(int vertex) const;
+    bool backwardGraphSearch(int vertex, std::vector<int>& distances) const;
+    bool forwardGraphSearch(int vertex, std::vector<int>& distances) const;
 };
 
 

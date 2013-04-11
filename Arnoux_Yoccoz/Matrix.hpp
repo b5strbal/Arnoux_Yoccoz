@@ -221,14 +221,46 @@ const Matrix<Type>& SquareMatrix<Type>::assertSquareMatrix(const Matrix<Type>& m
     return matrix;
 }
 
+template <typename Type>
+bool SquareMatrix<Type>::isIrreducible() const {
+    std::vector<int> distances; // We don't care about the distances here but have to pass a vector as argument
+    return forwardGraphSearch(0, distances) && backwardGraphSearch(0, distances);
+}
 
 
 template <typename Type>
-bool SquareMatrix<Type>::isEveryVertexReachableFrom(int vertex) const{
+bool SquareMatrix<Type>::isPrimitive() const {
+    assert(size() > 1);
+    std::vector<int> forwardDistances;
+    std::vector<int> backwardDistances;
+    if (!forwardGraphSearch(0, forwardDistances) || !backwardGraphSearch(0, backwardDistances)){ // if not strongly connected
+        return false;
+    }
+    int gcdOfCycles = forwardDistances[1] + backwardDistances[1];
+    for (int vertex = 0; vertex < size(); vertex++) {
+        for (int successor = 0; successor < size(); successor++) {
+            if (this->getEntry(vertex, successor)) {
+                gcdOfCycles = gcd(gcdOfCycles, forwardDistances[vertex] + backwardDistances[successor] + 1);
+                if (gcdOfCycles == 1) {
+                    return true;
+                }
+            }
+        }
+    }
+    std::cout << gcdOfCycles;
+    return false;
+}
+
+
+
+
+template <typename Type>
+bool SquareMatrix<Type>::forwardGraphSearch(int vertex, std::vector<int>& distances) const{
     // Doing a breadth-first search from vectex
     
     assert(vertex >= 0 && vertex < size());
     int CountReachableVertices = 1;
+    distances.resize(size(), size());
     
     enum vertex_status{
         ALREADY_SEARCHED_NEIGHBORS,
@@ -238,6 +270,7 @@ bool SquareMatrix<Type>::isEveryVertexReachableFrom(int vertex) const{
     
     std::vector<vertex_status> Status(size(), NOT_YET_REACHED);
     Status[vertex] = NEIGHBORS_TO_BE_SEARCHED;
+    distances[vertex] = 0;
     std::deque<int> VerticesToSearch(1, vertex);
     
     while (VerticesToSearch.size() > 0) {
@@ -247,6 +280,7 @@ bool SquareMatrix<Type>::isEveryVertexReachableFrom(int vertex) const{
                 Status[i] = NEIGHBORS_TO_BE_SEARCHED;
                 CountReachableVertices++;
                 VerticesToSearch.push_back(i);
+                distances[i] = distances[CurrentVertex] + 1;
             }
         }
         Status[CurrentVertex] = ALREADY_SEARCHED_NEIGHBORS;
@@ -261,8 +295,8 @@ bool SquareMatrix<Type>::isEveryVertexReachableFrom(int vertex) const{
 
 
 template <typename Type>
-bool SquareMatrix<Type>::isReachableFromEveryVertex(int vertex) const{
-    return this->transpose().isEveryVertexReachableFrom(vertex);
+bool SquareMatrix<Type>::backwardGraphSearch(int vertex, std::vector<int>& distances) const{
+    return this->transpose().forwardGraphSearch(vertex, distances);
 }
 
 

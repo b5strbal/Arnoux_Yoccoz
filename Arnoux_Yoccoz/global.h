@@ -25,6 +25,7 @@ int integerMod(int a, int b);
 
 int modAdd(int x, int y, int mod);
 
+int gcd(int a, int b);
 
 /**
  * @brief   Calculates the fractional part of a real number. E.g. FracPart(2.3) = 0.3, FracPart(-1.8) = 0.2.
