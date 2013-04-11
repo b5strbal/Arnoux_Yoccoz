@@ -9,8 +9,7 @@
 #include "global.h"
 
 
-int integerMod(int a, int b){
-    assert(b > 0);
+int Modint::integerMod(int a, int b){
     int result = a % b;
     return result >= 0 ? result : result + b;
 }
@@ -22,10 +21,20 @@ int gcd(int a, int b){
 
 
 
-int modAdd(int x, int y, int mod){
-    assert(mod > 0);
-    return integerMod(x + y, mod);
+
+
+
+Modint::Modint(int value, int modulus) :
+    m_modulus(modulus)
+{
+    assert(modulus > 0);
+    m_value = integerMod(value, modulus);
 }
+
+
+
+
+
 
 
 

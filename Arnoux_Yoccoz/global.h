@@ -21,11 +21,30 @@ typedef long double floating_point_type;
 
 const int CONTAINING_INTERVAL_NOT_UNIQUE = -100;
 
-int integerMod(int a, int b);
 
-int modAdd(int x, int y, int mod);
+
 
 int gcd(int a, int b);
+
+class Modint {    
+    int m_value;
+    int m_modulus;
+    
+    static int integerMod(int a, int b);
+public:
+    Modint(int value, int modulus);
+    
+    Modint& operator++() { m_value++; m_value %= m_modulus; return *this; }
+    Modint& operator--() { m_value = (m_value == 0 ? m_modulus - 1 : m_value - 1); return *this; }
+    Modint& operator+=(int a) { m_value = integerMod(m_value + a, m_modulus); return *this; }
+    Modint& operator-=(int a) { m_value = integerMod(m_value - a, m_modulus); return *this; }
+    friend Modint operator+(const Modint& modint, int a) { return Modint(modint.m_value + a, modint.m_modulus); }
+    friend Modint operator-(const Modint& modint, int a) { return Modint(modint.m_value - a, modint.m_modulus); }
+
+    operator int() const { return m_value; }
+};
+
+
 
 /**
  * @brief   Calculates the fractional part of a real number. E.g. FracPart(2.3) = 0.3, FracPart(-1.8) = 0.2.

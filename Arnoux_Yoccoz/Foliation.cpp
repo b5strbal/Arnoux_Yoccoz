@@ -122,17 +122,22 @@ bool Foliation::ArcsAroundDivPoints::ContainsArcThroughADivPointQ(const UnitInte
     if (m_cuttingPoints[RightIndexOfInterval].size() > 0 && m_cuttingPoints[RightIndexOfInterval].front() < RightEndPoint) {
         return false;
     }
-    int i;
-    bool foundGoodDivPoint = false;
-    for (i = LeftIndexOfInterval + 1; i != RightIndexOfInterval; i = (i + 1) % m_foliation.m_numSeparatrices) {
-        if ((throughTopDivPointQ && m_foliation.m_isTopDivPoint[i]) || (!throughTopDivPointQ && !m_foliation.m_isTopDivPoint[i])) {
-            foundGoodDivPoint = true;
-        }
+    
+    for (Modint i(LeftIndexOfInterval + 1, m_foliation.m_numSeparatrices); i != RightIndexOfInterval; ++i) {
         if (!m_cuttingPoints[i].empty()) {
-            break;
+            return false;
         }
     }
-    if (i != RightIndexOfInterval || !foundGoodDivPoint) {
+        
+    bool foundGoodDivPoint = false;
+    for (Modint i(LeftIndexOfInterval, m_foliation.m_numSeparatrices); i != RightIndexOfInterval; ++i) {
+        if ((throughTopDivPointQ && m_foliation.m_isTopDivPoint[i + 1]) ||
+            (!throughTopDivPointQ && !m_foliation.m_isTopDivPoint[i + 1])) {
+            foundGoodDivPoint = true;
+        }
+    }
+    
+    if (!foundGoodDivPoint) {
         return false;
     }
     return true;
@@ -254,23 +259,23 @@ std::string Foliation::SeparatrixSegment::print(bool verbose) const
 
 
 
-Foliation::TransverseCurve::TransverseCurve(const Foliation& foliation, const std::vector<const SeparatrixSegment*>& segments, bool wrapsAroundZero) :
+Foliation::TransverseCurve::TransverseCurve(const Foliation& foliation, const std::vector<std::list<SeparatrixSegment>::iterator>& goodSegmentIndices, bool wrapsAroundZero) :
     m_foliation(foliation)
 {
-    assert(segments.size() % 2 == 0);
-    assert(segments.size() >= 2);
+    assert(goodSegmentIndices.size() % 2 == 0);
+    assert(goodSegmentIndices.size() >= 2);
     std::vector<short> singularities(foliation.m_numIntervals, 0);
-    for (int i = 0; i < segments.size()/2; i++){
-        assert(segments[2 * i]->m_startingSingularity == segments[2 * i + 1]->m_startingSingularity);
-        assert(singularities[segments[2 * i]->m_startingSingularity] == 0);
-        singularities[segments[2 * i]->m_startingSingularity] = 1;
-        assert(segments[2 * i]->m_direction != segments[2 * i + 1]->m_direction);
+    for (int i = 0; i < goodSegmentIndices.size(); i += 2){
+        assert(goodSegmentIndices[i]->m_startingSingularity == goodSegmentIndices[i + 1]->m_startingSingularity);
+        assert(singularities[goodSegmentIndices[i]->m_startingSingularity] == 0);
+        singularities[goodSegmentIndices[i]->m_startingSingularity] = 1;
+        assert(goodSegmentIndices[i]->m_direction != goodSegmentIndices[i + 1]->m_direction);
     }
     
     std::vector<std::pair<UnitIntervalPoint, int>> endpointsAndIndices;
-    endpointsAndIndices.reserve(segments.size());
-    for (int i = 0; i < segments.size(); i++){
-        endpointsAndIndices.push_back(std::make_pair(segments[i]->m_endpoint, i));
+    endpointsAndIndices.reserve(goodSegmentIndices.size());
+    for (int i = 0; i < goodSegmentIndices.size(); i++){
+        endpointsAndIndices.emplace_back(goodSegmentIndices[i]->m_endpoint, i);
     }
     std::sort(endpointsAndIndices.begin(), endpointsAndIndices.end());
     for (auto it = endpointsAndIndices.begin() + 1; it != endpointsAndIndices.end(); it++) {
@@ -279,36 +284,76 @@ Foliation::TransverseCurve::TransverseCurve(const Foliation& foliation, const st
         }
     }
     
-    std::vector<const ArcsAroundDivPoints*> adpVector;
-    adpVector.reserve(segments.size());
-    for (auto ps : segments)
-        adpVector.push_back(&ps->m_arcsAroundDivPoints);
-    ArcsAroundDivPoints adpIntersection = m_foliation.intersect(adpVector);
-    
-    int startindex = wrapsAroundZero ? 1 : 0;
-    for (int i = startindex; i != startindex; i = (i + 2) % segments.size()) {
-        bool throughTopDivPoint = segments[endpointsAndIndices[i].second]->m_direction == DOWNWARDS &&
-                                    segments[endpointsAndIndices[i + 1].second]->m_direction == DOWNWARDS ? true : false;
-            
-    
-        if (!adpIntersection.ContainsArcThroughADivPointQ(endpointsAndIndices[i].first,
-                                                         segments[endpointsAndIndices[i].second]->m_smallContainingInterval,
-                                                         endpointsAndIndices[i + 1].first,
-                                                         segments[endpointsAndIndices[i + 1].second]->m_smallContainingInterval,
-                                                         throughTopDivPoint))
-        {
-            throw Exception_CantConstructTransverseCurve();
+    // checking that the curve is transverse
+    {
+        std::vector<short> connectingArcToRightQ(goodSegmentIndices.size());
+        for (int i = 0; i < endpointsAndIndices.size(); i++) {
+            connectingArcToRightQ[endpointsAndIndices[i].second] = (i % 2);
+        }
+        for (int i = 0; i < endpointsAndIndices.size(); i += 2) {
+            if (connectingArcToRightQ[i] == connectingArcToRightQ[i + 1]) {
+                throw Exception_CantConstructTransverseCurve();
+            }
         }
     }
-
+    
+    // checking that the curve is connected
+    
     std::vector<UnitIntervalPoint> endpoints;
     endpoints.reserve(endpointsAndIndices.size());
     for (auto& x : endpointsAndIndices) {
         endpoints.push_back(x.first);
     }
     
+    {
+        Modint index(0, static_cast<int>(goodSegmentIndices.size()));
+        int length = 0;
+        do {
+            if ((wrapsAroundZero && index % 2 == 1) || (!wrapsAroundZero && index % 2 == 0)) {
+                ++index;
+            } else
+                --index;
+            int pair = endpointsAndIndices[index].second % 2 == 0 ? endpointsAndIndices[index].second + 1 :
+            endpointsAndIndices[index].second - 1;
+            auto it = std::lower_bound(endpoints.begin(), endpoints.end(), goodSegmentIndices[pair]->m_endpoint);
+            index = Modint(static_cast<int>(it - endpoints.begin()), static_cast<int>(goodSegmentIndices.size()));
+            length += 2;
+        } while (index != 0);
+        if (length < goodSegmentIndices.size()) {
+            throw Exception_CantConstructTransverseCurve();
+        }
+    }
+    
+    
+    // checking that the curve is minimal (can't be simplified trivially) and that it is simple
+    
+    std::vector<const ArcsAroundDivPoints*> adpVector;
+    adpVector.reserve(goodSegmentIndices.size());
+    for (auto ps : goodSegmentIndices)
+        adpVector.push_back(&ps->m_arcsAroundDivPoints);
+    ArcsAroundDivPoints adpIntersection = m_foliation.intersect(adpVector);
+    
+    for (int i = wrapsAroundZero ? 1 : 0; i < goodSegmentIndices.size(); i += 2) {
+        int next = (i + 1) % goodSegmentIndices.size();
+        bool throughTopDivPoint = goodSegmentIndices[endpointsAndIndices[i].second]->m_direction == DOWNWARDS &&
+                                    goodSegmentIndices[endpointsAndIndices[next].second]->m_direction == DOWNWARDS ? true : false;
+            
+    
+        if (!adpIntersection.ContainsArcThroughADivPointQ(endpointsAndIndices[i].first,
+                                                         goodSegmentIndices[endpointsAndIndices[i].second]->m_smallContainingInterval,
+                                                         endpointsAndIndices[next].first,
+                                                         goodSegmentIndices[endpointsAndIndices[next].second]->m_smallContainingInterval,
+                                                         throughTopDivPoint))
+        {
+            throw Exception_CantConstructTransverseCurve();
+        }
+    }
+
+    
+    
     m_disjointIntervals = DisjointIntervals(endpoints, wrapsAroundZero);
-    m_separatrixSegments = segments; // We will probably have to find a more cleverly sorted way of storing the segments later.
+    m_goodSegmentIndices = goodSegmentIndices; // We will probably have to find a more cleverly sorted way of storing the segments later.
+   // std::cout << print() << "\n\n";
 }
 
 
@@ -338,8 +383,8 @@ std::string Foliation::TransverseCurve::print() const
 {
     std::ostringstream s;
     s << "Separatrix segments:\n";
-    for (auto segment : m_separatrixSegments){
-        s << segment->print() << "\n";
+    for (auto goodSegmentIndex : m_goodSegmentIndices){
+        s << goodSegmentIndex->print() << "\n";
     }
     s << "Connecting arcs: " << m_disjointIntervals.print() << "\n";
     s << "Length: " << length();
@@ -415,13 +460,14 @@ void InitArguments_Foliation::generateTopConnectingPairs(const FoliationSphere& 
 {
     int numSeparatrices = foliationSphere.topFoliation().intervalPairing().size();
     for (int i = 0; i < numSeparatrices; i++) {
-        if (foliationSphere.topFoliation().intervalPairing().permutation()[i] != modAdd(i, -1, numSeparatrices) ) {
+        Modint modi(i, numSeparatrices);
+        if (foliationSphere.topFoliation().intervalPairing().permutation()[modi] != Modint(i - 1, numSeparatrices)) {
             // otherwise the current separatrix emanates from a 1-pronged singularity which is not important
             
             ConnectedPoints newConnectedPoints;
             newConnectedPoints.topPoint = foliationSphere.topFoliation().intervalPairing().divPoints()[i];
             
-            int indexOfConnectedSeparatrix = modAdd(foliationSphere.topFoliation().intervalPairing().permutation()[i], 1, numSeparatrices);
+            int indexOfConnectedSeparatrix = Modint(foliationSphere.topFoliation().intervalPairing().permutation()[i]+ 1, numSeparatrices);
             UnitIntervalPoint middlePoint = foliationSphere.topFoliation().intervalPairing().divPoints()[indexOfConnectedSeparatrix];
             
             newConnectedPoints.bottomPoint = foliationSphere.bottomFoliation().intervalPairing().applyTo(middlePoint - foliationSphere.twist()) + foliationSphere.twist();
@@ -439,12 +485,12 @@ void InitArguments_Foliation::generateBottomConnectingPairs(const FoliationSpher
 {
     int numSeparatrices = foliationSphere.bottomFoliation().intervalPairing().size();
     for (int i = 0; i < numSeparatrices; i++) {
-        if (foliationSphere.bottomFoliation().intervalPairing().permutation()[i] != modAdd(i, -1, numSeparatrices) ) {
+        if (foliationSphere.bottomFoliation().intervalPairing().permutation()[i] != Modint(i - 1, numSeparatrices) ) {
             
             ConnectedPoints newConnectedPoints;
             newConnectedPoints.bottomPoint = foliationSphere.bottomFoliation().intervalPairing().divPoints()[i] + foliationSphere.twist();
             
-            int indexOfConnectedSeparatrix = modAdd(foliationSphere.bottomFoliation().intervalPairing().permutation()[i], 1, numSeparatrices);
+            int indexOfConnectedSeparatrix = Modint(foliationSphere.bottomFoliation().intervalPairing().permutation()[i] + 1, numSeparatrices);
             UnitIntervalPoint middlePoint = foliationSphere.topFoliation().intervalPairing().divPoints()[indexOfConnectedSeparatrix] + foliationSphere.twist();
             
             newConnectedPoints.topPoint = foliationSphere.topFoliation().intervalPairing().applyTo(middlePoint);
@@ -576,10 +622,19 @@ void Foliation::Init(){
 }
 
 
+
+
+
+
 bool Foliation::reachedSaddleConnection(Direction direction, int index) const
 {
     return m_goodShiftedSeparatrixSegments[direction][index].back().m_smallContainingInterval == CONTAINING_INTERVAL_NOT_UNIQUE;
 }
+
+
+
+
+
 
 
 
@@ -591,13 +646,12 @@ void Foliation::findNextSepSegment(Direction direction, int index){
     segment.m_arcsAroundDivPoints.InsertPoint(segment.m_endpoint, segment.m_smallContainingInterval);
     segment.m_depth++;
     segment.m_endpoint = segment.m_direction == UPWARDS ? m_twistedIntervalExchange.applyTo(segment.m_endpoint) : m_twistedIntervalExchange.applyInverseTo(segment.m_endpoint);
+    segment.m_endpoint = UnitIntervalPoint(segment.m_endpoint.getPosition()); // remove infinitesimal shift
     segment.m_smallContainingInterval = containingInterval(m_allRealDivPoints, segment.m_endpoint);
     
     if (segment.m_smallContainingInterval != CONTAINING_INTERVAL_NOT_UNIQUE &&
         segment.m_arcsAroundDivPoints.ContainsQ(segment.m_endpoint, segment.m_smallContainingInterval)) {
-        std::vector<SeparatrixSegment>& goodSegments = m_goodShiftedSeparatrixSegments[direction][index];
-        goodSegments.push_back(segment);
-    //    std::cout << currentSepSegments[index].m_depth << " ";
+        m_goodShiftedSeparatrixSegments[direction][index].push_back(segment);
     }
 }
 
@@ -693,7 +747,8 @@ void Foliation::printGoodSepSegments(int depth, bool verbose){
     for (Direction direction = Direction::UPWARDS; direction <= Direction::DOWNWARDS; direction++) {
         for (int i = 0; i < m_numIntervals; i++) {
             std::cout << i << (direction == UPWARDS ? " UP" : " DOWN") << "\n";
-            for(auto it = m_goodShiftedSeparatrixSegments[direction][i].begin(); it != m_goodShiftedSeparatrixSegments[direction][i].end() - 1; it++)
+            for(auto it = m_goodShiftedSeparatrixSegments[direction][i].begin(); it !=
+                ++m_goodShiftedSeparatrixSegments[direction][i].end(); it++)
             {
                 if (verbose) {
                     std::cout << it->print() << "\n\n";
@@ -776,20 +831,32 @@ void FoliationFromRP2::generateLiftsOfGoodTransverseCurves(int depth){
     generateSepSegments(depth);
     for (int index = 0; index < m_numIntervals; index++) {
         if (index < m_separatrixPair[index]) {
-            for (int downIndex = 0; downIndex < m_goodShiftedSeparatrixSegments[DOWNWARDS][index].size() - 1 &&
-                 m_goodShiftedSeparatrixSegments[DOWNWARDS][index][downIndex].m_depth <= depth; downIndex++) {
-                for (int upIndex = 0; upIndex < m_goodShiftedSeparatrixSegments[UPWARDS][index].size() - 1 &&
-                     m_goodShiftedSeparatrixSegments[UPWARDS][index][upIndex].m_depth <= depth; upIndex++) {
-                    assert(m_goodShiftedSeparatrixSegments[DOWNWARDS][index][downIndex].m_depth ==
-                           m_goodShiftedSeparatrixSegments[UPWARDS][m_separatrixPair[index]][downIndex].m_depth);
-                    assert(m_goodShiftedSeparatrixSegments[UPWARDS][index][upIndex].m_depth ==
-                           m_goodShiftedSeparatrixSegments[DOWNWARDS][m_separatrixPair[index]][upIndex].m_depth);
-                    std::vector<const SeparatrixSegment*> transverseCurveInput = {
-                        &m_goodShiftedSeparatrixSegments[DOWNWARDS][index][downIndex],
-                        &m_goodShiftedSeparatrixSegments[UPWARDS][index][upIndex],
-                        &m_goodShiftedSeparatrixSegments[UPWARDS][m_separatrixPair[index]][downIndex],
-                        &m_goodShiftedSeparatrixSegments[DOWNWARDS][m_separatrixPair[index]][upIndex]
+
+            
+            auto itFirstDown = m_goodShiftedSeparatrixSegments[DOWNWARDS][index].begin();
+            auto itSecondUp = m_goodShiftedSeparatrixSegments[UPWARDS][m_separatrixPair[index]].begin();
+            while (itFirstDown != --m_goodShiftedSeparatrixSegments[DOWNWARDS][index].end() &&
+                   itSecondUp != --m_goodShiftedSeparatrixSegments[UPWARDS][m_separatrixPair[index]].end() &&
+                   itFirstDown->m_depth <= depth &&
+                   itSecondUp->m_depth <= depth) {
+                assert(itFirstDown->m_depth == itSecondUp->m_depth);
+                
+                auto itFirstUp = m_goodShiftedSeparatrixSegments[UPWARDS][index].begin();
+                auto itSecondDown = m_goodShiftedSeparatrixSegments[DOWNWARDS][m_separatrixPair[index]].begin();
+                while (itFirstUp != --m_goodShiftedSeparatrixSegments[UPWARDS][index].end() &&
+                       itSecondDown != --m_goodShiftedSeparatrixSegments[DOWNWARDS][m_separatrixPair[index]].end() &&
+                       itFirstUp->m_depth <= depth &&
+                       itSecondDown->m_depth <= depth) {
+                    
+                    assert(itFirstUp->m_depth == itSecondDown->m_depth);
+                    
+                    std::vector<std::list<SeparatrixSegment>::iterator> transverseCurveInput = {
+                        itFirstDown,
+                        itFirstUp,
+                        itSecondUp,
+                        itSecondDown
                     };
+                    
                     try {
                         auto ret = m_transverseCurves.emplace(*this, transverseCurveInput, true);
                         if (ret.second) {
@@ -802,8 +869,19 @@ void FoliationFromRP2::generateLiftsOfGoodTransverseCurves(int depth){
                             m_liftsOfGoodTransverseCurves.insert(ret.first);
                         }
                     } catch (const Exception_CantConstructTransverseCurve&) {}
+                    
+                    itFirstUp++;
+                    itSecondDown++;
                 }
+
+                
+                itFirstDown++;
+                itSecondUp++;
             }
+            
+                
+                
+            
         }
     }
 }

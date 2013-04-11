@@ -12,6 +12,7 @@
 #include <iostream>
 #include <vector>
 #include <array>
+#include <list>
 #include <set>
 #include "UnitIntervalPoint.h"
 #include "IntervalExchangeMap.h"
@@ -61,11 +62,12 @@ protected:
     
     struct DisjointIntervals;
     class ArcsAroundDivPoints;
+public:
     struct SeparatrixSegment;
     class TransverseCurve;
     
     
-    
+protected:
     class DisjointIntervals{
     public:
         DisjointIntervals() {};
@@ -164,7 +166,7 @@ protected:
     };
 
     
-    
+public:
     struct SeparatrixSegment{
         const Foliation& m_foliation;
         int m_startingSingularity;
@@ -182,22 +184,21 @@ protected:
     
     class TransverseCurve{
     public:
-        TransverseCurve(const Foliation& foliation, const std::vector<const SeparatrixSegment*>& separatrixSegments, bool wrapsAroundZero);
+        TransverseCurve(const Foliation& foliation, const std::vector<std::list<SeparatrixSegment>::iterator>& goodSegmentIndices, bool wrapsAroundZero);
         floating_point_type length() const { return m_disjointIntervals.totalLength(); }
         std::string print() const;
         
         friend bool operator<(const TransverseCurve& c1, const TransverseCurve& c2);
         
     private:
-        std::vector<const SeparatrixSegment*> m_separatrixSegments;
+        std::vector<std::list<SeparatrixSegment>::iterator> m_goodSegmentIndices;
         DisjointIntervals m_disjointIntervals;
         const Foliation& m_foliation;
         
     };
-    friend bool operator<(const TransverseCurve& c1, const TransverseCurve& c2);
 
     
-    
+protected:
 // MEMBER VARIABLES
     int m_numIntervals;
     int m_numSeparatrices;
@@ -208,7 +209,7 @@ protected:
     std::vector<UnitIntervalPoint> m_bottomRealDivPoints;
     std::vector<int> m_pairOfTopDivPoints;
     
-    std::array<std::vector<std::vector<SeparatrixSegment>>, 2> m_goodShiftedSeparatrixSegments;
+    std::array<std::vector<std::list<SeparatrixSegment>>, 2> m_goodShiftedSeparatrixSegments;
 
     std::set<TransverseCurve> m_transverseCurves;
     

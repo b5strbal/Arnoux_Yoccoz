@@ -29,7 +29,7 @@ int main (int argc, const char * argv[])
     t1 = clock();
     
     //cout << fs;
-    f.generateLiftsOfGoodTransverseCurves(1000);
+    f.printLiftsOfGoodTransverseCurves(1000);
     //cout << f;
     
     t2 = clock();

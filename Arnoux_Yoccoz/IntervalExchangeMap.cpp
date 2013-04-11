@@ -87,7 +87,7 @@ Permutation rotatingPermutation(int size, int rotationAmount){
         throw std::runtime_error("Empty permutation.");
     }
     std::vector<int> functionValues(size);
-    int normalizedAmount = integerMod(rotationAmount, size);
+    int normalizedAmount = Modint(rotationAmount, size);
     for (int i = 0; i < size - normalizedAmount; i++) {
         functionValues[i] = i + normalizedAmount;
     }
@@ -228,14 +228,13 @@ std::ostream& operator<<(std::ostream& Out, const IntervalExchangeMap& intervalE
 
 
 
-
 UnitIntervalPoint IntervalExchangeMap::applyTo(const UnitIntervalPoint& point) const{
-    return point + m_translations[containingInterval(m_divPoints, point)];
+    return UnitIntervalPoint(point.getPosition()) + m_translations[containingInterval(m_divPoints, point)];
 }
 
 
 UnitIntervalPoint IntervalExchangeMap::applyInverseTo(const UnitIntervalPoint& point) const{
-    return point - m_translations[m_inversePermutation[containingInterval(m_divPointsAfterExchange, point)]];
+    return UnitIntervalPoint(point.getPosition()) - m_translations[m_inversePermutation[containingInterval(m_divPointsAfterExchange, point)]];
 }
 
 
@@ -348,7 +347,7 @@ TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<floatin
 
 
 TwistedIntervalExchangeMap TwistedIntervalExchangeMap::rotateBy(int rotationAmount) const{
-    int normalizedAmount = integerMod(rotationAmount, sizeBeforeTwist());
+    int normalizedAmount = Modint(rotationAmount, sizeBeforeTwist());
     if (normalizedAmount == 0) {
         return *this;
     }
