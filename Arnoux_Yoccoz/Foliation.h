@@ -51,7 +51,7 @@ class InitArguments_Foliation{
  
 
 class Foliation : private InitArguments_Foliation{
-private:
+protected:
     typedef std::pair<UnitIntervalPoint, UnitIntervalPoint> interval_t;
     enum Direction{
         UPWARDS = 0,
@@ -185,6 +185,9 @@ private:
         floating_point_type length() const { return m_disjointIntervals.totalLength(); }
         std::string print() const;
         
+        friend bool operator<(const TransverseCurve& c1, const TransverseCurve& c2)
+            { return c1.length() < c2.length(); }
+        
     private:
         std::vector<const SeparatrixSegment*> m_separatrixSegments;
         DisjointIntervals m_disjointIntervals;
@@ -204,7 +207,6 @@ private:
     std::vector<UnitIntervalPoint> m_bottomRealDivPoints;
     std::vector<int> m_pairOfTopDivPoints;
     
-    std::array<std::vector<SeparatrixSegment>, 2> m_currentSepSegments;
     std::array<std::vector<std::vector<SeparatrixSegment>>, 2> m_goodShiftedSeparatrixSegments;
 
     std::set<TransverseCurve> m_transverseCurves;
@@ -214,6 +216,7 @@ private:
     void findNextSepSegment(Direction direction, int index);
     const SeparatrixSegment& getFirstIntersection(Direction direction, int index, const DisjointIntervals& intervals);
     void checkPointsAreNotTooClose(const std::vector<UnitIntervalPoint>& points);
+    bool reachedSaddleConnection(Direction direction, int index) const; 
     
 public:
     Foliation(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
@@ -264,7 +267,9 @@ class FoliationFromRP2 : public Foliation
 public:
     FoliationFromRP2(const FoliationRP2& foliationRP2);
     
-    void generateLiftsOfGoodTransverseCurves(int depth) const;
+    void generateLiftsOfGoodTransverseCurves(int depth);
+private:
+    std::vector<int> m_separatrixPair;
 };
 
 

@@ -547,27 +547,28 @@ void Foliation::Init(){
     std::cout << m_pairOfTopDivPoints << std::endl;
 */
     
-    m_currentSepSegments[UPWARDS].reserve(m_numIntervals);
-    m_currentSepSegments[DOWNWARDS].reserve(m_numIntervals);
-    m_goodShiftedSeparatrixSegments[UPWARDS].reserve(m_numIntervals);
-    m_goodShiftedSeparatrixSegments[DOWNWARDS].reserve(m_numIntervals);
+    m_goodShiftedSeparatrixSegments[UPWARDS].resize(m_numIntervals);
+    m_goodShiftedSeparatrixSegments[DOWNWARDS].resize(m_numIntervals);
     for (int i = 0; i < m_numIntervals; i++) {
-        m_currentSepSegments[DOWNWARDS].emplace_back(*this, i, DOWNWARDS);
-        m_currentSepSegments[UPWARDS].emplace_back(*this, i, UPWARDS);
-        m_goodShiftedSeparatrixSegments[DOWNWARDS][i].push_back(m_currentSepSegments[DOWNWARDS].back());
-        m_goodShiftedSeparatrixSegments[UPWARDS][i].push_back(m_currentSepSegments[UPWARDS].back());
+        m_goodShiftedSeparatrixSegments[DOWNWARDS][i].emplace_back(*this, i, DOWNWARDS);
+        m_goodShiftedSeparatrixSegments[UPWARDS][i].emplace_back(*this, i, UPWARDS);
+        m_goodShiftedSeparatrixSegments[DOWNWARDS][i].push_back(m_goodShiftedSeparatrixSegments[DOWNWARDS][i].back());
+        m_goodShiftedSeparatrixSegments[UPWARDS][i].push_back(m_goodShiftedSeparatrixSegments[UPWARDS][i].back());
     }
-    
-    
+}
+
+
+bool Foliation::reachedSaddleConnection(Direction direction, int index) const
+{
+    return m_goodShiftedSeparatrixSegments[direction][index].back().m_smallContainingInterval == CONTAINING_INTERVAL_NOT_UNIQUE;
 }
 
 
 
-
 void Foliation::findNextSepSegment(Direction direction, int index){
-    assert(m_currentSepSegments[direction][index].m_smallContainingInterval != CONTAINING_INTERVAL_NOT_UNIQUE);
+    assert(!reachedSaddleConnection(direction, index));
     
-    SeparatrixSegment& segment = m_currentSepSegments[direction][index];
+    SeparatrixSegment& segment = m_goodShiftedSeparatrixSegments[direction][index].back();
     segment.m_intervalIntersectionCount[containingInterval(m_topRealDivPoints, segment.m_endpoint)]++;
     segment.m_arcsAroundDivPoints.InsertPoint(segment.m_endpoint, segment.m_smallContainingInterval);
     segment.m_depth++;
@@ -588,8 +589,8 @@ void Foliation::findNextSepSegment(Direction direction, int index){
 void Foliation::generateSepSegments(int depth){
     for (Direction direction = Direction::UPWARDS; direction <= Direction::DOWNWARDS; direction++) {
         for (int index = 0; index < m_numIntervals; index++) {
-            while (m_currentSepSegments[direction][index].m_smallContainingInterval != CONTAINING_INTERVAL_NOT_UNIQUE &&
-                   m_currentSepSegments[direction][index].m_depth < depth) {
+            while (!reachedSaddleConnection(direction, index) &&
+                   m_goodShiftedSeparatrixSegments[direction][index].back().m_depth < depth) {
                 findNextSepSegment(direction, index);
             }
     //        std::cout << std::endl << std::endl;
@@ -673,13 +674,13 @@ void Foliation::printGoodSepSegments(int depth, bool verbose){
     generateSepSegments(depth);
     for (Direction direction = Direction::UPWARDS; direction <= Direction::DOWNWARDS; direction++) {
         for (int i = 0; i < m_numIntervals; i++) {
-            std::cout << depth << (direction == UPWARDS ? " UP" : " DOWN") << "\n";
-            for(auto &segment : m_goodShiftedSeparatrixSegments[direction][i])
+            std::cout << i << (direction == UPWARDS ? " UP" : " DOWN") << "\n";
+            for(auto it = m_goodShiftedSeparatrixSegments[direction][i].begin(); it != m_goodShiftedSeparatrixSegments[direction][i].end() - 1; it++)
             {
                 if (verbose) {
-                    std::cout << segment.print() << "\n\n";
+                    std::cout << it->print() << "\n\n";
                 } else
-                    std::cout << segment.m_depth << " ";
+                    std::cout << it->m_depth << " ";
             }
             if (!verbose) {
                 std::cout << "\n\n";
@@ -731,16 +732,45 @@ Foliation arnouxYoccozFoliation(int genus){
 FoliationFromRP2::FoliationFromRP2(const FoliationRP2& foliationRP2):
     Foliation(foliationRP2)
 {
+    m_separatrixPair.resize(m_numIntervals);
+    for (int i = 0 ; i < m_numIntervals; i++) {
+        UnitIntervalPoint pair = m_twistedIntervalExchange.applyTo(m_goodShiftedSeparatrixSegments[DOWNWARDS][i].front().m_endpoint) - 0.5;
+        for (int j = 0; j < m_numIntervals; j++) {
+            if (distanceBetween(m_topRealDivPoints[j], pair) < UnitIntervalPoint::PRECISION || distanceBetween(pair, m_topRealDivPoints[j]) < UnitIntervalPoint::PRECISION) {
+                m_separatrixPair[i] = j;
+                break;
+            }
+        }
+    }
 }
 
 
-void FoliationFromRP2::generateLiftsOfGoodTransverseCurves(int depth) const{
-
+void FoliationFromRP2::generateLiftsOfGoodTransverseCurves(int depth){
+    generateSepSegments(depth);
 
 }
 
+/*
+void FoliationRP2::GenerateGoodCurves(int Depth){
+    GenerateGoodShiftedSeparatrixSegments(Depth);
+    for (int SeparatrixIndex = 0; SeparatrixIndex < m_NumSeparatrices; SeparatrixIndex++) {
+        int IndexOfPair = SeparatrixIndexOfPair(SeparatrixIndex, RIGHT);
+        for (std::list<SeparatrixSegment>::iterator it1 = m_GoodShiftedSeparatrixSegments[SeparatrixIndex][RIGHT].begin();
+             it1 != m_GoodShiftedSeparatrixSegments[SeparatrixIndex][RIGHT].end(); it1++) {
+            for (std::list<SeparatrixSegment>::iterator it2 = m_GoodShiftedSeparatrixSegments[IndexOfPair][LEFT].begin();
+                 it2 != m_GoodShiftedSeparatrixSegments[IndexOfPair][LEFT].end(); it2++) {
+                try {
+                    Save(GetGoodOneSidedCurve(*it2, *it1));
+                }
+                catch (const ExceptionNoObjectFound&) {}
+                catch (const ExceptionFoundSaddleConnection&) {}
+            }
+        }
+    }
+    m_GoodOneSidedCurves.sort(Compare);
+}
 
-
+*/
 
 
 

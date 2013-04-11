@@ -41,6 +41,8 @@
  */
 class UnitIntervalPoint {        
 public:
+    static const floating_point_type PRECISION;
+    
     /**
      * @brief   
      */
@@ -120,7 +122,6 @@ protected:
 
     
 private:
-    static const floating_point_type PRECISION;
 
     
 
