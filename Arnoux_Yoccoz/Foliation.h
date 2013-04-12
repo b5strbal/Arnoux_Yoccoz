@@ -58,7 +58,6 @@ protected:
         UPWARDS = 0,
         DOWNWARDS = 1
     };
-    class Exception_CantConstructTransverseCurve : public std::exception {};
     
     struct DisjointIntervals;
     class ArcsAroundDivPoints;
@@ -71,7 +70,7 @@ protected:
     class DisjointIntervals{
     public:
         DisjointIntervals() {};
-        DisjointIntervals(const std::vector<UnitIntervalPoint>& points, bool wrapsAroundZero);
+        DisjointIntervals(const std::vector<UnitIntervalPoint>& unsortedPoints, bool wrapsAroundZero);
         const std::vector<UnitIntervalPoint>& points() const { return m_points; }
         bool wrapsAroundZero() const { return m_wrapsAroundZero; }
         bool containsQ(const UnitIntervalPoint& point) const;
@@ -125,7 +124,9 @@ protected:
          *                      Also, there has to be at least one division point.
          */
         ArcsAroundDivPoints(const Foliation& foliation) :
-            m_cuttingPoints(foliation.m_numSeparatrices, std::vector<UnitIntervalPoint>(0)),
+            m_firstCuttingPoint(foliation.m_numSeparatrices),
+            m_secondCuttingPoint(foliation.m_numSeparatrices),
+            m_isIntervalEmpty(foliation.m_numSeparatrices, true),
             m_foliation(foliation)
         {
         }
@@ -161,7 +162,9 @@ protected:
          * @brief   
          */
         
-        std::vector<std::vector<UnitIntervalPoint>> m_cuttingPoints;
+        std::vector<UnitIntervalPoint> m_firstCuttingPoint;
+        std::vector<UnitIntervalPoint> m_secondCuttingPoint;
+        std::vector<char> m_isIntervalEmpty;
         const Foliation& m_foliation;
     };
 
@@ -218,7 +221,9 @@ protected:
     void findNextSepSegment(Direction direction, int index);
     const SeparatrixSegment& getFirstIntersection(Direction direction, int index, const DisjointIntervals& intervals);
     void checkPointsAreNotTooClose(const std::vector<UnitIntervalPoint>& points);
-    bool reachedSaddleConnection(Direction direction, int index) const; 
+    bool reachedSaddleConnection(Direction direction, int index) const;
+    std::array<bool, 2> whichTransverseCurvesExist(const std::vector<std::list<SeparatrixSegment>::iterator>& goodSegmentIndices);
+
     
 public:
     Foliation(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
@@ -238,6 +243,8 @@ private:
     Foliation(const TwistedIntervalExchangeMap&);
     
     void Init();
+    
+    
     
     
     /**

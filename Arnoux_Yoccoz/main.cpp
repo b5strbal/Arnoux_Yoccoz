@@ -27,9 +27,10 @@ int main (int argc, const char * argv[])
     FoliationSphere fs = arnouxYoccozRP2();
     clock_t t1, t2;
     t1 = clock();
+
     
     //cout << fs;
-    f.printLiftsOfGoodTransverseCurves(1000);
+    f.generateLiftsOfGoodTransverseCurves(10000);
     //cout << f;
     
     t2 = clock();
