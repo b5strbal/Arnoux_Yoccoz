@@ -68,13 +68,13 @@ std::string Foliation::DisjointIntervals::print() const{
 //-------------------------------//
 
 void Foliation::ArcsAroundDivPoints::InsertPoint(const UnitIntervalPoint& NewCuttingPoint, int IndexOfInterval){
-    if (m_isIntervalEmpty[IndexOfInterval]) {
-        m_firstCuttingPoint[IndexOfInterval] = m_secondCuttingPoint[IndexOfInterval] = NewCuttingPoint;
-        m_isIntervalEmpty[IndexOfInterval] = false;
-    } else if (NewCuttingPoint < m_firstCuttingPoint[IndexOfInterval])
-        m_firstCuttingPoint[IndexOfInterval] = NewCuttingPoint;
-    else if (m_secondCuttingPoint[IndexOfInterval] < NewCuttingPoint)
-        m_secondCuttingPoint[IndexOfInterval] = NewCuttingPoint;
+    if (m_cuttingPoints[IndexOfInterval].isEmpty) {
+        m_cuttingPoints[IndexOfInterval].first = m_cuttingPoints[IndexOfInterval].second = NewCuttingPoint;
+        m_cuttingPoints[IndexOfInterval].isEmpty = false;
+    } else if (NewCuttingPoint < m_cuttingPoints[IndexOfInterval].first)
+        m_cuttingPoints[IndexOfInterval].first = NewCuttingPoint;
+    else if (m_cuttingPoints[IndexOfInterval].second < NewCuttingPoint)
+        m_cuttingPoints[IndexOfInterval].second = NewCuttingPoint;
 }
 
 
@@ -82,10 +82,10 @@ void Foliation::ArcsAroundDivPoints::InsertPoint(const UnitIntervalPoint& NewCut
 
 
 bool Foliation::ArcsAroundDivPoints::ContainsQ(const UnitIntervalPoint& c, int IndexOfInterval) const{
-    if (m_isIntervalEmpty[IndexOfInterval]) {
+    if (m_cuttingPoints[IndexOfInterval].isEmpty) {
         return true;
     }
-    if (c < m_firstCuttingPoint[IndexOfInterval] || m_secondCuttingPoint[IndexOfInterval] < c)
+    if (c < m_cuttingPoints[IndexOfInterval].first || m_cuttingPoints[IndexOfInterval].second < c)
     {
         return true;
     }
@@ -104,15 +104,15 @@ bool Foliation::ArcsAroundDivPoints::ContainsArcThroughADivPointQ(const UnitInte
     if (LeftIndexOfInterval == RightIndexOfInterval) {
         return false;
     }
-    if (!m_isIntervalEmpty[LeftIndexOfInterval] && LeftEndPoint < m_secondCuttingPoint[LeftIndexOfInterval]) {
+    if (!m_cuttingPoints[LeftIndexOfInterval].isEmpty && LeftEndPoint < m_cuttingPoints[LeftIndexOfInterval].second) {
         return false;
     }
-    if (!m_isIntervalEmpty[RightIndexOfInterval] && m_firstCuttingPoint[RightIndexOfInterval] < RightEndPoint) {
+    if (!m_cuttingPoints[RightIndexOfInterval].isEmpty && m_cuttingPoints[RightIndexOfInterval].first < RightEndPoint) {
         return false;
     }
     
     for (Modint i(LeftIndexOfInterval + 1, m_foliation.m_numSeparatrices); i != RightIndexOfInterval; ++i) {
-        if (!m_isIntervalEmpty[i]) {
+        if (!m_cuttingPoints[i].isEmpty) {
             return false;
         }
     }
@@ -132,11 +132,11 @@ bool Foliation::ArcsAroundDivPoints::ContainsArcThroughADivPointQ(const UnitInte
 std::string Foliation::ArcsAroundDivPoints::print() const
 {
     std::ostringstream s;
-    for (int i = 0; i < m_isIntervalEmpty.size(); i++){
-        if (m_isIntervalEmpty[i]) {
+    for (int i = 0; i < m_cuttingPoints.size(); i++){
+        if (m_cuttingPoints[i].isEmpty) {
             s << "() ";
         } else
-            s << "(" << m_firstCuttingPoint[i] << "," << m_secondCuttingPoint[i] << ") ";
+            s << "(" << m_cuttingPoints[i].first << "," << m_cuttingPoints[i].second << ") ";
     }
     return s.str();
 }
@@ -163,15 +163,15 @@ Foliation::ArcsAroundDivPoints Foliation::intersect(const std::vector<const Arcs
     ArcsAroundDivPoints adp = *adpVector[0];
     for (int i = 0; i < m_numSeparatrices; i++) {
         for (auto it = adpVector.begin() + 1; it != adpVector.end(); it++) {
-            if ((*it)->m_isIntervalEmpty[i]) {
+            if ((*it)->m_cuttingPoints[i].isEmpty) {
             } else
-            if (adp.m_isIntervalEmpty[i]) {
-                adp.m_firstCuttingPoint[i] = (*it)->m_firstCuttingPoint[i];
-                adp.m_secondCuttingPoint[i] = (*it)->m_secondCuttingPoint[i];
-                adp.m_isIntervalEmpty[i] = false;
+            if (adp.m_cuttingPoints[i].isEmpty) {
+                adp.m_cuttingPoints[i].first = (*it)->m_cuttingPoints[i].first;
+                adp.m_cuttingPoints[i].second = (*it)->m_cuttingPoints[i].second;
+                adp.m_cuttingPoints[i].isEmpty = false;
             } else {
-                adp.m_firstCuttingPoint[i] = std::min(adp.m_firstCuttingPoint[i], (*it)->m_firstCuttingPoint[i]);
-                adp.m_secondCuttingPoint[i] = std::max(adp.m_secondCuttingPoint[i], (*it)->m_secondCuttingPoint[i]);
+                adp.m_cuttingPoints[i].first = std::min(adp.m_cuttingPoints[i].first, (*it)->m_cuttingPoints[i].first);
+                adp.m_cuttingPoints[i].second = std::max(adp.m_cuttingPoints[i].second, (*it)->m_cuttingPoints[i].second);
             }
         }
     }

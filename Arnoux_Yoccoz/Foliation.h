@@ -124,9 +124,7 @@ protected:
          *                      Also, there has to be at least one division point.
          */
         ArcsAroundDivPoints(const Foliation& foliation) :
-            m_firstCuttingPoint(foliation.m_numSeparatrices),
-            m_secondCuttingPoint(foliation.m_numSeparatrices),
-            m_isIntervalEmpty(foliation.m_numSeparatrices, true),
+            m_cuttingPoints(foliation.m_numSeparatrices),
             m_foliation(foliation)
         {
         }
@@ -161,10 +159,13 @@ protected:
         /**
          * @brief   
          */
+        struct CuttingPoints{
+            UnitIntervalPoint first;
+            UnitIntervalPoint second;
+            bool isEmpty = true;
+        };
         
-        std::vector<UnitIntervalPoint> m_firstCuttingPoint;
-        std::vector<UnitIntervalPoint> m_secondCuttingPoint;
-        std::vector<char> m_isIntervalEmpty;
+        std::vector<CuttingPoints> m_cuttingPoints;
         const Foliation& m_foliation;
     };
 
