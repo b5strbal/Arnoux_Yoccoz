@@ -14,6 +14,7 @@
 #include <array>
 #include <list>
 #include <set>
+#include <iterator>
 #include "UnitIntervalPoint.h"
 #include "IntervalExchangeMap.h"
 #include "PerronFrobenius.h"
@@ -56,7 +57,9 @@ protected:
     typedef std::pair<UnitIntervalPoint, UnitIntervalPoint> interval_t;
     enum Direction{
         UPWARDS = 0,
-        DOWNWARDS = 1
+        DOWNWARDS = 1,
+        FIRST = UPWARDS,
+        LAST = DOWNWARDS
     };
     
     struct DisjointIntervals;
@@ -188,14 +191,14 @@ public:
     
     class TransverseCurve{
     public:
-        TransverseCurve(const Foliation& foliation, const std::vector<std::list<SeparatrixSegment>::iterator>& goodSegmentIndices, bool wrapsAroundZero);
+        TransverseCurve(const Foliation& foliation, const std::vector<std::list<SeparatrixSegment>::const_iterator>& goodSegmentIndices, bool wrapsAroundZero);
         floating_point_type length() const { return m_disjointIntervals.totalLength(); }
         std::string print() const;
         
         friend bool operator<(const TransverseCurve& c1, const TransverseCurve& c2);
         
     private:
-        std::vector<std::list<SeparatrixSegment>::iterator> m_goodSegmentIndices;
+        std::vector<std::list<SeparatrixSegment>::const_iterator> m_goodSegmentIndices;
         DisjointIntervals m_disjointIntervals;
         const Foliation& m_foliation;
         
@@ -223,7 +226,7 @@ protected:
     const SeparatrixSegment& getFirstIntersection(Direction direction, int index, const DisjointIntervals& intervals);
     void checkPointsAreNotTooClose(const std::vector<UnitIntervalPoint>& points);
     bool reachedSaddleConnection(Direction direction, int index) const;
-    std::array<bool, 2> whichTransverseCurvesExist(const std::vector<std::list<SeparatrixSegment>::iterator>& goodSegmentIndices);
+    std::array<bool, 2> whichTransverseCurvesExist(const std::vector<std::list<SeparatrixSegment>::const_iterator>& goodSegmentIndices);
 
     
 public:
@@ -234,9 +237,10 @@ public:
     Foliation reflect() const;
     Foliation flipOver() const;
     
-    void generateSepSegments(int depth);
-    void printGoodSepSegments(int depth, bool verbose = false);
-
+    void generateSepSegments(int maxdepth);
+    void printGoodSepSegments(int maxdepth = 0, bool verbose = false);
+    void applyToStoredTransverseCurves(void (*function)(const TransverseCurve&));
+    void generateTransverseCurves(int maxdepth, int numLeafComponents, void (*function)(const TransverseCurve&) = nullptr);
     
     friend std::ostream& operator<<(std::ostream& Out, Foliation f);
     
@@ -245,7 +249,38 @@ private:
     
     void Init();
     
+    class Choose{
+    public:
+        Choose(int n, int k);
+        Choose& operator++();
+        inline bool isAfterLast() const { return m_chosenIndices.empty(); }
+        operator const std::vector<int>&(){ return m_chosenIndices; }
+        
+    private:
+        std::vector<int> m_chosenIndices;
+        int m_n;
+        int m_k;
+    };
     
+    
+    
+    
+    
+    class SepSegmentCollection{
+    public:
+        SepSegmentCollection(const Foliation& foliation, const std::vector<int>& sepSegmentIndices, int maxdepth);
+        inline bool isAfterLast() const{ return m_segments.empty(); }
+        
+        SepSegmentCollection& operator++();
+        operator const std::vector<std::list<SeparatrixSegment>::const_iterator>&() { return m_segments; }
+        
+    private:
+        std::vector<std::list<SeparatrixSegment>::const_iterator> m_segments;
+        const Foliation& m_foliation;
+        int m_maxdepth;
+        
+        bool isLast(std::list<SeparatrixSegment>::const_iterator it) const;
+    };
     
     
     /**

@@ -30,7 +30,10 @@ int main (int argc, const char * argv[])
 
     
     //cout << fs;
-    f.generateLiftsOfGoodTransverseCurves(10000);
+   // f.generateLiftsOfGoodTransverseCurves(10000);
+    f.generateTransverseCurves(2, 6 /*,[](const Foliation::TransverseCurve& curve){
+        cout << curve.print() << "\n\n";
+    }*/ );
     //cout << f;
     
     t2 = clock();
