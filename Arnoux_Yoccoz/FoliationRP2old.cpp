@@ -741,7 +741,7 @@ void FoliationRP2::PrintGoodCurves(int Depth){
 
 
 
-void FoliationRP2::Save(const GoodOneSidedCurve& GoodCurve){
+/* NO NEED */ void FoliationRP2::Save(const GoodOneSidedCurve& GoodCurve){
     bool AlreadySaved = false;
     for (std::list<GoodOneSidedCurve>::iterator it = m_GoodOneSidedCurves.begin(); it != m_GoodOneSidedCurves.end(); it++) {
         if (*it == GoodCurve) {
@@ -756,7 +756,7 @@ void FoliationRP2::Save(const GoodOneSidedCurve& GoodCurve){
 
 
 
-void FoliationRP2::GenerateGoodCurves(int Depth){
+/* NO NEED */ void FoliationRP2::GenerateGoodCurves(int Depth){
     GenerateGoodShiftedSeparatrixSegments(Depth);
     for (int SeparatrixIndex = 0; SeparatrixIndex < m_NumSeparatrices; SeparatrixIndex++) {
         int IndexOfPair = SeparatrixIndexOfPair(SeparatrixIndex, RIGHT);
