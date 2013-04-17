@@ -23,26 +23,19 @@ const int CONTAINING_INTERVAL_NOT_UNIQUE = -100;
 
 
 
+enum UpDownDirection{
+    UPWARDS = 0,
+    DOWNWARDS = 1,
+    FIRST = UPWARDS,
+    LAST = DOWNWARDS
+};
+
+
+
 
 int gcd(int a, int b);
 
-class Modint {    
-    int m_value;
-    int m_modulus;
-    
-    static int integerMod(int a, int b);
-public:
-    Modint(int value, int modulus);
-    
-    Modint& operator++() { m_value++; m_value %= m_modulus; return *this; }
-    Modint& operator--() { m_value = (m_value == 0 ? m_modulus - 1 : m_value - 1); return *this; }
-    Modint& operator+=(int a) { m_value = integerMod(m_value + a, m_modulus); return *this; }
-    Modint& operator-=(int a) { m_value = integerMod(m_value - a, m_modulus); return *this; }
-    friend Modint operator+(const Modint& modint, int a) { return Modint(modint.m_value + a, modint.m_modulus); }
-    friend Modint operator-(const Modint& modint, int a) { return Modint(modint.m_value - a, modint.m_modulus); }
 
-    operator int() const { return m_value; }
-};
 
 
 
@@ -84,14 +77,14 @@ int findInterval(const std::vector<Type>& separatingPoints,
 
 template <typename Type>
 std::ostream& operator<<(std::ostream& Out, const std::vector<Type>& vec){
-    for (int i = 0; i < vec.size(); i++) {
+    for (unsigned int i = 0; i < vec.size(); i++) {
         Out << vec[i] << " ";
         }
     return Out;
 }
 
         
-    
+
 
 
 

@@ -8,111 +8,7 @@
 
 
 #include "IntervalExchangeMap.h"
-
-
-
-
-
-
-Permutation::Permutation(const std::vector<int> functionValues) :
-    m_functionValues(functionValues)
-{
-    if (size() == 0) throw std::runtime_error("Empty permutation.");
-    std::vector<char> isInTheRange(size(), 0);
-    for (int i = 0; i < size(); i++) {
-        if(m_functionValues[i] >= size() || m_functionValues[i] < 0)
-            throw std::runtime_error("A permutation must be specified by integers between 0 and n-1.");
-        if (isInTheRange[m_functionValues[i]] == 1)
-            throw std::runtime_error("A permutation should be a one-to-one map.");
-        isInTheRange[m_functionValues[i]] = 1;
-    }
-}
-
-
-
-
-
-template <typename Type>
-std::vector<Type> Permutation::applyAndCreateCopy(const std::vector<Type>& vec) const{
-    if (size() != vec.size()) {
-        throw std::runtime_error("A permutation can't act on a vector if the sizes are different.");
-    }
-    std::vector<Type> newVector(size());
-    for (int i = 0; i < size(); i++) {
-        newVector[m_functionValues[i]] = vec[i];
-    }
-    return newVector;
-}
-
-
-
-
-
-
-
-
-Permutation operator*(const Permutation& p1, const Permutation& p2){
-    if (p1.size() != p2.size()) {
-        throw std::runtime_error("Two permutations must act on the same set in order to be composable.");
-    }
-    std::vector<int> compositionValues(p1.size());
-    for (int i = 0 ; i < p1.size(); i++) {
-        compositionValues[i] = p1[p2[i]];
-    }
-    return Permutation(compositionValues);
-}
-
-
-
-
-
-Permutation Permutation::inverse() const{
-    std::vector<int> newFunctionValues(size());
-    for (int i = 0; i < size(); i++) {
-        newFunctionValues[m_functionValues[i]] = i;
-    }
-    return Permutation(newFunctionValues);
-}
-
-
-std::ostream& operator<<(std::ostream& Out, const Permutation& permutation){
-    for(long i = 0; i < permutation.size(); i++)
-        std::cout << permutation.m_functionValues[i] << " ";
-    return Out;
-}
-
-
-Permutation rotatingPermutation(int size, int rotationAmount){
-    if (size <= 0) {
-        throw std::runtime_error("Empty permutation.");
-    }
-    std::vector<int> functionValues(size);
-    int normalizedAmount = Modint(rotationAmount, size);
-    for (int i = 0; i < size - normalizedAmount; i++) {
-        functionValues[i] = i + normalizedAmount;
-    }
-    for (int i = size - normalizedAmount; i < size; i++) {
-        functionValues[i] = i + normalizedAmount - size;
-    }
-    return Permutation(functionValues);
-}
-
-
-Permutation reversingPermutation(int size){
-    if (size <= 0) {
-        throw std::runtime_error("Empty permutation.");
-    }
-    std::vector<int> functionValues(size);
-    for (int i = 0 ; i < size; i++) {
-        functionValues[i] = size - 1 - i;
-    }
-    return Permutation(functionValues);
-}
-
-
-
-
-
+#include "Modint.h"
 
 
 
@@ -182,6 +78,14 @@ IntervalExchangeBase::IntervalExchangeBase(const std::vector<floating_point_type
 
 
 
+std::string IntervalExchangeBase::print() const{
+    std::ostringstream s;
+    s << "Permutation: " << m_permutation.print() << "\n";
+    s << "Lengths: " << m_lengths;
+    return s.str();
+}
+
+
 
 
 
@@ -208,7 +112,7 @@ IntervalExchangeMap::IntervalExchangeMap(const std::vector<floating_point_type>&
     IntervalExchangeBase(lengths, permutation),
     m_translations(lengths.size())
 {
-    for (int i = 0; i < lengths.size(); i++) {
+    for (unsigned int i = 0; i < lengths.size(); i++) {
         m_translations[i] = m_divPointsAfterExchange[m_permutation[i]].getPosition() - m_divPoints[i].getPosition();
     }
 }
@@ -216,13 +120,6 @@ IntervalExchangeMap::IntervalExchangeMap(const std::vector<floating_point_type>&
 
 
 
-
-
-std::ostream& operator<<(std::ostream& Out, const IntervalExchangeMap& intervalExchange){
-    Out << "Permutation: " << intervalExchange.m_permutation << "\n";
-    Out << "Lengths: " << intervalExchange.m_lengths;
-    return Out;
-}
 
 
 
@@ -261,7 +158,7 @@ InitArguments_TwistedIntervalExchangeMap::InitArguments_TwistedIntervalExchangeM
     IntervalExchangeMap originalIntExchange(lengths, permutation);
     arg_normalizedOriginalLengths = originalIntExchange.lengths();
     
-    int originalSize = static_cast<int>(lengths.size());
+    unsigned int originalSize = lengths.size();
     UnitIntervalPoint oneMinusTwist(FracPart(1 - twist));
     UnitIntervalPoint newDivPoint = originalIntExchange.applyInverseTo(oneMinusTwist);
     int intervalOfNewDivPoint = containingInterval(originalIntExchange.divPoints(), newDivPoint);
@@ -278,7 +175,7 @@ InitArguments_TwistedIntervalExchangeMap::InitArguments_TwistedIntervalExchangeM
     arg_lengths[intervalOfNewDivPoint] = smallerLength;
     
     // Finding the new permutation
-    std::vector<int> permutationInput(originalSize + 1);
+    std::vector<unsigned int> permutationInput(originalSize + 1);
     for (int i = 0; i < intervalOfNewDivPoint; i++) {
         if (permutation[i] < intervalOfOneMinusTwist) {
             permutationInput[i] = permutation[i] + originalSize - intervalOfOneMinusTwist;
@@ -287,7 +184,7 @@ InitArguments_TwistedIntervalExchangeMap::InitArguments_TwistedIntervalExchangeM
     }
     permutationInput[intervalOfNewDivPoint] = originalSize;
     permutationInput[intervalOfNewDivPoint + 1] = 0;
-    for (int i = intervalOfNewDivPoint + 2; i <= originalSize; i++) {
+    for (unsigned int i = intervalOfNewDivPoint + 2; i <= originalSize; i++) {
         if (permutation[i - 1] < intervalOfOneMinusTwist) {
             permutationInput[i] = permutation[i - 1] + originalSize - intervalOfOneMinusTwist;
         } else
@@ -309,10 +206,10 @@ TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<floatin
                                                        const Permutation& permutation,
                                                        floating_point_type twist) :
     InitArguments_TwistedIntervalExchangeMap(lengths, permutation, twist),
-    m_originalPermutation(permutation),
-    m_originalLengths(arg_normalizedOriginalLengths),
-    m_twist(twist),
     m_intervalExchangeAfterTwist(arg_lengths, arg_permutation),
+    m_originalLengths(arg_normalizedOriginalLengths),
+    m_originalPermutation(permutation),
+    m_twist(twist),
     m_indexOfFakeDivPoint(m_intervalExchangeAfterTwist.inversePermutation()[0])
 {
         
@@ -427,7 +324,7 @@ Permutation InitArguments_IntervalExchangeFoliationDisk::arg_permutation;
 
 InitArguments_IntervalExchangeFoliationDisk::InitArguments_IntervalExchangeFoliationDisk(const WeighedTree& wt){
     arg_lengths.resize(2 * wt.getNumEdges());
-    std::vector<int> pairing(2 * wt.getNumEdges());
+    std::vector<unsigned int> pairing(2 * wt.getNumEdges());
     fillInLengthsAndPairing(arg_lengths, pairing, 0, wt.m_Root);
     arg_permutation = Permutation(pairing);
 }
@@ -437,7 +334,7 @@ InitArguments_IntervalExchangeFoliationDisk::InitArguments_IntervalExchangeFolia
 
 
 void InitArguments_IntervalExchangeFoliationDisk::fillInLengthsAndPairing(std::vector<floating_point_type>& lengths,
-                                                                          std::vector<int>& pairing,
+                                                                          std::vector<unsigned int>& pairing,
                                                                           int StartingIndex,
                                                                           WeighedTree::Node* pNode) const{
     int ChildrenStartingIndex = StartingIndex;
@@ -478,11 +375,6 @@ UnitIntervalPoint IntervalExchangeFoliationDisk::applyTo(const UnitIntervalPoint
 
 
 
-std::ostream& operator<<(std::ostream& Out, const IntervalExchangeFoliationDisk& intervalExchange){
-    Out << "Lengths: " << intervalExchange.m_lengths << "\n";
-    Out << "Pairing: " << intervalExchange.m_permutation;
-    return Out;
-}
 
 
 

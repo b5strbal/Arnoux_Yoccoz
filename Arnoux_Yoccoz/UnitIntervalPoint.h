@@ -133,6 +133,8 @@ private:
 
 };
         
+bool arePointsTooClose(const std::vector<UnitIntervalPoint>& points);
+
         
 std::string printInterval(const UnitIntervalPoint& p1, const UnitIntervalPoint& p2);
         

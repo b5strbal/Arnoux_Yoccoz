@@ -10,31 +10,7 @@
  ******************************************************************************/
 
 #include "FoliationRP2.h"
-
-
-
-FoliationDisk::FoliationDisk(const WeighedTree& wt):
-    m_intervalPairing(wt),
-    m_weighedTree(wt)
-{
-}
-
-
-
-
-
-std::ostream& operator<<(std::ostream& Out, const FoliationDisk& fd){
-    using namespace std;
-
-    Out << fd.m_intervalPairing << endl;
-    
-    std::vector<int> singularityType = fd.m_weighedTree.getDegrees();
-    
-    Out << "Singularity type: " << singularityType;
-
-    return Out;
-}
-
+#include "PerronFrobenius.h"
 
 
 
@@ -70,30 +46,6 @@ FoliationRP2 arnouxYoccozRP2(){
 
 
 
-
-
-FoliationSphere::FoliationSphere(const FoliationDisk& topFoliation, const FoliationDisk& bottomFoliation, floating_point_type twist) :
-    m_topFoliation(topFoliation),
-    m_bottomFoliation(bottomFoliation),
-    m_twist(twist)
-{
-}
-
-
-FoliationSphere::FoliationSphere(const FoliationRP2& foliationRP2) :
-    FoliationSphere(foliationRP2.m_foliationDisk, foliationRP2.m_foliationDisk, 0.5)
-{
-}
-
-
-
-std::ostream& operator<<(std::ostream& Out, const FoliationSphere& f){
-    Out << "(Top Disk) " << f.topFoliation() << std::endl;
-    Out << "(Bottom Disk) " << f.bottomFoliation() << std::endl;
-    Out << "Twist: " << f.twist();
-    
-    return Out;
-}
 
 
 

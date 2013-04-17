@@ -9,10 +9,7 @@
 #include "global.h"
 
 
-int Modint::integerMod(int a, int b){
-    int result = a % b;
-    return result >= 0 ? result : result + b;
-}
+
 
 int gcd(int a, int b){
     return b == 0 ? a : gcd(b, a % b);
@@ -20,16 +17,6 @@ int gcd(int a, int b){
 
 
 
-
-
-
-
-Modint::Modint(int value, int modulus) :
-    m_modulus(modulus)
-{
-    assert(modulus > 0);
-    m_value = integerMod(value, modulus);
-}
 
 
 

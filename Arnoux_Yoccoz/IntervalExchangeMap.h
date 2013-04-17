@@ -15,6 +15,7 @@
 #include "UnitIntervalPoint.h"
 #include "WeighedTree.h"
 #include "global.h"
+#include "Permutation.h"
 
 
 
@@ -22,35 +23,6 @@
 
 
 
-
-
-class Permutation{
-public:
-    Permutation() : m_functionValues(1, 0) {} // trivial permutation on one element
-    Permutation(const std::vector<int> functionValues);    
-    inline int size() const{ return static_cast<int>(m_functionValues.size()); }
-    Permutation inverse() const;
-    
-    template <typename Type>
-    std::vector<Type> applyAndCreateCopy(const std::vector<Type>& vec) const;
-
-    friend Permutation operator*(const Permutation& p1, const Permutation& p2);
-    int operator[](int index) const { return m_functionValues[index]; }
-    friend std::ostream& operator<<(std::ostream& Out, const Permutation& permutation);
-
-private:
-    std::vector<int> m_functionValues;
-};
-
-Permutation rotatingPermutation(int size, int rotationAmount);
-Permutation reversingPermutation(int size);
-
-
-
-
-
-     
-            
             
 class IntervalExchangeBase{
 public:
@@ -62,6 +34,8 @@ public:
     const Permutation& inversePermutation() const { return m_inversePermutation; }
     const std::vector<UnitIntervalPoint>& divPoints() const { return m_divPoints; }
     const std::vector<UnitIntervalPoint>& divPointsAfterExchange() const { return m_divPointsAfterExchange; }
+    std::string print() const;
+
 protected:
     std::vector<floating_point_type> m_lengths;
     Permutation m_permutation;
@@ -91,7 +65,6 @@ public:
     UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& point) const;
     const std::vector<floating_point_type>& translations() const { return m_translations; }
     
-    friend std::ostream& operator<<(std::ostream& Out, const IntervalExchangeMap& intervalExchange);
 
 private:
     std::vector<floating_point_type> m_translations;
@@ -153,7 +126,7 @@ class InitArguments_IntervalExchangeFoliationDisk{
     
     InitArguments_IntervalExchangeFoliationDisk(const WeighedTree& wt);
     void fillInLengthsAndPairing(std::vector<floating_point_type>& lengths,
-                                 std::vector<int>& pairing, int StartingIndex, WeighedTree::Node* pNode) const;
+                                 std::vector<unsigned int> &pairing, int StartingIndex, WeighedTree::Node* pNode) const;
     
     static std::vector<floating_point_type> arg_lengths;
     static Permutation arg_permutation;
@@ -173,7 +146,6 @@ public:
     UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& point) const { return applyTo(point); }
 
     
-    friend std::ostream& operator<<(std::ostream& Out, const IntervalExchangeFoliationDisk& intervalExchange);
 
 };
 

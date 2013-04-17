@@ -78,7 +78,93 @@
 #ifndef ArnouxYoccoz_ArcsAroundDivPoints_h
 #define ArnouxYoccoz_ArcsAroundDivPoints_h
 
+//#include "Foliation.h"
+#include "UnitIntervalPoint.h"
 
+class Foliation;
+
+/**
+ * @brief   A collection of arcs around a set of points on the circle of circumference 1.
+ * @author  Balazs Strenner, strenner@math.wisc.edu
+ * @date    March 6, 2013
+ * @details Given a set of UnitIntervalPoints on the circle of circumference 1, called the "division points", an ArcAroundDivPoints object
+ *          is just a collection of arcs around the division points with some properties:
+ *
+ *          1) There is one Arc assigned to each division point, so the number of Arcs and division points are equal.
+ *
+ *          2) The division points are ordinary UnitIntervalPoints.
+ *
+ *          3) Each division point is contained in the inside of the corresponding Arc.
+ *
+ *          4) It is true for any pair of Arcs in the collection that they either coincide, or touch each other only at the endpoints,
+ *             or they are disjoint.
+ *
+ *          To better understand their structure, it might be better to understand how we are constructing them. First of all, we construct
+ *          an empty object, which means that we initialize the division points, but no Arcs are assigned to them. This represents the idea
+ *          that in this case the "arc" belonging to each division point is the whole circle, but since it is not really an arc, and it is
+ *          not represented by the Arc class, we simply handle this situation by not assigning an Arc to the division points.
+ *
+ *          Then, we start to add "cutting points" to the picture. When a cutting point is added, each Arc that contains it is cut in half
+ *          along it, and the smaller Arcs obtained which do not contain any division points are discarded. In other words, we look at
+ *          each division point and their corresponding Arc in order, and we try to cut the Arcs in two by the cutting point and keep the
+ *          Arc that contains the division point. Since the cutting points are always generalized UnitIntervalPoints, one can see that the above
+ *          properties are satisfied.
+ *
+ *          In particular, when a cutting point is inserted in an empty object, then the whole circle has to be divided along the cutting
+ *          point, the Arc of length 1, both endpoints being the cutting point will the Arc that is assigned to each division point.
+ *
+ * @see     UnitIntervalPoint, FoliationDisk
+ */
+class ArcsAroundDivPoints{
+public:
+    /**
+     * @brief   Constructor of empty object.
+     */
+    ArcsAroundDivPoints(const Foliation & foliation);
+
+
+    /**
+     * @brief   Inserts a new cutting point and updates the Arcs.
+     * @param NewCuttingPoint   It must not coincide with any of the division points, because in that case case the operation won't be
+     *                          well-defined.
+     */
+    void InsertPoint(const UnitIntervalPoint& NewCuttingPoint, int IndexOfInterval);
+
+    /**
+     * @brief   Decides if a point is contained in any of the Arcs.
+     */
+    bool ContainsQ(const UnitIntervalPoint& cp, int IndexOfInterval) const;
+
+
+
+    /**
+     * @brief   Returns true if the an Arc is contained in any of the member Arcs and it passes through the division point contained in the
+     *          member Arc.
+     */
+    bool ContainsArcThroughADivPointQ(const UnitIntervalPoint& LeftEndPoint, int LeftIndexOfInterval,
+                                      const UnitIntervalPoint& RightEndPoint, int RightIndexOfInterval,
+                                      bool throughTopDivPointQ) const;
+
+
+    std::string print() const;
+
+    /**
+     * @brief   Takes the intersection of ArcsAroundDivPoints objects.
+     */
+    friend ArcsAroundDivPoints intersect(const std::vector<const ArcsAroundDivPoints*>& apdVector);
+
+
+private:
+
+    struct CuttingPoints{
+        UnitIntervalPoint first;
+        UnitIntervalPoint second;
+        bool isEmpty = true;
+    };
+
+    std::vector<CuttingPoints> m_cuttingPoints;
+    const Foliation& m_foliation;
+};
 
 
 

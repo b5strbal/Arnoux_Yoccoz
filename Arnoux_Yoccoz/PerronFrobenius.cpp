@@ -29,8 +29,8 @@
 
 PerronFrobeniusMatrix::PerronFrobeniusMatrix(const SquareMatrix<long>& intSquareMatrix) :
     m_squareMatrix(intSquareMatrix),
-    m_perronFrobEigenvalue(0),  // initializing the Perron-Frobenius eigenvector and eigenvalue by invalid data
-    m_perronFrobEigenvector(0)  // since calculation is costly, we only calculate them when the client asks
+    m_perronFrobEigenvector(0),  // since calculation is costly, we only calculate them when the client asks
+    m_perronFrobEigenvalue(0)  // initializing the Perron-Frobenius eigenvector and eigenvalue by invalid data
 {
     for (int i = 0; i < size(); i++) {
         for (int j = 0; j < size(); j++) {

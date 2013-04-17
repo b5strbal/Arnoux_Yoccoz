@@ -1,5 +1,5 @@
-#ifndef FOLIATIONDISK_H
-#define FOLIATIONDISK_H
+#ifndef FOLIATIONRP2_H
+#define FOLIATIONRP2_H
 
 /*******************************************************************************
  *  CLASS NAME:	FoliationDisk
@@ -42,31 +42,16 @@
 cout << "Each vertex of the tree corresponds to a singularity of the foliation, the degree of the vertex and number of prongs being the same. In particular, leafs correspond to 1-pronged singularities, and we may assume that there are no degree 2-vertices, and that there is at least one vertex of degree at least 3.\n";
 */
 
-#include <iostream>
-#include <vector>
-#include <cassert>
-#include "IntervalExchangeMap.h"
-#include "PerronFrobenius.h"
+//#include <iostream>
+//#include <vector>
+//#include <cassert>
+//#include "IntervalExchangeMap.h"
+//#include "PerronFrobenius.h"
+#include "FoliationDisk.h"
 
-const int THE_POINT_IS_A_DIVPOINT = -1;
+//const int THE_POINT_IS_A_DIVPOINT = -1;
 
 
-class FoliationDisk
-{
-public:
-    FoliationDisk(const WeighedTree& wt);
-   
-    const WeighedTree& weighedTree() const { return m_weighedTree; }
-    const IntervalExchangeFoliationDisk& intervalPairing() const { return m_intervalPairing; }
-    int numSeparatrices() const { return m_intervalPairing.size(); }
-    const std::vector<UnitIntervalPoint>& divPoints() const { return m_intervalPairing.divPoints(); }
-    
-    friend std::ostream& operator<<(std::ostream& Out, const FoliationDisk& f);
-private:
-    IntervalExchangeFoliationDisk m_intervalPairing;
-    WeighedTree m_weighedTree;
-
-};
 
 
 
@@ -88,35 +73,12 @@ public:
 private:
     FoliationDisk m_foliationDisk;
     
-    //inline int IncreaseIndex(int SeparatrixIndex) const{ return SeparatrixIndex < m_NumSeparatrices - 1 ? SeparatrixIndex + 1 : 0; }
-    //inline int DecreaseIndex(int SeparatrixIndex) const{ return SeparatrixIndex > 0 ? SeparatrixIndex - 1 : m_NumSeparatrices - 1; }
-    //inline int ReflectIndex(int SeparatrixIndex) const{ return m_NumSeparatrices - 1 - SeparatrixIndex; }
-    //int SeparatrixIndexOfPair(int SeparatrixIndex, LeftOrRight Side);
 
 };
 
 
 FoliationRP2 arnouxYoccozRP2();
 
-
-// Both foliations are seen from above.
-// The top foliation is fixed in the standard position, and the bottom foliation is twisted.
-class FoliationSphere{
-public:
-    FoliationSphere(const FoliationDisk& topFoliation, const FoliationDisk& bottomFoliation, floating_point_type twist);
-    FoliationSphere(const FoliationRP2& foliationRP2);
-    const FoliationDisk& topFoliation() const { return m_topFoliation; }
-    const FoliationDisk& bottomFoliation() const { return m_bottomFoliation; }
-    floating_point_type twist() const { return m_twist; }
-    
-    friend std::ostream& operator<<(std::ostream& Out, const FoliationSphere&);
-    
-private:
-    FoliationDisk m_topFoliation;
-    FoliationDisk m_bottomFoliation;
-    floating_point_type m_twist;
-
-};
 
 
 

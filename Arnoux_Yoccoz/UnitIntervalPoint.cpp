@@ -62,6 +62,19 @@ std::string printInterval(const UnitIntervalPoint& p1, const UnitIntervalPoint& 
 
 
 
+bool arePointsTooClose(const std::vector<UnitIntervalPoint>& points){
+    for (auto it = points.begin() + 1; it != points.end(); it++) {
+        if (!(*(it - 1) < *it)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
+
+
 /*
 
 bool IsBetween(const UnitIntervalPoint& cLeft, const UnitIntervalPoint& cRight, const UnitIntervalPoint& cThird)
