@@ -29,7 +29,7 @@ protected:
     std::array<std::vector<SeparatrixSegment>, 2> m_currentSepSegments;
     std::array<std::vector<std::list<SeparatrixSegment>>, 2> m_goodShiftedSeparatrixSegments;
 
-    unsigned int numIntervals() const { return m_foliation.m_numIntervals; }
+    unsigned int numIntervals() const { return m_foliation.numIntervals(); }
 };
 
 
@@ -44,7 +44,7 @@ public:
         m_separatrixPair(foliationFromRP2.m_separatrixPair)
     {}
 private:
-    std::vector<int> m_separatrixPair;
+    std::vector<unsigned int> m_separatrixPair;
 };
 
 #endif // SEPSEGMENTDATABASE_H

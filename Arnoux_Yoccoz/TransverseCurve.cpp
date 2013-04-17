@@ -1,4 +1,4 @@
-#include "transversecurve.h"
+#include "TransverseCurve.h"
 
 //----------------------------//
 // Foliation::TransverseCurve //
@@ -13,7 +13,7 @@ TransverseCurve::TransverseCurve(const Foliation& foliation, const SepSegmentCol
     endpoints.reserve(segments.size());
     m_goodSegmentIndices.reserve(segments.size());
     for (unsigned int i = 0; i < segments.size(); i++){
-        endpoints.push_back(segments[i].m_endpoint);
+        endpoints.push_back(segments[i].endpoint());
         m_goodSegmentIndices.push_back(&segments[i]); // We will probably have to find a more cleverly sorted way of storing the segments later.
        // std::cout << print() << "\n\n";
     }

@@ -22,17 +22,7 @@ Permutation::Permutation(const std::vector<unsigned int> &functionValues) :
 
 
 
-template <typename Type>
-std::vector<Type> Permutation::applyAndCreateCopy(const std::vector<Type>& vec) const{
-    if (size() != vec.size()) {
-        throw std::runtime_error("A permutation can't act on a vector if the sizes are different.");
-    }
-    std::vector<Type> newVector(size());
-    for (int i = 0; i < size(); i++) {
-        newVector[m_functionValues[i]] = vec[i];
-    }
-    return newVector;
-}
+
 
 
 

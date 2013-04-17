@@ -21,4 +21,17 @@ protected:
     std::array<bool, 2> whichTransverseCurvesExist(const SepSegmentCollectionBase& segments);
 };
 
+
+class TransverseCurveDatabaseFromRP2 : public TransverseCurveDatabase
+{
+public:
+    TransverseCurveDatabaseFromRP2(SepSegmentDatabaseFromRP2& sepSegmentDatabaseFromRP2);
+    void generateTransverseCurvesFromRP2(int maxdepth, int numLeafComponents);
+    void printLiftsOfGoodTransverseCurves(int depth);
+
+private:
+    std::set<const TransverseCurve*> m_transverseCurvesFromRP2;
+};
+
+
 #endif // TRANSVERSECURVEDATABASE_H

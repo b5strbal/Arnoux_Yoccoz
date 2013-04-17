@@ -11,7 +11,16 @@ public:
     Permutation inverse() const;
 
     template <typename Type>
-    std::vector<Type> applyAndCreateCopy(const std::vector<Type>& vec) const;
+    std::vector<Type> applyAndCreateCopy(const std::vector<Type>& vec) const{
+        if (size() != vec.size()) {
+            throw std::runtime_error("A permutation can't act on a vector if the sizes are different.");
+        }
+        std::vector<Type> newVector(size());
+        for (unsigned int i = 0; i < size(); i++) {
+            newVector[m_functionValues[i]] = vec[i];
+        }
+        return newVector;
+    }
 
     friend Permutation operator*(const Permutation& p1, const Permutation& p2);
     int operator[](int index) const { return m_functionValues[index]; }

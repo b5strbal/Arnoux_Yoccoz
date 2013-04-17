@@ -3,11 +3,11 @@
 SepSegmentDatabase::SepSegmentDatabase(const Foliation& foliation) :
     m_foliation(foliation)
 {
-    m_currentSepSegments[UPWARDS].reserve(foliation.m_numIntervals);
-    m_currentSepSegments[DOWNWARDS].reserve(foliation.m_numIntervals);
-    m_goodShiftedSeparatrixSegments[UPWARDS].resize(foliation.m_numIntervals);
-    m_goodShiftedSeparatrixSegments[DOWNWARDS].resize(foliation.m_numIntervals);
-    for (int i = 0; i < foliation.m_numIntervals; i++) {
+    m_currentSepSegments[UPWARDS].reserve(foliation.numIntervals());
+    m_currentSepSegments[DOWNWARDS].reserve(foliation.numIntervals());
+    m_goodShiftedSeparatrixSegments[UPWARDS].resize(foliation.numIntervals());
+    m_goodShiftedSeparatrixSegments[DOWNWARDS].resize(foliation.numIntervals());
+    for (int i = 0; i < foliation.numIntervals(); i++) {
         m_currentSepSegments[DOWNWARDS].emplace_back(foliation, i, DOWNWARDS);
         m_currentSepSegments[UPWARDS].emplace_back(foliation, i, UPWARDS);
         m_goodShiftedSeparatrixSegments[DOWNWARDS][i].push_back(m_currentSepSegments[DOWNWARDS].back());
@@ -22,15 +22,15 @@ void SepSegmentDatabase::printGoodSepSegments(int maxdepth, bool verbose){
     } else
         maxdepth = INT_MAX;
     for (UpDownDirection direction = UpDownDirection::UPWARDS; direction <= UpDownDirection::DOWNWARDS; direction++) {
-        for (int i = 0; i < m_foliation.m_numIntervals; i++) {
+        for (int i = 0; i < m_foliation.numIntervals(); i++) {
             std::cout << i << (direction == UPWARDS ? " UP" : " DOWN") << "\n";
             for(auto it = m_goodShiftedSeparatrixSegments[direction][i].begin(); it !=
-                m_goodShiftedSeparatrixSegments[direction][i].end() && it->m_depth < maxdepth; it++)
+                m_goodShiftedSeparatrixSegments[direction][i].end() && it->depth() < maxdepth; it++)
             {
                 if (verbose) {
                     std::cout << it->print() << "\n\n";
                 } else
-                    std::cout << it->m_depth << " ";
+                    std::cout << it->depth() << " ";
             }
             if (!verbose) {
                 std::cout << "\n\n";
@@ -67,9 +67,9 @@ void SepSegmentDatabase::findNextSepSegment(UpDownDirection direction, int index
 
 void SepSegmentDatabase::generateSepSegments(int maxdepth){
     for (UpDownDirection direction = UpDownDirection::FIRST; direction <= UpDownDirection::LAST; direction++) {
-        for (int index = 0; index < m_foliation.m_numIntervals; index++) {
+        for (int index = 0; index < m_foliation.numIntervals(); index++) {
             while (!reachedSaddleConnection(direction, index) &&
-                   m_currentSepSegments[direction][index].m_depth < maxdepth) {
+                   m_currentSepSegments[direction][index].depth() < maxdepth) {
                 findNextSepSegment(direction, index);
             }
     //        std::cout << std::endl << std::endl;
@@ -86,11 +86,11 @@ const SeparatrixSegment& SepSegmentDatabase::getFirstIntersection(UpDownDirectio
                                                                     const DisjointIntervals& intervals)
 {
     for (auto &segment : m_goodShiftedSeparatrixSegments[direction][index]) {
-        if (intervals.containsQ(segment.m_endpoint)) { // we are gonna have to catch an error here
+        if (intervals.containsQ(segment.endpoint())) { // we are gonna have to catch an error here
             return segment;
         }
     }
-    while (!intervals.containsQ(m_currentSepSegments[direction][index].m_endpoint)) {
+    while (!intervals.containsQ(m_currentSepSegments[direction][index].endpoint())) {
         if (reachedSaddleConnection(direction, index)) {
             throw std::runtime_error("getFirstIntersection: First intersection cannot be found, because we found a saddle connection.");
         }

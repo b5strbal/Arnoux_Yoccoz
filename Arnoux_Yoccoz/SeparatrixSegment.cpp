@@ -7,7 +7,7 @@ SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, int startingSin
     m_startingSingularity(startingSingularity),
     m_depth(1),
     m_arcsAroundDivPoints(foliation),
-    m_intervalIntersectionCount(std::vector<int>(foliation.m_numIntervals, 0)),
+    m_intervalIntersectionCount(std::vector<int>(foliation.numIntervals(), 0)),
     m_direction(direction)
 {
     if (direction == UPWARDS) {

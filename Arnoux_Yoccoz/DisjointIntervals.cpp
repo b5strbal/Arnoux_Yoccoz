@@ -1,4 +1,4 @@
-#include "disjointintervals.h"
+#include "DisjointIntervals.h"
 
 
 //------------------------------//

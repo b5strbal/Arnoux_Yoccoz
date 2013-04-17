@@ -15,7 +15,7 @@ public:
     FoliationFromRP2(const FoliationRP2& foliationRP2);
 
 private:
-    std::vector<int> m_separatrixPair;
+    std::vector<unsigned int> m_separatrixPair;
 };
 
 

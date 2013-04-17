@@ -52,7 +52,6 @@ class InitArguments_Foliation{
 class Foliation : private InitArguments_Foliation{
     friend class SeparatrixSegment;
     friend class ArcsAroundDivPoints;
-    friend class SepSegmentDatabase;
     
 public:
     Foliation(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
@@ -63,9 +62,9 @@ public:
     Foliation flipOver() const;
     
    // int numSeparatrices() const { return m_numSeparatrices; }
-   // int numIntervals() const { return m_numIntervals; }
+    int numIntervals() const { return m_numIntervals; }
 
-    friend std::ostream& operator<<(std::ostream& Out, Foliation f);
+    std::string print() const;
 
 protected:
 //    typedef std::pair<UnitIntervalPoint, UnitIntervalPoint> interval_t;

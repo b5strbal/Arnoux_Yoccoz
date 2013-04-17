@@ -8,14 +8,14 @@ class Foliation;
 class ArcsAroundDivPoints;
 
 class SeparatrixSegment{
-    friend class Foliation;
-    friend class SepSegmentCollectionBase;
-    friend class SepSegmentCollectionDefault;
-    friend class TransverseCurve;
+//    friend class Foliation;
+//    friend class SepSegmentCollectionBase;
+//    friend class SepSegmentCollectionDefault;
+//    friend class TransverseCurve;
     friend class TransverseCurveDatabase;
-    friend class SepSegmentDatabase;
-    friend class SepSegmentDatabaseFromRP2;
-    friend class TransverseCurveFinder;
+//    friend class SepSegmentDatabase;
+//    friend class SepSegmentDatabaseFromRP2;
+//    friend class TransverseCurveFinder;
 public:
     SeparatrixSegment(const Foliation& foliation, int startingSingularity, UpDownDirection direction);
     std::string print(bool verbose = false) const;
@@ -23,10 +23,10 @@ public:
     void lengthen();
     bool isGood() const;
 
-//    int depth() const { return m_depth; }
-//    UnitIntervalPoint endpoint() const { return m_endpoint; }
-//    int startingSingularity() const { return m_startingSingularity; }
-//    UpDownDirection direction() const { return m_direction; }
+    int depth() const { return m_depth; }
+    UnitIntervalPoint endpoint() const { return m_endpoint; }
+    int startingSingularity() const { return m_startingSingularity; }
+    UpDownDirection direction() const { return m_direction; }
 //    const ArcsAroundDivPoints& arcsAroundDivPoints() const { return m_arcsAroundDivPoints; }
 //    int smallContainingInterval() const { return m_smallContainingInterval; }
 

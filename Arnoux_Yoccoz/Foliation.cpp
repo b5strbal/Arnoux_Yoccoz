@@ -243,9 +243,10 @@ Foliation Foliation::flipOver() const{
 
 
 
-std::ostream& operator<<(std::ostream& Out, Foliation f){
-    std::cout << f.m_twistedIntervalExchange;
-    return Out;
+std::string Foliation::print() const{
+    std::ostringstream s;
+    s << m_twistedIntervalExchange;
+    return s.str();
 }
 
 
