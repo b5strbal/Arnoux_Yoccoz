@@ -63,3 +63,6 @@ HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/TransverseCurveDatabase.h
 
 FORMS    += mainwindow.ui
+
+OTHER_FILES += ../Arnoux_Yoccoz/FoliationRP2old.cpp \
+    ../Arnoux_Yoccoz/FoliationRP2old.h \
