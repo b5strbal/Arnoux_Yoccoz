@@ -24,13 +24,6 @@ Permutation::Permutation(const std::vector<unsigned int> &functionValues) :
 
 
 
-
-
-
-
-
-
-
 Permutation operator*(const Permutation& p1, const Permutation& p2){
     if (p1.size() != p2.size()) {
         throw std::runtime_error("Two permutations must act on the same set in order to be composable.");

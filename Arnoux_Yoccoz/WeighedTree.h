@@ -51,7 +51,6 @@ private:
         inline Node* FirstChild() { return m_NumChildren == 0 ? NULL : m_Children; }
         inline Node* LastChild() { return m_NumChildren == 0 ? NULL : m_Children + (m_NumChildren - 1); }
         inline Node* FirstSibling() { return IsRoot() ? this : m_Parent->FirstChild(); };
-        //Node* Root();
         
         inline bool IsRoot() { return m_Parent == NULL ? true : false; }
         bool IsLastSibling() { return IsRoot() || m_Parent->LastChild() == this ? true : false; }

@@ -10,16 +10,11 @@ FoliationDisk::FoliationDisk(const WeighedTree& wt):
 
 
 
-std::ostream& operator<<(std::ostream& Out, const FoliationDisk& fd){
-    using namespace std;
-
-    Out << fd.m_intervalPairing.print() << endl;
-
-    std::vector<int> singularityType = fd.m_weighedTree.getDegrees();
-
-    Out << "Singularity type: " << singularityType;
-
-    return Out;
+std::string print() const{
+    std::ostringstream s;
+    s << m_intervalPairing.print() << "\n";
+    s << "Singularity type: " << m_weighedTree.getDegrees();
+    return s.str();
 }
 
 

@@ -42,14 +42,9 @@
 cout << "Each vertex of the tree corresponds to a singularity of the foliation, the degree of the vertex and number of prongs being the same. In particular, leafs correspond to 1-pronged singularities, and we may assume that there are no degree 2-vertices, and that there is at least one vertex of degree at least 3.\n";
 */
 
-//#include <iostream>
-//#include <vector>
-//#include <cassert>
-//#include "IntervalExchangeMap.h"
-//#include "PerronFrobenius.h"
+
 #include "FoliationDisk.h"
 
-//const int THE_POINT_IS_A_DIVPOINT = -1;
 
 
 
@@ -62,19 +57,15 @@ class FoliationRP2
     friend class FoliationSphere;
     
 public:
-    FoliationRP2(const FoliationDisk&);
+    FoliationRP2(const FoliationDisk &fd) : m_foliationDisk(fd) {}
     static FoliationRP2 arnouxYoccozRP2();
 
-    //void Rotate();
-    //void Reflect();
-    
-    friend std::ostream& operator<<(std::ostream& Out, const FoliationRP2&);
+
+    std::string print() { return m_foliationDisk.print(); }
     
     
 private:
     FoliationDisk m_foliationDisk;
-    
-
 };
 
 

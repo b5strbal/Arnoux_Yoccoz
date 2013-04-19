@@ -100,45 +100,58 @@ class Foliation;
  * small intervals, but only keep the intervals around the division points, and only keep the cutting points that
  * are endpoints of these intervals.
  *
+ * Internally the division points are actually not even stored. So any time a point is inserted or provided as an
+ * argument, the index of the interval between the division points has to be provided. The method of these class
+ * don't check if the point is in the interval, the caller has to make sure it is correct. The reason for this design
+ * is that there are points used often and this way it is sufficient to calculate the containing interval only once,
+ * instead of the IntervalNeighborhoods class calculating it over and over.
+ *
  * \see   UnitIntervalPoint, Foliation
  */
 class IntervalNeighborhoods{
 public:
-    //! Constructor of empty object, without any cutting points
+    //! \brief Constructor of empty object, without any cutting points.
+    //! \param foliation    The division points in foliation are used as the division points in the object.
     IntervalNeighborhoods(const Foliation & foliation);
 
-    /*! \brief Inserts a new cutting point.
-     *  \param newCuttingPoint  It must not coincide with any of the division points.
-     **/
+    //! \brief Inserts a new cutting point.
+    //! \param newCuttingPoint  It must not coincide with any of the division points.
+    //! \param indexOfInterval  The containing interval of newCuttingPoint
     void insertPoint(const UnitIntervalPoint& newCuttingPoint, int indexOfInterval);
 
     //! Decides if a point is contained in union of the intervals.
     bool contains(const UnitIntervalPoint& point, int indexOfInterval) const;
 
-    //! Returns true if the interval between two points is contained in any of the member intervals and passes
-    //! through either a TopDivPoint or BottomDivPoint, whichever is specified.
-    //! \see    Foliation
+    //! \brief Returns true if the interval between two points is contained in any of the member intervals and passes
+    //!        through either a TopDivPoint or BottomDivPoint, whichever is specified.
+    //! \see   Foliation
     bool containsIntervalThroughADivPoint(const UnitIntervalPoint& leftEndPoint, int leftIndexOfInterval,
                                       const UnitIntervalPoint& rightEndPoint, int rightIndexOfInterval,
                                       bool throughTopDivPointQ) const;
 
-
+    //! Prints out the object into a string.
     std::string print() const;
 
-    /**
-     * @brief   Takes the intersection of ArcsAroundDivPoints objects.
-     */
+    //! Takes the intersection of IntervalNeighborhoods objects.
     static IntervalNeighborhoods intersect(const std::vector<const IntervalNeighborhoods*>& inbhVector);
 
 
-private:
 
+
+private:
     struct CuttingPoints{
         UnitIntervalPoint first;
         UnitIntervalPoint second;
         bool isEmpty = true;
     };
 
+    /* We store the cutting points grouped according to which interval they are in. So m_cuttingpoints has size
+     * of the number of division points, and each element stores the left and right cutting point in the interval.
+     * If there is no cutting point yet in an interval, CuttingPoints::isEmpty is set to true, otherwise it is false.
+     * If there is one cutting point in the interval, then CuttingPoints::first and CuttingPoints::second concide.
+     * So actually we store the complement of the union of the interval neighborhoods by listing the gaps in
+     * each interval between the division points.
+     */
     std::vector<CuttingPoints> m_cuttingPoints;
     const Foliation& m_foliation;
 };

@@ -86,11 +86,11 @@ const SeparatrixSegment& SepSegmentDatabase::getFirstIntersection(UpDownDirectio
                                                                     const DisjointIntervals& intervals)
 {
     for (auto &segment : m_goodShiftedSeparatrixSegments[direction][index]) {
-        if (intervals.containsQ(segment.endpoint())) { // we are gonna have to catch an error here
+        if (intervals.contains(segment.endpoint())) { // we are gonna have to catch an error here
             return segment;
         }
     }
-    while (!intervals.containsQ(m_currentSepSegments[direction][index].endpoint())) {
+    while (!intervals.contains(m_currentSepSegments[direction][index].endpoint())) {
         if (reachedSaddleConnection(direction, index)) {
             throw std::runtime_error("getFirstIntersection: First intersection cannot be found, because we found a saddle connection.");
         }

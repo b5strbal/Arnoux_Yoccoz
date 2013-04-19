@@ -93,15 +93,12 @@ std::string IntervalNeighborhoods::print() const
 
 
 
-/**
- * @details The intersection of the two Arcs corresponding to each division point is taken and that is assigned to the division point
- *          it the intersection. The operation is well-defined, because although in general the intersection of two arcs on the circle
- *          might not be a single arc, in our case it can't happen because of the properties the Arcs in an ArcAroundDivPoints object
- *          have to satisfy.
+/*! The union of cutting points in all the IntervalNeighborhoods are taken and the resulting object,
+ * generally with shorter intervals around the division point are returned.
  *
- *          The motivation for this operation is to take the union of two sets of cutting points. A set of cutting points determines
- *          an ArcsAroundDivPoints, another set determines another one, and the union of the two sets determines exactly the
- *          intersection of the two objects.
+ * \param inbhVector    The IntervalNeighborhoods specified as arguments must be compatible, e.g. belong to the
+ *                      same set of division points. But this is never a problem because one only calls this
+ *                      function for IntervalNeighborhoods constructed from the same Foliation. *
  */
 IntervalNeighborhoods IntervalNeighborhoods::intersect(const std::vector<const IntervalNeighborhoods*>& inbhVector)
 {

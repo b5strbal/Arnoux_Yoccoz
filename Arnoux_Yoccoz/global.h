@@ -13,11 +13,11 @@
 #include <cassert>
 #include <cmath>
 
-/**
- * @brief   The floating point type used throughout the program for the calculations.
- */
+
+//! \brief   The floating point type used throughout the program for the calculations.
 typedef long double floating_point_type;
 
+class ExceptionContainingIntervalNotUnique : public std::runtime_error {};
 
 const int CONTAINING_INTERVAL_NOT_UNIQUE = -100;
 

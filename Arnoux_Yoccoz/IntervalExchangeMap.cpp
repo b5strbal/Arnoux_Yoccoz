@@ -142,7 +142,7 @@ TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<floatin
         throw std::runtime_error("The specified data results in an immediate saddle connection of the foliation constructed by the\
                                  twisted interval exchange map.");
     }
-    int intervalOfOneMinusTwist = containingInterval(originalIntExchange.divPointsAfterExchange(), oneMinusTwist);
+    unsigned int intervalOfOneMinusTwist = containingInterval(originalIntExchange.divPointsAfterExchange(), oneMinusTwist);
 
     // Finding the new lengths
     std::vector<floating_point_type> new_lengths = m_originalLengths;

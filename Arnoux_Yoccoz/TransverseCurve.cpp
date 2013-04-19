@@ -26,8 +26,8 @@ TransverseCurve::TransverseCurve(const Foliation& foliation, const SepSegmentCol
 bool operator<(const TransverseCurve& c1, const TransverseCurve& c2) {
     if (c1.length() > c2.length()) return true;
     if (c1.length() < c2.length()) return false;
-    auto &points1 = c1.m_disjointIntervals.points();
-    auto &points2 = c2.m_disjointIntervals.points();
+    auto &points1 = c1.m_disjointIntervals.endpoints();
+    auto &points2 = c2.m_disjointIntervals.endpoints();
     if (points1.size() < points2.size()) {
         return true;
     } else if (points1.size() > points2.size())
