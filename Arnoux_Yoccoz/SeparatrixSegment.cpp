@@ -43,7 +43,7 @@ std::string SeparatrixSegment::print(bool verbose) const
 void SeparatrixSegment::lengthen()
 {
     m_intervalIntersectionCount[containingInterval(m_foliation.m_topRealDivPoints, m_endpoint)]++;
-    m_arcsAroundDivPoints.InsertPoint(m_endpoint, m_smallContainingInterval);
+    m_arcsAroundDivPoints.insertPoint(m_endpoint, m_smallContainingInterval);
     m_depth++;
     m_endpoint = m_direction == UPWARDS ? m_foliation.m_twistedIntervalExchange.applyTo(m_endpoint) : m_foliation.m_twistedIntervalExchange.applyInverseTo(m_endpoint);
     m_endpoint = UnitIntervalPoint(m_endpoint.getPosition()); // remove infinitesimal shift
@@ -52,7 +52,7 @@ void SeparatrixSegment::lengthen()
 
 bool SeparatrixSegment::isGood() const
 {
-    return m_arcsAroundDivPoints.ContainsQ(m_endpoint, m_smallContainingInterval);
+    return m_arcsAroundDivPoints.contains(m_endpoint, m_smallContainingInterval);
 }
 
 

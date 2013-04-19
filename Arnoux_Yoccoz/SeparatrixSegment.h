@@ -2,10 +2,10 @@
 #define SEPARATRIXSEGMENT_H
 
 #include "Foliation.h"
-#include "ArcsAroundDivPoints.h"
+#include "IntervalNeighborhoods.h"
 
 class Foliation;
-class ArcsAroundDivPoints;
+class IntervalNeighborhoods;
 
 class SeparatrixSegment{
 //    friend class Foliation;
@@ -36,7 +36,7 @@ private:
     int m_depth;
     UnitIntervalPoint m_endpoint;
     int m_smallContainingInterval;
-    ArcsAroundDivPoints m_arcsAroundDivPoints;
+    IntervalNeighborhoods m_arcsAroundDivPoints;
     std::vector<int> m_intervalIntersectionCount;
     UpDownDirection m_direction;
 };

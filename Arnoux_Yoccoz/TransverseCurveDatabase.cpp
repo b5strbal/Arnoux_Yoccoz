@@ -85,12 +85,12 @@ std::array<bool, 2> TransverseCurveDatabase::whichTransverseCurvesExist(const Se
 
     // checking that the curve is minimal (can't be simplified trivially) and that it is simple
 
-    std::vector<const ArcsAroundDivPoints*> adpVector;
+    std::vector<const IntervalNeighborhoods*> adpVector;
     adpVector.reserve(segments.size());
     for (unsigned int i = 0; i < segments.size(); i++) {
         adpVector.push_back(&segments[i].m_arcsAroundDivPoints);
     }
-    ArcsAroundDivPoints adpIntersection = intersect(adpVector);
+    IntervalNeighborhoods adpIntersection = intersect(adpVector);
 
     for (short wrapsAroundZero = 0; wrapsAroundZero < 2; wrapsAroundZero++){
         if (isCandidateForWrapsAroundZero[wrapsAroundZero]) {
@@ -100,7 +100,7 @@ std::array<bool, 2> TransverseCurveDatabase::whichTransverseCurvesExist(const Se
                         segments[endpointsAndIndices[next].second].direction() == DOWNWARDS ? true : false;
 
 
-                if (!adpIntersection.ContainsArcThroughADivPointQ(endpointsAndIndices[i].first,
+                if (!adpIntersection.containsIntervalThroughADivPoint(endpointsAndIndices[i].first,
                                                                   segments[endpointsAndIndices[i].second].m_smallContainingInterval,
                                                                   endpointsAndIndices[next].first,
                                                                   segments[endpointsAndIndices[next].second].m_smallContainingInterval,

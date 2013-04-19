@@ -1,10 +1,3 @@
-/**
- * @file ArcsAroundDivPoints.h
- * @author  Balazs Strenner, strenner@math.wisc.edu
- * @date    March 6, 2013
- *
- * @brief   This file contains the ArcsAroundDivPoints class.
- */
 
 
 /*
@@ -65,84 +58,68 @@
                 with their length (more precisely the number of intersections with the Circle). For the Arnoux-Yoccoz
                 foliation on RP^2, there are only about 150 good separatrix segments with length less than 1 million.
  
-
- 
- 
-
- 
- *
  *
  ******************************************************************************/
 
 
-#ifndef ArnouxYoccoz_ArcsAroundDivPoints_h
-#define ArnouxYoccoz_ArcsAroundDivPoints_h
+#ifndef INTERVALNEIGHBORHOODS_H
+#define INTERVALNEIGHBORHOODS_H
 
-//#include "Foliation.h"
+#include "Foliation.h"
 #include "UnitIntervalPoint.h"
 
 class Foliation;
 
-/**
- * @brief   A collection of arcs around a set of points on the circle of circumference 1.
- * @author  Balazs Strenner, strenner@math.wisc.edu
- * @date    March 6, 2013
- * @details Given a set of UnitIntervalPoints on the circle of circumference 1, called the "division points", an ArcAroundDivPoints object
- *          is just a collection of arcs around the division points with some properties:
+/*!
+ * \brief   A collection of intervals around a set of division points on the unit interval.
+ * \author  Balazs Strenner, strenner@math.wisc.edu
+ * \date    April 18, 2013
  *
- *          1) There is one Arc assigned to each division point, so the number of Arcs and division points are equal.
+ * The endpoints of the unit interval are considered to be identified, so one can equally imagine that as a
+ * circle of circumference 1.
  *
- *          2) The division points are ordinary UnitIntervalPoints.
+ * Given a set of UnitIntervalPoints on the unit interval, called the "division points", an IntervalNeighborhoods
+ * object is a collection of intervals around the division points with the following properties:
  *
- *          3) Each division point is contained in the inside of the corresponding Arc.
+ * 1) There is one interval assigned to each division point, so the number of intervals and division points
+ *    are equal.
+ * 2) The division points are ordinary UnitIntervalPoints (i.e. not generalized ones).
+ * 3) Each division point is contained in the inside of the corresponding interval.
+ * 4) It is true for any pair of intervals in the collection that they either coincide,
+ *    or touch each other only at the endpoints, or they are disjoint.
  *
- *          4) It is true for any pair of Arcs in the collection that they either coincide, or touch each other only at the endpoints,
- *             or they are disjoint.
+ * These objects naturally appear in the algorithm of finding so-called "good separatrix segments" for Foliations.
+ * We will constuct IntervalNeighborhoods objects iteratively from an empty object: at construction, but no
+ * intervals are assigned to the division points. This represents the idea that in this case the interval
+ * belonging to each division point is the whole circle, but since it is not really an interval, we simply handle
+ * this situation by not assigning intervals at all.
  *
- *          To better understand their structure, it might be better to understand how we are constructing them. First of all, we construct
- *          an empty object, which means that we initialize the division points, but no Arcs are assigned to them. This represents the idea
- *          that in this case the "arc" belonging to each division point is the whole circle, but since it is not really an arc, and it is
- *          not represented by the Arc class, we simply handle this situation by not assigning an Arc to the division points.
+ * Then, we start to add "cutting points" to the picture. When a cutting point is added, each interval that contains
+ * it is cut in half along it, and the smaller intervals obtained which do not contain any division points are
+ * discarded. After a while we are going to have a lot of cutting points that separate the unit interval into
+ * small intervals, but only keep the intervals around the division points, and only keep the cutting points that
+ * are endpoints of these intervals.
  *
- *          Then, we start to add "cutting points" to the picture. When a cutting point is added, each Arc that contains it is cut in half
- *          along it, and the smaller Arcs obtained which do not contain any division points are discarded. In other words, we look at
- *          each division point and their corresponding Arc in order, and we try to cut the Arcs in two by the cutting point and keep the
- *          Arc that contains the division point. Since the cutting points are always generalized UnitIntervalPoints, one can see that the above
- *          properties are satisfied.
- *
- *          In particular, when a cutting point is inserted in an empty object, then the whole circle has to be divided along the cutting
- *          point, the Arc of length 1, both endpoints being the cutting point will the Arc that is assigned to each division point.
- *
- * @see     UnitIntervalPoint, FoliationDisk
+ * \see   UnitIntervalPoint, Foliation
  */
-class ArcsAroundDivPoints{
+class IntervalNeighborhoods{
 public:
-    /**
-     * @brief   Constructor of empty object.
-     */
-    ArcsAroundDivPoints(const Foliation & foliation);
+    //! Constructor of empty object, without any cutting points
+    IntervalNeighborhoods(const Foliation & foliation);
 
+    /*! \brief Inserts a new cutting point.
+     *  \param newCuttingPoint  It must not coincide with any of the division points.
+     **/
+    void insertPoint(const UnitIntervalPoint& newCuttingPoint, int indexOfInterval);
 
-    /**
-     * @brief   Inserts a new cutting point and updates the Arcs.
-     * @param NewCuttingPoint   It must not coincide with any of the division points, because in that case case the operation won't be
-     *                          well-defined.
-     */
-    void InsertPoint(const UnitIntervalPoint& NewCuttingPoint, int IndexOfInterval);
+    //! Decides if a point is contained in union of the intervals.
+    bool contains(const UnitIntervalPoint& point, int indexOfInterval) const;
 
-    /**
-     * @brief   Decides if a point is contained in any of the Arcs.
-     */
-    bool ContainsQ(const UnitIntervalPoint& cp, int IndexOfInterval) const;
-
-
-
-    /**
-     * @brief   Returns true if the an Arc is contained in any of the member Arcs and it passes through the division point contained in the
-     *          member Arc.
-     */
-    bool ContainsArcThroughADivPointQ(const UnitIntervalPoint& LeftEndPoint, int LeftIndexOfInterval,
-                                      const UnitIntervalPoint& RightEndPoint, int RightIndexOfInterval,
+    //! Returns true if the interval between two points is contained in any of the member intervals and passes
+    //! through either a TopDivPoint or BottomDivPoint, whichever is specified.
+    //! \see    Foliation
+    bool containsIntervalThroughADivPoint(const UnitIntervalPoint& leftEndPoint, int leftIndexOfInterval,
+                                      const UnitIntervalPoint& rightEndPoint, int rightIndexOfInterval,
                                       bool throughTopDivPointQ) const;
 
 
@@ -151,7 +128,7 @@ public:
     /**
      * @brief   Takes the intersection of ArcsAroundDivPoints objects.
      */
-    friend ArcsAroundDivPoints intersect(const std::vector<const ArcsAroundDivPoints*>& apdVector);
+    static IntervalNeighborhoods intersect(const std::vector<const IntervalNeighborhoods*>& inbhVector);
 
 
 private:

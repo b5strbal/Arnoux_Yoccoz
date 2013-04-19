@@ -23,7 +23,6 @@ SOURCES += main.cpp\
     ../Arnoux_Yoccoz/FoliationRP2.cpp \
     ../Arnoux_Yoccoz/Foliation.cpp \
     ../Arnoux_Yoccoz/SeparatrixSegment.cpp \
-    ../Arnoux_Yoccoz/ArcsAroundDivPoints.cpp \
     ../Arnoux_Yoccoz/Choose.cpp \
     ../Arnoux_Yoccoz/DisjointIntervals.cpp \
     ../Arnoux_Yoccoz/SepSegmentCollection.cpp \
@@ -35,7 +34,8 @@ SOURCES += main.cpp\
     ../Arnoux_Yoccoz/Permutation.cpp \
     ../Arnoux_Yoccoz/Modint.cpp \
     ../Arnoux_Yoccoz/SepSegmentDatabase.cpp \
-    ../Arnoux_Yoccoz/TransverseCurveDatabase.cpp
+    ../Arnoux_Yoccoz/TransverseCurveDatabase.cpp \
+    ../Arnoux_Yoccoz/IntervalNeighborhoods.cpp
 
 HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/WeighedTree.h \
@@ -48,7 +48,6 @@ HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/FoliationRP2.h \
     ../Arnoux_Yoccoz/Foliation.h \
     ../Arnoux_Yoccoz/SeparatrixSegment.h \
-    ../Arnoux_Yoccoz/ArcsAroundDivPoints.h \
     ../Arnoux_Yoccoz/Choose.h \
     ../Arnoux_Yoccoz/SepSegmentCollection.h \
     ../Arnoux_Yoccoz/TransverseCurve.h \
@@ -60,7 +59,8 @@ HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/DisjointIntervals.h \
     ../Arnoux_Yoccoz/Modint.h \
     ../Arnoux_Yoccoz/SepSegmentDatabase.h \
-    ../Arnoux_Yoccoz/TransverseCurveDatabase.h
+    ../Arnoux_Yoccoz/TransverseCurveDatabase.h \
+    ../Arnoux_Yoccoz/IntervalNeighborhoods.h
 
 FORMS    += mainwindow.ui
 

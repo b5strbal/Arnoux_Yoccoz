@@ -112,16 +112,15 @@ public:
     
     friend std::ostream& operator<<(std::ostream& Out, const UnitIntervalPoint& p);
     
-protected:
+
+    
+private:
     /**
      * @brief   The position of the point is described by this number which lies in the interval [0,1).
      */
     floating_point_type m_position;
     floating_point_type m_positionPlusPrecision;
     int m_epsilon;
-
-    
-private:
 
     
 

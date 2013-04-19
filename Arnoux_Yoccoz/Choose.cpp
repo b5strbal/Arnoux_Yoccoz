@@ -3,12 +3,6 @@
 
 
 
-
-//-------------------//
-// Foliation::Choose //
-//-------------------//
-
-
 Choose::Choose(int n, int k) :
 m_n(n),
 m_k(k),
@@ -18,6 +12,7 @@ m_chosenIndices(k)
         m_chosenIndices[i] = i;
     }
 }
+
 
 Choose& Choose::operator++() {
     assert(!isAfterLast());

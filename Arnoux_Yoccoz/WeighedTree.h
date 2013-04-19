@@ -97,11 +97,6 @@ private:
     
 
     
-    
-    
-    void fillInLengthsAndPairing(std::vector<floating_point_type>& lengths, std::vector<int>& pairing, int StartingIndex, Node* pNode) const;
-
-    
     /**
      * @brief   Initializes the object for the list of weights separated by zeroes as the argument. Called by the constructors.
      */
