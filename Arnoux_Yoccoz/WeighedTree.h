@@ -33,7 +33,7 @@
  */
 
 class WeighedTree{
-    friend class InitArguments_IntervalExchangeFoliationDisk;
+    friend class IntervalExchangeFoliationDisk;
 private:
     /**
      * @brief

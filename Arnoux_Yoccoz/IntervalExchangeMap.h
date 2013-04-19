@@ -43,6 +43,7 @@ protected:
     std::vector<UnitIntervalPoint> m_divPoints;
     std::vector<UnitIntervalPoint> m_divPointsAfterExchange;
 
+    IntervalExchangeBase() : IntervalExchangeBase({1}, Permutation()) {}
     IntervalExchangeBase(const std::vector<floating_point_type>& lengths, const Permutation& permutation);
 };
 
@@ -55,8 +56,8 @@ protected:
 
 
 class IntervalExchangeMap : public IntervalExchangeBase{
-    //friend class InitArguments_TwistedIntervalExchangeMap;
 public:
+    IntervalExchangeMap() : IntervalExchangeBase() {}
     IntervalExchangeMap(const std::vector<floating_point_type>& lengths, const Permutation& permutation);
 
     // Notice: even from a generalized UnitIntervalPoint, applyTo and applyInverseTo create a non-generalized UnitIntervalPoint!
@@ -77,21 +78,13 @@ private:
 
 
 
-class InitArguments_TwistedIntervalExchangeMap{
-    friend class TwistedIntervalExchangeMap;
-    
-    InitArguments_TwistedIntervalExchangeMap(const std::vector<floating_point_type>& lengths,
-                                             const Permutation& permutation,
-                                             floating_point_type twist);
-
-    static std::vector<floating_point_type> arg_lengths;
-    static Permutation arg_permutation;
-    static std::vector<floating_point_type> arg_normalizedOriginalLengths;
-};
 
 
 
-class TwistedIntervalExchangeMap : private InitArguments_TwistedIntervalExchangeMap{
+
+
+
+class TwistedIntervalExchangeMap{
     friend class Foliation;
     friend class FoliationFromRP2;
 public:
@@ -121,31 +114,25 @@ private:
 
 
 
-class InitArguments_IntervalExchangeFoliationDisk{
-    friend class IntervalExchangeFoliationDisk;
-    
-    InitArguments_IntervalExchangeFoliationDisk(const WeighedTree& wt);
-    void fillInLengthsAndPairing(std::vector<floating_point_type>& lengths,
-                                 std::vector<unsigned int> &pairing, int StartingIndex, WeighedTree::Node* pNode) const;
-    
-    static std::vector<floating_point_type> arg_lengths;
-    static Permutation arg_permutation;
-};
 
 
 
+class IntervalExchangeFoliationDisk : public IntervalExchangeBase
 
-
-class IntervalExchangeFoliationDisk : private InitArguments_IntervalExchangeFoliationDisk,
-                                      public IntervalExchangeBase
 {
 public:
-    IntervalExchangeFoliationDisk(const WeighedTree& wt);
+    static IntervalExchangeFoliationDisk fromWeighedTree(const WeighedTree& wt);
     
     UnitIntervalPoint applyTo(const UnitIntervalPoint& point) const;
     UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& point) const { return applyTo(point); }
 
-    
+private:
+    IntervalExchangeFoliationDisk(const std::vector<floating_point_type>& lengths, const Permutation& permutation);
+
+    static void fillInLengthsAndPairing(std::vector<floating_point_type>& lengths,
+                                 std::vector<unsigned int> &pairing,
+                                 int StartingIndex,
+                                 WeighedTree::Node* pNode);
 
 };
 

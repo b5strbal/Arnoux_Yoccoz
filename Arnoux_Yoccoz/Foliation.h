@@ -18,45 +18,22 @@
 
 
 
-//-------------------------//
-// InitArguments_Foliation //
-//-------------------------//
-
-
-class InitArguments_Foliation{
-    friend class Foliation;
-    
-    struct ConnectedPoints {
-        UnitIntervalPoint topPoint;
-        UnitIntervalPoint bottomPoint;
-    };
-    
-    InitArguments_Foliation() {}
-    InitArguments_Foliation(const FoliationSphere& foliationSphere);
-    void generateTopConnectingPairs(const FoliationSphere& foliationSphere, std::vector<ConnectedPoints>& allConnectedPoints);
-    void generateBottomConnectingPairs(const FoliationSphere& foliationSphere, std::vector<ConnectedPoints>& allConnectedPoints);
-    
-    static std::vector<floating_point_type> arg_lengths;
-    static Permutation arg_permutation;
-    static floating_point_type arg_twist;
-};
-
 
 
 
 //-----------//
 // Foliation //
 //-----------//
- 
 
-class Foliation : private InitArguments_Foliation{
+
+class Foliation{
     friend class SeparatrixSegment;
     friend class ArcsAroundDivPoints;
     
 public:
     Foliation(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
-    Foliation(const FoliationRP2&);
-    Foliation(const FoliationSphere&);
+    static Foliation fromFoliationRP2(const FoliationRP2 &foliationRP2);
+    static Foliation fromFoliationSphere(const FoliationSphere&foliationSphere);
     Foliation rotateBy(int rotationAmount) const;
     Foliation reflect() const;
     Foliation flipOver() const;
@@ -84,6 +61,15 @@ private:
     Foliation(const TwistedIntervalExchangeMap&);
     
     void init();
+
+    struct ConnectedPoints {
+        UnitIntervalPoint topPoint;
+        UnitIntervalPoint bottomPoint;
+    };
+
+    static void generateTopConnectingPairs(const FoliationSphere& foliationSphere, std::vector<ConnectedPoints>& allConnectedPoints);
+    static void generateBottomConnectingPairs(const FoliationSphere& foliationSphere, std::vector<ConnectedPoints>& allConnectedPoints);
+
     
 };
 

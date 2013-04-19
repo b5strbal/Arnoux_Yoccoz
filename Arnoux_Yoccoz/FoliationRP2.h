@@ -63,7 +63,8 @@ class FoliationRP2
     
 public:
     FoliationRP2(const FoliationDisk&);
-    
+    static FoliationRP2 arnouxYoccozRP2();
+
     //void Rotate();
     //void Reflect();
     
@@ -77,7 +78,6 @@ private:
 };
 
 
-FoliationRP2 arnouxYoccozRP2();
 
 
 

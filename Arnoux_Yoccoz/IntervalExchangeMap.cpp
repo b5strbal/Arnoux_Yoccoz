@@ -13,22 +13,9 @@
 
 
 
-
-
-
-
-
-
 //----------------------//
 // IntervalExchangeBase //
 //----------------------//
-
-
-
-
-
-
-
 
 
 
@@ -73,11 +60,6 @@ IntervalExchangeBase::IntervalExchangeBase(const std::vector<floating_point_type
 }
 
 
-
-
-
-
-
 std::string IntervalExchangeBase::print() const{
     std::ostringstream s;
     s << "Permutation: " << m_permutation.print() << "\n";
@@ -120,11 +102,6 @@ IntervalExchangeMap::IntervalExchangeMap(const std::vector<floating_point_type>&
 
 
 
-
-
-
-
-
 UnitIntervalPoint IntervalExchangeMap::applyTo(const UnitIntervalPoint& point) const{
     return UnitIntervalPoint(point.getPosition()) + m_translations[containingInterval(m_divPoints, point)];
 }
@@ -141,23 +118,22 @@ UnitIntervalPoint IntervalExchangeMap::applyInverseTo(const UnitIntervalPoint& p
 
 
 
-//------------------------------------------//
-// InitArguments_TwistedIntervalExchangeMap //
-//------------------------------------------//
 
 
-std::vector<floating_point_type> InitArguments_TwistedIntervalExchangeMap::arg_lengths(0);
-Permutation InitArguments_TwistedIntervalExchangeMap::arg_permutation;
-std::vector<floating_point_type> InitArguments_TwistedIntervalExchangeMap::arg_normalizedOriginalLengths(0);
+//----------------------------//
+// TwistedIntervalExchangeMap //
+//----------------------------//
 
 
-InitArguments_TwistedIntervalExchangeMap::InitArguments_TwistedIntervalExchangeMap(const std::vector<floating_point_type>& lengths,
-                                                                                   const Permutation& permutation,
-                                                                                   floating_point_type twist){
-
+TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<floating_point_type>& lengths,
+                                                       const Permutation& permutation,
+                                                       floating_point_type twist) :
+    m_originalPermutation(permutation),
+    m_twist(twist)
+{
     IntervalExchangeMap originalIntExchange(lengths, permutation);
-    arg_normalizedOriginalLengths = originalIntExchange.lengths();
-    
+    m_originalLengths = originalIntExchange.lengths();
+
     unsigned int originalSize = lengths.size();
     UnitIntervalPoint oneMinusTwist(FracPart(1 - twist));
     UnitIntervalPoint newDivPoint = originalIntExchange.applyInverseTo(oneMinusTwist);
@@ -167,13 +143,13 @@ InitArguments_TwistedIntervalExchangeMap::InitArguments_TwistedIntervalExchangeM
                                  twisted interval exchange map.");
     }
     int intervalOfOneMinusTwist = containingInterval(originalIntExchange.divPointsAfterExchange(), oneMinusTwist);
-        
+
     // Finding the new lengths
-    arg_lengths = arg_normalizedOriginalLengths;
+    std::vector<floating_point_type> new_lengths = m_originalLengths;
     floating_point_type smallerLength = newDivPoint.getPosition() - originalIntExchange.divPoints()[intervalOfNewDivPoint].getPosition();
-    arg_lengths.insert(arg_lengths.begin() + intervalOfNewDivPoint + 1, arg_lengths[intervalOfNewDivPoint] - smallerLength);
-    arg_lengths[intervalOfNewDivPoint] = smallerLength;
-    
+    new_lengths.insert(new_lengths.begin() + intervalOfNewDivPoint + 1, new_lengths[intervalOfNewDivPoint] - smallerLength);
+    new_lengths[intervalOfNewDivPoint] = smallerLength;
+
     // Finding the new permutation
     std::vector<unsigned int> permutationInput(originalSize + 1);
     for (int i = 0; i < intervalOfNewDivPoint; i++) {
@@ -190,29 +166,15 @@ InitArguments_TwistedIntervalExchangeMap::InitArguments_TwistedIntervalExchangeM
         } else
             permutationInput[i] = permutation[i - 1] - intervalOfOneMinusTwist;
     }
-    arg_permutation = Permutation(permutationInput);
-}
+
+    m_intervalExchangeAfterTwist = IntervalExchangeMap(new_lengths, Permutation(permutationInput));
+
+    m_indexOfFakeDivPoint = m_intervalExchangeAfterTwist.inversePermutation()[0];
 
 
 
 
 
-//----------------------------//
-// TwistedIntervalExchangeMap //
-//----------------------------//
-
-
-TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<floating_point_type>& lengths,
-                                                       const Permutation& permutation,
-                                                       floating_point_type twist) :
-    InitArguments_TwistedIntervalExchangeMap(lengths, permutation, twist),
-    m_intervalExchangeAfterTwist(arg_lengths, arg_permutation),
-    m_originalLengths(arg_normalizedOriginalLengths),
-    m_originalPermutation(permutation),
-    m_twist(twist),
-    m_indexOfFakeDivPoint(m_intervalExchangeAfterTwist.inversePermutation()[0])
-{
-        
     /*
     m_realSeparatingPoints.clear();
     int firstindex = 0;
@@ -315,38 +277,8 @@ std::ostream& operator<<(std::ostream& Out, const TwistedIntervalExchangeMap& tw
 
 
 
-//---------------------------------------------//
-// InitArguments_IntervalExchangeFoliationDisk //
-//---------------------------------------------//
-
-std::vector<floating_point_type> InitArguments_IntervalExchangeFoliationDisk::arg_lengths(0);
-Permutation InitArguments_IntervalExchangeFoliationDisk::arg_permutation;
-
-InitArguments_IntervalExchangeFoliationDisk::InitArguments_IntervalExchangeFoliationDisk(const WeighedTree& wt){
-    arg_lengths.resize(2 * wt.getNumEdges());
-    std::vector<unsigned int> pairing(2 * wt.getNumEdges());
-    fillInLengthsAndPairing(arg_lengths, pairing, 0, wt.m_Root);
-    arg_permutation = Permutation(pairing);
-}
 
 
-
-
-
-void InitArguments_IntervalExchangeFoliationDisk::fillInLengthsAndPairing(std::vector<floating_point_type>& lengths,
-                                                                          std::vector<unsigned int>& pairing,
-                                                                          int StartingIndex,
-                                                                          WeighedTree::Node* pNode) const{
-    int ChildrenStartingIndex = StartingIndex;
-    for (int i = 0; i < pNode->m_NumChildren; i++) {
-        int pair = ChildrenStartingIndex + 2 * pNode->m_Children[i].m_NumDescendants + 1;
-        lengths[ChildrenStartingIndex] = lengths[pair] = pNode->m_Children[i].m_Weight;
-        pairing[ChildrenStartingIndex] = pair;
-        pairing[pair] = ChildrenStartingIndex;
-        fillInLengthsAndPairing(lengths, pairing, ChildrenStartingIndex + 1, pNode->m_Children + i);
-        ChildrenStartingIndex = pair + 1;
-    }
-}
 
 
 
@@ -356,11 +288,14 @@ void InitArguments_IntervalExchangeFoliationDisk::fillInLengthsAndPairing(std::v
 //-------------------------------//
 
 
-IntervalExchangeFoliationDisk::IntervalExchangeFoliationDisk(const WeighedTree& wt) :
-    InitArguments_IntervalExchangeFoliationDisk(wt),
-    IntervalExchangeBase(arg_lengths, arg_permutation)
+IntervalExchangeFoliationDisk IntervalExchangeFoliationDisk::fromWeighedTree(const WeighedTree& wt)
 {
+    std::vector<floating_point_type> lengths(2 * wt.getNumEdges());
+    std::vector<unsigned int> pairing(2 * wt.getNumEdges());
+    fillInLengthsAndPairing(lengths, pairing, 0, wt.m_Root);
+    return IntervalExchangeFoliationDisk(lengths, Permutation(pairing));
 }
+
 
 
 UnitIntervalPoint IntervalExchangeFoliationDisk::applyTo(const UnitIntervalPoint& point) const{
@@ -371,9 +306,29 @@ UnitIntervalPoint IntervalExchangeFoliationDisk::applyTo(const UnitIntervalPoint
     return UnitIntervalPoint(m_divPoints[m_permutation[interval]].getPosition() + m_lengths[interval] + (m_divPoints[interval].getPosition() - point.getPosition()));
 }
 
+IntervalExchangeFoliationDisk::IntervalExchangeFoliationDisk(const std::vector<floating_point_type> &lengths,
+                                                             const Permutation &permutation) :
+    IntervalExchangeBase(lengths, permutation)
+{
+}
 
 
 
+void IntervalExchangeFoliationDisk::fillInLengthsAndPairing(std::vector<floating_point_type>& lengths,
+                                                            std::vector<unsigned int>& pairing,
+                                                            int StartingIndex,
+                                                            WeighedTree::Node* pNode)
+{
+    int ChildrenStartingIndex = StartingIndex;
+    for (int i = 0; i < pNode->m_NumChildren; i++) {
+        int pair = ChildrenStartingIndex + 2 * pNode->m_Children[i].m_NumDescendants + 1;
+        lengths[ChildrenStartingIndex] = lengths[pair] = pNode->m_Children[i].m_Weight;
+        pairing[ChildrenStartingIndex] = pair;
+        pairing[pair] = ChildrenStartingIndex;
+        fillInLengthsAndPairing(lengths, pairing, ChildrenStartingIndex + 1, pNode->m_Children + i);
+        ChildrenStartingIndex = pair + 1;
+    }
+}
 
 
 
