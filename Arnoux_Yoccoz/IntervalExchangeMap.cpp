@@ -217,7 +217,7 @@ TwistedIntervalExchangeMap TwistedIntervalExchangeMap::rotateBy(int rotationAmou
     // When the length vector is rotated, we must therefore precompose the original permutation by a rotation. By the previous remark,
     // postcomposing is not important as long as we choose the rigth twist.
 
-    Permutation newPermutation = m_originalPermutation * rotatingPermutation(sizeBeforeTwist(), - normalizedAmount);
+    Permutation newPermutation = m_originalPermutation * Permutation::rotatingPermutation(sizeBeforeTwist(), - normalizedAmount);
 
     int indexOfDivPointGoingToZero = m_indexOfFakeDivPoint + normalizedAmount < sizeAfterTwist() ? sizeAfterTwist() - normalizedAmount : sizeAfterTwist() - normalizedAmount - 1;
     floating_point_type rotationDistance = 1 - m_intervalExchangeAfterTwist.divPoints()[indexOfDivPointGoingToZero].getPosition();
@@ -233,7 +233,7 @@ TwistedIntervalExchangeMap TwistedIntervalExchangeMap::reflect() const{
     
     // Now, in contract to rotateBy, we have to pre- and post-compose our premutation
     
-    Permutation reverse = reversingPermutation(sizeBeforeTwist());
+    Permutation reverse = Permutation::reversingPermutation(sizeBeforeTwist());
     Permutation newPermutation = reverse * m_originalPermutation * reverse;
 
     // It is not hard to see that after reflecting the whole picture, the new twist is simply the negative of the old one.
