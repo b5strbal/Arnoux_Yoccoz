@@ -36,7 +36,8 @@ SOURCES += main.cpp\
     ../Arnoux_Yoccoz/TransverseCurveDatabase.cpp \
     ../Arnoux_Yoccoz/IntervalNeighborhoods.cpp \
     ../Arnoux_Yoccoz/Mod1Number.cpp \
-    ../Arnoux_Yoccoz/Mod1NumberIntExchange.cpp
+    ../Arnoux_Yoccoz/Mod1NumberIntExchange.cpp \
+    ../Arnoux_Yoccoz/Mod1NumberTwistedIntExchange.cpp
 
 HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/WeighedTree.h \
@@ -62,7 +63,8 @@ HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/TransverseCurveDatabase.h \
     ../Arnoux_Yoccoz/IntervalNeighborhoods.h \
     ../Arnoux_Yoccoz/Mod1Number.h \
-    ../Arnoux_Yoccoz/Mod1NumberIntExchange.h
+    ../Arnoux_Yoccoz/Mod1NumberIntExchange.h \
+    ../Arnoux_Yoccoz/Mod1NumberTwistedIntExchange.h
 
 FORMS    += mainwindow.ui
 

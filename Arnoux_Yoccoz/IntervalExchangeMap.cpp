@@ -17,6 +17,10 @@
 // IntervalExchangeBase //
 //----------------------//
 
+IntervalExchangeBase::IntervalExchangeBase() : IntervalExchangeBase(std::vector<floating_point_type>(1, 1), Permutation())
+{
+}
+
 
 
 IntervalExchangeBase::IntervalExchangeBase(const std::vector<floating_point_type>& lengths,
@@ -41,22 +45,32 @@ IntervalExchangeBase::IntervalExchangeBase(const std::vector<floating_point_type
     
     m_lengths.reserve(size);
     for (int i = 0; i < size; i++) {
-        m_lengths.emplace_back(*this, lengths[i]/total, i);
+        m_lengths.emplace_back(this, lengths[i]/total, i);
     }
     
     m_divPoints.resize(size);
-    m_divPoints[0] = Mod1Number(0);
+    m_divPoints[0] = Mod1NumberIntExchange(this);
     for (int i = 1; i < size; i++) {
         m_divPoints[i] = m_divPoints[i - 1] + m_lengths[i - 1];
-        if (!(m_divPoints[i - 1] < m_divPoints[i])) {
-            throw std::runtime_error("At least one interval in the interval exchange is too short.");
-        }
     }
         
     m_divPointsAfterExchange.resize(size);
+    m_divPointsAfterExchange[0] = Mod1NumberIntExchange(this);
     for (int i = 1; i < size; i++) {
         m_divPointsAfterExchange[i] = m_divPointsAfterExchange[i - 1] + m_lengths[m_inversePermutation[i - 1]];
     }
+}
+
+unsigned int IntervalExchangeBase::containingInterval(const Mod1Number &point) const
+{
+    int interval = std::upper_bound(m_divPoints.begin(), m_divPoints.end(), point) - m_divPoints.begin() - 1;
+    return interval == -1 ? size() - 1 : interval;
+}
+
+unsigned int IntervalExchangeBase::containingIntervalAfterExchange(const Mod1Number &point) const
+{
+    int interval = std::upper_bound(m_divPointsAfterExchange.begin(), m_divPointsAfterExchange.end(), point) - m_divPointsAfterExchange.begin() - 1;
+    return interval == -1 ? size() - 1 : interval;
 }
 
 
@@ -98,26 +112,26 @@ IntervalExchangeMap::IntervalExchangeMap(const std::vector<floating_point_type>&
 
 
 
+// For applyTo and applyInverseTo, the same code works, but since they are virtual functions, we can't templatize them.
 
 Mod1Number IntervalExchangeMap::applyTo(const Mod1Number& point) const{
-    return Mod1Number(point.getPosition()) + m_translations[containingInterval(m_divPoints, point)];
+    return point + m_translations[containingInterval(point)];
+}
+
+Mod1NumberIntExchange IntervalExchangeMap::applyTo(const Mod1NumberIntExchange &point) const{
+    assert(this == point.m_intExchange);
+    return point + m_translations[containingInterval(point)];
 }
 
 
 Mod1Number IntervalExchangeMap::applyInverseTo(const Mod1Number& point) const{
-    return Mod1Number(point.getPosition()) - m_translations[m_inversePermutation[containingInterval(m_divPointsAfterExchange, point)]];
-}
-
-Mod1NumberIntExchange IntervalExchangeMap::applyTo(const Mod1NumberIntExchange &point) const
-{
-    //define
+    return point - m_translations[m_inversePermutation[containingIntervalAfterExchange(point)]];
 }
 
 
-
-Mod1NumberIntExchange IntervalExchangeMap::applyInverseTo(const Mod1NumberIntExchange &point) const
-{
-    //define
+Mod1NumberIntExchange IntervalExchangeMap::applyInverseTo(const Mod1NumberIntExchange &point) const{
+    assert(this == point.m_intExchange);
+    return point - m_translations[m_inversePermutation[containingIntervalAfterExchange(point)]];
 }
 
 
@@ -137,7 +151,7 @@ Mod1NumberIntExchange IntervalExchangeMap::applyInverseTo(const Mod1NumberIntExc
 TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<floating_point_type>& lengths,
                                                        const Permutation& permutation,
                                                        floating_point_type twist) :
-    m_originalPermutation(permutation),
+   // m_originalPermutation(permutation),
     m_twist(twist)
 {
     IntervalExchangeMap originalIntExchange(lengths, permutation);
@@ -260,6 +274,14 @@ TwistedIntervalExchangeMap TwistedIntervalExchangeMap::invert() const{
     floating_point_type newTwist = -m_twist;
     
     return TwistedIntervalExchangeMap(newLengths, newPermutation, newTwist);
+}
+
+Mod1Number TwistedIntervalExchangeMap::applyTo(const Mod1Number &p) const
+{
+}
+
+Mod1Number TwistedIntervalExchangeMap::applyInverseTo(const Mod1Number &p) const
+{
 }
 
 

@@ -45,8 +45,11 @@ protected:
     std::vector<Mod1NumberIntExchange> m_divPoints;
     std::vector<Mod1NumberIntExchange> m_divPointsAfterExchange;
 
-    IntervalExchangeBase() : IntervalExchangeBase({1}, Permutation()) {}
+    IntervalExchangeBase(); // default constructor: the identity interval exchange with on one interval.
     IntervalExchangeBase(const std::vector<floating_point_type>& lengths, const Permutation& permutation);
+
+    unsigned int containingInterval(const Mod1Number& point) const;
+    unsigned int containingIntervalAfterExchange(const Mod1Number& point) const;
 };
 
 
@@ -67,11 +70,11 @@ public:
     virtual Mod1NumberIntExchange applyTo(const Mod1NumberIntExchange &point) const;
     virtual Mod1Number applyInverseTo(const Mod1Number& point) const;
     virtual Mod1NumberIntExchange applyInverseTo(const Mod1NumberIntExchange &point) const;
-    const std::vector<floating_point_type>& translations() const { return m_translations; }
+    const std::vector<Mod1NumberIntExchange>& translations() const { return m_translations; }
     
 
 private:
-    std::vector<floating_point_type> m_translations;
+    std::vector<Mod1NumberIntExchange> m_translations;
 };
 
 
@@ -95,20 +98,23 @@ public:
     TwistedIntervalExchangeMap rotateBy(int rotationAmount) const;
     TwistedIntervalExchangeMap reflect() const;
     TwistedIntervalExchangeMap invert() const;
-    Mod1Number applyTo(const Mod1Number& p) const { return m_intervalExchangeAfterTwist.applyTo(p); }
-    Mod1Number applyInverseTo(const Mod1Number& p) const { return m_intervalExchangeAfterTwist.applyInverseTo(p); }
+    Mod1Number applyTo(const Mod1Number& p) const;
+    Mod1Number applyInverseTo(const Mod1Number& p) const;
+    unsigned int size() const { return m_intExchangeMap.size(); }
 
     friend std::ostream& operator<<(std::ostream& Out, const TwistedIntervalExchangeMap& twistedIntervalExchange);
 private:
-    IntervalExchangeMap m_intervalExchangeAfterTwist;
-    std::vector<floating_point_type> m_originalLengths;
-    Permutation m_originalPermutation;
+    IntervalExchangeMap m_intExchangeMap;
     floating_point_type m_twist;
-    int m_indexOfFakeDivPoint;
+
+    // IntervalExchangeMap m_intervalExchangeAfterTwist;
+    //std::vector<floating_point_type> m_originalLengths;
+   // Permutation m_originalPermutation;
+   // int m_indexOfFakeDivPoint;
 
     
-    int sizeBeforeTwist() const{ return m_originalPermutation.size(); }
-    int sizeAfterTwist() const{ return m_intervalExchangeAfterTwist.size(); }
+   // int sizeBeforeTwist() const{ return m_originalPermutation.size(); }
+   // int sizeAfterTwist() const{ return m_intervalExchangeAfterTwist.size(); }
 };
 
 

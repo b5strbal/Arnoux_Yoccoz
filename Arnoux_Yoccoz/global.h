@@ -47,7 +47,7 @@ int gcd(int a, int b);
 floating_point_type fracPart(floating_point_type x);
 
 
-template <typename Type>
+/*template <typename Type>
 int containingInterval(const std::vector<Type>& separatingPoints, Type point){
     return findInterval(separatingPoints, point, -1, static_cast<int>(separatingPoints.size())  - 1);
 }
@@ -74,7 +74,7 @@ int findInterval(const std::vector<Type>& separatingPoints,
         return findInterval(separatingPoints, point, mid, end);
 }
 
-
+*/
 
 
 template <typename Type>
