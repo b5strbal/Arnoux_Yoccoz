@@ -18,29 +18,13 @@
 
 class Choose{
 public:
-
-    //! Constructs the subset of the first k elements.
-    Choose(int n, int k);
-
-    //! Steps to the next subset in the lexicographical order of subsets
-    Choose& operator++();
-
-    //! Returns n, the size of the base set.
+    Choose(int n, int k); // {0, 1, ..., k-1} in base set {0, 1, ..., n-1}
     int n() const { return m_n; }
-
-    //! Returns k, the size of the subsets.
     int k() const { return m_k; }
-
-    //! Returns true if the current subset is past the last subset, i.e. not valid anymore.
-    inline bool isAfterLast() const { return m_chosenIndices.empty(); }
-
-    //! Returns the i'th element of the subset.
-    int operator[](int i) { return m_chosenIndices[i]; }
-
-    //! Returns an iterator pointing to the beginning of the vector storing the elements of the subset.
+    Choose& operator++();
+    bool isAfterLast() const; // Returns true if the current subset is past the last subset, i.e. not valid anymore.
+    int operator[](int i);  // Returns the i'th element of the subset.
     std::vector<int>::const_iterator begin() const { return m_chosenIndices.begin(); }
-
-    //! Returns a pointer pointing after the last ele
     std::vector<int>::const_iterator end() const { return m_chosenIndices.end(); }
 
 

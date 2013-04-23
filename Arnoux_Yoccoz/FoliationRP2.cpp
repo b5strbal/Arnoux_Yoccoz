@@ -9,6 +9,12 @@ FoliationRP2 FoliationRP2::arnouxYoccozRP2(){
     return FoliationRP2(WeighedTree(weighedTreeInput));
 }
 
+std::ostream& operator <<(std::ostream &out, const FoliationRP2 &f)
+{
+    out << f.m_foliationDisk;
+    return out;
+}
+
 
 
 

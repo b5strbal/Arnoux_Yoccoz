@@ -20,34 +20,16 @@
  */
 class Permutation{
 public:
-    //! Constructs the permutation on a 1-element set.
-    Permutation() : m_functionValues(1, 0) {}
-
-    //! \brief Constructs a permutation from the list of function values.
-    //! \throws std::runtime_error  If the arguments are not valid, e.g. the vector
-    //!         is empty, the function values are out of range or the function
-    //!         is not one-to-one.
+    Permutation(); // Constructs the permutation on a 1-element set.
     Permutation(const std::vector<unsigned int> &functionValues);
-
-    //! \brief Constructs a rotating permutation. E.g. size=5, rotationAmount=2 produces {2, 3, 4, 0, 1}.
-    //! \param  size                The size of the base set.
-    //! \param  rotationAmount      Any integer, the amount of rotation.
-    //! \throws std::runtime_error  If size<=0.
     static Permutation rotatingPermutation(int size, int rotationAmount);
-
-    //! \brief Constructs a reversing permutation. E.g. size=5 produces {4, 3, 2, 1, 0}.
-    //! \param  size    The size of the base set.
-    //! \throws std::runtime_error  If size<=0.
     static Permutation reversingPermutation(int size);
-
-    //! Returns n, the size of the base set.
-    inline unsigned int size() const{ return m_functionValues.size(); }
-
-    //! Returns the inverse permutation.
     Permutation inverse() const;
+    unsigned int size() const;
+    unsigned int operator[](unsigned int index) const { return m_functionValues[index]; }
+    friend Permutation operator*(const Permutation& p1, const Permutation& p2);
+    friend std::ostream& operator<<(std::ostream& out, const Permutation& perm);
 
-    //! \brief Acts on a vector without changing it and returns a copy.
-    //! \throw std::runtime_error   If the size of the permutation and that of the vector are different.
     template <typename Type>
     std::vector<Type> actOn(const std::vector<Type>& vec) const{
         if (size() != vec.size()) {
@@ -60,15 +42,6 @@ public:
         return newVector;
     }
 
-    //! \brief Returns the composition of the two permutations.
-    //! \throws std::runtime_error  If the size of the permutations are different.
-    friend Permutation operator*(const Permutation& p1, const Permutation& p2);
-
-    //! Returns the image of element of the base set.
-    unsigned int operator[](unsigned int index) const { return m_functionValues[index]; }
-
-    //! Prints the object to a string.
-    std::string print() const;
 
 private:
     std::vector<unsigned int> m_functionValues;

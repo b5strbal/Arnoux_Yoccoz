@@ -4,6 +4,10 @@
 #include <sstream>
 
 
+Permutation::Permutation() : m_functionValues(1, 0) {}
+{
+}
+
 Permutation::Permutation(const std::vector<unsigned int> &functionValues) :
     m_functionValues(functionValues)
 {
@@ -48,14 +52,6 @@ Permutation Permutation::inverse() const{
 }
 
 
-std::string Permutation::print() const{
-    std::ostringstream s;
-
-    for (unsigned int i = 0; i < size(); i++)
-        s << m_functionValues[i] << " ";
-    return s.str();
-}
-
 
 Permutation rotatingPermutation(int size, int rotationAmount){
     if (size <= 0) {
@@ -86,10 +82,15 @@ Permutation reversingPermutation(int size){
 
 
 
+unsigned int Permutation::size() const
+{
+    return m_functionValues.size();
+}
 
 
-
-
-
-
-
+std::ostream &Permutation::operator <<(std::ostream &out, const Permutation &perm) const
+{
+    for (unsigned int i = 0; i < perm.size(); i++)
+        out << perm.m_functionValues[i] << " ";
+    return out;
+}

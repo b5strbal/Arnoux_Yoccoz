@@ -30,3 +30,12 @@ Choose& Choose::operator++() {
     return *this;
 }
 
+bool Choose::isAfterLast() const
+{
+    return m_chosenIndices.empty();
+}
+
+int Choose::operator [](int i)
+{
+    return m_chosenIndices[i];
+}

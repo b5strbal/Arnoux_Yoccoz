@@ -9,7 +9,7 @@
 TransverseCurve::TransverseCurve(const Foliation& foliation, const SepSegmentCollectionBase &segments, bool wrapsAroundZero) :
     m_foliation(foliation)
 {
-    std::vector<UnitIntervalPoint> endpoints;
+    std::vector<Mod1Number> endpoints;
     endpoints.reserve(segments.size());
     m_goodSegmentIndices.reserve(segments.size());
     for (unsigned int i = 0; i < segments.size(); i++){

@@ -15,7 +15,6 @@ CONFIG += C++11
 SOURCES += main.cpp\
         mainwindow.cpp \
     ../Arnoux_Yoccoz/WeighedTree.cpp \
-    ../Arnoux_Yoccoz/UnitIntervalPoint.cpp \
     ../Arnoux_Yoccoz/PerronFrobenius.cpp \
     ../Arnoux_Yoccoz/Matrix.cpp \
     ../Arnoux_Yoccoz/IntervalExchangeMap.cpp \
@@ -35,11 +34,12 @@ SOURCES += main.cpp\
     ../Arnoux_Yoccoz/Modint.cpp \
     ../Arnoux_Yoccoz/SepSegmentDatabase.cpp \
     ../Arnoux_Yoccoz/TransverseCurveDatabase.cpp \
-    ../Arnoux_Yoccoz/IntervalNeighborhoods.cpp
+    ../Arnoux_Yoccoz/IntervalNeighborhoods.cpp \
+    ../Arnoux_Yoccoz/Mod1Number.cpp \
+    ../Arnoux_Yoccoz/Mod1NumberIntExchange.cpp
 
 HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/WeighedTree.h \
-    ../Arnoux_Yoccoz/UnitIntervalPoint.h \
     ../Arnoux_Yoccoz/PerronFrobenius.h \
     ../Arnoux_Yoccoz/Matrix.hpp \
     ../Arnoux_Yoccoz/Matrix.h \
@@ -60,7 +60,9 @@ HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/Modint.h \
     ../Arnoux_Yoccoz/SepSegmentDatabase.h \
     ../Arnoux_Yoccoz/TransverseCurveDatabase.h \
-    ../Arnoux_Yoccoz/IntervalNeighborhoods.h
+    ../Arnoux_Yoccoz/IntervalNeighborhoods.h \
+    ../Arnoux_Yoccoz/Mod1Number.h \
+    ../Arnoux_Yoccoz/Mod1NumberIntExchange.h
 
 FORMS    += mainwindow.ui
 

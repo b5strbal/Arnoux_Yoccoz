@@ -21,6 +21,8 @@ class ExceptionContainingIntervalNotUnique : public std::runtime_error {};
 
 const int CONTAINING_INTERVAL_NOT_UNIQUE = -100;
 
+const floating_point_type PRECISION = 0.00000000001L;
+
 
 
 enum UpDownDirection{
@@ -40,9 +42,9 @@ int gcd(int a, int b);
 
 
 /**
- * @brief   Calculates the fractional part of a real number. E.g. FracPart(2.3) = 0.3, FracPart(-1.8) = 0.2.
+ * @brief   Calculates the fractional part of a real number. E.g. fracPart(2.3) = 0.3, fracPart(-1.8) = 0.2.
  */
-floating_point_type FracPart(floating_point_type x);
+floating_point_type fracPart(floating_point_type x);
 
 
 template <typename Type>

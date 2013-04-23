@@ -24,7 +24,7 @@ std::array<bool, 2> TransverseCurveDatabase::whichTransverseCurvesExist(const Se
 */
 
     std::array<bool, 2> isCandidateForWrapsAroundZero = {{true, true}};
-    std::vector<std::pair<UnitIntervalPoint, int>> endpointsAndIndices;
+    std::vector<std::pair<Mod1Number, int>> endpointsAndIndices;
 
     endpointsAndIndices.reserve(segments.size());
     for (unsigned int i = 0; i < segments.size(); i++){
@@ -56,7 +56,7 @@ std::array<bool, 2> TransverseCurveDatabase::whichTransverseCurvesExist(const Se
 
     // checking that the curve is connected
 
-    std::vector<UnitIntervalPoint> endpoints;
+    std::vector<Mod1Number> endpoints;
     endpoints.reserve(endpointsAndIndices.size());
     for (auto& x : endpointsAndIndices) {
         endpoints.push_back(x.first);

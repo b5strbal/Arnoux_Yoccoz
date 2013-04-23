@@ -61,8 +61,8 @@ public:
     static FoliationRP2 arnouxYoccozRP2();
 
 
-    std::string print() { return m_foliationDisk.print(); }
-    
+    friend std::ostream& operator<<(std::ostream& out, const FoliationRP2& f);
+
     
 private:
     FoliationDisk m_foliationDisk;

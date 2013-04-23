@@ -36,23 +36,12 @@
 class FoliationDisk
 {
 public:
-    //! Constructs a FoliationDisk from a WeighedTree
     FoliationDisk(const WeighedTree& wt);
-
-    //! Returns the WeighedTree representation.
     const WeighedTree& weighedTree() const { return m_weighedTree; }
-
-    //! Returns the interval exchange representation.
     const IntervalExchangeFoliationDisk& intervalPairing() const { return m_intervalPairing; }
-
-    //! Returns the number of separatrices.
     int numSeparatrices() const { return m_intervalPairing.size(); }
-
-    //! Returns the list of division points (intersections of separatrices with the boundary)
-    const std::vector<UnitIntervalPoint>& divPoints() const { return m_intervalPairing.divPoints(); }
-
-    //! Prints the data of the object into a string
-    std::string print() const;
+    const std::vector<Mod1NumberIntExchange>& divPoints() const { return m_intervalPairing.divPoints(); }
+    friend std::ostream& operator<<(std::ostream& out, const FoliationDisk& d);
 
 private:
     IntervalExchangeFoliationDisk m_intervalPairing; // the interval exchange representation

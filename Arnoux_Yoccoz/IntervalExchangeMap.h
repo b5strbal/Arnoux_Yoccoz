@@ -12,11 +12,11 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
-#include "UnitIntervalPoint.h"
+//#include "Mod1Number.h"
 #include "WeighedTree.h"
 #include "global.h"
 #include "Permutation.h"
-
+#include "Mod1NumberIntExchange.h"
 
 
 
@@ -27,21 +27,23 @@
 class IntervalExchangeBase{
 public:
     inline int size() const { return static_cast<int>(m_lengths.size()); }
-    virtual UnitIntervalPoint applyTo(const UnitIntervalPoint& point) const = 0;
-    virtual UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& point) const = 0;
-    const std::vector<floating_point_type>& lengths() const { return m_lengths; }
+    virtual Mod1Number applyTo(const Mod1Number& point) const = 0;
+    virtual Mod1NumberIntExchange applyTo(const Mod1NumberIntExchange &point) const = 0;
+    virtual Mod1Number applyInverseTo(const Mod1Number& point) const = 0;
+    virtual Mod1NumberIntExchange applyInverseTo(const Mod1NumberIntExchange &point) const = 0;
+    const std::vector<Mod1NumberIntExchange>& lengths() const { return m_lengths; }
     const Permutation& permutation() const { return m_permutation; }
     const Permutation& inversePermutation() const { return m_inversePermutation; }
-    const std::vector<UnitIntervalPoint>& divPoints() const { return m_divPoints; }
-    const std::vector<UnitIntervalPoint>& divPointsAfterExchange() const { return m_divPointsAfterExchange; }
-    std::string print() const;
+    const std::vector<Mod1NumberIntExchange>& divPoints() const { return m_divPoints; }
+    const std::vector<Mod1NumberIntExchange>& divPointsAfterExchange() const { return m_divPointsAfterExchange; }
+    friend std::ostream& operator<<(std::ostream& out, const IntervalExchangeBase& exchange);
 
 protected:
-    std::vector<floating_point_type> m_lengths;
+    std::vector<Mod1NumberIntExchange> m_lengths;
     Permutation m_permutation;
     Permutation m_inversePermutation;
-    std::vector<UnitIntervalPoint> m_divPoints;
-    std::vector<UnitIntervalPoint> m_divPointsAfterExchange;
+    std::vector<Mod1NumberIntExchange> m_divPoints;
+    std::vector<Mod1NumberIntExchange> m_divPointsAfterExchange;
 
     IntervalExchangeBase() : IntervalExchangeBase({1}, Permutation()) {}
     IntervalExchangeBase(const std::vector<floating_point_type>& lengths, const Permutation& permutation);
@@ -60,10 +62,11 @@ public:
     IntervalExchangeMap() : IntervalExchangeBase() {}
     IntervalExchangeMap(const std::vector<floating_point_type>& lengths, const Permutation& permutation);
 
-    // Notice: even from a generalized UnitIntervalPoint, applyTo and applyInverseTo create a non-generalized UnitIntervalPoint!
-    // So the shift is lost. In general, this is what we want.
-    UnitIntervalPoint applyTo(const UnitIntervalPoint& point) const;
-    UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& point) const;
+
+    virtual Mod1Number applyTo(const Mod1Number& point) const;
+    virtual Mod1NumberIntExchange applyTo(const Mod1NumberIntExchange &point) const;
+    virtual Mod1Number applyInverseTo(const Mod1Number& point) const;
+    virtual Mod1NumberIntExchange applyInverseTo(const Mod1NumberIntExchange &point) const;
     const std::vector<floating_point_type>& translations() const { return m_translations; }
     
 
@@ -92,8 +95,8 @@ public:
     TwistedIntervalExchangeMap rotateBy(int rotationAmount) const;
     TwistedIntervalExchangeMap reflect() const;
     TwistedIntervalExchangeMap invert() const;
-    UnitIntervalPoint applyTo(const UnitIntervalPoint& p) const { return m_intervalExchangeAfterTwist.applyTo(p); }
-    UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& p) const { return m_intervalExchangeAfterTwist.applyInverseTo(p); }
+    Mod1Number applyTo(const Mod1Number& p) const { return m_intervalExchangeAfterTwist.applyTo(p); }
+    Mod1Number applyInverseTo(const Mod1Number& p) const { return m_intervalExchangeAfterTwist.applyInverseTo(p); }
 
     friend std::ostream& operator<<(std::ostream& Out, const TwistedIntervalExchangeMap& twistedIntervalExchange);
 private:
@@ -123,9 +126,10 @@ class IntervalExchangeFoliationDisk : public IntervalExchangeBase
 public:
     static IntervalExchangeFoliationDisk fromWeighedTree(const WeighedTree& wt);
     
-    UnitIntervalPoint applyTo(const UnitIntervalPoint& point) const;
-    UnitIntervalPoint applyInverseTo(const UnitIntervalPoint& point) const { return applyTo(point); }
-
+    virtual Mod1Number applyTo(const Mod1Number& point) const;
+    virtual Mod1NumberIntExchange applyTo(const Mod1NumberIntExchange& point) const;
+    virtual Mod1Number applyInverseTo(const Mod1Number& point) const { return applyTo(point); }
+    virtual Mod1NumberIntExchange applyInverseTo(const Mod1NumberIntExchange& point) const;
 private:
     IntervalExchangeFoliationDisk(const std::vector<floating_point_type>& lengths, const Permutation& permutation);
 

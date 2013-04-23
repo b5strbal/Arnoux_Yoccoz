@@ -4,7 +4,7 @@
 class Modint {
 
 public:
-    Modint(int value, int modulus);
+    Modint(unsigned int value, unsigned int modulus);
 
     Modint& operator++() { m_value++; m_value %= m_modulus; return *this; }
     Modint& operator--() { m_value = (m_value == 0 ? m_modulus - 1 : m_value - 1); return *this; }
@@ -13,10 +13,10 @@ public:
     friend Modint operator+(const Modint& modint, int a) { return Modint(modint.m_value + a, modint.m_modulus); }
     friend Modint operator-(const Modint& modint, int a) { return Modint(modint.m_value - a, modint.m_modulus); }
 
-    operator int() const { return m_value; }
+    operator unsigned int() const { return m_value; }
 private:
-    int m_value;
-    int m_modulus;
+    unsigned int m_value;
+    unsigned int m_modulus;
 
     static int integerMod(int a, int b);
 };

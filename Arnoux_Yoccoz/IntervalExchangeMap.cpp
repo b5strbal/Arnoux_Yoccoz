@@ -10,7 +10,7 @@
 #include "IntervalExchangeMap.h"
 #include "Modint.h"
 
-
+//#include "UnitIntervalPoint.h"
 
 
 //----------------------//
@@ -39,13 +39,13 @@ IntervalExchangeBase::IntervalExchangeBase(const std::vector<floating_point_type
         total += lengths[i];
     }
     
-    m_lengths.resize(size);
+    m_lengths.reserve(size);
     for (int i = 0; i < size; i++) {
-        m_lengths[i] = lengths[i]/total;
+        m_lengths.emplace_back(*this, lengths[i]/total, i);
     }
     
     m_divPoints.resize(size);
-    m_divPoints[0] = UnitIntervalPoint(0);
+    m_divPoints[0] = Mod1Number(0);
     for (int i = 1; i < size; i++) {
         m_divPoints[i] = m_divPoints[i - 1] + m_lengths[i - 1];
         if (!(m_divPoints[i - 1] < m_divPoints[i])) {
@@ -60,14 +60,11 @@ IntervalExchangeBase::IntervalExchangeBase(const std::vector<floating_point_type
 }
 
 
-std::string IntervalExchangeBase::print() const{
-    std::ostringstream s;
-    s << "Permutation: " << m_permutation.print() << "\n";
-    s << "Lengths: " << m_lengths;
-    return s.str();
+std::ostream& operator<<(std::ostream& out, const IntervalExchangeBase& exchange){
+    out << "Permutation: " << exchange.m_permutation << "\n";
+    out << "Lengths: " << exchange.m_lengths;
+    return out;
 }
-
-
 
 
 
@@ -95,20 +92,32 @@ IntervalExchangeMap::IntervalExchangeMap(const std::vector<floating_point_type>&
     m_translations(lengths.size())
 {
     for (unsigned int i = 0; i < lengths.size(); i++) {
-        m_translations[i] = m_divPointsAfterExchange[m_permutation[i]].getPosition() - m_divPoints[i].getPosition();
+        m_translations[i] = m_divPointsAfterExchange[m_permutation[i]] - m_divPoints[i];
     }
 }
 
 
 
 
-UnitIntervalPoint IntervalExchangeMap::applyTo(const UnitIntervalPoint& point) const{
-    return UnitIntervalPoint(point.getPosition()) + m_translations[containingInterval(m_divPoints, point)];
+Mod1Number IntervalExchangeMap::applyTo(const Mod1Number& point) const{
+    return Mod1Number(point.getPosition()) + m_translations[containingInterval(m_divPoints, point)];
 }
 
 
-UnitIntervalPoint IntervalExchangeMap::applyInverseTo(const UnitIntervalPoint& point) const{
-    return UnitIntervalPoint(point.getPosition()) - m_translations[m_inversePermutation[containingInterval(m_divPointsAfterExchange, point)]];
+Mod1Number IntervalExchangeMap::applyInverseTo(const Mod1Number& point) const{
+    return Mod1Number(point.getPosition()) - m_translations[m_inversePermutation[containingInterval(m_divPointsAfterExchange, point)]];
+}
+
+Mod1NumberIntExchange IntervalExchangeMap::applyTo(const Mod1NumberIntExchange &point) const
+{
+    //define
+}
+
+
+
+Mod1NumberIntExchange IntervalExchangeMap::applyInverseTo(const Mod1NumberIntExchange &point) const
+{
+    //define
 }
 
 
@@ -135,8 +144,8 @@ TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<floatin
     m_originalLengths = originalIntExchange.lengths();
 
     unsigned int originalSize = lengths.size();
-    UnitIntervalPoint oneMinusTwist(FracPart(1 - twist));
-    UnitIntervalPoint newDivPoint = originalIntExchange.applyInverseTo(oneMinusTwist);
+    Mod1Number oneMinusTwist(fracPart(1 - twist));
+    Mod1Number newDivPoint = originalIntExchange.applyInverseTo(oneMinusTwist);
     int intervalOfNewDivPoint = containingInterval(originalIntExchange.divPoints(), newDivPoint);
     if (intervalOfNewDivPoint == CONTAINING_INTERVAL_NOT_UNIQUE) {
         throw std::runtime_error("The specified data results in an immediate saddle connection of the foliation constructed by the\
@@ -246,7 +255,7 @@ TwistedIntervalExchangeMap TwistedIntervalExchangeMap::reflect() const{
 
 
 TwistedIntervalExchangeMap TwistedIntervalExchangeMap::invert() const{
-    std::vector<floating_point_type> newLengths(m_originalPermutation.applyAndCreateCopy(m_originalLengths));
+    std::vector<floating_point_type> newLengths(m_originalPermutation.actOn(m_originalLengths));
     Permutation newPermutation = m_originalPermutation.inverse();
     floating_point_type newTwist = -m_twist;
     
@@ -298,19 +307,24 @@ IntervalExchangeFoliationDisk IntervalExchangeFoliationDisk::fromWeighedTree(con
 
 
 
-UnitIntervalPoint IntervalExchangeFoliationDisk::applyTo(const UnitIntervalPoint& point) const{
+Mod1Number IntervalExchangeFoliationDisk::applyTo(const Mod1Number& point) const{
     int interval = containingInterval(m_divPoints, point);
     if (interval == CONTAINING_INTERVAL_NOT_UNIQUE) {
         throw std::runtime_error("IntervalExchangeFoliationDisk: Can't apply interval exchange, the point is very close to a division points.");
     }
-    return UnitIntervalPoint(m_divPoints[m_permutation[interval]].getPosition() + m_lengths[interval] + (m_divPoints[interval].getPosition() - point.getPosition()));
+    return Mod1Number(m_divPoints[m_permutation[interval]].getPosition() + m_lengths[interval] + (m_divPoints[interval].getPosition() - point.getPosition()));
 }
 
-IntervalExchangeFoliationDisk::IntervalExchangeFoliationDisk(const std::vector<floating_point_type> &lengths,
-                                                             const Permutation &permutation) :
-    IntervalExchangeBase(lengths, permutation)
+Mod1NumberIntExchange IntervalExchangeFoliationDisk::applyTo(const Mod1NumberIntExchange &point) const
 {
+    // define
 }
+
+Mod1NumberIntExchange IntervalExchangeFoliationDisk::applyInverseTo(const Mod1NumberIntExchange &point) const
+{
+    //define
+}
+
 
 
 

@@ -13,7 +13,8 @@ IntervalNeighborhoods::IntervalNeighborhoods(const Foliation & foliation) :
 
 
 // \param  newCuttingPoint     It must not coincide with any of the division points.
-void IntervalNeighborhoods::insertPoint(const UnitIntervalPoint& newCuttingPoint, int indexOfInterval){
+void IntervalNeighborhoods::insertPoint(const Mod1Number& newCuttingPoint, int indexOfInterval){
+    assert(newCuttingPoint.isGeneralized());
     if (m_cuttingPoints[indexOfInterval].isEmpty) {
         m_cuttingPoints[indexOfInterval].first = m_cuttingPoints[indexOfInterval].second = newCuttingPoint;
         m_cuttingPoints[indexOfInterval].isEmpty = false;
@@ -27,7 +28,7 @@ void IntervalNeighborhoods::insertPoint(const UnitIntervalPoint& newCuttingPoint
 
 
 
-bool IntervalNeighborhoods::contains(const UnitIntervalPoint& point, int indexOfInterval) const{
+bool IntervalNeighborhoods::contains(const Mod1Number& point, int indexOfInterval) const{
     if (m_cuttingPoints[indexOfInterval].isEmpty) {
         return true;
     }
@@ -43,8 +44,8 @@ bool IntervalNeighborhoods::contains(const UnitIntervalPoint& point, int indexOf
 
 
 
-bool IntervalNeighborhoods::containsIntervalThroughADivPoint(const UnitIntervalPoint& leftEndPoint, int leftIndexOfInterval,
-                                                                  const UnitIntervalPoint& rightEndPoint, int rightIndexOfInterval,
+bool IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1Number& leftEndPoint, int leftIndexOfInterval,
+                                                                  const Mod1Number& rightEndPoint, int rightIndexOfInterval,
                                                                   bool throughTopDivPointQ) const{
 
     if (leftIndexOfInterval == rightIndexOfInterval) {

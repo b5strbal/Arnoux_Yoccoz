@@ -11,7 +11,8 @@ int main(int argc, char *argv[])
 //    w.show();
 
     Foliation f = arnouxYoccozFoliation(3);
-    
-    qDebug() << QString::fromStdString(f.print());
+    std::ostringstream s;
+    s << f;
+    qDebug() << QString::fromStdString(s.str());
    // return a.exec();
 }

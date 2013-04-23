@@ -48,7 +48,7 @@ Foliation Foliation::fromFoliationSphere(const FoliationSphere &foliationSphere)
                   return cp1.topPoint < cp2.topPoint;
               } );
     std::vector<ConnectedPoints>& allConnectedPointsSortedByTop = allConnectedPoints;
-    std::vector<UnitIntervalPoint> allBottomPoints;
+    std::vector<Mod1Number> allBottomPoints;
     allBottomPoints.reserve(allConnectedPoints.size());
 
     for (ConnectedPoints cp : allConnectedPoints) {
@@ -59,7 +59,7 @@ Foliation Foliation::fromFoliationSphere(const FoliationSphere &foliationSphere)
 
     std::vector<floating_point_type> lengths(allConnectedPoints.size());
     for (unsigned int i = 0; i < allConnectedPoints.size() - 1; i++) {
-        lengths[i] = distanceBetween( allConnectedPointsSortedByTop[i].topPoint, allConnectedPointsSortedByTop[i + 1].topPoint);
+        lengths[i] = Mod1Number::distanceBetween( allConnectedPointsSortedByTop[i].topPoint, allConnectedPointsSortedByTop[i + 1].topPoint);
     }
     lengths[allConnectedPoints.size() - 1] = 1 - allConnectedPointsSortedByTop[allConnectedPoints.size() - 1].topPoint.getPosition();
 
@@ -86,7 +86,7 @@ void Foliation::init(){
     m_numSeparatrices = 2 * m_numIntervals;
     
     struct DivPoint{
-        UnitIntervalPoint m_point;
+        Mod1Number m_point;
         bool m_isTopPoint;
     };
     
@@ -159,7 +159,7 @@ void Foliation::generateTopConnectingPairs(const FoliationSphere& foliationSpher
             newConnectedPoints.topPoint = foliationSphere.topFoliation().intervalPairing().divPoints()[i];
 
             int indexOfConnectedSeparatrix = Modint(foliationSphere.topFoliation().intervalPairing().permutation()[i]+ 1, numSeparatrices);
-            UnitIntervalPoint middlePoint = foliationSphere.topFoliation().intervalPairing().divPoints()[indexOfConnectedSeparatrix];
+            Mod1Number middlePoint = foliationSphere.topFoliation().intervalPairing().divPoints()[indexOfConnectedSeparatrix];
 
             newConnectedPoints.bottomPoint = foliationSphere.bottomFoliation().intervalPairing().applyTo(middlePoint - foliationSphere.twist()) + foliationSphere.twist();
 
@@ -182,7 +182,7 @@ void Foliation::generateBottomConnectingPairs(const FoliationSphere& foliationSp
             newConnectedPoints.bottomPoint = foliationSphere.bottomFoliation().intervalPairing().divPoints()[i] + foliationSphere.twist();
 
             int indexOfConnectedSeparatrix = Modint(foliationSphere.bottomFoliation().intervalPairing().permutation()[i] + 1, numSeparatrices);
-            UnitIntervalPoint middlePoint = foliationSphere.topFoliation().intervalPairing().divPoints()[indexOfConnectedSeparatrix] + foliationSphere.twist();
+            Mod1Number middlePoint = foliationSphere.topFoliation().intervalPairing().divPoints()[indexOfConnectedSeparatrix] + foliationSphere.twist();
 
             newConnectedPoints.topPoint = foliationSphere.topFoliation().intervalPairing().applyTo(middlePoint);
 
@@ -217,10 +217,9 @@ Foliation Foliation::flipOver() const{
 
 
 
-std::string Foliation::print() const{
-    std::ostringstream s;
-    s << m_twistedIntervalExchange;
-    return s.str();
+std::ostream& operator<<(std::ostream& out, const Foliation& f){
+    out << f.m_twistedIntervalExchange;
+    return out;
 }
 
 

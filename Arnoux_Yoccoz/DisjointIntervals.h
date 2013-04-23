@@ -20,31 +20,30 @@
 
 class DisjointIntervals{
 public:
-    //! Default constructor, can be thought of the constructor of an empty set.
-    DisjointIntervals() {};
+    DisjointIntervals() {} // Empty set
 
     //! \brief Constructs an object from an unordered list of points, wrapping around 0 or not.
     //! \warning Whether or not there are two coinciding points or two that are too close to
     //!          each other is not checked.
-    DisjointIntervals(const std::vector<UnitIntervalPoint>& unsortedPoints, bool wrapsAroundZero);
+    DisjointIntervals(const std::vector<Mod1Number>& unsortedPoints, bool wrapsAroundZero);
 
     //! Returns the ordered list of endpoints.
-    const std::vector<UnitIntervalPoint>& endpoints() const { return m_endpoints; }
+    const std::vector<Mod1Number>& endpoints() const { return m_endpoints; }
 
     //! Decides if there is an interval that wraps around 0.
     bool wrapsAroundZero() const { return m_wrapsAroundZero; }
 
     //! Decides if a point is contained in any of the intervals.
     //! \throws ExceptionContainingIntervalNotUnique    If point is too close to one of the endpoints.
-    bool contains(const UnitIntervalPoint& point) const;
+    bool contains(const Mod1Number& point) const;
 
     //! Returns the total length of the intervals.
     floating_point_type totalLength() const { return m_totalLength; }
 
     //! Prints the objects to a string.
-    std::string print() const;
+    friend std::ostream& operator<<(std::ostream& out, const DisjointIntervals& d);
 private:
-    std::vector<UnitIntervalPoint> m_endpoints; // The ordered list of endpoints.
+    std::vector<Mod1Number> m_endpoints; // The ordered list of endpoints.
     bool m_wrapsAroundZero;                     // Whether 0 is in one of the intervals.
     floating_point_type m_totalLength;          // The total length of the intervals.
 };

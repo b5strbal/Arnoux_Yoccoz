@@ -18,13 +18,13 @@ class SeparatrixSegment{
 //    friend class TransverseCurveFinder;
 public:
     SeparatrixSegment(const Foliation& foliation, int startingSingularity, UpDownDirection direction);
-    std::string print(bool verbose = false) const;
+    friend std::ostream& operator<<(std::ostream& out, const SeparatrixSegment& s);
     bool reachedSaddleConnection() const { return m_smallContainingInterval == CONTAINING_INTERVAL_NOT_UNIQUE; }
     void lengthen();
     bool isGood() const;
 
     int depth() const { return m_depth; }
-    UnitIntervalPoint endpoint() const { return m_endpoint; }
+    Mod1Number endpoint() const { return m_endpoint; }
     int startingSingularity() const { return m_startingSingularity; }
     UpDownDirection direction() const { return m_direction; }
 //    const ArcsAroundDivPoints& arcsAroundDivPoints() const { return m_arcsAroundDivPoints; }
@@ -34,7 +34,7 @@ private:
     const Foliation& m_foliation;
     int m_startingSingularity;
     int m_depth;
-    UnitIntervalPoint m_endpoint;
+    Mod1Number m_endpoint;
     int m_smallContainingInterval;
     IntervalNeighborhoods m_arcsAroundDivPoints;
     std::vector<int> m_intervalIntersectionCount;

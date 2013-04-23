@@ -25,4 +25,4 @@ int gcd(int a, int b){
 
 
 
-floating_point_type FracPart(floating_point_type x){ return x - floor(x); }
+floating_point_type fracPart(floating_point_type x){ return x - floor(x); }

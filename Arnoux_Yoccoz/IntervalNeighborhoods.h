@@ -110,23 +110,17 @@ class Foliation;
  */
 class IntervalNeighborhoods{
 public:
-    //! \brief Constructor of empty object, without any cutting points.
-    //! \param foliation    The division points in foliation are used as the division points in the object.
-    IntervalNeighborhoods(const Foliation & foliation);
-
-    //! \brief Inserts a new cutting point.
-    //! \param newCuttingPoint  It must not coincide with any of the division points.
-    //! \param indexOfInterval  The containing interval of newCuttingPoint
-    void insertPoint(const UnitIntervalPoint& newCuttingPoint, int indexOfInterval);
+    IntervalNeighborhoods(const Foliation & foliation); // empty object
+    void insertPoint(const Mod1Number& newCuttingPoint, int indexOfInterval);
 
     //! Decides if a point is contained in union of the intervals.
-    bool contains(const UnitIntervalPoint& point, int indexOfInterval) const;
+    bool contains(const Mod1Number& point, int indexOfInterval) const;
 
     //! \brief Returns true if the interval between two points is contained in any of the member intervals and passes
     //!        through either a TopDivPoint or BottomDivPoint, whichever is specified.
     //! \see   Foliation
-    bool containsIntervalThroughADivPoint(const UnitIntervalPoint& leftEndPoint, int leftIndexOfInterval,
-                                      const UnitIntervalPoint& rightEndPoint, int rightIndexOfInterval,
+    bool containsIntervalThroughADivPoint(const Mod1Number& leftEndPoint, int leftIndexOfInterval,
+                                      const Mod1Number& rightEndPoint, int rightIndexOfInterval,
                                       bool throughTopDivPointQ) const;
 
     //! Prints out the object into a string.
@@ -140,8 +134,8 @@ public:
 
 private:
     struct CuttingPoints{
-        UnitIntervalPoint first;
-        UnitIntervalPoint second;
+        Mod1Number first;
+        Mod1Number second;
         bool isEmpty = true;
     };
 

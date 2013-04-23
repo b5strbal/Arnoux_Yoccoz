@@ -10,7 +10,7 @@
 #define __Arnoux_Yoccoz__Foliation__
 
 #include <vector>
-#include "UnitIntervalPoint.h"
+#include "Mod1Number.h"
 #include "IntervalExchangeMap.h"
 #include "PerronFrobenius.h"
 #include "FoliationRP2.h"
@@ -41,7 +41,7 @@ public:
    // int numSeparatrices() const { return m_numSeparatrices; }
     int numIntervals() const { return m_numIntervals; }
 
-    std::string print() const;
+    friend std::ostream& operator<<(std::ostream& out, const Foliation& f);
 
 protected:
 //    typedef std::pair<UnitIntervalPoint, UnitIntervalPoint> interval_t;
@@ -51,10 +51,10 @@ protected:
     int m_numIntervals;
     int m_numSeparatrices;
     TwistedIntervalExchangeMap m_twistedIntervalExchange;
-    std::vector<UnitIntervalPoint> m_allRealDivPoints;
+    std::vector<Mod1Number> m_allRealDivPoints;
     std::vector<short> m_isTopDivPoint;
-    std::vector<UnitIntervalPoint> m_topRealDivPoints;
-    std::vector<UnitIntervalPoint> m_bottomRealDivPoints;
+    std::vector<Mod1Number> m_topRealDivPoints;
+    std::vector<Mod1Number> m_bottomRealDivPoints;
     std::vector<int> m_pairOfTopDivPoints;
 
 private:
@@ -63,8 +63,8 @@ private:
     void init();
 
     struct ConnectedPoints {
-        UnitIntervalPoint topPoint;
-        UnitIntervalPoint bottomPoint;
+        Mod1Number topPoint;
+        Mod1Number bottomPoint;
     };
 
     static void generateTopConnectingPairs(const FoliationSphere& foliationSphere, std::vector<ConnectedPoints>& allConnectedPoints);

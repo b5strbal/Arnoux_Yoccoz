@@ -8,7 +8,7 @@ int Modint::integerMod(int a, int b){
 
 
 
-Modint::Modint(int value, int modulus) :
+Modint::Modint(unsigned int value, unsigned int modulus) :
     m_modulus(modulus)
 {
     assert(modulus > 0);
