@@ -11,7 +11,7 @@
 
 #include <vector>
 #include "Mod1Number.h"
-#include "IntervalExchangeMap.h"
+#include "TwistedIntervalExchangeMap.h"
 #include "PerronFrobenius.h"
 #include "FoliationRP2.h"
 #include "FoliationSphere.h"

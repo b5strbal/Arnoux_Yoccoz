@@ -17,7 +17,6 @@ SOURCES += main.cpp\
     ../Arnoux_Yoccoz/WeighedTree.cpp \
     ../Arnoux_Yoccoz/PerronFrobenius.cpp \
     ../Arnoux_Yoccoz/Matrix.cpp \
-    ../Arnoux_Yoccoz/IntervalExchangeMap.cpp \
     ../Arnoux_Yoccoz/global.cpp \
     ../Arnoux_Yoccoz/FoliationRP2.cpp \
     ../Arnoux_Yoccoz/Foliation.cpp \
@@ -37,14 +36,15 @@ SOURCES += main.cpp\
     ../Arnoux_Yoccoz/IntervalNeighborhoods.cpp \
     ../Arnoux_Yoccoz/Mod1Number.cpp \
     ../Arnoux_Yoccoz/Mod1NumberIntExchange.cpp \
-    ../Arnoux_Yoccoz/Mod1NumberTwistedIntExchange.cpp
+    ../Arnoux_Yoccoz/TwistedIntervalExchangeMap.cpp \
+    ../Arnoux_Yoccoz/IntervalExchangeFoliationDisk.cpp \
+    ../Arnoux_Yoccoz/IntervalExchangeBase.cpp
 
 HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/WeighedTree.h \
     ../Arnoux_Yoccoz/PerronFrobenius.h \
     ../Arnoux_Yoccoz/Matrix.hpp \
     ../Arnoux_Yoccoz/Matrix.h \
-    ../Arnoux_Yoccoz/IntervalExchangeMap.h \
     ../Arnoux_Yoccoz/global.h \
     ../Arnoux_Yoccoz/FoliationRP2.h \
     ../Arnoux_Yoccoz/Foliation.h \
@@ -64,7 +64,9 @@ HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/IntervalNeighborhoods.h \
     ../Arnoux_Yoccoz/Mod1Number.h \
     ../Arnoux_Yoccoz/Mod1NumberIntExchange.h \
-    ../Arnoux_Yoccoz/Mod1NumberTwistedIntExchange.h
+    ../Arnoux_Yoccoz/TwistedIntervalExchangeMap.h \
+    ../Arnoux_Yoccoz/IntervalExchangeFoliationDisk.h \
+    ../Arnoux_Yoccoz/IntervalExchangeBase.h
 
 FORMS    += mainwindow.ui
 

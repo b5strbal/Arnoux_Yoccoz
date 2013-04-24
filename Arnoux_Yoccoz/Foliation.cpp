@@ -61,7 +61,7 @@ Foliation Foliation::fromFoliationSphere(const FoliationSphere &foliationSphere)
     for (unsigned int i = 0; i < allConnectedPoints.size() - 1; i++) {
         lengths[i] = Mod1Number::distanceBetween( allConnectedPointsSortedByTop[i].topPoint, allConnectedPointsSortedByTop[i + 1].topPoint);
     }
-    lengths[allConnectedPoints.size() - 1] = 1 - allConnectedPointsSortedByTop[allConnectedPoints.size() - 1].topPoint.getPosition();
+    lengths[allConnectedPoints.size() - 1] = -allConnectedPointsSortedByTop[allConnectedPoints.size() - 1].topPoint;
 
     std::vector<unsigned int> permutationInput(allConnectedPoints.size());
     for (unsigned int i = 0; i < allConnectedPoints.size(); i++) {
@@ -69,7 +69,7 @@ Foliation Foliation::fromFoliationSphere(const FoliationSphere &foliationSphere)
         permutationInput[i] = it - allBottomPoints.begin() ;
     }
     Permutation permutation(permutationInput);
-    floating_point_type twist = allBottomPoints[0].getPosition();
+    floating_point_type twist = allBottomPoints[0];
 
     return Foliation(lengths, permutation, twist);
 }
@@ -82,7 +82,7 @@ Foliation Foliation::fromFoliationSphere(const FoliationSphere &foliationSphere)
 
 
 void Foliation::init(){
-    m_numIntervals = m_twistedIntervalExchange.sizeBeforeTwist();
+    m_numIntervals = m_twistedIntervalExchange.size();
     m_numSeparatrices = 2 * m_numIntervals;
     
     struct DivPoint{
