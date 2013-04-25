@@ -4,7 +4,7 @@
 #include <sstream>
 
 
-Permutation::Permutation() : m_functionValues(1, 0) {}
+Permutation::Permutation() : m_functionValues(1, 0)
 {
 }
 
@@ -88,7 +88,7 @@ unsigned int Permutation::size() const
 }
 
 
-std::ostream &Permutation::operator <<(std::ostream &out, const Permutation &perm) const
+std::ostream& operator <<(std::ostream &out, const Permutation &perm)
 {
     for (unsigned int i = 0; i < perm.size(); i++)
         out << perm.m_functionValues[i] << " ";

@@ -5,7 +5,7 @@
 
 
 IntervalNeighborhoods::IntervalNeighborhoods(const Foliation & foliation) :
-    m_cuttingPoints(foliation.m_numSeparatrices),
+    m_cuttingPoints(foliation.numSeparatrices()),
     m_foliation(foliation)
 {
 }
@@ -44,8 +44,8 @@ bool IntervalNeighborhoods::contains(const Mod1Number& point, int indexOfInterva
 
 
 
-bool IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1Number& leftEndPoint, int leftIndexOfInterval,
-                                                                  const Mod1Number& rightEndPoint, int rightIndexOfInterval,
+bool IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1Number& leftEndPoint, unsigned int leftIndexOfInterval,
+                                                                  const Mod1Number& rightEndPoint, unsigned int rightIndexOfInterval,
                                                                   bool throughTopDivPointQ) const{
 
     if (leftIndexOfInterval == rightIndexOfInterval) {
@@ -58,15 +58,15 @@ bool IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1Number& l
         return false;
     }
 
-    for (Modint i(leftIndexOfInterval + 1, m_foliation.m_numSeparatrices); i != rightIndexOfInterval; ++i) {
+    for (Modint i(leftIndexOfInterval + 1, m_foliation.numSeparatrices()); i != rightIndexOfInterval; ++i) {
         if (!m_cuttingPoints[i].isEmpty) {
             return false;
         }
     }
 
-    for (Modint i(leftIndexOfInterval, m_foliation.m_numSeparatrices); i != rightIndexOfInterval; ++i) {
-        if ((throughTopDivPointQ && m_foliation.m_isTopDivPoint[i + 1]) ||
-            (!throughTopDivPointQ && !m_foliation.m_isTopDivPoint[i + 1])) {
+    for (Modint i(leftIndexOfInterval, m_foliation.numSeparatrices()); i != rightIndexOfInterval; ++i) {
+        if ((throughTopDivPointQ && m_foliation.isTopDivPoint(i + 1)) ||
+            (!throughTopDivPointQ && !m_foliation.isTopDivPoint(i + 1))) {
             return true;
         }
     }
@@ -120,7 +120,7 @@ IntervalNeighborhoods IntervalNeighborhoods::intersect(const std::vector<const I
             }
         }
     }
-    return adp;
+    return inbh;
 }
 
 

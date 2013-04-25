@@ -17,20 +17,26 @@
 //! \brief   The floating point type used throughout the program for the calculations.
 typedef long double floating_point_type;
 
-class ExceptionContainingIntervalNotUnique : public std::runtime_error {};
+namespace Direction{
+    enum LeftOrRight{
+        LEFT = 0,
+        RIGHT = 1
+    };
 
-const int CONTAINING_INTERVAL_NOT_UNIQUE = -100;
+    enum UpOrDown{
+        UP = 0,
+        DOWN = 1
+    };
+}
+
+//class ExceptionContainingIntervalNotUnique : public std::runtime_error {};
+
+//const int CONTAINING_INTERVAL_NOT_UNIQUE = -100;
 
 const floating_point_type PRECISION = 0.00000000001L;
 
 
 
-enum UpDownDirection{
-    UPWARDS = 0,
-    DOWNWARDS = 1,
-    FIRST = UPWARDS,
-    LAST = DOWNWARDS
-};
 
 
 

@@ -55,7 +55,7 @@ cout << "Each vertex of the tree corresponds to a singularity of the foliation, 
 class FoliationRP2
 {
     friend class FoliationSphere;
-    
+    friend class FoliationFromRP2;
 public:
     FoliationRP2(const FoliationDisk &fd) : m_foliationDisk(fd) {}
     static FoliationRP2 arnouxYoccozRP2();

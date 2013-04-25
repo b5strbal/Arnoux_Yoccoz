@@ -6,6 +6,6 @@
 
 
 FoliationFromSphere::FoliationFromSphere(const FoliationSphere& foliationSphere) :
-    Foliation(foliationSphere)
+    Foliation(Foliation::fromFoliationSphere(foliationSphere))
 {
 }

@@ -6,7 +6,7 @@
 #include "IntervalExchangeBase.h"
 
 class TwistedIntervalExchangeMap : public IntervalExchangeBase{
-   // friend class Foliation;
+    friend class Foliation;
    // friend class FoliationFromRP2;
 public:
     TwistedIntervalExchangeMap(); // default constructor: the identity interval exchange on one interval.
@@ -24,6 +24,8 @@ public:
     TwistedIntervalExchangeMap rotateBy(int rotationAmount) const;
     TwistedIntervalExchangeMap reverse() const;
     TwistedIntervalExchangeMap invert() const;
+
+    friend std::ostream& operator<<(std::ostream& Out, const TwistedIntervalExchangeMap& twistedIntervalExchange);
 private:
     std::vector<Mod1NumberIntExchange> m_translations;
 };

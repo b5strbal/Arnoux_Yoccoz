@@ -4,7 +4,6 @@
 #include "FoliationFromSphere.h"
 #include "FoliationRP2.h"
 #include <vector>
-#include <set>
 
 
 
@@ -15,7 +14,7 @@ public:
     FoliationFromRP2(const FoliationRP2& foliationRP2);
 
 private:
-    std::vector<unsigned int> m_separatrixPair;
+    Permutation m_intervalPairing;
 };
 
 

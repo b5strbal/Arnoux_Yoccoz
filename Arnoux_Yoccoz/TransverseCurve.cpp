@@ -6,18 +6,18 @@
 
 
 
-TransverseCurve::TransverseCurve(const Foliation& foliation, const SepSegmentCollectionBase &segments, bool wrapsAroundZero) :
+TransverseCurve::TransverseCurve(const Foliation& foliation, const SepSegmentCollection &segments, bool wrapsAroundEnds) :
     m_foliation(foliation)
 {
     std::vector<Mod1Number> endpoints;
-    endpoints.reserve(segments.size());
-    m_goodSegmentIndices.reserve(segments.size());
+    endpoints.resize(segments.size());
+    m_goodSegmentIndices.resize(segments.size());
     for (unsigned int i = 0; i < segments.size(); i++){
-        endpoints.push_back(segments[i].endpoint());
-        m_goodSegmentIndices.push_back(&segments[i]); // We will probably have to find a more cleverly sorted way of storing the segments later.
+        endpoints.push_back(segments[i]->endpoint());
+        m_goodSegmentIndices.push_back(&(*segments[i])); // We will probably have to find a more cleverly sorted way of storing the segments later.
        // std::cout << print() << "\n\n";
     }
-    m_disjointIntervals = DisjointIntervals(endpoints, wrapsAroundZero);
+    m_disjointIntervals = DisjointIntervals(endpoints, wrapsAroundEnds);
 
 }
 
@@ -49,9 +49,9 @@ std::string TransverseCurve::print() const
     std::ostringstream s;
     s << "Separatrix segments:\n";
     for (auto goodSegmentIndex : m_goodSegmentIndices){
-        s << goodSegmentIndex->print() << "\n";
+        s << goodSegmentIndex << "\n";
     }
-    s << "Connecting arcs: " << m_disjointIntervals.print() << "\n";
+    s << "Connecting arcs: " << m_disjointIntervals << "\n";
     s << "Length: " << length();
     return s.str();
 }

@@ -66,7 +66,7 @@
 #define INTERVALNEIGHBORHOODS_H
 
 #include "Foliation.h"
-#include "UnitIntervalPoint.h"
+//#include "Mod1.h"
 
 class Foliation;
 
@@ -119,8 +119,8 @@ public:
     //! \brief Returns true if the interval between two points is contained in any of the member intervals and passes
     //!        through either a TopDivPoint or BottomDivPoint, whichever is specified.
     //! \see   Foliation
-    bool containsIntervalThroughADivPoint(const Mod1Number& leftEndPoint, int leftIndexOfInterval,
-                                      const Mod1Number& rightEndPoint, int rightIndexOfInterval,
+    bool containsIntervalThroughADivPoint(const Mod1Number& leftEndPoint, unsigned int leftIndexOfInterval,
+                                      const Mod1Number& rightEndPoint, unsigned int rightIndexOfInterval,
                                       bool throughTopDivPointQ) const;
 
     //! Prints out the object into a string.

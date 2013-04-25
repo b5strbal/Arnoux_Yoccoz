@@ -8,19 +8,16 @@
 #include "DisjointIntervals.h"
 #include "FoliationFromRP2.h"
 
-//class SeparatrixSegment;
 
 class SepSegmentDatabase
 {
-    friend class SepSegmentCollectionBase;
-    friend class SepSegmentCollectionDefault;
     friend class TransverseCurveDatabase;
 public:
     SepSegmentDatabase(const Foliation& foliation);
 
-    void findNextSepSegment(UpDownDirection direction, int index);
-    const SeparatrixSegment& getFirstIntersection(UpDownDirection direction, int index, const DisjointIntervals& intervals);
-    bool reachedSaddleConnection(UpDownDirection direction, int index) const;
+    void findNextSepSegment(Direction::UpOrDown direction, int index);
+    const SeparatrixSegment& getFirstIntersection(Direction::UpOrDown direction, int index, const DisjointIntervals& intervals);
+    bool reachedSaddleConnection(Direction::UpOrDown direction, int index) const;
     void generateSepSegments(int maxdepth);
     void printGoodSepSegments(int maxdepth = 0, bool verbose = false);
 
@@ -40,11 +37,11 @@ class SepSegmentDatabaseFromRP2 : public SepSegmentDatabase
     friend class SepSegmentCollectionFromRP2;
 public:
     SepSegmentDatabaseFromRP2(const FoliationFromRP2& foliationFromRP2) :
-        SepSegmentDatabase(foliationFromRP2),
-        m_separatrixPair(foliationFromRP2.m_separatrixPair)
+        SepSegmentDatabase(foliationFromRP2)
+      //  m_separatrixPair(foliationFromRP2.m_separatrixPair)
     {}
 private:
-    std::vector<unsigned int> m_separatrixPair;
+   // std::vector<unsigned int> m_separatrixPair;
 };
 
 #endif // SEPSEGMENTDATABASE_H

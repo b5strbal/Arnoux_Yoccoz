@@ -1,21 +1,18 @@
 #include "SeparatrixSegment.h"
+#include "Modint.h"
 
 
-
-SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, int startingSingularity, UpDownDirection direction) :
+SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, int startingSingularity, Direction::UpOrDown direction) :
     m_foliation(foliation),
     m_startingSingularity(startingSingularity),
     m_depth(1),
-    m_arcsAroundDivPoints(foliation),
+    m_endpoint(foliation.firstIntersection(startingSingularity, direction)),
+    m_smallContainingInterval(foliation.smallContainingInterval(m_endpoint)), // m_endpoint should be defined by this
+    m_intervalNeighborhoods(foliation),
     m_intervalIntersectionCount(std::vector<int>(foliation.numIntervals(), 0)),
-    m_direction(direction)
+    m_direction(direction),
+    m_reachedSaddleConnection(false)
 {
-    if (direction == UPWARDS) {
-        m_endpoint = Mod1Number( foliation.m_bottomRealDivPoints[foliation.m_pairOfTopDivPoints[startingSingularity]].getPosition(), 1);
-    } else
-        m_endpoint = Mod1Number( foliation.m_topRealDivPoints[startingSingularity].getPosition(), 1);
-
-    m_smallContainingInterval = containingInterval(foliation.m_allRealDivPoints, m_endpoint);
 }
 
 
@@ -28,7 +25,7 @@ std::ostream& operator<<(std::ostream& out, const SeparatrixSegment& s)
     out << "SEPARATRIX SEGMENT\n";
     out << "(" << s.m_startingSingularity << ", ";
     out << s.m_depth << ", ";
-    out << (s.m_direction == UpDownDirection::DOWNWARDS ? "down" : "up") << ", ";
+    out << (s.m_direction == Direction::DOWN ? "down" : "up") << ", ";
     out << s.m_endpoint << ")\n";
 //    if (verbose) {
 //        out << "IIC: " << s.m_intervalIntersectionCount << "\n";
@@ -41,17 +38,39 @@ std::ostream& operator<<(std::ostream& out, const SeparatrixSegment& s)
 
 void SeparatrixSegment::lengthen()
 {
-    m_intervalIntersectionCount[containingInterval(m_foliation.m_topRealDivPoints, m_endpoint)]++;
-    m_arcsAroundDivPoints.insertPoint(m_endpoint, m_smallContainingInterval);
+    assert(isCentered());
+    if(m_depth > 1){
+        m_intervalIntersectionCount[Mod1Number::containingInterval(m_foliation.topDivPoints(), m_endpoint)]++;
+        m_intervalNeighborhoods.insertPoint(m_endpoint, m_smallContainingInterval);
+    }
     m_depth++;
-    m_endpoint = m_direction == UPWARDS ? m_foliation.m_twistedIntervalExchange.applyTo(m_endpoint) : m_foliation.m_twistedIntervalExchange.applyInverseTo(m_endpoint);
-    m_endpoint = Mod1Number(m_endpoint.getPosition()); // remove infinitesimal shift
-    m_smallContainingInterval = containingInterval(m_foliation.m_allRealDivPoints, m_endpoint);
+    m_endpoint = (m_direction == Direction::UP) ? m_foliation.m_twistedIntervalExchange.applyTo(m_endpoint) :
+                                            m_foliation.m_twistedIntervalExchange.applyInverseTo(m_endpoint);
+    m_smallContainingInterval = m_foliation.smallContainingInterval(m_endpoint);
+    if(Mod1Number::distanceBetween(m_foliation.m_allDivPoints[m_smallContainingInterval], m_endpoint) < PRECISION ||
+       Mod1Number::distanceBetween(m_endpoint,
+       m_foliation.m_allDivPoints[Modint(m_smallContainingInterval + 1, m_foliation.numSeparatrices())]) < PRECISION){
+        m_reachedSaddleConnection = true;
+       }
 }
 
 bool SeparatrixSegment::isGood() const
 {
-    return m_arcsAroundDivPoints.contains(m_endpoint, m_smallContainingInterval);
+    return m_intervalNeighborhoods.contains(m_endpoint, m_smallContainingInterval);
+}
+
+void SeparatrixSegment::shiftTo(Direction::LeftOrRight side)
+{
+    assert(isCentered());
+    m_endpoint.shiftTo(side);
+
+    // inserting the first intersection that we have previously omitted
+    Mod1Number pointToInsert = m_foliation.firstIntersection(m_startingSingularity, m_direction);
+    pointToInsert.shiftTo(side);
+    unsigned int smallContainingInterval = m_foliation.smallContainingInterval(pointToInsert);
+    m_intervalNeighborhoods.insertPoint(pointToInsert, smallContainingInterval);
+
+    m_intervalIntersectionCount[smallContainingInterval]++;
 }
 
 

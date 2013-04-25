@@ -12,15 +12,22 @@
 
 
 
-//-----------//
-// Foliation //
-//-----------//
-
 Foliation::Foliation(const TwistedIntervalExchangeMap& twistedintervalExchange) :
     m_twistedIntervalExchange(twistedintervalExchange)
 {
-    init();
+    m_allDivPoints.reserve(numSeparatrices());
+    std::merge(topDivPoints().begin(), topDivPoints().end(),
+               bottomDivPoints().begin(), bottomDivPoints().end(), std::back_inserter(m_allDivPoints));
+
+    for(unsigned int i = 1; i < numSeparatrices(); i++){
+        if(Mod1Number::distanceBetween(m_allDivPoints[i - 1], m_allDivPoints[i]) < PRECISION){
+            throw std::runtime_error("The foliation has a saddle connection.");
+        }
+    }
 }
+
+
+
 
 
 Foliation::Foliation(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist) :
@@ -79,73 +86,6 @@ Foliation Foliation::fromFoliationSphere(const FoliationSphere &foliationSphere)
 
 
 
-
-
-void Foliation::init(){
-    m_numIntervals = m_twistedIntervalExchange.size();
-    m_numSeparatrices = 2 * m_numIntervals;
-    
-    struct DivPoint{
-        Mod1Number m_point;
-        bool m_isTopPoint;
-    };
-    
-    std::vector<DivPoint> divPoints;
-    divPoints.reserve(m_numSeparatrices);
-    
-    m_topRealDivPoints.reserve(m_numIntervals);
-    m_pairOfTopDivPoints.reserve(m_numIntervals);
-    for (int i = 0; i < m_numIntervals + 1; i++) {
-        if (i != m_twistedIntervalExchange.m_indexOfFakeDivPoint) {
-            m_topRealDivPoints.push_back(m_twistedIntervalExchange.m_intervalExchangeAfterTwist.divPoints()[i]);
-            m_pairOfTopDivPoints.push_back(m_twistedIntervalExchange.m_intervalExchangeAfterTwist.permutation()[i] - 1);
-
-            DivPoint divpoint;
-            divpoint.m_point = m_twistedIntervalExchange.m_intervalExchangeAfterTwist.divPoints()[i];
-            divpoint.m_isTopPoint = true;
-            divPoints.push_back(divpoint);
-        }
-    }
-    
-    m_bottomRealDivPoints.reserve(m_numIntervals);
-    auto temp = m_twistedIntervalExchange.m_intervalExchangeAfterTwist.divPointsAfterExchange();
-    for(auto it = temp.begin() + 1; it != temp.end(); it++)
-        m_bottomRealDivPoints.push_back(*it);
-    
-    
-    for (int i = 1; i < m_numIntervals + 1; i++) {
-        DivPoint divpoint;
-        divpoint.m_point = m_twistedIntervalExchange.m_intervalExchangeAfterTwist.divPointsAfterExchange()[i];
-        divpoint.m_isTopPoint = false;
-        divPoints.push_back(divpoint);
-    }
-    
-    std::inplace_merge(divPoints.begin(), divPoints.begin() + m_numIntervals, divPoints.end(), [] (const DivPoint& p1, const DivPoint& p2)
-                       {
-                           return p1.m_point < p2.m_point;
-                       } );
-    
-    m_allRealDivPoints.reserve(m_numSeparatrices);
-    m_isTopDivPoint.reserve(m_numSeparatrices);
-    for (auto p : divPoints) {
-        m_allRealDivPoints.push_back(p.m_point);
-        m_isTopDivPoint.push_back(p.m_isTopPoint);
-    }
-    
-    assert(!arePointsTooClose(m_allRealDivPoints));
-  /*
-    std::cout << m_isTopDivPoint << std::endl;
-    std::cout << m_allRealDivPoints << std::endl;
-    std::cout << m_topRealDivPoints << std::endl;
-    std::cout << m_bottomRealDivPoints << std::endl;
-    std::cout << m_pairOfTopDivPoints << std::endl;
-*/
-    
-
-}
-
-
-
 void Foliation::generateTopConnectingPairs(const FoliationSphere& foliationSphere,
                                                          std::vector<ConnectedPoints>& allConnectedPoints)
 {
@@ -179,10 +119,10 @@ void Foliation::generateBottomConnectingPairs(const FoliationSphere& foliationSp
         if (foliationSphere.bottomFoliation().intervalPairing().permutation()[i] != Modint(i - 1, numSeparatrices) ) {
 
             ConnectedPoints newConnectedPoints;
-            newConnectedPoints.bottomPoint = foliationSphere.bottomFoliation().intervalPairing().divPoints()[i] + foliationSphere.twist();
+            newConnectedPoints.bottomPoint = static_cast<Mod1Number>(foliationSphere.bottomFoliation().intervalPairing().divPoints()[i]) + foliationSphere.twist();
 
             int indexOfConnectedSeparatrix = Modint(foliationSphere.bottomFoliation().intervalPairing().permutation()[i] + 1, numSeparatrices);
-            Mod1Number middlePoint = foliationSphere.topFoliation().intervalPairing().divPoints()[indexOfConnectedSeparatrix] + foliationSphere.twist();
+            Mod1Number middlePoint = static_cast<Mod1Number>(foliationSphere.topFoliation().intervalPairing().divPoints()[indexOfConnectedSeparatrix]) + foliationSphere.twist();
 
             newConnectedPoints.topPoint = foliationSphere.topFoliation().intervalPairing().applyTo(middlePoint);
 
@@ -195,7 +135,22 @@ void Foliation::generateBottomConnectingPairs(const FoliationSphere& foliationSp
 
 
 
+bool Foliation::isTopDivPoint(int divPointIndex) const{
+    return m_allDivPoints[divPointIndex].twistCoeff() == 0;
+}
 
+const Mod1NumberIntExchange &Foliation::firstIntersection(int singularityIndex, Direction::UpOrDown direction) const
+{
+    if (direction == Direction::UP) {
+        return bottomDivPoints()[m_twistedIntervalExchange.m_permutationAfterTwist[singularityIndex]];
+    } else
+        return topDivPoints()[singularityIndex];
+}
+
+unsigned int Foliation::smallContainingInterval(const Mod1Number &point) const
+{
+    return Mod1Number::containingInterval(m_allDivPoints, point);
+}
 
 
 Foliation Foliation::rotateBy(int rotationAmount) const{
@@ -204,12 +159,12 @@ Foliation Foliation::rotateBy(int rotationAmount) const{
 
 
 Foliation Foliation::reflect() const{
-    return Foliation(m_twistedIntervalExchange.reflect());
+    return Foliation(m_twistedIntervalExchange.reverse());
 }
 
 
 Foliation Foliation::flipOver() const{
-    return Foliation(m_twistedIntervalExchange.invert().reflect());
+    return Foliation(m_twistedIntervalExchange.invert().reverse());
 }
 
 

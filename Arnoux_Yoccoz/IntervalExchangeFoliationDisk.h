@@ -15,6 +15,8 @@ public:
     virtual Mod1NumberIntExchange applyTo(const Mod1NumberIntExchange& point) const;
     virtual Mod1Number applyInverseTo(const Mod1Number& point) const { return applyTo(point); }
     virtual Mod1NumberIntExchange applyInverseTo(const Mod1NumberIntExchange& point) const;
+    const Permutation& permutation() const { return m_permutation; }
+
 private:
     IntervalExchangeFoliationDisk(const std::vector<floating_point_type>& lengths, const Permutation& permutation);
 

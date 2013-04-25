@@ -24,11 +24,11 @@ public:
     virtual Mod1NumberIntExchange applyTo(const Mod1NumberIntExchange &point) const = 0;
     virtual Mod1Number applyInverseTo(const Mod1Number& point) const = 0;
     virtual Mod1NumberIntExchange applyInverseTo(const Mod1NumberIntExchange &point) const = 0;
-    //const std::vector<Mod1NumberIntExchange>& lengths() const { return m_lengths; }
+    const std::vector<Mod1NumberIntExchange>& lengths() const { return m_lengths; }
     //const Permutation& permutation() const { return m_permutation; }
     //const Permutation& inversePermutation() const { return m_inversePermutation; }
-    //const std::vector<Mod1NumberIntExchange>& divPoints() const { return m_divPoints; }
-    //const std::vector<Mod1NumberIntExchange>& divPointsAfterExchange() const { return m_divPointsAfterExchange; }
+    const std::vector<Mod1NumberIntExchange>& divPoints() const { return m_divPoints; }
+    const std::vector<Mod1NumberIntExchange>& divPointsAfterExchange() const { return m_divPointsAfterExchange; }
     friend std::ostream& operator<<(std::ostream& out, const IntervalExchangeBase& exchange);
 
 protected:

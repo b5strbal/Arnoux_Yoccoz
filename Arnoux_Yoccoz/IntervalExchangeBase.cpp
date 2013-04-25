@@ -7,15 +7,10 @@
  */
 
 
-#include "IntervalExchangeMap.h"
+#include "IntervalExchangeBase.h"
 #include "Modint.h"
 
-//#include "UnitIntervalPoint.h"
 
-
-//----------------------//
-// IntervalExchangeBase //
-//----------------------//
 
 
 IntervalExchangeBase::IntervalExchangeBase() :
@@ -72,8 +67,9 @@ IntervalExchangeBase::IntervalExchangeBase(const std::vector<floating_point_type
 
 unsigned int IntervalExchangeBase::containingInterval(const Mod1Number &point) const
 {
-    int interval = std::upper_bound(m_divPoints.begin(), m_divPoints.end(), point) - m_divPoints.begin() - 1;
-    return interval == -1 ? size() - 1 : interval;
+//    int interval = std::upper_bound(m_divPoints.begin(), m_divPoints.end(), point) - m_divPoints.begin() - 1;
+//    return interval == -1 ? size() - 1 : interval;
+    return Mod1Number::containing
 }
 
 unsigned int IntervalExchangeBase::containingIntervalAfterExchange(const Mod1Number &point) const

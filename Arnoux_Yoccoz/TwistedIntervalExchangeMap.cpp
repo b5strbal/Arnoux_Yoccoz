@@ -1,5 +1,5 @@
 #include "TwistedIntervalExchangeMap.h"
-
+#include "Modint.h"
 
 TwistedIntervalExchangeMap::TwistedIntervalExchangeMap() :
     IntervalExchangeBase()
@@ -9,11 +9,11 @@ TwistedIntervalExchangeMap::TwistedIntervalExchangeMap() :
 TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<floating_point_type> &lengths,
                                          const Permutation &permutation,
                                          floating_point_type twist) :
-    IntervalExchangeBase(lengths, permutation, twist),
-    m_translations(size())
+    IntervalExchangeBase(lengths, permutation, twist)
 {
+    m_translations.reserve(size());
     for (unsigned int i = 0; i < size(); i++) {
-        m_translations[i] = m_divPointsAfterExchange[m_permutationAfterTwist[i]] - m_divPoints[i];
+        m_translations.push_back(m_divPointsAfterExchange[m_permutationAfterTwist[i]] - m_divPoints[i]);
     }
 }
 
@@ -24,7 +24,6 @@ Mod1Number TwistedIntervalExchangeMap::applyTo(const Mod1Number& point) const{
 }
 
 Mod1NumberIntExchange TwistedIntervalExchangeMap::applyTo(const Mod1NumberIntExchange &point) const{
-    assert(this == point.m_intExchange);
     return point + m_translations[containingInterval(point)];
 }
 
@@ -35,7 +34,6 @@ Mod1Number TwistedIntervalExchangeMap::applyInverseTo(const Mod1Number& point) c
 
 
 Mod1NumberIntExchange TwistedIntervalExchangeMap::applyInverseTo(const Mod1NumberIntExchange &point) const{
-    assert(this == point.m_intExchange);
     return point - m_translations[m_inversePermutationAfterTwist[containingIntervalAfterExchange(point)]];
 }
 
@@ -56,8 +54,8 @@ TwistedIntervalExchangeMap TwistedIntervalExchangeMap::rotateBy(int rotationAmou
 
     Permutation newPermutation = m_permutation * Permutation::rotatingPermutation(size(), - normalizedAmount);
 
-    floating_point_type rotationDistance = 1 - m_divPoints[size() - normalizedAmount];
-    floating_point_type newTwist = m_twist + rotationDistance;
+    floating_point_type rotationDistance = -m_divPoints[size() - normalizedAmount];
+    floating_point_type newTwist = static_cast<floating_point_type>(m_twist) + rotationDistance;
 
     return TwistedIntervalExchangeMap(newLengths, newPermutation, newTwist);
 }
@@ -67,7 +65,7 @@ TwistedIntervalExchangeMap TwistedIntervalExchangeMap::rotateBy(int rotationAmou
 
 TwistedIntervalExchangeMap TwistedIntervalExchangeMap::reverse() const{
     std::vector<floating_point_type> newLengths(size());
-    std::reverse_copy(m_lengths.begin(), m_lengths.end(), m_lengths.begin());
+    std::reverse_copy(m_lengths.begin(), m_lengths.end(), newLengths.begin());
 
     // Now, in contrast to rotateBy, we have to pre- and post-compose our premutation
 
@@ -101,7 +99,7 @@ std::ostream& operator<<(std::ostream& Out, const TwistedIntervalExchangeMap& tw
     Out << "Lengths: " << twistedIntervalExchange.m_lengths << "\n";
     Out << "Permutation: " << twistedIntervalExchange.m_permutation << "\n";
     Out << "Twist:" << twistedIntervalExchange.m_twist << "\n";
-    Out << "Translations: " << twistedIntervalExchange.m_translations();
+    Out << "Translations: " << twistedIntervalExchange.m_translations;
 
     return Out;
 }

@@ -18,6 +18,19 @@ Mod1Number::Mod1Number(floating_point_type position, int epsilon) :
 {
 }
 
+void Mod1Number::shiftTo(Direction::LeftOrRight side)
+{
+    assert(!isGeneralized());
+    switch(side){
+        case Direction::LEFT:
+            m_epsilon = -1;
+            break;
+        case Direction::RIGHT:
+            m_epsilon = 1;
+            break;
+    }
+}
+
 
 Mod1Number operator+(const Mod1Number& p1, const Mod1Number& p2){
     return Mod1Number(p1.m_position + p2.m_position, p1.m_epsilon + p2.m_epsilon);
@@ -75,15 +88,6 @@ std::string Mod1Number::printInterval(const Mod1Number& p1, const Mod1Number& p2
 
 
 
-bool arePointsTooClose(const std::vector<Mod1Number>& points){
-    for (auto it = points.begin() + 1; it != points.end(); it++) {
-        if (!(*(it - 1) < *it)) {
-            return true;
-        }
-    }
-    return false;
-}
-
 
 
 bool operator==(const Mod1Number &p1, const Mod1Number &p2)
@@ -113,3 +117,26 @@ bool operator >(const Mod1Number &p1, const Mod1Number &p2)
 }
 
 
+
+
+
+//bool arePointsTooClose(const std::vector<Mod1Number>& points){
+//    for (auto it = points.begin() + 1; it != points.end(); it++) {
+//        if (!(*(it - 1) < *it)) {
+//            return true;
+//        }
+//    }
+//    return false;
+//}
+
+
+Mod1Number operator +(const Mod1Number &p1, const floating_point_type &p2)
+{
+    return p1 + Mod1Number(p2);
+}
+
+
+Mod1Number operator -(const Mod1Number &p1, const floating_point_type &p2)
+{
+    return p1 - Mod1Number(p2);
+}

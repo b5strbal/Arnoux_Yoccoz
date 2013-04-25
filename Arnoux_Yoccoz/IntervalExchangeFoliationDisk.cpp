@@ -13,21 +13,19 @@ IntervalExchangeFoliationDisk IntervalExchangeFoliationDisk::fromWeighedTree(con
 
 
 Mod1Number IntervalExchangeFoliationDisk::applyTo(const Mod1Number& point) const{
-    int interval = containingInterval(m_divPoints, point);
-    if (interval == CONTAINING_INTERVAL_NOT_UNIQUE) {
-        throw std::runtime_error("IntervalExchangeFoliationDisk: Can't apply interval exchange, the point is very close to a division points.");
-    }
-    return Mod1Number(m_divPoints[m_permutation[interval]].getPosition() + m_lengths[interval] + (m_divPoints[interval].getPosition() - point.getPosition()));
+    int interval = Mod1Number::containingInterval(m_divPoints, point);
+    return m_divPoints[m_permutation[interval]] + m_lengths[interval] + (m_divPoints[interval] - point);
 }
 
 Mod1NumberIntExchange IntervalExchangeFoliationDisk::applyTo(const Mod1NumberIntExchange &point) const
 {
-    // define
+    int interval = Mod1Number::containingInterval(m_divPoints, point);
+    return m_divPoints[m_permutation[interval]] + m_lengths[interval] + (m_divPoints[interval] - point);
 }
 
 Mod1NumberIntExchange IntervalExchangeFoliationDisk::applyInverseTo(const Mod1NumberIntExchange &point) const
 {
-    //define
+    return applyInverseTo(point);
 }
 
 

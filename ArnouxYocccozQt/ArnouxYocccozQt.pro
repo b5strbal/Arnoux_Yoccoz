@@ -38,7 +38,10 @@ SOURCES += main.cpp\
     ../Arnoux_Yoccoz/Mod1NumberIntExchange.cpp \
     ../Arnoux_Yoccoz/TwistedIntervalExchangeMap.cpp \
     ../Arnoux_Yoccoz/IntervalExchangeFoliationDisk.cpp \
-    ../Arnoux_Yoccoz/IntervalExchangeBase.cpp
+    ../Arnoux_Yoccoz/IntervalExchangeBase.cpp \
+    ../Arnoux_Yoccoz/SepSegmentCollectionsGeneral.cpp \
+    ../Arnoux_Yoccoz/SepSegmentCollectionsFromRP2.cpp \
+    ../Arnoux_Yoccoz/TransverseCurveDatabaseFromRP2.cpp
 
 HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/WeighedTree.h \
@@ -66,7 +69,10 @@ HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/Mod1NumberIntExchange.h \
     ../Arnoux_Yoccoz/TwistedIntervalExchangeMap.h \
     ../Arnoux_Yoccoz/IntervalExchangeFoliationDisk.h \
-    ../Arnoux_Yoccoz/IntervalExchangeBase.h
+    ../Arnoux_Yoccoz/IntervalExchangeBase.h \
+    ../Arnoux_Yoccoz/SepSegmentCollectionsGeneral.h \
+    ../Arnoux_Yoccoz/SepSegmentCollectionsFromRP2.h \
+    ../Arnoux_Yoccoz/TransverseCurveDatabaseFromRP2.h
 
 FORMS    += mainwindow.ui
 

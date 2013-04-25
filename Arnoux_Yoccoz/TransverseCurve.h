@@ -4,14 +4,14 @@
 #include "Foliation.h"
 #include "DisjointIntervals.h"
 #include "SeparatrixSegment.h"
-#include "SepSegmentCollection.h"
+#include "SepSegmentCollectionsGeneral.h"
 #include <list>
 
 class SeparatrixSegment;
 
 class TransverseCurve{
 public:
-    TransverseCurve(const Foliation& foliation, const SepSegmentCollectionBase& segments, bool wrapsAroundZero);
+    TransverseCurve(const Foliation& foliation, const SepSegmentCollection& segments, bool wrapsAroundEnds);
     floating_point_type length() const { return m_disjointIntervals.totalLength(); }
     std::string print() const;
 

@@ -9,7 +9,7 @@ TransverseCurveDatabase::TransverseCurveDatabase(SepSegmentDatabase &sepSegmentD
 }
 
 
-std::array<bool, 2> TransverseCurveDatabase::whichTransverseCurvesExist(const SepSegmentCollectionBase& segments){
+std::array<bool, 2> TransverseCurveDatabase::whichTransverseCurvesExist(const SepSegmentCollection& segments){
 
 /*
     assert(goodSegmentIndices.size() % 2 == 0);
@@ -23,12 +23,12 @@ std::array<bool, 2> TransverseCurveDatabase::whichTransverseCurvesExist(const Se
     }
 */
 
-    std::array<bool, 2> isCandidateForWrapsAroundZero = {{true, true}};
+    std::array<bool, 2> isCandidateForWrapsAroundEnds = {{true, true}};
     std::vector<std::pair<Mod1Number, int>> endpointsAndIndices;
 
     endpointsAndIndices.reserve(segments.size());
     for (unsigned int i = 0; i < segments.size(); i++){
-        endpointsAndIndices.emplace_back(segments[i].endpoint(), i);
+        endpointsAndIndices.emplace_back(segments[i]->endpoint(), i);
     }
     std::sort(endpointsAndIndices.begin(), endpointsAndIndices.end());
     for (auto it = endpointsAndIndices.begin() + 1; it != endpointsAndIndices.end(); it++) {
@@ -63,56 +63,56 @@ std::array<bool, 2> TransverseCurveDatabase::whichTransverseCurvesExist(const Se
     }
 
 
-    for (short wrapsAroundZero = 0; wrapsAroundZero < 2; wrapsAroundZero++){
+    for (short wrapsAroundEnds = 0; wrapsAroundEnds < 2; wrapsAroundEnds++){
         Modint index(0, static_cast<int>(segments.size()));
         unsigned int length = 0;
         do {
-            if ((wrapsAroundZero && index % 2 == 1) || (!wrapsAroundZero && index % 2 == 0)) {
+            if ((wrapsAroundEnds && index % 2 == 1) || (!wrapsAroundEnds && index % 2 == 0)) {
                 ++index;
             } else
                 --index;
             int pair = endpointsAndIndices[index].second % 2 == 0 ? endpointsAndIndices[index].second + 1 :
             endpointsAndIndices[index].second - 1;
-            auto it = std::lower_bound(endpoints.begin(), endpoints.end(), segments[pair].endpoint());
+            auto it = std::lower_bound(endpoints.begin(), endpoints.end(), segments[pair]->endpoint());
             index = Modint(it - endpoints.begin(), segments.size());
             length += 2;
         } while (index != 0);
         if (length < segments.size()) {
-            isCandidateForWrapsAroundZero[wrapsAroundZero] = false;
+            isCandidateForWrapsAroundEnds[wrapsAroundEnds] = false;
         }
     }
 
 
     // checking that the curve is minimal (can't be simplified trivially) and that it is simple
 
-    std::vector<const IntervalNeighborhoods*> adpVector;
-    adpVector.reserve(segments.size());
+    std::vector<const IntervalNeighborhoods*> inhVector;
+    inhVector.reserve(segments.size());
     for (unsigned int i = 0; i < segments.size(); i++) {
-        adpVector.push_back(&segments[i].m_arcsAroundDivPoints);
+        inhVector.push_back(&segments[i]->m_intervalNeighborhoods);
     }
-    IntervalNeighborhoods adpIntersection = intersect(adpVector);
+    IntervalNeighborhoods inhIntersection = IntervalNeighborhoods::intersect(inhVector);
 
-    for (short wrapsAroundZero = 0; wrapsAroundZero < 2; wrapsAroundZero++){
-        if (isCandidateForWrapsAroundZero[wrapsAroundZero]) {
-            for (unsigned int i = wrapsAroundZero ? 1 : 0; i < segments.size(); i += 2) {
+    for (short wrapsAroundEnds = 0; wrapsAroundEnds < 2; wrapsAroundEnds++){
+        if (isCandidateForWrapsAroundEnds[wrapsAroundEnds]) {
+            for (unsigned int i = wrapsAroundEnds ? 1 : 0; i < segments.size(); i += 2) {
                 int next = (i + 1) % segments.size();
-                bool throughTopDivPoint = segments[endpointsAndIndices[i].second].direction() == DOWNWARDS &&
-                        segments[endpointsAndIndices[next].second].direction() == DOWNWARDS ? true : false;
+                bool throughTopDivPoint = segments[endpointsAndIndices[i].second]->direction() == Direction::DOWN &&
+                        segments[endpointsAndIndices[next].second]->direction() == Direction::DOWN ? true : false;
 
 
-                if (!adpIntersection.containsIntervalThroughADivPoint(endpointsAndIndices[i].first,
-                                                                  segments[endpointsAndIndices[i].second].m_smallContainingInterval,
+                if (!inhIntersection.containsIntervalThroughADivPoint(endpointsAndIndices[i].first,
+                                                                  segments[endpointsAndIndices[i].second]->m_smallContainingInterval,
                                                                   endpointsAndIndices[next].first,
-                                                                  segments[endpointsAndIndices[next].second].m_smallContainingInterval,
+                                                                  segments[endpointsAndIndices[next].second]->m_smallContainingInterval,
                                                                   throughTopDivPoint))
                 {
-                    isCandidateForWrapsAroundZero[wrapsAroundZero] = false;
+                    isCandidateForWrapsAroundEnds[wrapsAroundEnds] = false;
                 }
             }
         }
     }
 
-    return isCandidateForWrapsAroundZero;
+    return isCandidateForWrapsAroundEnds;
 }
 
 
@@ -126,110 +126,27 @@ void TransverseCurveDatabase::applyToStoredTransverseCurves(void (*function)(con
 
 
 void TransverseCurveDatabase::generateTransverseCurves(int maxdepth, int numLeafComponents, void (*function)(const TransverseCurve&)){
-    m_sepSegmentDatabase.generateSepSegments(maxdepth);
+    //m_sepSegmentDatabase.generateSepSegments(maxdepth);
+    SepSegmentCollections collections(m_sepSegmentDatabase, maxdepth,
+                                      SepSegmentCollections::Mode::SEGMENTS_SHIFTED_TO_RIGHT, numLeafComponents);
 
-        for (auto indices = Choose(m_sepSegmentDatabase.numIntervals(), numLeafComponents); !indices.isAfterLast(); ++indices) {
-            //  std::cout << static_cast<std::vector<int>>(indices) << "\n";
-            for (SepSegmentCollectionDefault segments(m_sepSegmentDatabase, indices, maxdepth); !segments.isAfterLast(); segments.advance()) {
-
-                std::array<bool, 2> isWrapsAroundZeroGood = whichTransverseCurvesExist(segments);
-                for (short wrapsAroundZero = 0; wrapsAroundZero < 2; wrapsAroundZero++ ) {
-                    if (isWrapsAroundZeroGood[wrapsAroundZero]) {
-                        auto ret = m_transverseCurves.emplace(m_sepSegmentDatabase.m_foliation, segments, wrapsAroundZero).first;
-                        if (function != nullptr) {
-                            function(*ret);
-                        }
-                    }
+    for (const SepSegmentCollection& sepSegmentCollection : collections) {
+        std::array<bool, 2> isWrapsAroundEndsGood = whichTransverseCurvesExist(sepSegmentCollection);
+        for (short wrapsAroundEnds = 0; wrapsAroundEnds < 2; wrapsAroundEnds++ ) {
+            if (isWrapsAroundEndsGood[wrapsAroundEnds]) {
+                auto ret = m_transverseCurves.emplace(m_sepSegmentDatabase.m_foliation, sepSegmentCollection, wrapsAroundEnds).first;
+                if (function != nullptr) {
+                    function(*ret);
                 }
             }
-        }
-}
-
-
-
-
-///////////////////////
-
-
-
-TransverseCurveDatabaseFromRP2::TransverseCurveDatabaseFromRP2(SepSegmentDatabaseFromRP2& sepSegmentDatabaseFromRP2) :
-    TransverseCurveDatabase(sepSegmentDatabaseFromRP2)
-{
-
-}
-
-
-
-
-
-void TransverseCurveDatabaseFromRP2::generateTransverseCurvesFromRP2(int maxdepth, int numLeafComponents){
-    assert(numLeafComponents % 2 == 0);
-
-    m_sepSegmentDatabase.generateSepSegments(maxdepth);
-    SepSegmentCollectionFromRP2
-
-    std::vector<std::list<SeparatrixSegment>::const_iterator> transverseCurveInput;
-    transverseCurveInput.reserve(4);
-
-    for (int index = 0; index < m_numIntervals; index++) {
-        if (index < m_separatrixPair[index]) {
-
-
-            auto itFirstDown = m_goodShiftedSeparatrixSegments[DOWNWARDS][index].begin();
-            auto itSecondUp = m_goodShiftedSeparatrixSegments[UPWARDS][m_separatrixPair[index]].begin();
-            while (itFirstDown != --m_goodShiftedSeparatrixSegments[DOWNWARDS][index].end() &&
-                   itSecondUp != --m_goodShiftedSeparatrixSegments[UPWARDS][m_separatrixPair[index]].end() &&
-                   itFirstDown->m_depth <= maxdepth &&
-                   itSecondUp->m_depth <= maxdepth) {
-                assert(itFirstDown->m_depth == itSecondUp->m_depth);
-
-                auto itFirstUp = m_goodShiftedSeparatrixSegments[UPWARDS][index].begin();
-                auto itSecondDown = m_goodShiftedSeparatrixSegments[DOWNWARDS][m_separatrixPair[index]].begin();
-                while (itFirstUp != --m_goodShiftedSeparatrixSegments[UPWARDS][index].end() &&
-                       itSecondDown != --m_goodShiftedSeparatrixSegments[DOWNWARDS][m_separatrixPair[index]].end() &&
-                       itFirstUp->m_depth <= maxdepth &&
-                       itSecondDown->m_depth <= maxdepth) {
-
-                    assert(itFirstUp->m_depth == itSecondDown->m_depth);
-
-                    transverseCurveInput = {
-                        itFirstDown,
-                        itFirstUp,
-                        itSecondUp,
-                        itSecondDown
-                    };
-
-                    std::array<bool, 2> isWrapsAroundZeroGood = whichTransverseCurvesExist(transverseCurveInput);
-                    for (short wrapsAroundZero = 0; wrapsAroundZero < 2; wrapsAroundZero++ ) {
-                        if (isWrapsAroundZeroGood[wrapsAroundZero]) {
-                            auto ret = m_transverseCurves.emplace(*this, transverseCurveInput, wrapsAroundZero);
-                            if (ret.second) {
-                                m_liftsOfGoodTransverseCurves.insert(ret.first);
-                            }
-                        }
-                    }
-
-
-                    itFirstUp++;
-                    itSecondDown++;
-                }
-
-
-                itFirstDown++;
-                itSecondUp++;
-            }
-
-
-
-
         }
     }
 }
 
 
 
-void TransverseCurveDatabaseFromRP2::printLiftsOfGoodTransverseCurves(int depth){
-    generateLiftsOfGoodTransverseCurves(depth);
-    for (auto it : m_liftsOfGoodTransverseCurves)
-        std::cout << it->print() << "\n\n";
-}
+
+
+
+
+
