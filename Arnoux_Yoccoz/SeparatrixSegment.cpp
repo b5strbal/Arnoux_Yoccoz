@@ -11,7 +11,8 @@ SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, int startingSin
     m_intervalNeighborhoods(foliation),
     m_intervalIntersectionCount(std::vector<int>(foliation.numIntervals(), 0)),
     m_direction(direction),
-    m_reachedSaddleConnection(false)
+    m_reachedSaddleConnection(false),
+    m_smallIntervalOfFirstIntersection(m_smallContainingInterval)
 {
 }
 
@@ -56,7 +57,8 @@ void SeparatrixSegment::lengthen()
 
 bool SeparatrixSegment::isGood() const
 {
-    return m_intervalNeighborhoods.contains(m_endpoint, m_smallContainingInterval);
+    return m_intervalNeighborhoods.containsInTwoSidedInterval(m_endpoint, m_smallContainingInterval,
+                                                              m_smallIntervalOfFirstIntersection);
 }
 
 void SeparatrixSegment::shiftTo(Direction::LeftOrRight side)

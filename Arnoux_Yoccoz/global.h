@@ -20,7 +20,8 @@ typedef long double floating_point_type;
 namespace Direction{
     enum LeftOrRight{
         LEFT = 0,
-        RIGHT = 1
+        RIGHT = 1,
+        CENTER = 2
     };
 
     enum UpOrDown{

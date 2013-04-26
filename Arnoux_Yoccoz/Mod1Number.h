@@ -46,6 +46,7 @@ public:
     //inline floating_point_type getPosition() const{ return m_position; }
     bool isGeneralized() const { return m_epsilon !=0; }
     void shiftTo(Direction::LeftOrRight side);
+    Direction::LeftOrRight side() const;
     static floating_point_type distanceBetween(const Mod1Number& p1, const Mod1Number& p2);
     friend Mod1Number operator+(const Mod1Number& p1, const Mod1Number& p2);
     friend Mod1Number operator+(const Mod1Number& p1, const floating_point_type& p2);

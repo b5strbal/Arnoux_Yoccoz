@@ -22,6 +22,8 @@ public:
     bool reachedSaddleConnection() const { return m_reachedSaddleConnection; }
     void lengthen();
     bool isGood() const;
+    bool isCentered() const { return !m_endpoint.isGeneralized(); }
+    void shiftTo(Direction::LeftOrRight side);
 
     int depth() const { return m_depth; }
     const Mod1NumberIntExchange& endpoint() const { return m_endpoint; }
@@ -31,8 +33,7 @@ public:
 //    int smallContainingInterval() const { return m_smallContainingInterval; }
 
 private:
-    bool isCentered() const { return !m_endpoint.isGeneralized(); }
-    void shiftTo(Direction::LeftOrRight side);
+
 
     const Foliation& m_foliation;
     int m_startingSingularity;
@@ -43,6 +44,7 @@ private:
     std::vector<int> m_intervalIntersectionCount;
     Direction::UpOrDown m_direction;
     bool m_reachedSaddleConnection;
+    int m_smallIntervalOfFirstIntersection;
 };
 
 

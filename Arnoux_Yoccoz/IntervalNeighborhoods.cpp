@@ -27,12 +27,31 @@ void IntervalNeighborhoods::insertPoint(const Mod1Number& newCuttingPoint, int i
 
 
 
-
-bool IntervalNeighborhoods::contains(const Mod1Number& point, int indexOfInterval) const{
+// An interval around a divpoint is two sided if the divpoint cuts the interval into
+// two intervals, both with length bigger than zero.
+//
+// The IntervalNeighborhoods corresponding to a SeparatrixSegment have the first cutting
+// point which is an infinitesimal shift of one of the divpoints. As a result, the interval
+// around that divpoint is one-sided, unless it is long enough to contain another divpoint.
+// But if it only contains that one divpoint, then a SeparatrixSegment with endpoint falling
+// into that interval can't be good no matter which side that infinitesimal shift is.
+//
+// The parameter indexOfOneSidedDivPoint tells which divpoint might have the one-sided interval.
+//
+// This little compication has the benefit that without this it would be possible that
+// a separatrix segment of certain depth is considered good when shifted to the left, and
+// bad if shifted to the right, or vica versa, and this assymetry would be inconvenient when
+// iterating over the good separatrix segments.
+//
+bool IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1Number& point, unsigned int indexOfInterval,
+                                                       unsigned int indexOfOneSidedDivPoint) const{
     if (m_cuttingPoints[indexOfInterval].isEmpty) {
         return true;
     }
-    if (point < m_cuttingPoints[indexOfInterval].first || m_cuttingPoints[indexOfInterval].second < point)
+    unsigned int nextIndex = Modint(indexOfInterval + 1, m_cuttingPoints.size());
+
+    if ((point < m_cuttingPoints[indexOfInterval].first && indexOfInterval != indexOfOneSidedDivPoint)
+            || (m_cuttingPoints[indexOfInterval].second < point && nextIndex != indexOfOneSidedDivPoint))
     {
         return true;
     }

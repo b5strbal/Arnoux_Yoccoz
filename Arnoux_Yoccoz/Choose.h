@@ -18,22 +18,23 @@
 
 class Choose{
 public:
-    Choose(int n, int k); // {0, 1, ..., k-1} in base set {0, 1, ..., n-1}
-    int n() const { return m_n; }
-    int k() const { return m_k; }
+    Choose() : Choose(1, 1) {} // default constructor
+    Choose(unsigned int n, unsigned int k); // {0, 1, ..., k-1} in base set {0, 1, ..., n-1}
+    unsigned int n() const { return m_n; }
+    unsigned int k() const { return m_k; }
     Choose& operator++();
     bool isAfterLast() const; // Returns true if the current subset is past the last subset, i.e. not valid anymore.
-    int operator[](int i);  // Returns the i'th element of the subset.
-    std::vector<int>::const_iterator begin() const { return m_chosenIndices.begin(); }
-    std::vector<int>::const_iterator end() const { return m_chosenIndices.end(); }
+    unsigned int operator[](unsigned int i);  // Returns the i'th element of the subset.
+    std::vector<unsigned int>::const_iterator begin() const { return m_chosenIndices.begin(); }
+    std::vector<unsigned int>::const_iterator end() const { return m_chosenIndices.end(); }
 
 
     // operator const std::vector<int>&(){ return m_chosenIndices; }
 
 private:
-    int m_n;    // The size of the base set.
-    int m_k;    // The size of the subset.
-    std::vector<int> m_chosenIndices;   // The list of elements in the subset.
+    unsigned int m_n;    // The size of the base set.
+    unsigned int m_k;    // The size of the subset.
+    std::vector<unsigned int> m_chosenIndices;   // The list of elements in the subset.
 };
 
 #endif // CHOOSE_H

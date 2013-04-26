@@ -4,7 +4,7 @@
 #include "Foliation.h"
 #include "DisjointIntervals.h"
 #include "SeparatrixSegment.h"
-#include "SepSegmentCollectionsGeneral.h"
+#include "SepSegmentCollections.h"
 #include <list>
 
 class SeparatrixSegment;

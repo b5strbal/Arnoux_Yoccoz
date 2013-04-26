@@ -7,11 +7,12 @@
 #include "SeparatrixSegment.h"
 #include "DisjointIntervals.h"
 #include "FoliationFromRP2.h"
-
+#include "SepSegmentCollections.h"
 
 class SepSegmentDatabase
 {
     friend class TransverseCurveDatabase;
+    friend class SepSegmentCollections;
 public:
     SepSegmentDatabase(const Foliation& foliation);
 
@@ -24,9 +25,10 @@ public:
 protected:
     const Foliation& m_foliation;
     std::array<std::vector<SeparatrixSegment>, 2> m_currentSepSegments;
-    std::array<std::vector<std::list<SeparatrixSegment>>, 2> m_goodShiftedSeparatrixSegments;
+    std::array<std::array<std::vector<std::list<SeparatrixSegment>>, 2>, 2> m_goodShiftedSeparatrixSegments;
 
     unsigned int numIntervals() const { return m_foliation.numIntervals(); }
+    void addToGoodSegmentsIfGood(const SeparatrixSegment& s);
 };
 
 

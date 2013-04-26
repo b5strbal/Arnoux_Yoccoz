@@ -1,19 +1,17 @@
 #ifndef SEPSEGMENTCOLLECTIONSFROMRP2_H
 #define SEPSEGMENTCOLLECTIONSFROMRP2_H
 
-class SepSegmentCollectionsFromRP2
+#include "SepSegmentCollections.h"
+
+
+
+
+
+class SepSegmentCollectionsFromRP2 : public SepSegmentCollections
 {
 public:
-    SepSegmentCollectionsFromRP2();
-};
-
-
-
-
-class SepSegmentCollectionFromRP2 : public SepSegmentCollection
-{
-public:
-    SepSegmentCollectionFromRP2(const SepSegmentDatabaseFromRP2& database, int numLeafSegments, int maxdepth);
+    SepSegmentCollectionsFromRP2(SepSegmentDatabaseFromRP2 &database, unsigned int maxDepth, Mode mode,
+                                 unsigned int modeParameter);
 
     virtual void advance();
 private:

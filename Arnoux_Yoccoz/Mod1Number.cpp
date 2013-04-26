@@ -20,7 +20,6 @@ Mod1Number::Mod1Number(floating_point_type position, int epsilon) :
 
 void Mod1Number::shiftTo(Direction::LeftOrRight side)
 {
-    assert(!isGeneralized());
     switch(side){
         case Direction::LEFT:
             m_epsilon = -1;
@@ -28,8 +27,22 @@ void Mod1Number::shiftTo(Direction::LeftOrRight side)
         case Direction::RIGHT:
             m_epsilon = 1;
             break;
+        case Direction::CENTER:
+            m_epsilon = 0;
+            break;
     }
 }
+
+Direction::LeftOrRight Mod1Number::side() const
+{
+    if(m_epsilon < 0)
+        return Direction::LEFT;
+    if(m_epsilon > 0)
+        return Direction::RIGHT;
+    return Direction::CENTER;
+}
+
+
 
 
 Mod1Number operator+(const Mod1Number& p1, const Mod1Number& p2){

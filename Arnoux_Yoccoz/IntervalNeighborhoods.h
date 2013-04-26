@@ -113,8 +113,8 @@ public:
     IntervalNeighborhoods(const Foliation & foliation); // empty object
     void insertPoint(const Mod1Number& newCuttingPoint, int indexOfInterval);
 
-    //! Decides if a point is contained in union of the intervals.
-    bool contains(const Mod1Number& point, int indexOfInterval) const;
+    // Decides if the point is contained in an intervals which is two sided.
+    bool containsInTwoSidedInterval(const Mod1Number& point, unsigned int indexOfInterval, unsigned int indexOfOneSidedDivPoint) const;
 
     //! \brief Returns true if the interval between two points is contained in any of the member intervals and passes
     //!        through either a TopDivPoint or BottomDivPoint, whichever is specified.

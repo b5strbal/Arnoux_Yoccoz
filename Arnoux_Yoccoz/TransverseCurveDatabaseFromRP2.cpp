@@ -9,12 +9,12 @@ TransverseCurveDatabaseFromRP2::TransverseCurveDatabaseFromRP2(SepSegmentDatabas
 
 
 
-
+/*
 void TransverseCurveDatabaseFromRP2::generateTransverseCurvesFromRP2(int maxdepth, int numLeafComponents){
     assert(numLeafComponents % 2 == 0);
 
     m_sepSegmentDatabase.generateSepSegments(maxdepth);
-    SepSegmentCollectionFromRP2
+    SepSegmentCollectionsFromRP2
 
     std::vector<std::list<SeparatrixSegment>::const_iterator> transverseCurveInput;
     transverseCurveInput.reserve(4);
@@ -56,19 +56,12 @@ void TransverseCurveDatabaseFromRP2::generateTransverseCurvesFromRP2(int maxdept
                             }
                         }
                     }
-
-
                     itFirstUp++;
                     itSecondDown++;
                 }
-
-
                 itFirstDown++;
                 itSecondUp++;
             }
-
-
-
 
         }
     }
@@ -77,8 +70,8 @@ void TransverseCurveDatabaseFromRP2::generateTransverseCurvesFromRP2(int maxdept
 
 
 void TransverseCurveDatabaseFromRP2::printLiftsOfGoodTransverseCurves(int depth){
-    generateLiftsOfGoodTransverseCurves(depth);
+    generateTransverseCurvesFromRP2(depth);
     for (auto it : m_liftsOfGoodTransverseCurves)
         std::cout << it->print() << "\n\n";
 }
-
+*/

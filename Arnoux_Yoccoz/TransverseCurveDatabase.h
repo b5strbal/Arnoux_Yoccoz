@@ -5,7 +5,7 @@
 #include <set>
 #include <array>
 #include "SepSegmentDatabase.h"
-#include "SepSegmentCollectionsGeneral.h"
+#include "SepSegmentCollections.h"
 
 class TransverseCurveDatabase
 {

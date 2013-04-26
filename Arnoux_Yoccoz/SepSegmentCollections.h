@@ -8,33 +8,42 @@
 typedef std::vector<std::list<SeparatrixSegment>::const_iterator> SepSegmentCollection;
 
 
+class SepSegmentDatabase;
+
 
 class SepSegmentCollections
 {
 public:
     class iterator{
     public:
+        iterator(const SepSegmentCollections& parent);
+        static iterator endIterator(const SepSegmentCollections& parent);
         const SepSegmentCollection& operator*() { return m_sepSegmentCollection; }
         iterator& operator++();
         friend bool operator==(const iterator& it1, const iterator& it2);
         friend bool operator!=(const iterator& it1, const iterator& it2);
     private:
-        iterator(const SepSegmentCollections& parent);
+        iterator(const SepSegmentCollections &parent,
+                 const SepSegmentCollection& sepSegmentCollection,
+                 const Choose& sepIndicesChoose);
+        void setInitialSetting();
 
-        SepSegmentCollection m_sepSegmentCollection;
-        Choose m_separatrixIndices;
         const SepSegmentCollections& m_parent;
+        SepSegmentCollection m_sepSegmentCollection; // if empty, it is the end iterator
+        Choose m_sepIndicesChoose;
     };
 
     enum class Mode{
-        SEGMENTS_SHIFTED_TO_RIGHT // mode parameter: number of leaf segments
+        SEGMENTS_SHIFTED_TO_SAME_SIDE, // mode parameter: number of leaf segments
+        WRAPPING_AROUND_SINGULARITIES_SYMMETRICALLY
     };
 
 
     SepSegmentCollections(SepSegmentDatabase& sepSegmentDatabase,
-                            unsigned int maxDepth,
-                            Mode mode,
-                          unsigned int modeParameter);
+                          unsigned int maxDepth,
+                          unsigned int maxInvolvedSingularities,
+                          Mode mode,
+                          Direction::LeftOrRight shiftToSide = Direction::RIGHT);
 
     iterator begin() const;
     iterator end() const;
@@ -42,8 +51,9 @@ public:
 private:
     SepSegmentDatabase& m_sepSegmentDatabase;
     unsigned int m_maxDepth;
+    unsigned int m_maxInvolvedSingularities;
     Mode m_mode;
-    unsigned int m_modeParameter;
+    Direction::LeftOrRight m_shiftToSide;
 };
 
 
@@ -56,7 +66,6 @@ private:
 
 
 //bool isLast(std::list<SeparatrixSegment>::const_iterator it) const;
-//void setIndicesToBegin();
 
 
 
