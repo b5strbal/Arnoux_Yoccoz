@@ -20,7 +20,7 @@ Foliation::Foliation(const TwistedIntervalExchangeMap& twistedintervalExchange) 
                bottomDivPoints().begin(), bottomDivPoints().end(), std::back_inserter(m_allDivPoints));
 
     for(unsigned int i = 1; i < numSeparatrices(); i++){
-        if(Mod1Number::distanceBetween(m_allDivPoints[i - 1], m_allDivPoints[i]) < PRECISION){
+        if(distanceBetween(m_allDivPoints[i - 1], m_allDivPoints[i]) < PRECISION){
             throw std::runtime_error("The foliation has a saddle connection.");
         }
     }
@@ -66,7 +66,7 @@ Foliation Foliation::fromFoliationSphere(const FoliationSphere &foliationSphere)
 
     std::vector<floating_point_type> lengths(allConnectedPoints.size());
     for (unsigned int i = 0; i < allConnectedPoints.size() - 1; i++) {
-        lengths[i] = Mod1Number::distanceBetween( allConnectedPointsSortedByTop[i].topPoint, allConnectedPointsSortedByTop[i + 1].topPoint);
+        lengths[i] = distanceBetween( allConnectedPointsSortedByTop[i].topPoint, allConnectedPointsSortedByTop[i + 1].topPoint);
     }
     lengths[allConnectedPoints.size() - 1] = -allConnectedPointsSortedByTop[allConnectedPoints.size() - 1].topPoint;
 
@@ -149,7 +149,7 @@ const Mod1NumberIntExchange &Foliation::firstIntersection(int singularityIndex, 
 
 unsigned int Foliation::smallContainingInterval(const Mod1Number &point) const
 {
-    return Mod1Number::containingInterval(m_allDivPoints, point);
+    return containingInterval(m_allDivPoints, point);
 }
 
 

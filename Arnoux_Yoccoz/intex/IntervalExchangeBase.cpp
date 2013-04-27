@@ -25,7 +25,7 @@ IntervalExchangeBase::IntervalExchangeBase(const std::vector<floating_point_type
                                            floating_point_type twist) :
     m_permutation(permutation),
     m_inversePermutation(permutation.inverse()),
-    m_twist(permutation.size(), twist)
+    m_twist(this, twist)
 {
     if(lengths.size() != permutation.size()){
         throw std::runtime_error("The number of intervals is ambiguous.");
@@ -44,17 +44,17 @@ IntervalExchangeBase::IntervalExchangeBase(const std::vector<floating_point_type
     
     m_lengths.reserve(size);
     for (int i = 0; i < size; i++) {
-        m_lengths.push_back(Mod1NumberIntExchange(size, lengths[i]/total, i));
+        m_lengths.push_back(Mod1NumberIntExchange(this, lengths[i]/total, i));
     }
-    
+
     m_divPoints.resize(size);
-    m_divPoints[0] = Mod1NumberIntExchange(size);
+    m_divPoints[0] = Mod1NumberIntExchange(this);
     for (int i = 1; i < size; i++) {
         m_divPoints[i] = m_divPoints[i - 1] + m_lengths[i - 1];
     }
         
     m_divPointsAfterExchange.resize(size);
-    m_divPointsAfterExchange[0] = Mod1NumberIntExchange(size) + m_twist;
+    m_divPointsAfterExchange[0] = Mod1NumberIntExchange(this) + m_twist;
     for (int i = 1; i < size; i++) {
         m_divPointsAfterExchange[i] = m_divPointsAfterExchange[i - 1] + m_lengths[m_inversePermutation[i - 1]];
     }
@@ -69,7 +69,7 @@ unsigned int IntervalExchangeBase::containingInterval(const Mod1Number &point) c
 {
 //    int interval = std::upper_bound(m_divPoints.begin(), m_divPoints.end(), point) - m_divPoints.begin() - 1;
 //    return interval == -1 ? size() - 1 : interval;
-    return Mod1Number::containingInterval(m_divPoints, point);
+    return ::containingInterval(m_divPoints, point);
 }
 
 unsigned int IntervalExchangeBase::containingIntervalAfterExchange(const Mod1Number &point) const

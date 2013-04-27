@@ -44,16 +44,15 @@ bool operator<(const TransverseCurve& c1, const TransverseCurve& c2) {
 
 
 
-std::string TransverseCurve::print() const
+std::ostream& operator<<(std::ostream& out, const TransverseCurve& tc)
 {
-    std::ostringstream s;
-    s << "Separatrix segments:\n";
-    for (auto goodSegmentIndex : m_goodSegmentIndices){
-        s << goodSegmentIndex << "\n";
+    out << "Separatrix segments:\n";
+    for (auto goodSegmentIndex : tc.m_goodSegmentIndices){
+        out << goodSegmentIndex << "\n";
     }
-    s << "Connecting arcs: " << m_disjointIntervals << "\n";
-    s << "Length: " << length();
-    return s.str();
+    out << "Connecting arcs: " << tc.m_disjointIntervals << "\n";
+    out << "Length: " << tc.length();
+    return out;
 }
 
 

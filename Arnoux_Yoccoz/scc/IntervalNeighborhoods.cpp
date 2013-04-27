@@ -14,7 +14,7 @@ IntervalNeighborhoods::IntervalNeighborhoods(const Foliation & foliation) :
 
 // \param  newCuttingPoint     It must not coincide with any of the division points.
 void IntervalNeighborhoods::insertPoint(const Mod1Number& newCuttingPoint, int indexOfInterval){
-    assert(newCuttingPoint.isGeneralized());
+    assert(newCuttingPoint.side() != Direction::CENTER);
     if (m_cuttingPoints[indexOfInterval].isEmpty) {
         m_cuttingPoints[indexOfInterval].first = m_cuttingPoints[indexOfInterval].second = newCuttingPoint;
         m_cuttingPoints[indexOfInterval].isEmpty = false;
@@ -95,16 +95,15 @@ bool IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1Number& l
 
 
 
-std::string IntervalNeighborhoods::print() const
+std::ostream & operator<<(std::ostream &out, const IntervalNeighborhoods& inh)
 {
-    std::ostringstream s;
-    for (unsigned int i = 0; i < m_cuttingPoints.size(); i++){
-        if (m_cuttingPoints[i].isEmpty) {
-            s << "() ";
+    for (unsigned int i = 0; i < inh.m_cuttingPoints.size(); i++){
+        if (inh.m_cuttingPoints[i].isEmpty) {
+            out << "() ";
         } else
-            s << "(" << m_cuttingPoints[i].first << "," << m_cuttingPoints[i].second << ") ";
+            out << "(" << inh.m_cuttingPoints[i].first << "," << inh.m_cuttingPoints[i].second << ") ";
     }
-    return s.str();
+    return out;
 }
 
 

@@ -11,11 +11,8 @@
 #define ArnouxYoccoz_UnitIntervalPoint_h
 
 #include <iostream>
-#include <cmath>
 #include <cassert>
 #include "global.h"
-#include <sstream>
-#include "Matrix.h"
 
 
 
@@ -38,47 +35,55 @@
  *
  * @see     ArcsAroundDivPoints, FoliationDisk
  */
+
+
 class Mod1Number {
 public:
-
-
     Mod1Number(floating_point_type position = 0, int epsilon = 0);
-    //inline floating_point_type getPosition() const{ return m_position; }
-    bool isGeneralized() const { return m_epsilon !=0; }
     void shiftTo(Direction::LeftOrRight side);
     Direction::LeftOrRight side() const;
-    static floating_point_type distanceBetween(const Mod1Number& p1, const Mod1Number& p2);
-    friend Mod1Number operator+(const Mod1Number& p1, const Mod1Number& p2);
-    friend Mod1Number operator+(const Mod1Number& p1, const floating_point_type& p2);
-    friend Mod1Number operator-(const Mod1Number& p1, const Mod1Number& p2);
-    friend Mod1Number operator-(const Mod1Number& p1, const floating_point_type& p2);
+    Mod1Number& operator+=(const Mod1Number& rhs);
+    Mod1Number operator-() const;
     friend bool operator<(const Mod1Number& p1, const Mod1Number& p2);
-    friend bool operator>(const Mod1Number& p1, const Mod1Number& p2);
-    friend bool operator==(const Mod1Number& p1, const Mod1Number& p2);
-    friend bool operator!=(const Mod1Number& p1, const Mod1Number& p2);
-    friend bool operator<=(const Mod1Number& p1, const Mod1Number& p2);
-    friend bool operator>=(const Mod1Number& p1, const Mod1Number& p2);
     friend std::ostream& operator<<(std::ostream& out, const Mod1Number& p);
     operator floating_point_type() const { return m_position; }
-
-    static std::string printInterval(const Mod1Number& p1, const Mod1Number& p2);
-
-    template <typename t1, typename t2>
-    static unsigned int containingInterval(const std::vector<t1>& orderedList, const t2& point){
-        int interval = std::upper_bound(orderedList.begin(), orderedList.end(), point) - orderedList.begin() - 1;
-        return interval == -1 ? orderedList.size() - 1 : interval;
-    }
-
 protected:
     floating_point_type m_position; // The position of the point.
     int m_epsilon;                  // The infinitesimal shift.
 };
 
-//bool arePointsTooClose(const std::vector<Mod1Number>& points);
+
+
+floating_point_type distanceBetween(const Mod1Number& p1, const Mod1Number& p2);
+Mod1Number operator+(const Mod1Number& p1, const Mod1Number& p2);
+Mod1Number operator+(const Mod1Number& p1, const floating_point_type& p2);
+Mod1Number operator-(const Mod1Number& p1, const Mod1Number& p2);
+Mod1Number operator-(const Mod1Number& p1, const floating_point_type& p2);
+bool operator>(const Mod1Number& p1, const Mod1Number& p2);
+bool operator==(const Mod1Number& p1, const Mod1Number& p2);
+bool operator!=(const Mod1Number& p1, const Mod1Number& p2);
+bool operator<=(const Mod1Number& p1, const Mod1Number& p2);
+bool operator>=(const Mod1Number& p1, const Mod1Number& p2);
 
 
 
-        
+typedef struct{
+    Mod1Number leftEndpoint;
+    Mod1Number rightEndpoint;
+} interval_t;
+
+std::ostream& operator<<(std::ostream& out, const interval_t& interval);
+
+
+
+template <typename type1, typename type2>
+unsigned int containingInterval(const std::vector<type1>& orderedList, const type2& point){
+    int interval = std::upper_bound(orderedList.begin(), orderedList.end(), point) - orderedList.begin() - 1;
+    return interval == -1 ? orderedList.size() - 1 : interval;
+}
+
+
+
         
 #endif
         

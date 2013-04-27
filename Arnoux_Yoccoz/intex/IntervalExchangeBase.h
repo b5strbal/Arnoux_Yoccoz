@@ -5,8 +5,6 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
-#include "Mod1Number.h"
-#include "global.h"
 #include "Permutation.h"
 #include "Mod1NumberIntExchange.h"
 

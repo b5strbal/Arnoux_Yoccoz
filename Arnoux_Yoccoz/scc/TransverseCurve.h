@@ -13,7 +13,7 @@ class TransverseCurve{
 public:
     TransverseCurve(const Foliation& foliation, const SepSegmentCollection& segments, bool wrapsAroundEnds);
     floating_point_type length() const { return m_disjointIntervals.totalLength(); }
-    std::string print() const;
+    friend std::ostream & operator<<(std::ostream &out, const TransverseCurve &tc);
 
     friend bool operator<(const TransverseCurve& c1, const TransverseCurve& c2);
 

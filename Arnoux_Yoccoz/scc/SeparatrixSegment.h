@@ -22,7 +22,7 @@ public:
     bool reachedSaddleConnection() const { return m_reachedSaddleConnection; }
     void lengthen();
     bool isGood() const;
-    bool isCentered() const { return !m_endpoint.isGeneralized(); }
+    bool isCentered() const { return m_endpoint.side() == Direction::CENTER; }
     void shiftTo(Direction::LeftOrRight side);
 
     int depth() const { return m_depth; }

@@ -66,7 +66,6 @@
 #define INTERVALNEIGHBORHOODS_H
 
 #include "Foliation.h"
-//#include "Mod1.h"
 
 class Foliation;
 
@@ -124,7 +123,7 @@ public:
                                       bool throughTopDivPointQ) const;
 
     //! Prints out the object into a string.
-    std::string print() const;
+    friend std::ostream & operator<<(std::ostream &out, const IntervalNeighborhoods& inh);
 
     //! Takes the intersection of IntervalNeighborhoods objects.
     static IntervalNeighborhoods intersect(const std::vector<const IntervalNeighborhoods*>& inbhVector);

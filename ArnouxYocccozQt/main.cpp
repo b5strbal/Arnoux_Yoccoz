@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QString>
 #include "../Arnoux_Yoccoz/Foliation.h"
+#include <sstream>
 
 int main(int argc, char *argv[])
 {

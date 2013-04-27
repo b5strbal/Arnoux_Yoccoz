@@ -10,12 +10,10 @@
 #define __Arnoux_Yoccoz__Foliation__
 
 #include <vector>
-#include "Mod1Number.h"
 #include "TwistedIntervalExchangeMap.h"
 #include "PerronFrobenius.h"
 #include "FoliationRP2.h"
 #include "FoliationSphere.h"
-#include "IntervalNeighborhoods.h"
 
 
 

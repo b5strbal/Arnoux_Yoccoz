@@ -13,13 +13,13 @@ IntervalExchangeFoliationDisk IntervalExchangeFoliationDisk::fromWeighedTree(con
 
 
 Mod1Number IntervalExchangeFoliationDisk::applyTo(const Mod1Number& point) const{
-    int interval = Mod1Number::containingInterval(m_divPoints, point);
+    int interval = containingInterval(point);
     return m_divPoints[m_permutation[interval]] + m_lengths[interval] + (m_divPoints[interval] - point);
 }
 
 Mod1NumberIntExchange IntervalExchangeFoliationDisk::applyTo(const Mod1NumberIntExchange &point) const
 {
-    int interval = Mod1Number::containingInterval(m_divPoints, point);
+    int interval = containingInterval(point);
     return m_divPoints[m_permutation[interval]] + m_lengths[interval] + (m_divPoints[interval] - point);
 }
 

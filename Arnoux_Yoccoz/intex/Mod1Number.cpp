@@ -42,16 +42,18 @@ Direction::LeftOrRight Mod1Number::side() const
     return Direction::CENTER;
 }
 
-
-
-
-Mod1Number operator+(const Mod1Number& p1, const Mod1Number& p2){
-    return Mod1Number(p1.m_position + p2.m_position, p1.m_epsilon + p2.m_epsilon);
+Mod1Number &Mod1Number::operator +=(const Mod1Number &rhs)
+{
+    m_position += rhs.m_position;
+    m_epsilon += rhs.m_epsilon;
+    return *this;
 }
 
-Mod1Number operator-(const Mod1Number& p1, const Mod1Number& p2){
-    return Mod1Number(p1.m_position - p2.m_position, p1.m_epsilon - p2.m_epsilon);
+Mod1Number Mod1Number::operator -() const
+{
+    return Mod1Number(-m_position, -m_epsilon);
 }
+
 
 
 
@@ -68,17 +70,6 @@ bool operator<(const Mod1Number& p1, const Mod1Number& p2){
 
 
 
-// Returns the distance between two points. Ignores the infinitesimal shift.
-//
-// It looks for c2 on the RIGHT of c1, so the return value may be bigger than 0.5.
-// E.g. DistaceBetween(UnitIntervalPoint(0.8, LEFT), UnitIntervalPoint(0.1)) is 0.3.
-// floating_point_type distanceBetween(const UnitIntervalPoint& p1, const UnitIntervalPoint& p2)
-//
-floating_point_type Mod1Number::distanceBetween(const Mod1Number& p1, const Mod1Number& p2)
-{
-    return p1.m_position <= p2.m_position ? p2.m_position - p1.m_position : p2.m_position - p1.m_position + 1;
-}
-
 
 
 std::ostream& operator<<(std::ostream& out, const Mod1Number& p){
@@ -93,10 +84,9 @@ std::ostream& operator<<(std::ostream& out, const Mod1Number& p){
 
 
 
-std::string Mod1Number::printInterval(const Mod1Number& p1, const Mod1Number& p2){
-    std::ostringstream s;
-    s << "[" << p1 << "," << p2 << "]";
-    return s.str();
+std::ostream& operator<<(std::ostream& out, const interval_t& interval){
+    out << "[" << interval.leftEndpoint << "," << interval.rightEndpoint << "]";
+    return out;
 }
 
 
@@ -105,7 +95,7 @@ std::string Mod1Number::printInterval(const Mod1Number& p1, const Mod1Number& p2
 
 bool operator==(const Mod1Number &p1, const Mod1Number &p2)
 {
-    return p1.m_position == p2.m_position && p1.m_epsilon == p2.m_epsilon;
+    return (p1 < p2 || p2 < p1) ? false : true;
 }
 
 bool operator !=(const Mod1Number &p1, const Mod1Number &p2)
@@ -131,16 +121,15 @@ bool operator >(const Mod1Number &p1, const Mod1Number &p2)
 
 
 
+Mod1Number operator+(const Mod1Number& p1, const Mod1Number& p2){
+    Mod1Number sum = p1;
+    sum += p2;
+    return sum;
+}
 
-
-//bool arePointsTooClose(const std::vector<Mod1Number>& points){
-//    for (auto it = points.begin() + 1; it != points.end(); it++) {
-//        if (!(*(it - 1) < *it)) {
-//            return true;
-//        }
-//    }
-//    return false;
-//}
+Mod1Number operator-(const Mod1Number& p1, const Mod1Number& p2){
+    return p1 + (-p2);
+}
 
 
 Mod1Number operator +(const Mod1Number &p1, const floating_point_type &p2)
@@ -153,3 +142,16 @@ Mod1Number operator -(const Mod1Number &p1, const floating_point_type &p2)
 {
     return p1 - Mod1Number(p2);
 }
+
+
+// Returns the distance between two points. Ignores the infinitesimal shift.
+//
+// It looks for c2 on the RIGHT of c1, so the return value may be bigger than 0.5.
+// E.g. DistaceBetween(UnitIntervalPoint(0.8, LEFT), UnitIntervalPoint(0.1)) is 0.3.
+// floating_point_type distanceBetween(const UnitIntervalPoint& p1, const UnitIntervalPoint& p2)
+//
+floating_point_type distanceBetween(const Mod1Number& p1, const Mod1Number& p2)
+{
+    return static_cast<floating_point_type>(p2 - p1);
+}
+

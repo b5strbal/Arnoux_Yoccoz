@@ -41,15 +41,15 @@ void SeparatrixSegment::lengthen()
 {
     assert(isCentered());
     if(m_depth > 1){
-        m_intervalIntersectionCount[Mod1Number::containingInterval(m_foliation.topDivPoints(), m_endpoint)]++;
+        m_intervalIntersectionCount[containingInterval(m_foliation.topDivPoints(), m_endpoint)]++;
         m_intervalNeighborhoods.insertPoint(m_endpoint, m_smallContainingInterval);
     }
     m_depth++;
     m_endpoint = (m_direction == Direction::UP) ? m_foliation.m_twistedIntervalExchange.applyTo(m_endpoint) :
                                             m_foliation.m_twistedIntervalExchange.applyInverseTo(m_endpoint);
     m_smallContainingInterval = m_foliation.smallContainingInterval(m_endpoint);
-    if(Mod1Number::distanceBetween(m_foliation.m_allDivPoints[m_smallContainingInterval], m_endpoint) < PRECISION ||
-       Mod1Number::distanceBetween(m_endpoint,
+    if(distanceBetween(m_foliation.m_allDivPoints[m_smallContainingInterval], m_endpoint) < PRECISION ||
+       distanceBetween(m_endpoint,
        m_foliation.m_allDivPoints[Modint(m_smallContainingInterval + 1, m_foliation.numSeparatrices())]) < PRECISION){
         m_reachedSaddleConnection = true;
        }

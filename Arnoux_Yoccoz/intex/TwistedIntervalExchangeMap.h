@@ -1,8 +1,6 @@
 #ifndef TWISTEDINTERVALEXCHANGEMAP_H
 #define TWISTEDINTERVALEXCHANGEMAP_H
 
-#include "Mod1Number.h"
-#include "Mod1NumberIntExchange.h"
 #include "IntervalExchangeBase.h"
 
 class TwistedIntervalExchangeMap : public IntervalExchangeBase{

@@ -15,15 +15,15 @@ DisjointIntervals::DisjointIntervals(const std::vector<Mod1Number>& unsortedPoin
     assert(unsortedPoints.size() % 2 == 0);
     std::sort(m_endpoints.begin(), m_endpoints.end());
     for (unsigned int i = 0; i < m_endpoints.size(); i += 2) {
-        m_totalLength += Mod1Number::distanceBetween(m_endpoints[i], m_endpoints[i + 1]);
+        m_totalLength += distanceBetween(m_endpoints[i], m_endpoints[i + 1]);
     }
     m_totalLength = wrapsAroundEnds ? 1 - m_totalLength : m_totalLength;
 }
 
 
 bool DisjointIntervals::contains(const Mod1Number& point) const {
-    assert(!point.isGeneralized());
-    int containingIntervalIndex = Mod1Number::containingInterval(m_endpoints, point);
+    assert(point.side() == Direction::CENTER);
+    int containingIntervalIndex = containingInterval(m_endpoints, point);
 
     if ((containingIntervalIndex % 2 == 0 && !m_wrapsAroundEnds) ||
             (containingIntervalIndex % 2 == 1 && m_wrapsAroundEnds)) {
@@ -38,11 +38,11 @@ bool DisjointIntervals::contains(const Mod1Number& point) const {
 
 std::ostream& operator<<(std::ostream& out, const DisjointIntervals& d){
     for (unsigned int i = d.m_wrapsAroundEnds ? 1 : 0; i < d.m_endpoints.size() - 2; i += 2) {
-        out << Mod1Number::printInterval(d.m_endpoints[i], d.m_endpoints[i + 1]) << " ";
+        out << interval_t({d.m_endpoints[i], d.m_endpoints[i + 1]}) << " ";
     }
     if (d.m_wrapsAroundEnds) {
-        out << Mod1Number::printInterval(d.m_endpoints.back(), d.m_endpoints.front());
+        out << interval_t({d.m_endpoints.back(), d.m_endpoints.front()});
     } else
-        out << Mod1Number::printInterval(d.m_endpoints[d.m_endpoints.size() - 2], d.m_endpoints.back());
+        out << interval_t({d.m_endpoints[d.m_endpoints.size() - 2], d.m_endpoints.back()});
     return out;
 }
