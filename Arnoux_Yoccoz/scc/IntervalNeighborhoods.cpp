@@ -4,7 +4,7 @@
 
 
 
-IntervalNeighborhoods::IntervalNeighborhoods(const Foliation & foliation) :
+balazs::IntervalNeighborhoods::IntervalNeighborhoods(const Foliation & foliation) :
     m_cuttingPoints(foliation.numSeparatrices()),
     m_foliation(foliation)
 {
@@ -13,7 +13,7 @@ IntervalNeighborhoods::IntervalNeighborhoods(const Foliation & foliation) :
 
 
 // \param  newCuttingPoint     It must not coincide with any of the division points.
-void IntervalNeighborhoods::insertPoint(const Mod1Number& newCuttingPoint, int indexOfInterval){
+void balazs::IntervalNeighborhoods::insertPoint(const Mod1Number& newCuttingPoint, int indexOfInterval){
     assert(newCuttingPoint.side() != Direction::CENTER);
     if (m_cuttingPoints[indexOfInterval].isEmpty) {
         m_cuttingPoints[indexOfInterval].first = m_cuttingPoints[indexOfInterval].second = newCuttingPoint;
@@ -43,7 +43,7 @@ void IntervalNeighborhoods::insertPoint(const Mod1Number& newCuttingPoint, int i
 // bad if shifted to the right, or vica versa, and this assymetry would be inconvenient when
 // iterating over the good separatrix segments.
 //
-bool IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1Number& point, unsigned int indexOfInterval,
+bool balazs::IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1Number& point, unsigned int indexOfInterval,
                                                        unsigned int indexOfOneSidedDivPoint) const{
     if (m_cuttingPoints[indexOfInterval].isEmpty) {
         return true;
@@ -63,7 +63,7 @@ bool IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1Number& point, 
 
 
 
-bool IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1Number& leftEndPoint, unsigned int leftIndexOfInterval,
+bool balazs::IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1Number& leftEndPoint, unsigned int leftIndexOfInterval,
                                                                   const Mod1Number& rightEndPoint, unsigned int rightIndexOfInterval,
                                                                   bool throughTopDivPointQ) const{
 
@@ -95,7 +95,7 @@ bool IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1Number& l
 
 
 
-std::ostream & operator<<(std::ostream &out, const IntervalNeighborhoods& inh)
+std::ostream & balazs::operator<<(std::ostream &out, const IntervalNeighborhoods& inh)
 {
     for (unsigned int i = 0; i < inh.m_cuttingPoints.size(); i++){
         if (inh.m_cuttingPoints[i].isEmpty) {
@@ -119,7 +119,7 @@ std::ostream & operator<<(std::ostream &out, const IntervalNeighborhoods& inh)
  *                      same set of division points. But this is never a problem because one only calls this
  *                      function for IntervalNeighborhoods constructed from the same Foliation. *
  */
-IntervalNeighborhoods IntervalNeighborhoods::intersect(const std::vector<const IntervalNeighborhoods*>& inbhVector)
+balazs::IntervalNeighborhoods balazs::IntervalNeighborhoods::intersect(const std::vector<const IntervalNeighborhoods*>& inbhVector)
 {
     assert(inbhVector.size() >= 2);
     //const Foliation& foliation = adpVector[0]->m_foliation;

@@ -7,6 +7,9 @@
 #include "SepSegmentDatabase.h"
 #include "SepSegmentCollections.h"
 
+namespace balazs{
+
+
 class TransverseCurveDatabase
 {
 public:
@@ -21,6 +24,7 @@ protected:
     std::array<bool, 2> whichTransverseCurvesExist(const SepSegmentCollection& segments);
 };
 
+}
 
 
 #endif // TRANSVERSECURVEDATABASE_H

@@ -4,6 +4,9 @@
 #include "TransverseCurveDatabase.h"
 #include "SepSegmentCollectionsFromRP2.h"
 
+namespace balazs{
+
+
 class TransverseCurveDatabaseFromRP2 : public TransverseCurveDatabase
 {
 public:
@@ -15,5 +18,7 @@ private:
     std::set<const TransverseCurve*> m_transverseCurvesFromRP2;
 };
 
+
+}
 
 #endif // TRANSVERSECURVEDATABASEFROMRP2_H

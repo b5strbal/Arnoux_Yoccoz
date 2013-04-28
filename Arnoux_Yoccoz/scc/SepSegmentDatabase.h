@@ -3,11 +3,14 @@
 
 #include <array>
 #include <list>
-#include "Foliation.h"
+#include "../fol/Foliation.h"
 #include "SeparatrixSegment.h"
 #include "DisjointIntervals.h"
-#include "FoliationFromRP2.h"
+#include "../fol/FoliationFromRP2.h"
 #include "SepSegmentCollections.h"
+
+namespace balazs{
+
 
 class SepSegmentDatabase
 {
@@ -45,5 +48,8 @@ public:
 private:
    // std::vector<unsigned int> m_separatrixPair;
 };
+
+}
+
 
 #endif // SEPSEGMENTDATABASE_H

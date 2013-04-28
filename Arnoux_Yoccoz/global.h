@@ -13,6 +13,7 @@
 #include <cassert>
 #include <cmath>
 
+namespace balazs{
 
 //! \brief   The floating point type used throughout the program for the calculations.
 typedef long double floating_point_type;
@@ -92,7 +93,8 @@ std::ostream& operator<<(std::ostream& Out, const std::vector<Type>& vec){
     return Out;
 }
 
-        
+
+}
 
 
 

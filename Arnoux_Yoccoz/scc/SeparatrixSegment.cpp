@@ -2,7 +2,7 @@
 #include "Modint.h"
 
 
-SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, int startingSingularity, Direction::UpOrDown direction) :
+balazs::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, int startingSingularity, Direction::UpOrDown direction) :
     m_foliation(foliation),
     m_startingSingularity(startingSingularity),
     m_depth(1),
@@ -21,7 +21,7 @@ SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, int startingSin
 
 
 
-std::ostream& operator<<(std::ostream& out, const SeparatrixSegment& s)
+std::ostream& balazs::operator<<(std::ostream& out, const SeparatrixSegment& s)
 {
     out << "SEPARATRIX SEGMENT\n";
     out << "(" << s.m_startingSingularity << ", ";
@@ -37,7 +37,7 @@ std::ostream& operator<<(std::ostream& out, const SeparatrixSegment& s)
 }
 
 
-void SeparatrixSegment::lengthen()
+void balazs::SeparatrixSegment::lengthen()
 {
     assert(isCentered());
     if(m_depth > 1){
@@ -55,13 +55,13 @@ void SeparatrixSegment::lengthen()
        }
 }
 
-bool SeparatrixSegment::isGood() const
+bool balazs::SeparatrixSegment::isGood() const
 {
     return m_intervalNeighborhoods.containsInTwoSidedInterval(m_endpoint, m_smallContainingInterval,
                                                               m_smallIntervalOfFirstIntersection);
 }
 
-void SeparatrixSegment::shiftTo(Direction::LeftOrRight side)
+void balazs::SeparatrixSegment::shiftTo(Direction::LeftOrRight side)
 {
     assert(isCentered());
     m_endpoint.shiftTo(side);

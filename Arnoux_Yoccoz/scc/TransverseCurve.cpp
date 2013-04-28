@@ -1,12 +1,8 @@
 #include "TransverseCurve.h"
 
-//----------------------------//
-// Foliation::TransverseCurve //
-//----------------------------//
 
 
-
-TransverseCurve::TransverseCurve(const Foliation& foliation, const SepSegmentCollection &segments, bool wrapsAroundEnds) :
+balazs::TransverseCurve::TransverseCurve(const Foliation& foliation, const SepSegmentCollection &segments, bool wrapsAroundEnds) :
     m_foliation(foliation)
 {
     std::vector<Mod1Number> endpoints;
@@ -23,7 +19,7 @@ TransverseCurve::TransverseCurve(const Foliation& foliation, const SepSegmentCol
 
 
 
-bool operator<(const TransverseCurve& c1, const TransverseCurve& c2) {
+bool balazs::operator<(const TransverseCurve& c1, const TransverseCurve& c2) {
     if (c1.length() > c2.length()) return true;
     if (c1.length() < c2.length()) return false;
     auto &points1 = c1.m_disjointIntervals.endpoints();
@@ -44,7 +40,7 @@ bool operator<(const TransverseCurve& c1, const TransverseCurve& c2) {
 
 
 
-std::ostream& operator<<(std::ostream& out, const TransverseCurve& tc)
+std::ostream& balazs::operator<<(std::ostream& out, const TransverseCurve& tc)
 {
     out << "Separatrix segments:\n";
     for (auto goodSegmentIndex : tc.m_goodSegmentIndices){
@@ -56,7 +52,7 @@ std::ostream& operator<<(std::ostream& out, const TransverseCurve& tc)
 }
 
 
-bool transverseCurve_compare::operator()(const TransverseCurve* cp1, const TransverseCurve* cp2)
+bool balazs::transverseCurve_compare::operator()(const TransverseCurve* cp1, const TransverseCurve* cp2)
 {
     return *cp1 < *cp2;
 }

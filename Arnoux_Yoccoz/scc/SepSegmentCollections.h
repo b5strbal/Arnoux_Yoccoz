@@ -1,14 +1,18 @@
 #ifndef SEPSEGMENTCOLLECTIONSGENERAL_H
 #define SEPSEGMENTCOLLECTIONSGENERAL_H
 
-#include "Choose.h"
+#include "../math/Choose.h"
 #include "SepSegmentDatabase.h"
-//#include "SepSegmentCollection.h"
+
+class SepSegmentDatabase;
+
+namespace balazs{
+
 
 typedef std::vector<std::list<SeparatrixSegment>::const_iterator> SepSegmentCollection;
 
 
-class SepSegmentDatabase;
+
 
 
 class SepSegmentCollections
@@ -71,6 +75,7 @@ private:
 
 
 
+}
 
 
 

@@ -12,11 +12,11 @@
 #include <iostream>
 #include <vector>
 //#include "Eigen/Eigenvalues"
-#include "global.h"
+#include "../global.h"
 #include <limits>
 #include "Matrix.h"
 
-
+namespace balazs{
 
 
 class PerronFrobeniusMatrix{
@@ -43,6 +43,7 @@ private:
 
 floating_point_type arnouxYoccozStretchFactor(int genus);
 
+}
 
 
 #endif /* defined(__Arnoux_Yoccoz__AlmostPFMatrix__) */

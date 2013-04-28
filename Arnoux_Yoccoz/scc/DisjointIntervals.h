@@ -2,7 +2,10 @@
 #define DISJOINTINTERVALS_H
 
 #include <vector>
-#include "Mod1Number.h"
+#include "../intex/Mod1NumberIntExchange.h"
+
+namespace balazs{
+
 
 /*!
  * \brief The DisjointIntervals class stores a union or disjoint subintervals of the unit interval.
@@ -44,4 +47,8 @@ private:
     bool m_wrapsAroundEnds;                     // Whether 0 is in one of the intervals.
     floating_point_type m_totalLength;          // The total length of the intervals.
 };
+
+
+}
+
 #endif // DISJOINTINTERVALS_H

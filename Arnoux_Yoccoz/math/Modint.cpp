@@ -1,16 +1,43 @@
 #include "Modint.h"
 #include <cassert>
 
-int Modint::integerMod(int a, int b){
+int balazs::integerMod(int a, int b){
     int result = a % b;
     return result >= 0 ? result : result + b;
 }
 
+balazs::Modint& balazs::Modint::operator+=(int a) {
+    m_value = integerMod(m_value + a, m_modulus);
+    return *this;
+}
 
 
-Modint::Modint(unsigned int value, unsigned int modulus) :
+balazs::Modint::Modint(unsigned int value, unsigned int modulus) :
     m_modulus(modulus)
 {
     assert(modulus > 0);
     m_value = integerMod(value, modulus);
+}
+
+
+
+balazs::Modint& balazs::operator-=(Modint& m, int a) {
+    m += -a; return m;
+}
+
+balazs::Modint& balazs::operator++(Modint& m) {
+    m += 1; return m;
+}
+
+balazs::Modint& balazs::operator--(Modint& m) {
+    m -= 1; return m;
+}
+
+balazs::Modint balazs::operator+(const Modint& modint, int a) {
+    Modint sum = modint; sum += a;
+    return sum;
+}
+
+balazs::Modint balazs::operator-(const Modint& modint, int a) {
+    return modint + (-a);
 }

@@ -11,8 +11,10 @@
 
 #include <iostream>
 #include <vector>
-#include "global.h"
+#include "../global.h"
 #include <deque>
+
+namespace balazs{
 
 
 static const floating_point_type ALLOWED_ERROR = 0.0000000000000001;
@@ -116,6 +118,9 @@ private:
 
 
 #include "Matrix.hpp"
+
+}
+
 
 #endif /* defined(__Arnoux_Yoccoz__Matrix__) */
 

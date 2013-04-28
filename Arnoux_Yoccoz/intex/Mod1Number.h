@@ -12,8 +12,9 @@
 
 #include <iostream>
 #include <cassert>
-#include "global.h"
+#include "../global.h"
 
+namespace balazs{
 
 
 /**
@@ -47,7 +48,7 @@ public:
     friend bool operator<(const Mod1Number& p1, const Mod1Number& p2);
     friend std::ostream& operator<<(std::ostream& out, const Mod1Number& p);
     operator floating_point_type() const { return m_position; }
-protected:
+private:
     floating_point_type m_position; // The position of the point.
     int m_epsilon;                  // The infinitesimal shift.
 };
@@ -82,6 +83,7 @@ unsigned int containingInterval(const std::vector<type1>& orderedList, const typ
     return interval == -1 ? orderedList.size() - 1 : interval;
 }
 
+}
 
 
         

@@ -1,13 +1,9 @@
 #include "DisjointIntervals.h"
 
 
-//------------------------------//
-// Foliation::DisjointIntervals //
-//------------------------------//
 
 
-
-DisjointIntervals::DisjointIntervals(const std::vector<Mod1Number>& unsortedPoints, bool wrapsAroundEnds) :
+balazs::DisjointIntervals::DisjointIntervals(const std::vector<Mod1Number>& unsortedPoints, bool wrapsAroundEnds) :
     m_endpoints(unsortedPoints),
     m_wrapsAroundEnds(wrapsAroundEnds),
     m_totalLength(0)
@@ -21,7 +17,7 @@ DisjointIntervals::DisjointIntervals(const std::vector<Mod1Number>& unsortedPoin
 }
 
 
-bool DisjointIntervals::contains(const Mod1Number& point) const {
+bool balazs::DisjointIntervals::contains(const Mod1Number& point) const {
     assert(point.side() == Direction::CENTER);
     int containingIntervalIndex = containingInterval(m_endpoints, point);
 
@@ -36,7 +32,7 @@ bool DisjointIntervals::contains(const Mod1Number& point) const {
 
 
 
-std::ostream& operator<<(std::ostream& out, const DisjointIntervals& d){
+std::ostream& balazs::operator<<(std::ostream& out, const DisjointIntervals& d){
     for (unsigned int i = d.m_wrapsAroundEnds ? 1 : 0; i < d.m_endpoints.size() - 2; i += 2) {
         out << interval_t({d.m_endpoints[i], d.m_endpoints[i + 1]}) << " ";
     }

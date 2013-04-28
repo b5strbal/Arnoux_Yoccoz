@@ -3,6 +3,9 @@
 
 #include <vector>
 
+namespace balazs{
+
+
 /*!
  * \brief The Permutation class represents a permutation on integers 0, 1, ..., n-1.
  * \author Balazs Strenner, strenner@math.wisc.edu
@@ -22,8 +25,6 @@ class Permutation{
 public:
     Permutation(); // Constructs the permutation on a 1-element set.
     Permutation(const std::vector<unsigned int> &functionValues);
-    static Permutation rotatingPermutation(int size, int rotationAmount);
-    static Permutation reversingPermutation(int size);
     Permutation inverse() const;
     unsigned int size() const;
     unsigned int operator[](unsigned int index) const { return m_functionValues[index]; }
@@ -42,10 +43,14 @@ public:
         return newVector;
     }
 
-
 private:
     std::vector<unsigned int> m_functionValues;
 };
+
+Permutation rotatingPermutation(int size, int rotationAmount);
+Permutation reversingPermutation(int size);
+
+}
 
 
 #endif // PERMUTATION_H

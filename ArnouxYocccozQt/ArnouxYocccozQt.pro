@@ -23,8 +23,6 @@ SOURCES += main.cpp\
     ../Arnoux_Yoccoz/intex/TwistedIntervalExchangeMap.cpp \
     ../Arnoux_Yoccoz/intex/Mod1NumberIntExchange.cpp \
     ../Arnoux_Yoccoz/intex/Mod1Number.cpp \
-    ../Arnoux_Yoccoz/intex/IntervalExchangeFoliationDisk.cpp \
-    ../Arnoux_Yoccoz/intex/IntervalExchangeBase.cpp \
     ../Arnoux_Yoccoz/math/WeighedTree.cpp \
     ../Arnoux_Yoccoz/math/PerronFrobenius.cpp \
     ../Arnoux_Yoccoz/math/Permutation.cpp \
@@ -37,10 +35,12 @@ SOURCES += main.cpp\
     ../Arnoux_Yoccoz/scc/SepSegmentDatabase.cpp \
     ../Arnoux_Yoccoz/scc/SepSegmentCollectionsFromRP2.cpp \
     ../Arnoux_Yoccoz/scc/SepSegmentCollections.cpp \
-    ../Arnoux_Yoccoz/scc/SepSegmentCollection.cpp \
     ../Arnoux_Yoccoz/scc/SeparatrixSegment.cpp \
     ../Arnoux_Yoccoz/scc/IntervalNeighborhoods.cpp \
-    ../Arnoux_Yoccoz/scc/DisjointIntervals.cpp
+    ../Arnoux_Yoccoz/scc/DisjointIntervals.cpp \
+    ../Arnoux_Yoccoz/intex/LengthsAndTwist.cpp \
+    ../Arnoux_Yoccoz/global.cpp \
+    ../Arnoux_Yoccoz/intex/IntervalPairing.cpp
 
 HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/fol/FoliationSphere.h \
@@ -52,8 +52,6 @@ HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/intex/TwistedIntervalExchangeMap.h \
     ../Arnoux_Yoccoz/intex/Mod1NumberIntExchange.h \
     ../Arnoux_Yoccoz/intex/Mod1Number.h \
-    ../Arnoux_Yoccoz/intex/IntervalExchangeFoliationDisk.h \
-    ../Arnoux_Yoccoz/intex/IntervalExchangeBase.h \
     ../Arnoux_Yoccoz/math/WeighedTree.h \
     ../Arnoux_Yoccoz/math/PerronFrobenius.h \
     ../Arnoux_Yoccoz/math/Permutation.h \
@@ -67,10 +65,12 @@ HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/scc/SepSegmentDatabase.h \
     ../Arnoux_Yoccoz/scc/SepSegmentCollectionsFromRP2.h \
     ../Arnoux_Yoccoz/scc/SepSegmentCollections.h \
-    ../Arnoux_Yoccoz/scc/SepSegmentCollection.h \
     ../Arnoux_Yoccoz/scc/SeparatrixSegment.h \
     ../Arnoux_Yoccoz/scc/IntervalNeighborhoods.h \
-    ../Arnoux_Yoccoz/scc/DisjointIntervals.h
+    ../Arnoux_Yoccoz/scc/DisjointIntervals.h \
+    ../Arnoux_Yoccoz/intex/LengthsAndTwist.h \
+    ../Arnoux_Yoccoz/global.h \
+    ../Arnoux_Yoccoz/intex/IntervalPairing.h
 
 FORMS    += mainwindow.ui
 

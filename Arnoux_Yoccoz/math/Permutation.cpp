@@ -4,11 +4,11 @@
 #include <sstream>
 
 
-Permutation::Permutation() : m_functionValues(1, 0)
+balazs::Permutation::Permutation() : m_functionValues(1, 0)
 {
 }
 
-Permutation::Permutation(const std::vector<unsigned int> &functionValues) :
+balazs::Permutation::Permutation(const std::vector<unsigned int> &functionValues) :
     m_functionValues(functionValues)
 {
     if (size() == 0) throw std::runtime_error("Empty permutation.");
@@ -28,7 +28,7 @@ Permutation::Permutation(const std::vector<unsigned int> &functionValues) :
 
 
 
-Permutation operator*(const Permutation& p1, const Permutation& p2){
+balazs::Permutation balazs::operator*(const Permutation& p1, const Permutation& p2){
     if (p1.size() != p2.size()) {
         throw std::runtime_error("Two permutations must act on the same set in order to be composable.");
     }
@@ -43,7 +43,7 @@ Permutation operator*(const Permutation& p1, const Permutation& p2){
 
 
 
-Permutation Permutation::inverse() const{
+balazs::Permutation balazs::Permutation::inverse() const{
     std::vector<unsigned int> newFunctionValues(size());
     for (unsigned int i = 0; i < size(); i++) {
         newFunctionValues[m_functionValues[i]] = i;
@@ -53,7 +53,7 @@ Permutation Permutation::inverse() const{
 
 
 
-Permutation rotatingPermutation(int size, int rotationAmount){
+balazs::Permutation balazs::rotatingPermutation(int size, int rotationAmount){
     if (size <= 0) {
         throw std::runtime_error("Empty permutation.");
     }
@@ -69,7 +69,7 @@ Permutation rotatingPermutation(int size, int rotationAmount){
 }
 
 
-Permutation reversingPermutation(int size){
+balazs::Permutation balazs::reversingPermutation(int size){
     if (size <= 0) {
         throw std::runtime_error("Empty permutation.");
     }
@@ -82,13 +82,13 @@ Permutation reversingPermutation(int size){
 
 
 
-unsigned int Permutation::size() const
+unsigned int balazs::Permutation::size() const
 {
     return m_functionValues.size();
 }
 
 
-std::ostream& operator <<(std::ostream &out, const Permutation &perm)
+std::ostream& balazs::operator <<(std::ostream &out, const Permutation &perm)
 {
     for (unsigned int i = 0; i < perm.size(); i++)
         out << perm.m_functionValues[i] << " ";

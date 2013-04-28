@@ -1,49 +1,67 @@
 #include "Mod1NumberIntExchange.h"
-#include "IntervalExchangeBase.h"
-
-Mod1NumberIntExchange::Mod1NumberIntExchange(const IntervalExchangeBase* intExchange) :
-    Mod1Number(),
-    m_coefficients(intExchange->size(), 0),
-    m_twistCoeff(0),
-    m_intExchange(intExchange)
-{
-}
 
 
 
-Mod1NumberIntExchange::Mod1NumberIntExchange(const IntervalExchangeBase* intExchange,
+
+
+balazs::Mod1NumberIntExchange::Mod1NumberIntExchange(const LengthsAndTwist* lengthsAndTwist,
                                              const Mod1Number &mod1number,
                                              const std::vector<int> &coefficients,
                                              int twistCoeff) :
     Mod1Number(mod1number),
     m_coefficients(coefficients),
     m_twistCoeff(twistCoeff),
-    m_intExchange(intExchange)
+    m_lengthsAndTwist(lengthsAndTwist)
 {
+    assert(lengthsAndTwist != nullptr);
 }
 
-Mod1NumberIntExchange::Mod1NumberIntExchange(const IntervalExchangeBase* intExchange, const Mod1Number &intervalLength,
-                                             int intervalIndex) :
-    Mod1Number(intervalLength),
-    m_coefficients(intExchange->size(), 0),
+
+balazs::Mod1NumberIntExchange::Mod1NumberIntExchange(const LengthsAndTwist* lengthsAndTwist) :
+    Mod1Number(0),
+    m_coefficients(lengthsAndTwist->lengths().size(), 0),
     m_twistCoeff(0),
-    m_intExchange(intExchange)
+    m_lengthsAndTwist(lengthsAndTwist)
 {
-    m_coefficients[intervalIndex] = 1;
-}
-
-Mod1NumberIntExchange::Mod1NumberIntExchange(const IntervalExchangeBase *intExchange, floating_point_type twist) :
-    Mod1Number(twist),
-    m_coefficients(intExchange->size(), 0),
-    m_twistCoeff(1),
-    m_intExchange(intExchange)
-{
+    assert(lengthsAndTwist != nullptr);
 }
 
 
-
-Mod1NumberIntExchange& Mod1NumberIntExchange::operator+=(const Mod1NumberIntExchange &rhs)
+balazs::Mod1NumberIntExchange balazs::Mod1NumberIntExchange::constructZero(const LengthsAndTwist *lengthsAndTwist)
 {
+    return Mod1NumberIntExchange(lengthsAndTwist);
+}
+
+balazs::Mod1NumberIntExchange balazs::Mod1NumberIntExchange::constructTwist(const LengthsAndTwist *lengthsAndTwist)
+{
+    Mod1NumberIntExchange result(lengthsAndTwist);
+    result.Mod1Number::operator +=(lengthsAndTwist->twist());
+    result.m_twistCoeff = 1;
+    return result;
+}
+
+balazs::Mod1NumberIntExchange balazs::Mod1NumberIntExchange::constructLength(const LengthsAndTwist *lengthsAndTwist,
+                                                             unsigned int lengthIndex)
+{
+    Mod1NumberIntExchange result(lengthsAndTwist);
+    result.Mod1Number::operator +=(lengthsAndTwist->lengths()[lengthIndex]);
+    result.m_coefficients[lengthIndex] = 1;
+    return result;
+}
+
+
+
+
+
+
+
+
+
+
+balazs::Mod1NumberIntExchange& balazs::Mod1NumberIntExchange::operator+=(const Mod1NumberIntExchange &rhs)
+{
+    assert(m_lengthsAndTwist != nullptr);
+    assert(m_lengthsAndTwist == rhs.m_lengthsAndTwist);
     Mod1Number::operator+=(rhs);
     for(unsigned int i = 0; i < m_coefficients.size(); i++){
         m_coefficients[i] += rhs.m_coefficients[i];
@@ -58,25 +76,26 @@ Mod1NumberIntExchange& Mod1NumberIntExchange::operator+=(const Mod1NumberIntExch
 }
 
 
-Mod1NumberIntExchange Mod1NumberIntExchange::operator-() const
+balazs::Mod1NumberIntExchange balazs::Mod1NumberIntExchange::operator-() const
 {
+    assert(m_lengthsAndTwist != nullptr);
     std::vector<int> newCoefficients(m_coefficients.size());
     for(unsigned int i = 0; i < m_coefficients.size(); i++){
         newCoefficients[i] = -m_coefficients[i];
     }
-    if(m_position > 0){
+    if(static_cast<floating_point_type>(*this) > 0){
         for(unsigned int i = 0; i < m_coefficients.size(); i++){
             newCoefficients[i]++;
         }
     }
-    return Mod1NumberIntExchange(m_intExchange, Mod1Number::operator-(), newCoefficients, -m_twistCoeff);
+    return Mod1NumberIntExchange(m_lengthsAndTwist, this->Mod1Number::operator-(), newCoefficients, -m_twistCoeff);
 }
 
 
 
 
 
-Mod1NumberIntExchange operator +(const Mod1NumberIntExchange & x, const Mod1NumberIntExchange & y)
+balazs::Mod1NumberIntExchange balazs::operator +(const Mod1NumberIntExchange & x, const Mod1NumberIntExchange & y)
 {
     Mod1NumberIntExchange sum = x;
     sum += y;
@@ -84,10 +103,11 @@ Mod1NumberIntExchange operator +(const Mod1NumberIntExchange & x, const Mod1Numb
 }
 
 
-Mod1NumberIntExchange operator -(const Mod1NumberIntExchange & x, const Mod1NumberIntExchange & y)
+balazs::Mod1NumberIntExchange balazs::operator -(const Mod1NumberIntExchange & x, const Mod1NumberIntExchange & y)
 {
     return x + (-y);
 }
+
 
 
 

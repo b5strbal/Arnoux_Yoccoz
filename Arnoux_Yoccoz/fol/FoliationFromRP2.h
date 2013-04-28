@@ -5,6 +5,7 @@
 #include "FoliationRP2.h"
 #include <vector>
 
+namespace balazs{
 
 
 class FoliationFromRP2 : public FoliationFromSphere
@@ -18,6 +19,6 @@ private:
 };
 
 
-
+}
 
 #endif // FOLIATIONFROMRP2_H

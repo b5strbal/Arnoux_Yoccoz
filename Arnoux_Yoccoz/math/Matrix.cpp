@@ -10,7 +10,7 @@
 
 
 
-void normalize(Matrix<floating_point_type>& matrix){
+void balazs::normalize(Matrix<floating_point_type>& matrix){
     floating_point_type maxValue = matrix.maxEntry();
     assert(maxValue > 0);
     for (int i = 0; i < matrix.height(); i++) {

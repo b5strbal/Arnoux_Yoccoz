@@ -1,13 +1,16 @@
 #ifndef TRANSVERSECURVE_H
 #define TRANSVERSECURVE_H
 
-#include "Foliation.h"
+#include "../fol/Foliation.h"
 #include "DisjointIntervals.h"
 #include "SeparatrixSegment.h"
 #include "SepSegmentCollections.h"
 #include <list>
 
 class SeparatrixSegment;
+
+namespace balazs{
+
 
 class TransverseCurve{
 public:
@@ -29,6 +32,8 @@ private:
 struct transverseCurve_compare{
     bool operator() (const TransverseCurve* cp1, const TransverseCurve* cp2);
 };
+
+}
 
 
 #endif // TRANSVERSECURVE_H

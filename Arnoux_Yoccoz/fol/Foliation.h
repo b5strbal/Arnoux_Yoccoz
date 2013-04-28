@@ -10,25 +10,23 @@
 #define __Arnoux_Yoccoz__Foliation__
 
 #include <vector>
-#include "TwistedIntervalExchangeMap.h"
-#include "PerronFrobenius.h"
+#include "../intex/TwistedIntervalExchangeMap.h"
+#include "../math/PerronFrobenius.h"
 #include "FoliationRP2.h"
 #include "FoliationSphere.h"
 
 
+namespace balazs{
 
-
-
-//-----------//
-// Foliation //
-//-----------//
 
 
 class Foliation{
     friend class SeparatrixSegment;
     friend class IntervalNeighborhoods;
 public:
-    Foliation(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist);
+    Foliation(const std::vector<floating_point_type>& lengths,
+              const Permutation& permutation,
+              floating_point_type twist);
     static Foliation fromFoliationRP2(const FoliationRP2 &foliationRP2);
     static Foliation fromFoliationSphere(const FoliationSphere&foliationSphere);
     Foliation rotateBy(int rotationAmount) const;
@@ -77,7 +75,7 @@ private:
 Foliation arnouxYoccozFoliation(int genus);
 
 
-
+}
 
 
 

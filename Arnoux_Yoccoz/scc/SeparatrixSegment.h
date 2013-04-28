@@ -1,21 +1,17 @@
 #ifndef SEPARATRIXSEGMENT_H
 #define SEPARATRIXSEGMENT_H
 
-#include "Foliation.h"
+#include "../fol/Foliation.h"
 #include "IntervalNeighborhoods.h"
 
 class Foliation;
 class IntervalNeighborhoods;
 
+namespace balazs{
+
+
 class SeparatrixSegment{
-//    friend class Foliation;
-//    friend class TransverseCurve;
     friend class TransverseCurveDatabase;
-//    friend class SepSegmentDatabase;
-//    friend class SepSegmentDatabaseFromRP2;
-private:
-
-
 public:
     SeparatrixSegment(const Foliation& foliation, int startingSingularity, Direction::UpOrDown direction);
     friend std::ostream& operator<<(std::ostream& out, const SeparatrixSegment& s);
@@ -49,5 +45,6 @@ private:
 
 
 
+}
 
 #endif // SEPARATRIXSEGMENT_H

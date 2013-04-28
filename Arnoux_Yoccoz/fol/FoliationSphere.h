@@ -4,6 +4,9 @@
 #include "FoliationDisk.h"
 #include "FoliationRP2.h"
 
+namespace balazs{
+
+
 // Both foliations are seen from above.
 // The top foliation is fixed in the standard position, and the bottom foliation is twisted.
 class FoliationSphere{
@@ -22,5 +25,8 @@ private:
     floating_point_type m_twist;
 
 };
+
+}
+
 
 #endif // FOLIATIONSPHERE_H

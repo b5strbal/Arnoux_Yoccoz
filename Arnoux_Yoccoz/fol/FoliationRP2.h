@@ -46,7 +46,7 @@ cout << "Each vertex of the tree corresponds to a singularity of the foliation, 
 #include "FoliationDisk.h"
 
 
-
+namespace balazs{
 
 
 
@@ -63,13 +63,12 @@ public:
 
     friend std::ostream& operator<<(std::ostream& out, const FoliationRP2& f);
 
-    
 private:
     FoliationDisk m_foliationDisk;
 };
 
 
-
+}
 
 
 

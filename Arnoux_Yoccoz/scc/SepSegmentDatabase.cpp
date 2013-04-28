@@ -1,6 +1,6 @@
 #include "SepSegmentDatabase.h"
 
-SepSegmentDatabase::SepSegmentDatabase(const Foliation& foliation) :
+balazs::SepSegmentDatabase::SepSegmentDatabase(const Foliation& foliation) :
     m_foliation(foliation)
 {
     for(Direction::UpOrDown updown = Direction::UP; updown <= Direction::DOWN; updown++){
@@ -18,7 +18,7 @@ SepSegmentDatabase::SepSegmentDatabase(const Foliation& foliation) :
 }
 
 
-void SepSegmentDatabase::printGoodSepSegments(int maxdepth, bool verbose){
+void balazs::SepSegmentDatabase::printGoodSepSegments(int maxdepth, bool verbose){
     if (maxdepth > 0) {
         generateSepSegments(maxdepth);
     } else
@@ -41,7 +41,7 @@ void SepSegmentDatabase::printGoodSepSegments(int maxdepth, bool verbose){
     }
 }
 
-void SepSegmentDatabase::addToGoodSegmentsIfGood(const SeparatrixSegment &s)
+void balazs::SepSegmentDatabase::addToGoodSegmentsIfGood(const SeparatrixSegment &s)
 {
     if (!s.reachedSaddleConnection() && s.isGood()) {
         for(Direction::LeftOrRight leftright = Direction::LEFT; leftright <= Direction::RIGHT; leftright++){
@@ -59,14 +59,14 @@ void SepSegmentDatabase::addToGoodSegmentsIfGood(const SeparatrixSegment &s)
 
 
 
-bool SepSegmentDatabase::reachedSaddleConnection(Direction::UpOrDown direction, int index) const
+bool balazs::SepSegmentDatabase::reachedSaddleConnection(Direction::UpOrDown direction, int index) const
 {
     return m_currentSepSegments[direction][index].reachedSaddleConnection();
 }
 
 
 
-void SepSegmentDatabase::findNextSepSegment(Direction::UpOrDown direction, int index){
+void balazs::SepSegmentDatabase::findNextSepSegment(Direction::UpOrDown direction, int index){
     assert(!reachedSaddleConnection(direction, index));
 
     SeparatrixSegment& segment = m_currentSepSegments[direction][index];
@@ -79,7 +79,7 @@ void SepSegmentDatabase::findNextSepSegment(Direction::UpOrDown direction, int i
 
 
 
-void SepSegmentDatabase::generateSepSegments(int maxdepth){
+void balazs::SepSegmentDatabase::generateSepSegments(int maxdepth){
     for (Direction::UpOrDown direction = Direction::UP; direction <= Direction::DOWN; direction++) {
         for (unsigned int index = 0; index < m_foliation.numIntervals(); index++) {
             while (!reachedSaddleConnection(direction, index) &&
@@ -97,7 +97,7 @@ void SepSegmentDatabase::generateSepSegments(int maxdepth){
 // However, in the appliations, we use a special collection of intervals (a subset of an IntervalNeighborhoods),
 // where the first intersection is always a good separatrix segment. More precisely, both the left and right
 // shifts of the first intersection are good, so it is enough to check only the right ones for instance.
-const SeparatrixSegment& SepSegmentDatabase::getFirstIntersection(Direction::UpOrDown direction,
+const balazs::SeparatrixSegment& balazs::SepSegmentDatabase::getFirstIntersection(Direction::UpOrDown direction,
                                                                     int index,
                                                                     const DisjointIntervals& intervals)
 {

@@ -65,7 +65,10 @@
 #ifndef INTERVALNEIGHBORHOODS_H
 #define INTERVALNEIGHBORHOODS_H
 
-#include "Foliation.h"
+#include "../fol/Foliation.h"
+
+namespace balazs{
+
 
 class Foliation;
 
@@ -152,6 +155,7 @@ private:
 
 
 
+}
 
 
 

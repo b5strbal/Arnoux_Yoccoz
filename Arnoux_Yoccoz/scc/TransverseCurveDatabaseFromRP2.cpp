@@ -1,6 +1,6 @@
 #include "TransverseCurveDatabaseFromRP2.h"
 
-TransverseCurveDatabaseFromRP2::TransverseCurveDatabaseFromRP2(SepSegmentDatabaseFromRP2& sepSegmentDatabaseFromRP2) :
+balazs::TransverseCurveDatabaseFromRP2::TransverseCurveDatabaseFromRP2(SepSegmentDatabaseFromRP2& sepSegmentDatabaseFromRP2) :
     TransverseCurveDatabase(sepSegmentDatabaseFromRP2)
 {
 

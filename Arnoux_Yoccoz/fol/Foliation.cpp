@@ -7,12 +7,12 @@
  */
 
 #include "Foliation.h"
-#include "Modint.h"
+#include "../math/Modint.h"
 
 
 
 
-Foliation::Foliation(const TwistedIntervalExchangeMap& twistedintervalExchange) :
+balazs::Foliation::Foliation(const TwistedIntervalExchangeMap& twistedintervalExchange) :
     m_twistedIntervalExchange(twistedintervalExchange)
 {
     m_allDivPoints.reserve(numSeparatrices());
@@ -30,17 +30,17 @@ Foliation::Foliation(const TwistedIntervalExchangeMap& twistedintervalExchange) 
 
 
 
-Foliation::Foliation(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist) :
+balazs::Foliation::Foliation(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist) :
     Foliation(TwistedIntervalExchangeMap(lengths, permutation, twist))
 {
 }
 
-Foliation Foliation::fromFoliationRP2(const FoliationRP2 &foliationRP2)
+balazs::Foliation balazs::Foliation::fromFoliationRP2(const FoliationRP2 &foliationRP2)
 {
     return fromFoliationSphere(FoliationSphere(foliationRP2));
 }
 
-Foliation Foliation::fromFoliationSphere(const FoliationSphere &foliationSphere)
+balazs::Foliation balazs::Foliation::fromFoliationSphere(const FoliationSphere &foliationSphere)
 {
 
     std::vector<ConnectedPoints> allConnectedPoints;
@@ -86,7 +86,7 @@ Foliation Foliation::fromFoliationSphere(const FoliationSphere &foliationSphere)
 
 
 
-void Foliation::generateTopConnectingPairs(const FoliationSphere& foliationSphere,
+void balazs::Foliation::generateTopConnectingPairs(const FoliationSphere& foliationSphere,
                                                          std::vector<ConnectedPoints>& allConnectedPoints)
 {
     int numSeparatrices = foliationSphere.topFoliation().intervalPairing().size();
@@ -111,7 +111,7 @@ void Foliation::generateTopConnectingPairs(const FoliationSphere& foliationSpher
 
 
 
-void Foliation::generateBottomConnectingPairs(const FoliationSphere& foliationSphere,
+void balazs::Foliation::generateBottomConnectingPairs(const FoliationSphere& foliationSphere,
                                                             std::vector<ConnectedPoints>& allConnectedPoints)
 {
     int numSeparatrices = foliationSphere.bottomFoliation().intervalPairing().size();
@@ -135,35 +135,35 @@ void Foliation::generateBottomConnectingPairs(const FoliationSphere& foliationSp
 
 
 
-bool Foliation::isTopDivPoint(int divPointIndex) const{
+bool balazs::Foliation::isTopDivPoint(int divPointIndex) const{
     return m_allDivPoints[divPointIndex].twistCoeff() == 0;
 }
 
-const Mod1NumberIntExchange &Foliation::firstIntersection(int singularityIndex, Direction::UpOrDown direction) const
+const balazs::Mod1NumberIntExchange &balazs::Foliation::firstIntersection(int singularityIndex, Direction::UpOrDown direction) const
 {
     if (direction == Direction::UP) {
-        return bottomDivPoints()[m_twistedIntervalExchange.m_permutationAfterTwist[singularityIndex]];
+        return bottomDivPoints()[m_twistedIntervalExchange.permutationWithMinimalTwist()[singularityIndex]];
     } else
         return topDivPoints()[singularityIndex];
 }
 
-unsigned int Foliation::smallContainingInterval(const Mod1Number &point) const
+unsigned int balazs::Foliation::smallContainingInterval(const Mod1Number &point) const
 {
     return containingInterval(m_allDivPoints, point);
 }
 
 
-Foliation Foliation::rotateBy(int rotationAmount) const{
+balazs::Foliation balazs::Foliation::rotateBy(int rotationAmount) const{
     return Foliation(m_twistedIntervalExchange.rotateBy(rotationAmount));
 }
 
 
-Foliation Foliation::reflect() const{
+balazs::Foliation balazs::Foliation::reflect() const{
     return Foliation(m_twistedIntervalExchange.reverse());
 }
 
 
-Foliation Foliation::flipOver() const{
+balazs::Foliation balazs::Foliation::flipOver() const{
     return Foliation(m_twistedIntervalExchange.invert().reverse());
 }
 
@@ -172,7 +172,7 @@ Foliation Foliation::flipOver() const{
 
 
 
-std::ostream& operator<<(std::ostream& out, const Foliation& f){
+std::ostream& balazs::operator<<(std::ostream& out, const Foliation& f){
     out << f.m_twistedIntervalExchange;
     return out;
 }
@@ -182,7 +182,7 @@ std::ostream& operator<<(std::ostream& out, const Foliation& f){
 
 
 
-Foliation arnouxYoccozFoliation(int genus){
+balazs::Foliation balazs::arnouxYoccozFoliation(int genus){
     std::vector<unsigned int> permutationInput(2 * genus);
     std::vector<floating_point_type> lengths(2 * genus);
     floating_point_type shrinkingNumber = 1/arnouxYoccozStretchFactor(genus);

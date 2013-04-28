@@ -1,8 +1,11 @@
 #ifndef FOLIATIONDISK_H
 #define FOLIATIONDISK_H
 
-#include "WeighedTree.h"
-#include "IntervalExchangeFoliationDisk.h"
+#include "../math/WeighedTree.h"
+#include "../intex/IntervalPairing.h"
+
+namespace balazs{
+
 
 /*!
  * \brief The FoliationDisk class stores a measured foliation on a disk that is transverse to the boundary.
@@ -38,14 +41,16 @@ class FoliationDisk
 public:
     FoliationDisk(const WeighedTree& wt);
     const WeighedTree& weighedTree() const { return m_weighedTree; }
-    const IntervalExchangeFoliationDisk& intervalPairing() const { return m_intervalPairing; }
+    const IntervalPairing& intervalPairing() const { return m_intervalPairing; }
     int numSeparatrices() const { return m_intervalPairing.size(); }
    // const std::vector<Mod1NumberIntExchange>& divPoints() const { return m_intervalPairing.divPoints(); }
     friend std::ostream& operator<<(std::ostream& out, const FoliationDisk& d);
 
 private:
-    IntervalExchangeFoliationDisk m_intervalPairing; // the interval exchange representation
+    IntervalPairing m_intervalPairing; // the interval exchange representation
     WeighedTree m_weighedTree;                       // the WeighedTree representation
 };
+
+}
 
 #endif // FOLIATIONDISK_H

@@ -27,7 +27,7 @@
 
 
 
-PerronFrobeniusMatrix::PerronFrobeniusMatrix(const SquareMatrix<long>& intSquareMatrix) :
+balazs::PerronFrobeniusMatrix::PerronFrobeniusMatrix(const SquareMatrix<long>& intSquareMatrix) :
     m_squareMatrix(intSquareMatrix),
     m_perronFrobEigenvector(0),  // since calculation is costly, we only calculate them when the client asks
     m_perronFrobEigenvalue(0)  // initializing the Perron-Frobenius eigenvector and eigenvalue by invalid data
@@ -48,17 +48,7 @@ PerronFrobeniusMatrix::PerronFrobeniusMatrix(const SquareMatrix<long>& intSquare
 
 
 
-
-
-
-
-
-
-
-
-
-
-SquareMatrix<long> PerronFrobeniusMatrix::powerUp(){
+balazs::SquareMatrix<long> balazs::PerronFrobeniusMatrix::powerUp(){
     SquareMatrix<long> bigMatrix(m_squareMatrix);
     //int count = 0;
     while (bigMatrix.maxEntry()< sqrt(LONG_MAX/size())) {
@@ -74,7 +64,7 @@ SquareMatrix<long> PerronFrobeniusMatrix::powerUp(){
 
 
 
-std::vector<floating_point_type> PerronFrobeniusMatrix::perronFrobEigenvector() 
+std::vector<balazs::floating_point_type> balazs::PerronFrobeniusMatrix::perronFrobEigenvector()
 {
     if (!isEigenDataDefined()) {
         initEigenData();
@@ -83,7 +73,7 @@ std::vector<floating_point_type> PerronFrobeniusMatrix::perronFrobEigenvector()
 }
 
 
-floating_point_type PerronFrobeniusMatrix::perronFrobEigenvalue()
+balazs::floating_point_type balazs::PerronFrobeniusMatrix::perronFrobEigenvalue()
 {
     if (!isEigenDataDefined()) {
         initEigenData();
@@ -96,7 +86,7 @@ floating_point_type PerronFrobeniusMatrix::perronFrobEigenvalue()
 
 
 
-void PerronFrobeniusMatrix::initEigenData(){
+void balazs::PerronFrobeniusMatrix::initEigenData(){
     m_perronFrobEigenvector.resize(size());
 
     SquareMatrix<floating_point_type> hugeMatrix = powerUp();
@@ -125,7 +115,7 @@ void PerronFrobeniusMatrix::initEigenData(){
 
 
 
-floating_point_type arnouxYoccozStretchFactor(int genus){
+balazs::floating_point_type balazs::arnouxYoccozStretchFactor(int genus){
     SquareMatrix<floating_point_type> matrix(genus);
     
     matrix.setEntry(0, 0, 1);

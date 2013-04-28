@@ -3,7 +3,7 @@
 
 
 
-Choose::Choose(unsigned int n, unsigned int k) :
+balazs::Choose::Choose(unsigned int n, unsigned int k) :
 m_n(n),
 m_k(k),
 m_chosenIndices(k)
@@ -14,7 +14,7 @@ m_chosenIndices(k)
 }
 
 
-Choose& Choose::operator++() {
+balazs::Choose& balazs::Choose::operator++() {
     assert(!isAfterLast());
     int indexToIncrease = m_k - 1;
     while( indexToIncrease >= 0 && m_chosenIndices[indexToIncrease] == m_n - m_k + indexToIncrease)
@@ -30,12 +30,12 @@ Choose& Choose::operator++() {
     return *this;
 }
 
-bool Choose::isAfterLast() const
+bool balazs::Choose::isAfterLast() const
 {
     return m_chosenIndices.empty();
 }
 
-unsigned int Choose::operator [](unsigned int i)
+unsigned int balazs::Choose::operator [](unsigned int i)
 {
     return m_chosenIndices[i];
 }

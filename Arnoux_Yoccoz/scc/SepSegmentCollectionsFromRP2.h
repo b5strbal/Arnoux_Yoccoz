@@ -3,6 +3,7 @@
 
 #include "SepSegmentCollections.h"
 
+namespace balazs{
 
 
 
@@ -19,6 +20,11 @@ private:
     // The other half is then determined by taking the pairs of these.
     std::vector<int> m_allowedSeparatrixIndices;
 
-    void setIndicesToBegin();
+    void setIndicesToBegin(){}
 };
+
+
+
+}
+
 #endif // SEPSEGMENTCOLLECTIONSFROMRP2_H

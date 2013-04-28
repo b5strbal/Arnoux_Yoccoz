@@ -16,6 +16,8 @@
  * class instance choose.
  */
 
+namespace balazs{
+
 class Choose{
 public:
     Choose() : Choose(1, 1) {} // default constructor
@@ -36,5 +38,8 @@ private:
     unsigned int m_k;    // The size of the subset.
     std::vector<unsigned int> m_chosenIndices;   // The list of elements in the subset.
 };
+
+
+}
 
 #endif // CHOOSE_H

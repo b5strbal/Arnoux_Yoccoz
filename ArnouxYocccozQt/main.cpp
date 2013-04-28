@@ -2,8 +2,9 @@
 #include <QApplication>
 #include <QDebug>
 #include <QString>
-#include "../Arnoux_Yoccoz/Foliation.h"
+#include "../Arnoux_Yoccoz/fol/Foliation.h"
 #include <sstream>
+
 
 int main(int argc, char *argv[])
 {
@@ -11,7 +12,7 @@ int main(int argc, char *argv[])
 //    MainWindow w;
 //    w.show();
 
-    Foliation f = arnouxYoccozFoliation(3);
+    balazs::Foliation f = balazs::arnouxYoccozFoliation(3);
     std::ostringstream s;
     s << f;
     qDebug() << QString::fromStdString(s.str());

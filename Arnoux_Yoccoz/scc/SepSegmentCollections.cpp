@@ -1,6 +1,6 @@
 #include "SepSegmentCollections.h"
 
-SepSegmentCollections::SepSegmentCollections(SepSegmentDatabase &sepSegmentDatabase,
+balazs::SepSegmentCollections::SepSegmentCollections(SepSegmentDatabase &sepSegmentDatabase,
                                              unsigned int maxDepth,
                                              unsigned int maxInvolvedSingularities,
                                              Mode mode, Direction::LeftOrRight shiftToSide) :
@@ -14,12 +14,12 @@ SepSegmentCollections::SepSegmentCollections(SepSegmentDatabase &sepSegmentDatab
     m_sepSegmentDatabase.generateSepSegments(maxDepth);
 }
 
-SepSegmentCollections::iterator SepSegmentCollections::begin() const
+balazs::SepSegmentCollections::iterator balazs::SepSegmentCollections::begin() const
 {
     return iterator(*this);
 }
 
-SepSegmentCollections::iterator SepSegmentCollections::end() const
+balazs::SepSegmentCollections::iterator balazs::SepSegmentCollections::end() const
 {
     return iterator::endIterator(*this);
 }
@@ -28,7 +28,7 @@ SepSegmentCollections::iterator SepSegmentCollections::end() const
 
 
 
-SepSegmentCollections::iterator &SepSegmentCollections::iterator::operator ++()
+balazs::SepSegmentCollections::iterator &balazs::SepSegmentCollections::iterator::operator ++()
 {
     assert(*this != iterator::endIterator(m_parent));
 
@@ -46,29 +46,29 @@ SepSegmentCollections::iterator &SepSegmentCollections::iterator::operator ++()
 
 }
 
-bool operator ==(const SepSegmentCollections::iterator &it1, const SepSegmentCollections::iterator &it2)
+bool balazs::operator ==(const SepSegmentCollections::iterator &it1, const SepSegmentCollections::iterator &it2)
 {
     return it1.m_sepSegmentCollection == it2.m_sepSegmentCollection;
 }
 
-bool operator !=(const SepSegmentCollections::iterator &it1, const SepSegmentCollections::iterator &it2)
+bool balazs::operator !=(const SepSegmentCollections::iterator &it1, const SepSegmentCollections::iterator &it2)
 {
     return it1 == it2 ? false : true;
 }
 
-SepSegmentCollections::iterator::iterator(const SepSegmentCollections &parent) :
+balazs::SepSegmentCollections::iterator::iterator(const SepSegmentCollections &parent) :
     m_parent(parent),
     m_sepIndicesChoose(Choose(parent.m_sepSegmentDatabase.numIntervals(), 1))
 {
     setInitialSetting();
 }
 
-SepSegmentCollections::iterator SepSegmentCollections::iterator::endIterator(const SepSegmentCollections &parent)
+balazs::SepSegmentCollections::iterator balazs::SepSegmentCollections::iterator::endIterator(const SepSegmentCollections &parent)
 {
     return iterator(parent, SepSegmentCollection(), Choose());
 }
 
-SepSegmentCollections::iterator::iterator(const SepSegmentCollections &parent,
+balazs::SepSegmentCollections::iterator::iterator(const SepSegmentCollections &parent,
                                           const SepSegmentCollection &sepSegmentCollection,
                                           const Choose &sepIndicesChoose) :
     m_parent(parent),
@@ -79,7 +79,7 @@ SepSegmentCollections::iterator::iterator(const SepSegmentCollections &parent,
 
 
 
-void SepSegmentCollections::iterator::setInitialSetting()
+void balazs::SepSegmentCollections::iterator::setInitialSetting()
 {
     m_sepSegmentCollection.resize(2 * m_sepIndicesChoose.k());
 
@@ -112,7 +112,7 @@ void SepSegmentCollections::iterator::setInitialSetting()
 
 
 
-bool SepSegmentCollection::isLast(std::list<SeparatrixSegment>::const_iterator it) const{
+bool balazs::SepSegmentCollection::isLast(std::list<SeparatrixSegment>::const_iterator it) const{
     it++;
     return (it == m_sepSegmentDatabase.m_goodShiftedSeparatrixSegments[it->direction()][it->startingSingularity()].end() ||
     it->depth() > m_maxdepth);
@@ -123,7 +123,7 @@ bool SepSegmentCollection::isLast(std::list<SeparatrixSegment>::const_iterator i
 
 /////////////////////////////////
 
-void SepSegmentCollectionDefault::advance() {
+void balazs::SepSegmentCollectionDefault::advance() {
     assert(!isAfterLast());
     int indexToIncrease = static_cast<int>(m_segments.size()) - 1;
     while (indexToIncrease >= 0 && isLast(m_segments[indexToIncrease]) ){

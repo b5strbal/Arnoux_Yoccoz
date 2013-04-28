@@ -1,15 +1,14 @@
 #include "TransverseCurveDatabase.h"
-#include "Modint.h"
-#include "SepSegmentCollection.h"
-#include "Choose.h"
+#include "../math/Modint.h"
+#include "../math/Choose.h"
 
-TransverseCurveDatabase::TransverseCurveDatabase(SepSegmentDatabase &sepSegmentDatabase) :
+balazs::TransverseCurveDatabase::TransverseCurveDatabase(SepSegmentDatabase &sepSegmentDatabase) :
     m_sepSegmentDatabase(sepSegmentDatabase)
 {
 }
 
 
-std::array<bool, 2> TransverseCurveDatabase::whichTransverseCurvesExist(const SepSegmentCollection& segments){
+std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(const SepSegmentCollection& segments){
 
 /*
     assert(goodSegmentIndices.size() % 2 == 0);
@@ -117,7 +116,7 @@ std::array<bool, 2> TransverseCurveDatabase::whichTransverseCurvesExist(const Se
 
 
 
-void TransverseCurveDatabase::applyToStoredTransverseCurves(void (*function)(const TransverseCurve&)){
+void balazs::TransverseCurveDatabase::applyToStoredTransverseCurves(void (*function)(const TransverseCurve&)){
    assert(function != nullptr);
    for ( auto curve : m_transverseCurves )
         function(curve);
@@ -125,7 +124,7 @@ void TransverseCurveDatabase::applyToStoredTransverseCurves(void (*function)(con
 
 
 
-void TransverseCurveDatabase::generateTransverseCurves(int maxdepth, int numLeafComponents, void (*function)(const TransverseCurve&)){
+void balazs::TransverseCurveDatabase::generateTransverseCurves(int maxdepth, int numLeafComponents, void (*function)(const TransverseCurve&)){
     //m_sepSegmentDatabase.generateSepSegments(maxdepth);
     SepSegmentCollections collections(m_sepSegmentDatabase, maxdepth, numLeafComponents,
                                       SepSegmentCollections::Mode::SEGMENTS_SHIFTED_TO_SAME_SIDE);
