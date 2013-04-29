@@ -41,8 +41,7 @@ const floating_point_type PRECISION = 0.00000000001L;
 
 
 
-
-
+int integerMod(int a, int b);
 int gcd(int a, int b);
 
 

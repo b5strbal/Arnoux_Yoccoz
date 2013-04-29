@@ -25,14 +25,11 @@ class Permutation{
 public:
     Permutation(); // Constructs the permutation on a 1-element set.
     Permutation(const std::vector<unsigned int> &functionValues);
-    Permutation inverse() const;
     unsigned int size() const;
     unsigned int operator[](unsigned int index) const { return m_functionValues[index]; }
-    friend Permutation operator*(const Permutation& p1, const Permutation& p2);
-    friend std::ostream& operator<<(std::ostream& out, const Permutation& perm);
 
     template <typename Type>
-    std::vector<Type> actOn(const std::vector<Type>& vec) const{
+    std::vector<Type> operator()(const std::vector<Type>& vec) const{
         if (size() != vec.size()) {
             throw std::runtime_error("A permutation can't act on a vector if the sizes are different.");
         }
@@ -47,8 +44,19 @@ private:
     std::vector<unsigned int> m_functionValues;
 };
 
+
+bool isSimple(const Permutation& perm);
+
+std::ostream& operator<<(std::ostream& out, const Permutation& perm);
+Permutation operator*(const Permutation& p1, const Permutation& p2);
+
+Permutation inverse(const Permutation& perm);
 Permutation rotatingPermutation(int size, int rotationAmount);
 Permutation reversingPermutation(int size);
+
+
+
+
 
 }
 

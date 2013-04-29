@@ -1,5 +1,4 @@
 #include "SeparatrixSegment.h"
-#include "Modint.h"
 
 
 balazs::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, int startingSingularity, Direction::UpOrDown direction) :
@@ -50,7 +49,7 @@ void balazs::SeparatrixSegment::lengthen()
     m_smallContainingInterval = m_foliation.smallContainingInterval(m_endpoint);
     if(distanceBetween(m_foliation.m_allDivPoints[m_smallContainingInterval], m_endpoint) < PRECISION ||
        distanceBetween(m_endpoint,
-       m_foliation.m_allDivPoints[Modint(m_smallContainingInterval + 1, m_foliation.numSeparatrices())]) < PRECISION){
+       m_foliation.m_allDivPoints[integerMod(m_smallContainingInterval + 1, m_foliation.numSeparatrices())]) < PRECISION){
         m_reachedSaddleConnection = true;
        }
 }

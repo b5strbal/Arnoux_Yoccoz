@@ -1,6 +1,5 @@
 #include "IntervalNeighborhoods.h"
 #include "Foliation.h"
-#include "Modint.h"
 
 
 
@@ -48,7 +47,7 @@ bool balazs::IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1Number&
     if (m_cuttingPoints[indexOfInterval].isEmpty) {
         return true;
     }
-    unsigned int nextIndex = Modint(indexOfInterval + 1, m_cuttingPoints.size());
+    unsigned int nextIndex = integerMod(indexOfInterval + 1, m_cuttingPoints.size());
 
     if ((point < m_cuttingPoints[indexOfInterval].first && indexOfInterval != indexOfOneSidedDivPoint)
             || (m_cuttingPoints[indexOfInterval].second < point && nextIndex != indexOfOneSidedDivPoint))
@@ -77,13 +76,15 @@ bool balazs::IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1N
         return false;
     }
 
-    for (Modint i(leftIndexOfInterval + 1, m_foliation.numSeparatrices()); i != rightIndexOfInterval; ++i) {
+    for (unsigned int i = leftIndexOfInterval + 1; i != rightIndexOfInterval;
+         i = integerMod(i + 1, m_foliation.numSeparatrices())) {
         if (!m_cuttingPoints[i].isEmpty) {
             return false;
         }
     }
 
-    for (Modint i(leftIndexOfInterval, m_foliation.numSeparatrices()); i != rightIndexOfInterval; ++i) {
+    for (unsigned int i = leftIndexOfInterval; i != rightIndexOfInterval;
+         i = integerMod(i + 1, m_foliation.numSeparatrices())) {
         if ((throughTopDivPointQ && m_foliation.isTopDivPoint(i + 1)) ||
             (!throughTopDivPointQ && !m_foliation.isTopDivPoint(i + 1))) {
             return true;

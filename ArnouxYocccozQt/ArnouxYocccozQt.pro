@@ -26,7 +26,6 @@ SOURCES += main.cpp\
     ../Arnoux_Yoccoz/math/WeighedTree.cpp \
     ../Arnoux_Yoccoz/math/PerronFrobenius.cpp \
     ../Arnoux_Yoccoz/math/Permutation.cpp \
-    ../Arnoux_Yoccoz/math/Modint.cpp \
     ../Arnoux_Yoccoz/math/Matrix.cpp \
     ../Arnoux_Yoccoz/math/Choose.cpp \
     ../Arnoux_Yoccoz/scc/TransverseCurveDatabaseFromRP2.cpp \
@@ -55,7 +54,6 @@ HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/math/WeighedTree.h \
     ../Arnoux_Yoccoz/math/PerronFrobenius.h \
     ../Arnoux_Yoccoz/math/Permutation.h \
-    ../Arnoux_Yoccoz/math/Modint.h \
     ../Arnoux_Yoccoz/math/Matrix.hpp \
     ../Arnoux_Yoccoz/math/Matrix.h \
     ../Arnoux_Yoccoz/math/Choose.h \
@@ -75,4 +73,4 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui
 
 OTHER_FILES += ../Arnoux_Yoccoz/FoliationRP2old.cpp \
-    ../Arnoux_Yoccoz/FoliationRP2old.h \
+    ../Arnoux_Yoccoz/FoliationRP2old.h

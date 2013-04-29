@@ -1,7 +1,6 @@
 #ifndef FOLIATIONSPHERE_H
 #define FOLIATIONSPHERE_H
 
-#include "FoliationDisk.h"
 #include "FoliationRP2.h"
 
 namespace balazs{
@@ -17,14 +16,14 @@ public:
     const FoliationDisk& bottomFoliation() const { return m_bottomFoliation; }
     floating_point_type twist() const { return m_twist; }
 
-    friend std::ostream& operator<<(std::ostream& Out, const FoliationSphere&);
-
 private:
     FoliationDisk m_topFoliation;
     FoliationDisk m_bottomFoliation;
     floating_point_type m_twist;
-
 };
+
+std::ostream& operator<<(std::ostream& Out, const FoliationSphere&);
+
 
 }
 

@@ -3,19 +3,18 @@
 
 #include "FoliationFromSphere.h"
 #include "FoliationRP2.h"
-#include <vector>
 
 namespace balazs{
 
 
 class FoliationFromRP2 : public FoliationFromSphere
 {
-    friend class SepSegmentDatabaseFromRP2;
 public:
     FoliationFromRP2(const FoliationRP2& foliationRP2);
-
+    static Foliation fromFoliationRP2(const FoliationRP2 &foliationRP2);
+    const Permutation& intervalPermutationBeforeHalfTwist() const;
 private:
-    Permutation m_intervalPairing;
+    Permutation m_intervalPermutationBeforeHalfTwist;
 };
 
 

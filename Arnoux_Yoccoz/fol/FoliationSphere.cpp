@@ -9,7 +9,7 @@ balazs::FoliationSphere::FoliationSphere(const FoliationDisk& topFoliation, cons
 
 
 balazs::FoliationSphere::FoliationSphere(const FoliationRP2& foliationRP2) :
-    FoliationSphere(foliationRP2.m_foliationDisk, foliationRP2.m_foliationDisk, 0.5)
+    FoliationSphere(foliationRP2.foliationDisk(), foliationRP2.foliationDisk(), 0.5)
 {
 }
 

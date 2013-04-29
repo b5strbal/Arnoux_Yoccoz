@@ -1,8 +1,6 @@
 #include "Permutation.h"
-#include "Modint.h"
-#include <string>
-#include <sstream>
-
+#include "../global.h"
+#include <iostream>
 
 balazs::Permutation::Permutation() : m_functionValues(1, 0)
 {
@@ -43,10 +41,10 @@ balazs::Permutation balazs::operator*(const Permutation& p1, const Permutation& 
 
 
 
-balazs::Permutation balazs::Permutation::inverse() const{
-    std::vector<unsigned int> newFunctionValues(size());
-    for (unsigned int i = 0; i < size(); i++) {
-        newFunctionValues[m_functionValues[i]] = i;
+balazs::Permutation balazs::inverse(const Permutation& perm){
+    std::vector<unsigned int> newFunctionValues(perm.size());
+    for (unsigned int i = 0; i < perm.size(); i++) {
+        newFunctionValues[perm[i]] = i;
     }
     return Permutation(newFunctionValues);
 }
@@ -58,7 +56,7 @@ balazs::Permutation balazs::rotatingPermutation(int size, int rotationAmount){
         throw std::runtime_error("Empty permutation.");
     }
     std::vector<unsigned int> functionValues(size);
-    int normalizedAmount = Modint(rotationAmount, size);
+    int normalizedAmount = integerMod(rotationAmount, size);
     for (int i = 0; i < size - normalizedAmount; i++) {
         functionValues[i] = i + normalizedAmount;
     }
@@ -91,6 +89,17 @@ unsigned int balazs::Permutation::size() const
 std::ostream& balazs::operator <<(std::ostream &out, const Permutation &perm)
 {
     for (unsigned int i = 0; i < perm.size(); i++)
-        out << perm.m_functionValues[i] << " ";
+        out << perm[i] << " ";
     return out;
+}
+
+
+bool balazs::isSimple(const Permutation &perm)
+{
+    for(unsigned int i = 0; i < perm.size(); i++){
+        if(perm[(i + 1) % perm.size()] == (perm[i] + 1) % perm.size()){
+            return false;
+        }
+    }
+    return true;
 }

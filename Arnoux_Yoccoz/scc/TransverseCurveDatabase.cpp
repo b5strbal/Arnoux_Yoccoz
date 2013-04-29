@@ -1,5 +1,4 @@
 #include "TransverseCurveDatabase.h"
-#include "../math/Modint.h"
 #include "../math/Choose.h"
 
 balazs::TransverseCurveDatabase::TransverseCurveDatabase(SepSegmentDatabase &sepSegmentDatabase) :
@@ -63,17 +62,17 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
 
 
     for (short wrapsAroundEnds = 0; wrapsAroundEnds < 2; wrapsAroundEnds++){
-        Modint index(0, static_cast<int>(segments.size()));
+        unsigned int index = 0;
         unsigned int length = 0;
         do {
             if ((wrapsAroundEnds && index % 2 == 1) || (!wrapsAroundEnds && index % 2 == 0)) {
-                ++index;
+                index = integerMod(index + 1, segments.size());
             } else
-                --index;
+                index = integerMod(index - 1, segments.size());
             int pair = endpointsAndIndices[index].second % 2 == 0 ? endpointsAndIndices[index].second + 1 :
             endpointsAndIndices[index].second - 1;
             auto it = std::lower_bound(endpoints.begin(), endpoints.end(), segments[pair]->endpoint());
-            index = Modint(it - endpoints.begin(), segments.size());
+            index = integerMod(it - endpoints.begin(), segments.size());
             length += 2;
         } while (index != 0);
         if (length < segments.size()) {

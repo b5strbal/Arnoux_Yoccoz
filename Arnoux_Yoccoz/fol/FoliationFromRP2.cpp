@@ -3,11 +3,16 @@
 
 
 balazs::FoliationFromRP2::FoliationFromRP2(const FoliationRP2& foliationRP2):
-    FoliationFromSphere(foliationRP2),
-    m_intervalPairing(IntervalPairing::fromWeighedTree(foliationRP2.m_foliationDisk.weighedTree()).permutation())
+    FoliationFromSphere(FoliationFromSphere::fromFoliationSphere(foliationRP2)),
+    m_intervalPermutationBeforeHalfTwist(IntervalPairing::fromWeighedTree(foliationRP2.foliationDisk().weighedTree()).permutation())
 {
 }
 
+
+const balazs::Permutation &balazs::FoliationFromRP2::intervalPermutationBeforeHalfTwist() const
+{
+    return m_intervalPermutationBeforeHalfTwist;
+}
 
 
 

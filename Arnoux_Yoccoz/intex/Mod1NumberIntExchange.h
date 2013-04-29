@@ -2,6 +2,7 @@
 #define MOD1NUMBERINTEXCHANGE_H
 
 #include "LengthsAndTwist.h"
+#include "Mod1Number.h"
 
 namespace balazs{
 

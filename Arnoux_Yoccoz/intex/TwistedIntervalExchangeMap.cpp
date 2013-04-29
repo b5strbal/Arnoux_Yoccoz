@@ -1,5 +1,4 @@
 #include "TwistedIntervalExchangeMap.h"
-#include "../math/Modint.h"
 
 
 
@@ -14,7 +13,7 @@ balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector
                                          floating_point_type twist) :
     m_lengthsAndTwist(lengths, twist),
     m_permutation(permutation),
-    m_inversePermutation(permutation.inverse()),
+    m_inversePermutation(inverse(permutation)),
     m_twist(Mod1NumberIntExchange::constructTwist(&m_lengthsAndTwist))
 {
     if(lengths.size() != permutation.size()){
@@ -42,7 +41,7 @@ balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector
     int shift = m_divPointsAfterExchange.end() -
             std::lower_bound(m_divPointsAfterExchange.begin(), m_divPointsAfterExchange.end(), -m_twist);
     m_permutationWithMinimalTwist = rotatingPermutation(lengths.size(), shift) * m_permutation;
-    m_inversePermutationWithMinimalTwist = m_permutationWithMinimalTwist.inverse();
+    m_inversePermutationWithMinimalTwist = inverse(m_permutationWithMinimalTwist);
 
     m_translations.reserve(lengths.size());
     for (unsigned int i = 0; i < lengths.size(); i++) {
@@ -57,7 +56,7 @@ balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector
 
 
 balazs::TwistedIntervalExchangeMap balazs::TwistedIntervalExchangeMap::rotateBy(int rotationAmount) const{
-    unsigned int normalizedAmount = Modint(rotationAmount, size());
+    unsigned int normalizedAmount = integerMod(rotationAmount, size());
     if (normalizedAmount == 0) {
         return *this;
     }
@@ -98,7 +97,7 @@ balazs::TwistedIntervalExchangeMap balazs::TwistedIntervalExchangeMap::reverse()
 
 
 balazs::TwistedIntervalExchangeMap balazs::TwistedIntervalExchangeMap::invert() const{
-    std::vector<Mod1NumberIntExchange> newLengths(m_permutation.actOn(m_lengths));
+    std::vector<Mod1NumberIntExchange> newLengths(m_permutation(m_lengths));
     std::vector<floating_point_type> newLengthsFloat(newLengths.begin(), newLengths.end());
     Permutation newPermutation = m_inversePermutation;
     floating_point_type newTwist = -m_twist;

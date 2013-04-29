@@ -2,7 +2,7 @@
 #define LENGTHSANDTWIST_H
 
 #include <vector>
-#include "Mod1Number.h"
+#include "../global.h"
 
 namespace balazs{
 

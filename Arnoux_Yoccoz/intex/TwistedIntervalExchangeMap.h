@@ -6,7 +6,6 @@
 #include <cassert>
 #include "../math/Permutation.h"
 #include "Mod1NumberIntExchange.h"
-#include "LengthsAndTwist.h"
 
 namespace balazs{
 

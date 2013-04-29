@@ -9,9 +9,12 @@
 #include "global.h"
 
 
+int balazs::integerMod(int a, int b){
+    int result = a % b;
+    return result >= 0 ? result : result + b;
+}
 
-
-int gcd(int a, int b){
+int balazs::gcd(int a, int b){
     return b == 0 ? a : gcd(b, a % b);
 }
 
@@ -25,4 +28,4 @@ int gcd(int a, int b){
 
 
 
-floating_point_type fracPart(floating_point_type x){ return x - floor(x); }
+balazs::floating_point_type balazs::fracPart(floating_point_type x){ return x - floor(x); }

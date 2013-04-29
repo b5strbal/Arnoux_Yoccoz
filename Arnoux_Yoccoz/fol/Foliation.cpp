@@ -7,8 +7,7 @@
  */
 
 #include "Foliation.h"
-#include "../math/Modint.h"
-
+#include "../math/PerronFrobenius.h"
 
 
 
@@ -35,102 +34,6 @@ balazs::Foliation::Foliation(const std::vector<floating_point_type>& lengths, co
 {
 }
 
-balazs::Foliation balazs::Foliation::fromFoliationRP2(const FoliationRP2 &foliationRP2)
-{
-    return fromFoliationSphere(FoliationSphere(foliationRP2));
-}
-
-balazs::Foliation balazs::Foliation::fromFoliationSphere(const FoliationSphere &foliationSphere)
-{
-
-    std::vector<ConnectedPoints> allConnectedPoints;
-    allConnectedPoints.reserve(foliationSphere.topFoliation().numSeparatrices() + foliationSphere.bottomFoliation().numSeparatrices());
-
-    generateTopConnectingPairs(foliationSphere, allConnectedPoints);
-    generateBottomConnectingPairs(foliationSphere, allConnectedPoints);
-
-
-    std::sort(allConnectedPoints.begin(), allConnectedPoints.end(), [] (const ConnectedPoints& cp1, const ConnectedPoints& cp2)
-              {
-                  return cp1.topPoint < cp2.topPoint;
-              } );
-    std::vector<ConnectedPoints>& allConnectedPointsSortedByTop = allConnectedPoints;
-    std::vector<Mod1Number> allBottomPoints;
-    allBottomPoints.reserve(allConnectedPoints.size());
-
-    for (ConnectedPoints cp : allConnectedPoints) {
-        allBottomPoints.push_back(cp.bottomPoint);
-    }
-
-    std::sort(allBottomPoints.begin(), allBottomPoints.end());
-
-    std::vector<floating_point_type> lengths(allConnectedPoints.size());
-    for (unsigned int i = 0; i < allConnectedPoints.size() - 1; i++) {
-        lengths[i] = distanceBetween( allConnectedPointsSortedByTop[i].topPoint, allConnectedPointsSortedByTop[i + 1].topPoint);
-    }
-    lengths[allConnectedPoints.size() - 1] = -allConnectedPointsSortedByTop[allConnectedPoints.size() - 1].topPoint;
-
-    std::vector<unsigned int> permutationInput(allConnectedPoints.size());
-    for (unsigned int i = 0; i < allConnectedPoints.size(); i++) {
-        auto it = std::lower_bound(allBottomPoints.begin(), allBottomPoints.end(), allConnectedPointsSortedByTop[i].bottomPoint);
-        permutationInput[i] = it - allBottomPoints.begin() ;
-    }
-    Permutation permutation(permutationInput);
-    floating_point_type twist = allBottomPoints[0];
-
-    return Foliation(lengths, permutation, twist);
-}
-
-
-
-
-
-
-void balazs::Foliation::generateTopConnectingPairs(const FoliationSphere& foliationSphere,
-                                                         std::vector<ConnectedPoints>& allConnectedPoints)
-{
-    int numSeparatrices = foliationSphere.topFoliation().intervalPairing().size();
-    for (int i = 0; i < numSeparatrices; i++) {
-        Modint modi(i, numSeparatrices);
-        if (foliationSphere.topFoliation().intervalPairing().permutation()[modi] != Modint(i - 1, numSeparatrices)) {
-            // otherwise the current separatrix emanates from a 1-pronged singularity which is not important
-
-            ConnectedPoints newConnectedPoints;
-            newConnectedPoints.topPoint = foliationSphere.topFoliation().intervalPairing().divPoints()[i];
-
-            int indexOfConnectedSeparatrix = Modint(foliationSphere.topFoliation().intervalPairing().permutation()[i]+ 1, numSeparatrices);
-            Mod1Number middlePoint = foliationSphere.topFoliation().intervalPairing().divPoints()[indexOfConnectedSeparatrix];
-
-            newConnectedPoints.bottomPoint = foliationSphere.bottomFoliation().intervalPairing().applyTo(middlePoint - foliationSphere.twist()) + foliationSphere.twist();
-
-
-            allConnectedPoints.push_back( newConnectedPoints );
-        }
-    }
-}
-
-
-
-void balazs::Foliation::generateBottomConnectingPairs(const FoliationSphere& foliationSphere,
-                                                            std::vector<ConnectedPoints>& allConnectedPoints)
-{
-    int numSeparatrices = foliationSphere.bottomFoliation().intervalPairing().size();
-    for (int i = 0; i < numSeparatrices; i++) {
-        if (foliationSphere.bottomFoliation().intervalPairing().permutation()[i] != Modint(i - 1, numSeparatrices) ) {
-
-            ConnectedPoints newConnectedPoints;
-            newConnectedPoints.bottomPoint = static_cast<Mod1Number>(foliationSphere.bottomFoliation().intervalPairing().divPoints()[i]) + foliationSphere.twist();
-
-            int indexOfConnectedSeparatrix = Modint(foliationSphere.bottomFoliation().intervalPairing().permutation()[i] + 1, numSeparatrices);
-            Mod1Number middlePoint = static_cast<Mod1Number>(foliationSphere.topFoliation().intervalPairing().divPoints()[indexOfConnectedSeparatrix]) + foliationSphere.twist();
-
-            newConnectedPoints.topPoint = foliationSphere.topFoliation().intervalPairing().applyTo(middlePoint);
-
-            allConnectedPoints.push_back( newConnectedPoints );
-        }
-    }
-}
-
 
 
 
@@ -138,6 +41,9 @@ void balazs::Foliation::generateBottomConnectingPairs(const FoliationSphere& fol
 bool balazs::Foliation::isTopDivPoint(int divPointIndex) const{
     return m_allDivPoints[divPointIndex].twistCoeff() == 0;
 }
+
+
+
 
 const balazs::Mod1NumberIntExchange &balazs::Foliation::firstIntersection(int singularityIndex, Direction::UpOrDown direction) const
 {
@@ -147,10 +53,30 @@ const balazs::Mod1NumberIntExchange &balazs::Foliation::firstIntersection(int si
         return topDivPoints()[singularityIndex];
 }
 
+
+
+
+const std::vector<balazs::Mod1NumberIntExchange>& balazs::Foliation::topDivPoints() const {
+    return m_twistedIntervalExchange.divPoints();
+}
+
+
+
+
+const std::vector<balazs::Mod1NumberIntExchange>& balazs::Foliation::bottomDivPoints() const {
+    return m_twistedIntervalExchange.divPointsAfterExchange();
+}
+
+
+
+
+
 unsigned int balazs::Foliation::smallContainingInterval(const Mod1Number &point) const
 {
     return containingInterval(m_allDivPoints, point);
 }
+
+
 
 
 balazs::Foliation balazs::Foliation::rotateBy(int rotationAmount) const{
@@ -158,9 +84,13 @@ balazs::Foliation balazs::Foliation::rotateBy(int rotationAmount) const{
 }
 
 
+
+
 balazs::Foliation balazs::Foliation::reflect() const{
     return Foliation(m_twistedIntervalExchange.reverse());
 }
+
+
 
 
 balazs::Foliation balazs::Foliation::flipOver() const{
