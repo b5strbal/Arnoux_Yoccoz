@@ -11,7 +11,7 @@ balazs::Mod1NumberIntExchange::Mod1NumberIntExchange(const LengthsAndTwist* leng
     Mod1Number(mod1number),
     m_coefficients(coefficients),
     m_twistCoeff(twistCoeff),
-    m_lengthsAndTwist(lengthsAndTwist)
+    m_parent(lengthsAndTwist)
 {
     assert(lengthsAndTwist != nullptr);
 }
@@ -21,7 +21,7 @@ balazs::Mod1NumberIntExchange::Mod1NumberIntExchange(const LengthsAndTwist* leng
     Mod1Number(0),
     m_coefficients(lengthsAndTwist->lengths().size(), 0),
     m_twistCoeff(0),
-    m_lengthsAndTwist(lengthsAndTwist)
+    m_parent(lengthsAndTwist)
 {
     assert(lengthsAndTwist != nullptr);
 }
@@ -60,8 +60,8 @@ balazs::Mod1NumberIntExchange balazs::Mod1NumberIntExchange::constructLength(con
 
 balazs::Mod1NumberIntExchange& balazs::Mod1NumberIntExchange::operator+=(const Mod1NumberIntExchange &rhs)
 {
-    assert(m_lengthsAndTwist != nullptr);
-    assert(m_lengthsAndTwist == rhs.m_lengthsAndTwist);
+    assert(signature() != nullptr);
+    assert(signature() == rhs.signature());
     Mod1Number::operator+=(rhs);
     for(unsigned int i = 0; i < m_coefficients.size(); i++){
         m_coefficients[i] += rhs.m_coefficients[i];
@@ -78,7 +78,7 @@ balazs::Mod1NumberIntExchange& balazs::Mod1NumberIntExchange::operator+=(const M
 
 balazs::Mod1NumberIntExchange balazs::Mod1NumberIntExchange::operator-() const
 {
-    assert(m_lengthsAndTwist != nullptr);
+    assert(signature() != nullptr);
     std::vector<int> newCoefficients(m_coefficients.size());
     for(unsigned int i = 0; i < m_coefficients.size(); i++){
         newCoefficients[i] = -m_coefficients[i];
@@ -88,7 +88,14 @@ balazs::Mod1NumberIntExchange balazs::Mod1NumberIntExchange::operator-() const
             newCoefficients[i]++;
         }
     }
-    return Mod1NumberIntExchange(m_lengthsAndTwist, this->Mod1Number::operator-(), newCoefficients, -m_twistCoeff);
+    return Mod1NumberIntExchange(m_parent, this->Mod1Number::operator-(), newCoefficients, -m_twistCoeff);
+}
+
+
+
+balazs::Mod1NumberIntExchange balazs::Mod1NumberIntExchange::shiftedTo(Direction::LeftOrRight side) const
+{
+    return Mod1NumberIntExchange(m_parent, Mod1Number::shiftedTo(side), m_coefficients, m_twistCoeff);
 }
 
 

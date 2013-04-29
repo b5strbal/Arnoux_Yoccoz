@@ -41,7 +41,7 @@ namespace balazs{
 class Mod1Number {
 public:
     Mod1Number(floating_point_type position = 0, int epsilon = 0);
-    void shiftTo(Direction::LeftOrRight side);
+    Mod1Number shiftedTo(Direction::LeftOrRight side) const;
     Direction::LeftOrRight side() const;
     Mod1Number& operator+=(const Mod1Number& rhs);
     Mod1Number operator-() const;

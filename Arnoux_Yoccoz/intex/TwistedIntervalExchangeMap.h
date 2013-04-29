@@ -20,6 +20,7 @@ public:
                         floating_point_type twist);
 
     unsigned int size() const { return m_lengths.size(); }
+    const LengthsAndTwist* signature() const { return &m_lengthsAndTwist; }
     const std::vector<Mod1NumberIntExchange>& lengths() const { return m_lengths; }
     const std::vector<Mod1NumberIntExchange>& divPoints() const { return m_divPoints; }
     const std::vector<Mod1NumberIntExchange>& divPointsAfterExchange() const { return m_divPointsAfterExchange; }
@@ -29,12 +30,12 @@ public:
 
     template <typename Mod1NumberType>
     Mod1NumberType applyTo(const Mod1NumberType& point) const{
-        return point + m_translations[containingInterval(point)];
+        return point + m_translations[containingInterval(divPoints(), point)];
     }
 
     template <typename Mod1NumberType>
     Mod1NumberType applyInverseTo(const Mod1NumberType& point) const{
-        return point - m_translations[m_inversePermutationWithMinimalTwist[containingIntervalAfterExchange(point)]];
+        return point - m_translations[m_inversePermutationWithMinimalTwist[containingInterval(divPointsAfterExchange(), point)]];
     }
 
     TwistedIntervalExchangeMap rotateBy(int rotationAmount) const;

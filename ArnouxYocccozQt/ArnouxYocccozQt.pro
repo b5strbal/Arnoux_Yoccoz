@@ -39,7 +39,8 @@ SOURCES += main.cpp\
     ../Arnoux_Yoccoz/scc/DisjointIntervals.cpp \
     ../Arnoux_Yoccoz/intex/LengthsAndTwist.cpp \
     ../Arnoux_Yoccoz/global.cpp \
-    ../Arnoux_Yoccoz/intex/IntervalPairing.cpp
+    ../Arnoux_Yoccoz/intex/IntervalPairing.cpp \
+    ../Arnoux_Yoccoz/scc/Mod1NumberIntExWithInfo.cpp
 
 HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/fol/FoliationSphere.h \
@@ -68,7 +69,8 @@ HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/scc/DisjointIntervals.h \
     ../Arnoux_Yoccoz/intex/LengthsAndTwist.h \
     ../Arnoux_Yoccoz/global.h \
-    ../Arnoux_Yoccoz/intex/IntervalPairing.h
+    ../Arnoux_Yoccoz/intex/IntervalPairing.h \
+    ../Arnoux_Yoccoz/scc/Mod1NumberIntExWithInfo.h
 
 FORMS    += mainwindow.ui
 

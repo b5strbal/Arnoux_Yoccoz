@@ -1,7 +1,6 @@
 #ifndef DISJOINTINTERVALS_H
 #define DISJOINTINTERVALS_H
 
-#include <vector>
 #include "../intex/Mod1NumberIntExchange.h"
 
 namespace balazs{
@@ -44,8 +43,8 @@ public:
     friend std::ostream& operator<<(std::ostream& out, const DisjointIntervals& d);
 private:
     std::vector<Mod1Number> m_endpoints; // The ordered list of endpoints.
-    bool m_wrapsAroundEnds;                     // Whether 0 is in one of the intervals.
-    floating_point_type m_totalLength;          // The total length of the intervals.
+    bool m_wrapsAroundEnds;              // Whether 0 is in one of the intervals.
+    floating_point_type m_totalLength;   // The total length of the intervals.
 };
 
 

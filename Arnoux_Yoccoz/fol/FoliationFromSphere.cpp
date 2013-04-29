@@ -61,8 +61,8 @@ balazs::FoliationFromSphere balazs::FoliationFromSphere::fromFoliationSphere(con
 void balazs::FoliationFromSphere::generateTopConnectingPairs(const FoliationSphere& foliationSphere,
                                                          std::vector<ConnectedPoints>& allConnectedPoints)
 {
-    int numSeparatrices = foliationSphere.topFoliation().intervalPairing().size();
-    for (int i = 0; i < numSeparatrices; i++) {
+    unsigned int numSeparatrices = foliationSphere.topFoliation().numSeparatrices();
+    for (unsigned int i = 0; i < numSeparatrices; i++) {
         if (foliationSphere.topFoliation().intervalPairing().permutation()[integerMod(i, numSeparatrices)] !=
                 integerMod(i - 1, numSeparatrices)) {
             // otherwise the current separatrix emanates from a 1-pronged singularity which is not important
@@ -88,8 +88,8 @@ void balazs::FoliationFromSphere::generateTopConnectingPairs(const FoliationSphe
 void balazs::FoliationFromSphere::generateBottomConnectingPairs(const FoliationSphere& foliationSphere,
                                                             std::vector<ConnectedPoints>& allConnectedPoints)
 {
-    int numSeparatrices = foliationSphere.bottomFoliation().intervalPairing().size();
-    for (int i = 0; i < numSeparatrices; i++) {
+    unsigned int numSeparatrices = foliationSphere.bottomFoliation().numSeparatrices();
+    for (unsigned int i = 0; i < numSeparatrices; i++) {
         if (foliationSphere.bottomFoliation().intervalPairing().permutation()[i] !=
                 integerMod(i - 1, numSeparatrices) ) {
 

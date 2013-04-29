@@ -1,5 +1,4 @@
 #include "TransverseCurveDatabase.h"
-#include "../math/Choose.h"
 
 balazs::TransverseCurveDatabase::TransverseCurveDatabase(SepSegmentDatabase &sepSegmentDatabase) :
     m_sepSegmentDatabase(sepSegmentDatabase)
@@ -9,20 +8,20 @@ balazs::TransverseCurveDatabase::TransverseCurveDatabase(SepSegmentDatabase &sep
 
 std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(const SepSegmentCollection& segments){
 
-/*
-    assert(goodSegmentIndices.size() % 2 == 0);
-    assert(goodSegmentIndices.size() >= 2);
-    std::vector<short> singularities(m_sepSegmentFinder.numIntervals(), 0);
-    for (unsigned int i = 0; i < goodSegmentIndices.size(); i += 2){
-        assert(goodSegmentIndices[i]->startingSingularity() == goodSegmentIndices[i + 1]->startingSingularity());
-        assert(singularities[goodSegmentIndices[i]->startingSingularity()] == 0);
-        singularities[goodSegmentIndices[i]->startingSingularity()] = 1;
-        assert(goodSegmentIndices[i]->direction() != goodSegmentIndices[i + 1]->direction());
+    assert(segments.size() % 2 == 0);
+    assert(segments.size() >= 2);
+    std::vector<char> singularities(foliation().numIntervals(), 0);
+    for (unsigned int i = 0; i < segments.size(); i += 2){
+        assert(segments[i]->startingSingularity() == segments[i + 1]->startingSingularity());
+        assert(singularities[segments[i]->startingSingularity()] == 0);
+        singularities[segments[i]->startingSingularity()] = 1;
+        assert(segments[i]->direction() != segments[i + 1]->direction() ||
+               segments[i]->side() != segments[i + 1]->side());
     }
-*/
 
-    std::array<bool, 2> isCandidateForWrapsAroundEnds = {{true, true}};
-    std::vector<std::pair<Mod1Number, int>> endpointsAndIndices;
+
+    std::array<bool, 2> isCandidateForWrapsAroundEnds = {true, true};
+    std::vector<std::pair<Mod1NumberIntExWithInfo, int>> endpointsAndIndices;
 
     endpointsAndIndices.reserve(segments.size());
     for (unsigned int i = 0; i < segments.size(); i++){
@@ -47,7 +46,7 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
         }
         for (unsigned int i = 0; i < endpointsAndIndices.size(); i += 2) {
             if (isEndpointIndexOdd[i] == isEndpointIndexOdd[i + 1]) {
-                return {{false, false}};
+                return {false, false};
             }
         }
     }
@@ -86,7 +85,7 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
     std::vector<const IntervalNeighborhoods*> inhVector;
     inhVector.reserve(segments.size());
     for (unsigned int i = 0; i < segments.size(); i++) {
-        inhVector.push_back(&segments[i]->m_intervalNeighborhoods);
+        inhVector.push_back(&segments[i]->intervalNeighborhoods());
     }
     IntervalNeighborhoods inhIntersection = IntervalNeighborhoods::intersect(inhVector);
 
@@ -99,9 +98,7 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
 
 
                 if (!inhIntersection.containsIntervalThroughADivPoint(endpointsAndIndices[i].first,
-                                                                  segments[endpointsAndIndices[i].second]->m_smallContainingInterval,
                                                                   endpointsAndIndices[next].first,
-                                                                  segments[endpointsAndIndices[next].second]->m_smallContainingInterval,
                                                                   throughTopDivPoint))
                 {
                     isCandidateForWrapsAroundEnds[wrapsAroundEnds] = false;
@@ -132,7 +129,7 @@ void balazs::TransverseCurveDatabase::generateTransverseCurves(int maxdepth, int
         std::array<bool, 2> isWrapsAroundEndsGood = whichTransverseCurvesExist(sepSegmentCollection);
         for (short wrapsAroundEnds = 0; wrapsAroundEnds < 2; wrapsAroundEnds++ ) {
             if (isWrapsAroundEndsGood[wrapsAroundEnds]) {
-                auto ret = m_transverseCurves.emplace(m_sepSegmentDatabase.m_foliation, sepSegmentCollection, wrapsAroundEnds).first;
+                auto ret = m_transverseCurves.emplace(foliation(), sepSegmentCollection, wrapsAroundEnds).first;
                 if (function != nullptr) {
                     function(*ret);
                 }

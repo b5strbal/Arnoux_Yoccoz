@@ -3,22 +3,20 @@
 
 #include <array>
 #include <list>
-#include "../fol/Foliation.h"
 #include "SeparatrixSegment.h"
 #include "DisjointIntervals.h"
 #include "../fol/FoliationFromRP2.h"
-#include "SepSegmentCollections.h"
 
 namespace balazs{
 
 
 class SepSegmentDatabase
 {
-    friend class TransverseCurveDatabase;
     friend class SepSegmentCollections;
 public:
     SepSegmentDatabase(const Foliation& foliation);
 
+    const Foliation& foliation() const { return m_foliation; }
     void findNextSepSegment(Direction::UpOrDown direction, int index);
     const SeparatrixSegment& getFirstIntersection(Direction::UpOrDown direction, int index, const DisjointIntervals& intervals);
     bool reachedSaddleConnection(Direction::UpOrDown direction, int index) const;
@@ -39,14 +37,11 @@ protected:
 
 class SepSegmentDatabaseFromRP2 : public SepSegmentDatabase
 {
-    friend class SepSegmentCollectionFromRP2;
 public:
     SepSegmentDatabaseFromRP2(const FoliationFromRP2& foliationFromRP2) :
         SepSegmentDatabase(foliationFromRP2)
-      //  m_separatrixPair(foliationFromRP2.m_separatrixPair)
     {}
 private:
-   // std::vector<unsigned int> m_separatrixPair;
 };
 
 }

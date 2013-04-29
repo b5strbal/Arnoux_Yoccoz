@@ -102,8 +102,7 @@ const balazs::SeparatrixSegment& balazs::SepSegmentDatabase::getFirstIntersectio
                                                                     const DisjointIntervals& intervals)
 {
     for (auto &segment : m_goodShiftedSeparatrixSegments[Direction::RIGHT][direction][index]) {
-        Mod1Number centeredEndpoint = segment.endpoint();
-        centeredEndpoint.shiftTo(Direction::CENTER);
+        Mod1Number centeredEndpoint = segment.endpoint().shiftedTo(Direction::CENTER);
         if (intervals.contains(centeredEndpoint)) { // we are gonna have to catch an error here
             return segment;
         }

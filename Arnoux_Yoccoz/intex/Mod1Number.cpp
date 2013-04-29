@@ -18,18 +18,18 @@ balazs::Mod1Number::Mod1Number(floating_point_type position, int epsilon) :
 {
 }
 
-void balazs::Mod1Number::shiftTo(Direction::LeftOrRight side)
+balazs::Mod1Number balazs::Mod1Number::shiftedTo(Direction::LeftOrRight side) const
 {
     switch(side){
-        case Direction::LEFT:
-            m_epsilon = -1;
-            break;
-        case Direction::RIGHT:
-            m_epsilon = 1;
-            break;
-        case Direction::CENTER:
-            m_epsilon = 0;
-            break;
+    case Direction::LEFT:
+        return Mod1Number(m_position, -1);
+        break;
+    case Direction::RIGHT:
+        return Mod1Number(m_position, 1);
+        break;
+    case Direction::CENTER:
+        return Mod1Number(m_position, 0);
+        break;
     }
 }
 

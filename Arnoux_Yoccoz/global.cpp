@@ -9,7 +9,7 @@
 #include "global.h"
 
 
-int balazs::integerMod(int a, int b){
+unsigned int balazs::integerMod(int a, unsigned int b){
     int result = a % b;
     return result >= 0 ? result : result + b;
 }

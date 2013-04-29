@@ -14,8 +14,6 @@ namespace balazs{
  *
  */
 class Foliation{
-    friend class SeparatrixSegment;
-    friend class IntervalNeighborhoods;
 public:
     Foliation(const std::vector<floating_point_type>& lengths,
               const Permutation& permutation,
@@ -26,14 +24,15 @@ public:
     unsigned int numSeparatrices() const { return 2 * numIntervals(); }
     unsigned int numIntervals() const { return m_twistedIntervalExchange.size(); }
 
-    friend std::ostream& operator<<(std::ostream& out, const Foliation& f);
-
-protected:
+    const TwistedIntervalExchangeMap& intExchange() const;
+    const std::vector<Mod1NumberIntExchange>& allDivPoints() const;
     const std::vector<Mod1NumberIntExchange>& topDivPoints() const;
     const std::vector<Mod1NumberIntExchange>& bottomDivPoints() const;
     bool isTopDivPoint(int divPointIndex) const;
     const Mod1NumberIntExchange& firstIntersection(int singularityIndex, Direction::UpOrDown direction) const;
-    unsigned int smallContainingInterval(const Mod1Number& point) const;
+
+    friend std::ostream& operator<<(std::ostream& out, const Foliation& f);
+
 
 private:
     Foliation(const TwistedIntervalExchangeMap&);

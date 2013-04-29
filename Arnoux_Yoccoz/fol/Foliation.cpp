@@ -34,6 +34,16 @@ balazs::Foliation::Foliation(const std::vector<floating_point_type>& lengths, co
 {
 }
 
+const balazs::TwistedIntervalExchangeMap &balazs::Foliation::intExchange() const
+{
+    return m_twistedIntervalExchange;
+}
+
+const std::vector<balazs::Mod1NumberIntExchange> &balazs::Foliation::allDivPoints() const
+{
+    return m_allDivPoints;
+}
+
 
 
 
@@ -67,14 +77,6 @@ const std::vector<balazs::Mod1NumberIntExchange>& balazs::Foliation::bottomDivPo
     return m_twistedIntervalExchange.divPointsAfterExchange();
 }
 
-
-
-
-
-unsigned int balazs::Foliation::smallContainingInterval(const Mod1Number &point) const
-{
-    return containingInterval(m_allDivPoints, point);
-}
 
 
 

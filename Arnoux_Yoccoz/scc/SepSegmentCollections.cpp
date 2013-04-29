@@ -10,7 +10,7 @@ balazs::SepSegmentCollections::SepSegmentCollections(SepSegmentDatabase &sepSegm
     m_mode(mode),
     m_shiftToSide(shiftToSide)
 {
-    assert(maxInvolvedSingularities > 0 && maxInvolvedSingularities <= sepSegmentDatabase.numIntervals());
+    assert(maxInvolvedSingularities > 0 && maxInvolvedSingularities <= sepSegmentDatabase.foliation().numIntervals());
     m_sepSegmentDatabase.generateSepSegments(maxDepth);
 }
 
@@ -58,7 +58,7 @@ bool balazs::operator !=(const SepSegmentCollections::iterator &it1, const SepSe
 
 balazs::SepSegmentCollections::iterator::iterator(const SepSegmentCollections &parent) :
     m_parent(parent),
-    m_sepIndicesChoose(Choose(parent.m_sepSegmentDatabase.numIntervals(), 1))
+    m_sepIndicesChoose(Choose(parent.m_sepSegmentDatabase.foliation().numIntervals(), 1))
 {
     setInitialSetting();
 }

@@ -1,5 +1,5 @@
 #include "IntervalNeighborhoods.h"
-#include "Foliation.h"
+#include "../fol/Foliation.h"
 
 
 
@@ -11,9 +11,12 @@ balazs::IntervalNeighborhoods::IntervalNeighborhoods(const Foliation & foliation
 
 
 
-// \param  newCuttingPoint     It must not coincide with any of the division points.
-void balazs::IntervalNeighborhoods::insertPoint(const Mod1Number& newCuttingPoint, int indexOfInterval){
-    assert(newCuttingPoint.side() != Direction::CENTER);
+void balazs::IntervalNeighborhoods::insertPoint(const Mod1NumberIntExWithInfo &newCuttingPoint){
+    assert(foliation() == newCuttingPoint.signature());
+    assert(newCuttingPoint.number().side() != Direction::CENTER);
+
+    unsigned int indexOfInterval = newCuttingPoint.smallContainingInterval();
+
     if (m_cuttingPoints[indexOfInterval].isEmpty) {
         m_cuttingPoints[indexOfInterval].first = m_cuttingPoints[indexOfInterval].second = newCuttingPoint;
         m_cuttingPoints[indexOfInterval].isEmpty = false;
@@ -42,15 +45,25 @@ void balazs::IntervalNeighborhoods::insertPoint(const Mod1Number& newCuttingPoin
 // bad if shifted to the right, or vica versa, and this assymetry would be inconvenient when
 // iterating over the good separatrix segments.
 //
-bool balazs::IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1Number& point, unsigned int indexOfInterval,
-                                                       unsigned int indexOfOneSidedDivPoint) const{
+bool balazs::IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1NumberIntExWithInfo& point) const{
+    assert(foliation() == point.signature());
+
+    unsigned int indexOfInterval = point.smallContainingInterval();
+
     if (m_cuttingPoints[indexOfInterval].isEmpty) {
         return true;
     }
-    unsigned int nextIndex = integerMod(indexOfInterval + 1, m_cuttingPoints.size());
 
-    if ((point < m_cuttingPoints[indexOfInterval].first && indexOfInterval != indexOfOneSidedDivPoint)
-            || (m_cuttingPoints[indexOfInterval].second < point && nextIndex != indexOfOneSidedDivPoint))
+    unsigned int prevIndex = integerMod(indexOfInterval - 1, m_cuttingPoints.size());
+    unsigned int nextIndex = integerMod(indexOfInterval + 1, m_cuttingPoints.size());
+    bool isLeftDivPointTwoSided = m_cuttingPoints[prevIndex].isEmpty ||
+            m_cuttingPoints[prevIndex].second.number() < m_foliation.allDivPoints()[indexOfInterval].shiftedTo(Direction::LEFT);
+
+    bool isRightDivPointTwoSided = m_cuttingPoints[nextIndex].isEmpty ||
+            m_foliation.allDivPoints()[nextIndex].shiftedTo(Direction::RIGHT) < m_cuttingPoints[nextIndex].first.number();
+
+    if ((point < m_cuttingPoints[indexOfInterval].first && isLeftDivPointTwoSided)
+            || (m_cuttingPoints[indexOfInterval].second < point && isRightDivPointTwoSided))
     {
         return true;
     }
@@ -62,9 +75,15 @@ bool balazs::IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1Number&
 
 
 
-bool balazs::IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1Number& leftEndPoint, unsigned int leftIndexOfInterval,
-                                                                  const Mod1Number& rightEndPoint, unsigned int rightIndexOfInterval,
+bool balazs::IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1NumberIntExWithInfo &leftEndPoint,
+                                                                  const Mod1NumberIntExWithInfo &rightEndPoint,
                                                                   bool throughTopDivPointQ) const{
+    assert(foliation() == leftEndPoint.signature());
+    assert(foliation() == rightEndPoint.signature());
+
+    unsigned int leftIndexOfInterval = leftEndPoint.smallContainingInterval();
+    unsigned int rightIndexOfInterval = rightEndPoint.smallContainingInterval();
+
 
     if (leftIndexOfInterval == rightIndexOfInterval) {
         return false;
@@ -102,7 +121,8 @@ std::ostream & balazs::operator<<(std::ostream &out, const IntervalNeighborhoods
         if (inh.m_cuttingPoints[i].isEmpty) {
             out << "() ";
         } else
-            out << "(" << inh.m_cuttingPoints[i].first << "," << inh.m_cuttingPoints[i].second << ") ";
+            out << "(" << inh.m_cuttingPoints[i].first.number() << ","
+                << inh.m_cuttingPoints[i].second.number() << ") ";
     }
     return out;
 }
@@ -113,16 +133,16 @@ std::ostream & balazs::operator<<(std::ostream &out, const IntervalNeighborhoods
 
 
 
-/*! The union of cutting points in all the IntervalNeighborhoods are taken and the resulting object,
- * generally with shorter intervals around the division point are returned.
- *
- * \param inbhVector    The IntervalNeighborhoods specified as arguments must be compatible, e.g. belong to the
- *                      same set of division points. But this is never a problem because one only calls this
- *                      function for IntervalNeighborhoods constructed from the same Foliation. *
- */
+// The union of cutting points in all the IntervalNeighborhoods are taken and the resulting object,
+// generally with shorter intervals around the division point are returned.
+//
 balazs::IntervalNeighborhoods balazs::IntervalNeighborhoods::intersect(const std::vector<const IntervalNeighborhoods*>& inbhVector)
 {
+    for(unsigned int i = 1; i < inbhVector.size(); i++){
+        assert(inbhVector[i - 1]->signature() == inbhVector[i]->signature());
+    }
     assert(inbhVector.size() >= 2);
+
     //const Foliation& foliation = adpVector[0]->m_foliation;
     IntervalNeighborhoods inbh = *inbhVector[0];
     for (unsigned int i = 0; i < inbh.m_cuttingPoints.size(); i++) {

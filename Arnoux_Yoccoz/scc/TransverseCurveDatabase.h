@@ -16,7 +16,7 @@ public:
     TransverseCurveDatabase(SepSegmentDatabase& sepSegmentDatabase);
     void applyToStoredTransverseCurves(void (*function)(const TransverseCurve&));
     void generateTransverseCurves(int maxdepth, int numLeafComponents, void (*function)(const TransverseCurve&) = nullptr);
-
+    const Foliation& foliation() const { return m_sepSegmentDatabase.foliation(); }
 protected:
     SepSegmentDatabase& m_sepSegmentDatabase;
     std::set<TransverseCurve> m_transverseCurves;
