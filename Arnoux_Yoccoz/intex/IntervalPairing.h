@@ -29,7 +29,6 @@ private:
 
     static void fillInLengthsAndPairing(std::vector<floating_point_type>& lengths,
                                  std::vector<unsigned int> &pairing,
-                                 int StartingIndex,
                                  WeighedTree::Node* pNode);
 
 

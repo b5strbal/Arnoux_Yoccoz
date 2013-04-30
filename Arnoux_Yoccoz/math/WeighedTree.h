@@ -55,7 +55,7 @@ public:
     WeighedTree(const std::vector<floating_point_type>& definingList);
     WeighedTree(const WeighedTree& wt) : WeighedTree(wt.m_definingList) {}
     static WeighedTree randomWeighedTree(int numEdges); // Random WeighedTree with prescribed number of edges
-    ~WeighedTree();
+    ~WeighedTree() { delete m_root; }
     
     unsigned int numEdges() const { return m_numEdges; }
     std::vector<int> degrees() const;

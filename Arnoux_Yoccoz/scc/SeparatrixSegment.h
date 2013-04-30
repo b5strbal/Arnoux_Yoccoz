@@ -9,7 +9,7 @@ namespace balazs{
 
 class SeparatrixSegment{
 public:
-    SeparatrixSegment(const Foliation& foliation, int startingSingularity, Direction::UpOrDown direction);
+    SeparatrixSegment(const Foliation& foliation, unsigned int startingSingularity, Direction::UpOrDown direction);
     friend std::ostream& operator<<(std::ostream& out, const SeparatrixSegment& s);
     bool reachedSaddleConnection() const { return m_reachedSaddleConnection; }
     void lengthen();
@@ -19,19 +19,19 @@ public:
 
     const Foliation& foliation() const { return m_foliation; }
     Direction::LeftOrRight side() const { return m_endpoint.number().side(); }
-    int depth() const { return m_depth; }
+    unsigned int depth() const { return m_depth; }
     const Mod1NumberIntExWithInfo& endpoint() const { return m_endpoint; }
-    int startingSingularity() const { return m_startingSingularity; }
+    unsigned int startingSingularity() const { return m_startingSingularity; }
     Direction::UpOrDown direction() const { return m_direction; }
     const IntervalNeighborhoods& intervalNeighborhoods() const { return m_intervalNeighborhoods; }
 
 private:
     const Foliation& m_foliation;
-    int m_startingSingularity;
-    int m_depth;
+    unsigned int m_startingSingularity;
+    unsigned int m_depth;
     Mod1NumberIntExWithInfo m_endpoint;
     IntervalNeighborhoods m_intervalNeighborhoods;
-    std::vector<int> m_intervalIntersectionCount;
+    std::vector<unsigned int> m_intervalIntersectionCount;
     Direction::UpOrDown m_direction;
     bool m_reachedSaddleConnection;
 };

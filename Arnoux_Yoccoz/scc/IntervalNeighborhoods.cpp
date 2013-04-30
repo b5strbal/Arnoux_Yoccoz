@@ -12,7 +12,7 @@ balazs::IntervalNeighborhoods::IntervalNeighborhoods(const Foliation & foliation
 
 
 void balazs::IntervalNeighborhoods::insertPoint(const Mod1NumberIntExWithInfo &newCuttingPoint){
-    assert(foliation() == newCuttingPoint.signature());
+    assert(&foliation() == &newCuttingPoint.foliation());
     assert(newCuttingPoint.number().side() != Direction::CENTER);
 
     unsigned int indexOfInterval = newCuttingPoint.smallContainingInterval();
@@ -46,7 +46,7 @@ void balazs::IntervalNeighborhoods::insertPoint(const Mod1NumberIntExWithInfo &n
 // iterating over the good separatrix segments.
 //
 bool balazs::IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1NumberIntExWithInfo& point) const{
-    assert(foliation() == point.signature());
+    assert(&foliation() == &point.foliation());
 
     unsigned int indexOfInterval = point.smallContainingInterval();
 
@@ -78,8 +78,8 @@ bool balazs::IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1NumberI
 bool balazs::IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1NumberIntExWithInfo &leftEndPoint,
                                                                   const Mod1NumberIntExWithInfo &rightEndPoint,
                                                                   bool throughTopDivPointQ) const{
-    assert(foliation() == leftEndPoint.signature());
-    assert(foliation() == rightEndPoint.signature());
+    assert(&foliation() == &leftEndPoint.foliation());
+    assert(&foliation() == &rightEndPoint.foliation());
 
     unsigned int leftIndexOfInterval = leftEndPoint.smallContainingInterval();
     unsigned int rightIndexOfInterval = rightEndPoint.smallContainingInterval();
@@ -139,7 +139,7 @@ std::ostream & balazs::operator<<(std::ostream &out, const IntervalNeighborhoods
 balazs::IntervalNeighborhoods balazs::IntervalNeighborhoods::intersect(const std::vector<const IntervalNeighborhoods*>& inbhVector)
 {
     for(unsigned int i = 1; i < inbhVector.size(); i++){
-        assert(inbhVector[i - 1]->signature() == inbhVector[i]->signature());
+        assert(&inbhVector[i - 1]->foliation() == &inbhVector[i]->foliation());
     }
     assert(inbhVector.size() >= 2);
 

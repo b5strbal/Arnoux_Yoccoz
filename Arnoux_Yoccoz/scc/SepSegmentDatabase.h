@@ -12,7 +12,6 @@ namespace balazs{
 
 class SepSegmentDatabase
 {
-    friend class SepSegmentCollections;
 public:
     SepSegmentDatabase(const Foliation& foliation);
 
@@ -20,8 +19,14 @@ public:
     void findNextSepSegment(Direction::UpOrDown direction, int index);
     const SeparatrixSegment& getFirstIntersection(Direction::UpOrDown direction, int index, const DisjointIntervals& intervals);
     bool reachedSaddleConnection(Direction::UpOrDown direction, int index) const;
-    void generateSepSegments(int maxdepth);
-    void printGoodSepSegments(int maxdepth = 0, bool verbose = false);
+    void generateSepSegments(unsigned int maxdepth);
+    void printGoodSepSegments(unsigned int maxdepth = 0, bool verbose = false);
+    std::list<SeparatrixSegment>::const_iterator firstGoodSegment(Direction::LeftOrRight leftOrRight,
+                                                                  Direction::UpOrDown upOrDown,
+                                                                  unsigned int singularityIndex);
+    bool isLast(std::list<SeparatrixSegment>::const_iterator it, unsigned int maxDepth) const;
+
+
 
 protected:
     const Foliation& m_foliation;

@@ -1,13 +1,9 @@
 #ifndef TRANSVERSECURVE_H
 #define TRANSVERSECURVE_H
 
-#include "../fol/Foliation.h"
 #include "DisjointIntervals.h"
-#include "SeparatrixSegment.h"
 #include "SepSegmentCollections.h"
-#include <list>
 
-class SeparatrixSegment;
 
 namespace balazs{
 

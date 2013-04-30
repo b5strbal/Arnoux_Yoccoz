@@ -4,7 +4,6 @@
 #include "../math/Choose.h"
 #include "SepSegmentDatabase.h"
 
-class SepSegmentDatabase;
 
 namespace balazs{
 
@@ -22,7 +21,7 @@ public:
     public:
         iterator(const SepSegmentCollections& parent);
         static iterator endIterator(const SepSegmentCollections& parent);
-        const SepSegmentCollection& operator*() { return m_sepSegmentCollection; }
+        const SepSegmentCollection& operator*() const { return m_sepSegmentCollection; }
         iterator& operator++();
         friend bool operator==(const iterator& it1, const iterator& it2);
         friend bool operator!=(const iterator& it1, const iterator& it2);
@@ -30,7 +29,8 @@ public:
         iterator(const SepSegmentCollections &parent,
                  const SepSegmentCollection& sepSegmentCollection,
                  const Choose& sepIndicesChoose);
-        void setInitialSetting();
+        void setToEndIterator();
+        void setInitialSetting(const Choose& sepIndicesChoose);
 
         const SepSegmentCollections& m_parent;
         SepSegmentCollection m_sepSegmentCollection; // if empty, it is the end iterator
@@ -56,7 +56,7 @@ private:
     SepSegmentDatabase& m_sepSegmentDatabase;
     unsigned int m_maxDepth;
     unsigned int m_maxInvolvedSingularities;
-    Mode m_mode;
+    const Mode m_mode;
     Direction::LeftOrRight m_shiftToSide;
 };
 
