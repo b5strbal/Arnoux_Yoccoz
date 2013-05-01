@@ -12,25 +12,23 @@ typedef std::vector<std::list<SeparatrixSegment>::const_iterator> SepSegmentColl
 
 
 
-
-
 class SepSegmentCollections
 {
 public:
     class iterator{
     public:
-        iterator(const SepSegmentCollections& parent);
+        static iterator beginIterator(const SepSegmentCollections& parent);
         static iterator endIterator(const SepSegmentCollections& parent);
         const SepSegmentCollection& operator*() const { return m_sepSegmentCollection; }
         iterator& operator++();
-        friend bool operator==(const iterator& it1, const iterator& it2);
-        friend bool operator!=(const iterator& it1, const iterator& it2);
     private:
-        iterator(const SepSegmentCollections &parent,
-                 const SepSegmentCollection& sepSegmentCollection,
-                 const Choose& sepIndicesChoose);
+        iterator(const SepSegmentCollections& parent);
+
         void setToEndIterator();
+        void setSegmentToFirst(unsigned int segmentIndex);
         void setInitialSetting(const Choose& sepIndicesChoose);
+        unsigned int numInvolvedSingularities() const;
+        unsigned int howMuchToChooseFrom() const;
 
         const SepSegmentCollections& m_parent;
         SepSegmentCollection m_sepSegmentCollection; // if empty, it is the end iterator
@@ -38,8 +36,9 @@ public:
     };
 
     enum class Mode{
-        SEGMENTS_SHIFTED_TO_SAME_SIDE, // mode parameter: number of leaf segments
-        WRAPPING_AROUND_SINGULARITIES_SYMMETRICALLY
+        SEGMENTS_SHIFTED_TO_SAME_SIDE,
+        WRAPPING_AROUND_SINGULARITIES_SYMMETRICALLY,
+        SEGMENTS_SHIFTED_TO_SAME_SIDE_FROM_RP2
     };
 
 
@@ -53,33 +52,33 @@ public:
     iterator end() const;
 
 private:
+    const Foliation& foliation() const;
+    const FoliationFromRP2& foliationFromRP2() const;
+
+
     SepSegmentDatabase& m_sepSegmentDatabase;
     unsigned int m_maxDepth;
     unsigned int m_maxInvolvedSingularities;
     const Mode m_mode;
     Direction::LeftOrRight m_shiftToSide;
+
+    // This vector is only filled in if the underlying foliation is a FoliationFromRP2.
+    // In that case the singularities/separatrices are naturally paired up by the covering map.
+    // That pairing is described by FoliationFromRP2::intervalPermutationBeforeHalfTwist().
+    // This vector contains the smaller indices of the singularities in each pair.
+    // So its length is half of numIntervals of the foliation.
+    std::vector<unsigned int> m_choiceOfSingularities_RP2;
 };
 
 
-
-
-
-
-
-//inline bool isAfterLast() const{ return m_segments.empty(); }
-
-
-//bool isLast(std::list<SeparatrixSegment>::const_iterator it) const;
+bool operator==(const SepSegmentCollections::iterator& it1, const SepSegmentCollections::iterator& it2);
+bool operator!=(const SepSegmentCollections::iterator& it1, const SepSegmentCollections::iterator& it2);
 
 
 
 
 
 }
-
-
-
-
 
 
 

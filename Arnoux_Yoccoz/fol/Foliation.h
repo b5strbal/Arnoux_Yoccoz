@@ -18,7 +18,7 @@ public:
     Foliation(const std::vector<floating_point_type>& lengths,
               const Permutation& permutation,
               floating_point_type twist);
-
+    virtual ~Foliation() {}
 
     
     unsigned int numSeparatrices() const { return 2 * numIntervals(); }

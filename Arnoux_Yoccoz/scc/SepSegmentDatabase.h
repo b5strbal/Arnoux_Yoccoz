@@ -21,9 +21,11 @@ public:
     bool reachedSaddleConnection(Direction::UpOrDown direction, int index) const;
     void generateSepSegments(unsigned int maxdepth);
     void printGoodSepSegments(unsigned int maxdepth = 0, bool verbose = false);
+
+    std::list<SeparatrixSegment>::const_iterator firstGoodSegment(std::list<SeparatrixSegment>::const_iterator it) const;
     std::list<SeparatrixSegment>::const_iterator firstGoodSegment(Direction::LeftOrRight leftOrRight,
                                                                   Direction::UpOrDown upOrDown,
-                                                                  unsigned int singularityIndex);
+                                                                  unsigned int singularityIndex) const;
     bool isLast(std::list<SeparatrixSegment>::const_iterator it, unsigned int maxDepth) const;
 
 

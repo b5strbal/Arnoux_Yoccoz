@@ -9,6 +9,7 @@ namespace balazs{
 class FoliationFromSphere : public Foliation
 {
 public:
+    virtual ~FoliationFromSphere() {}
     static FoliationFromSphere fromFoliationSphere(const FoliationSphere &foliationSphere);
 private:
     FoliationFromSphere(const std::vector<floating_point_type>& lengths,

@@ -42,10 +42,22 @@ void balazs::SepSegmentDatabase::printGoodSepSegments(unsigned int maxdepth, boo
 }
 
 
-std::list<balazs::SeparatrixSegment>::const_iterator balazs::SepSegmentDatabase::firstGoodSegment(Direction::LeftOrRight leftOrRight, Direction::UpOrDown upOrDown, unsigned int singularityIndex)
+
+
+std::list<balazs::SeparatrixSegment>::const_iterator balazs::SepSegmentDatabase::firstGoodSegment(std::list<SeparatrixSegment>::const_iterator it) const
+{
+    assert(&foliation() == &it->foliation());
+    return firstGoodSegment(it->side(), it->direction(), it->startingSingularity());
+}
+
+
+
+
+std::list<balazs::SeparatrixSegment>::const_iterator balazs::SepSegmentDatabase::firstGoodSegment(Direction::LeftOrRight leftOrRight, Direction::UpOrDown upOrDown, unsigned int singularityIndex) const
 {
     return m_goodShiftedSeparatrixSegments[leftOrRight][upOrDown][singularityIndex].begin();
 }
+
 
 
 bool balazs::SepSegmentDatabase::isLast(std::list<SeparatrixSegment>::const_iterator it, unsigned int maxDepth) const

@@ -20,7 +20,7 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
     }
 
 
-    std::array<bool, 2> isCandidateForWrapsAroundEnds = {true, true};
+    std::array<bool, 2> isCandidateForWrapsAroundEnds = {{true, true}};
     std::vector<std::pair<Mod1NumberIntExWithInfo, int>> endpointsAndIndices;
 
     endpointsAndIndices.reserve(segments.size());
@@ -46,7 +46,7 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
         }
         for (unsigned int i = 0; i < endpointsAndIndices.size(); i += 2) {
             if (isEndpointIndexOdd[i] == isEndpointIndexOdd[i + 1]) {
-                return {false, false};
+                return {{false, false}};
             }
         }
     }

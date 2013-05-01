@@ -32,7 +32,6 @@ SOURCES += main.cpp\
     ../Arnoux_Yoccoz/scc/TransverseCurveDatabase.cpp \
     ../Arnoux_Yoccoz/scc/TransverseCurve.cpp \
     ../Arnoux_Yoccoz/scc/SepSegmentDatabase.cpp \
-    ../Arnoux_Yoccoz/scc/SepSegmentCollectionsFromRP2.cpp \
     ../Arnoux_Yoccoz/scc/SepSegmentCollections.cpp \
     ../Arnoux_Yoccoz/scc/SeparatrixSegment.cpp \
     ../Arnoux_Yoccoz/scc/IntervalNeighborhoods.cpp \
@@ -62,7 +61,6 @@ HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/scc/TransverseCurveDatabase.h \
     ../Arnoux_Yoccoz/scc/TransverseCurve.h \
     ../Arnoux_Yoccoz/scc/SepSegmentDatabase.h \
-    ../Arnoux_Yoccoz/scc/SepSegmentCollectionsFromRP2.h \
     ../Arnoux_Yoccoz/scc/SepSegmentCollections.h \
     ../Arnoux_Yoccoz/scc/SeparatrixSegment.h \
     ../Arnoux_Yoccoz/scc/IntervalNeighborhoods.h \
