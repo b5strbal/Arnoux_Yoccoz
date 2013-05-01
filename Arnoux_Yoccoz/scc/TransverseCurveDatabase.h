@@ -3,7 +3,7 @@
 
 #include <set>
 #include "TransverseCurve.h"
-#include "SepSegmentCollections.h"
+#include "SepSegmentCollectionList.h"
 
 namespace balazs{
 

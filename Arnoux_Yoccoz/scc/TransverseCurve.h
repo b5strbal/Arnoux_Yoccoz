@@ -2,7 +2,7 @@
 #define TRANSVERSECURVE_H
 
 #include "DisjointIntervals.h"
-#include "SepSegmentDatabase.h"
+#include "SepSegmentCollection.h"
 
 
 namespace balazs{

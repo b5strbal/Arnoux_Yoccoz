@@ -122,8 +122,8 @@ void balazs::TransverseCurveDatabase::applyToStoredTransverseCurves(void (*funct
 
 void balazs::TransverseCurveDatabase::generateTransverseCurves(int maxdepth, int numLeafComponents, void (*function)(const TransverseCurve&)){
     //m_sepSegmentDatabase.generateSepSegments(maxdepth);
-    SepSegmentCollections collections(m_sepSegmentDatabase, maxdepth, numLeafComponents,
-                                      SepSegmentCollections::Mode::SEGMENTS_SHIFTED_TO_SAME_SIDE);
+    SepSegmentCollectionList collections(m_sepSegmentDatabase, maxdepth, numLeafComponents,
+                                      SepSegmentCollectionMode::SEGMENTS_SHIFTED_TO_SAME_SIDE);
 
     for (const SepSegmentCollection& sepSegmentCollection : collections) {
         std::array<bool, 2> isWrapsAroundEndsGood = whichTransverseCurvesExist(sepSegmentCollection);

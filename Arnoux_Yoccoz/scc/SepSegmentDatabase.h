@@ -9,6 +9,7 @@
 
 namespace balazs{
 
+typedef std::list<SeparatrixSegment>::const_iterator sepSegmentDatabaseConstIterator_t;
 
 class SepSegmentDatabase
 {
@@ -40,7 +41,6 @@ private:
 };
 
 
-typedef std::vector<std::list<SeparatrixSegment>::const_iterator> SepSegmentCollection;
 
 
 }
