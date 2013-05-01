@@ -28,7 +28,6 @@ SOURCES += main.cpp\
     ../Arnoux_Yoccoz/math/Permutation.cpp \
     ../Arnoux_Yoccoz/math/Matrix.cpp \
     ../Arnoux_Yoccoz/math/Choose.cpp \
-    ../Arnoux_Yoccoz/scc/TransverseCurveDatabaseFromRP2.cpp \
     ../Arnoux_Yoccoz/scc/TransverseCurveDatabase.cpp \
     ../Arnoux_Yoccoz/scc/TransverseCurve.cpp \
     ../Arnoux_Yoccoz/scc/SepSegmentDatabase.cpp \
@@ -57,7 +56,6 @@ HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/math/Matrix.hpp \
     ../Arnoux_Yoccoz/math/Matrix.h \
     ../Arnoux_Yoccoz/math/Choose.h \
-    ../Arnoux_Yoccoz/scc/TransverseCurveDatabaseFromRP2.h \
     ../Arnoux_Yoccoz/scc/TransverseCurveDatabase.h \
     ../Arnoux_Yoccoz/scc/TransverseCurve.h \
     ../Arnoux_Yoccoz/scc/SepSegmentDatabase.h \

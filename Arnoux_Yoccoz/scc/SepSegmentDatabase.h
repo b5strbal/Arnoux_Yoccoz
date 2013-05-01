@@ -30,7 +30,7 @@ public:
 
 
 
-protected:
+private:
     const Foliation& m_foliation;
     std::array<std::vector<SeparatrixSegment>, 2> m_currentSepSegments;
     std::array<std::array<std::vector<std::list<SeparatrixSegment>>, 2>, 2> m_goodShiftedSeparatrixSegments;
@@ -40,16 +40,8 @@ protected:
 };
 
 
+typedef std::vector<std::list<SeparatrixSegment>::const_iterator> SepSegmentCollection;
 
-
-class SepSegmentDatabaseFromRP2 : public SepSegmentDatabase
-{
-public:
-    SepSegmentDatabaseFromRP2(const FoliationFromRP2& foliationFromRP2) :
-        SepSegmentDatabase(foliationFromRP2)
-    {}
-private:
-};
 
 }
 

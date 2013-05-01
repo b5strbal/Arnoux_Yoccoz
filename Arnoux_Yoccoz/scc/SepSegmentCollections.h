@@ -8,7 +8,6 @@
 namespace balazs{
 
 
-typedef std::vector<std::list<SeparatrixSegment>::const_iterator> SepSegmentCollection;
 
 
 

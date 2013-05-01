@@ -11,7 +11,7 @@ balazs::SepSegmentDatabase::SepSegmentDatabase(const Foliation& foliation) :
         }
 
         for (unsigned int i = 0; i < foliation.numIntervals(); i++) {
-            m_currentSepSegments[updown].emplace_back(foliation, i, updown);
+            m_currentSepSegments[updown].push_back(SeparatrixSegment(foliation, i, updown));
             addToGoodSegmentsIfGood(m_currentSepSegments[updown].back());
         }
     }
@@ -103,7 +103,6 @@ void balazs::SepSegmentDatabase::findNextSepSegment(Direction::UpOrDown directio
     segment.lengthen();
 
     addToGoodSegmentsIfGood(segment);
-
 }
 
 
@@ -116,7 +115,6 @@ void balazs::SepSegmentDatabase::generateSepSegments(unsigned int maxdepth){
                    m_currentSepSegments[direction][index].depth() < maxdepth) {
                 findNextSepSegment(direction, index);
             }
-    //        std::cout << std::endl << std::endl;
         }
     }
 }
@@ -133,7 +131,7 @@ const balazs::SeparatrixSegment& balazs::SepSegmentDatabase::getFirstIntersectio
 {
     for (auto &segment : m_goodShiftedSeparatrixSegments[Direction::RIGHT][direction][index]) {
         Mod1Number centeredEndpoint = segment.endpoint().shiftedTo(Direction::CENTER);
-        if (intervals.contains(centeredEndpoint)) { // we are gonna have to catch an error here
+        if (intervals.contains(centeredEndpoint)) { // we are gonna have to catch an error here?
             return segment;
         }
     }

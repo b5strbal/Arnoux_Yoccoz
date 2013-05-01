@@ -1,10 +1,8 @@
 #ifndef TRANSVERSECURVEDATABASE_H
 #define TRANSVERSECURVEDATABASE_H
 
-#include "TransverseCurve.h"
 #include <set>
-#include <array>
-#include "SepSegmentDatabase.h"
+#include "TransverseCurve.h"
 #include "SepSegmentCollections.h"
 
 namespace balazs{
@@ -17,7 +15,8 @@ public:
     void applyToStoredTransverseCurves(void (*function)(const TransverseCurve&));
     void generateTransverseCurves(int maxdepth, int numLeafComponents, void (*function)(const TransverseCurve&) = nullptr);
     const Foliation& foliation() const { return m_sepSegmentDatabase.foliation(); }
-protected:
+
+private:
     SepSegmentDatabase& m_sepSegmentDatabase;
     std::set<TransverseCurve> m_transverseCurves;
 
