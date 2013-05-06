@@ -21,8 +21,8 @@ public:
     virtual ~Foliation() {}
 
     
-    unsigned int numSeparatrices() const { return 2 * numIntervals(); }
-    unsigned int numIntervals() const { return m_twistedIntervalExchange.size(); }
+    std::size_t numSeparatrices() const { return 2 * numIntervals(); }
+    std::size_t numIntervals() const { return m_twistedIntervalExchange.size(); }
 
     const TwistedIntervalExchangeMap& intExchange() const;
     const std::vector<Mod1NumberIntExchange>& allDivPoints() const;

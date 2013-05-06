@@ -19,7 +19,7 @@ public:
                         const Permutation& permutation,
                         floating_point_type twist);
 
-    unsigned int size() const { return m_lengths.size(); }
+    std::size_t size() const { return m_lengths.size(); }
     const LengthsAndTwist* signature() const { return &m_lengthsAndTwist; }
     const std::vector<Mod1NumberIntExchange>& lengths() const { return m_lengths; }
     const std::vector<Mod1NumberIntExchange>& divPoints() const { return m_divPoints; }
@@ -42,8 +42,8 @@ public:
     TwistedIntervalExchangeMap reverse() const;
     TwistedIntervalExchangeMap invert() const;
 
-    //    unsigned int containingInterval(const Mod1Number& point) const;
-    //    unsigned int containingIntervalAfterExchange(const Mod1Number& point) const;
+    //    std::size_t containingInterval(const Mod1Number& point) const;
+    //    std::size_t containingIntervalAfterExchange(const Mod1Number& point) const;
 
     friend std::ostream& operator<<(std::ostream& Out, const TwistedIntervalExchangeMap& twistedIntervalExchange);
 

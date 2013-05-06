@@ -34,8 +34,8 @@ public:
 
 
     SepSegmentCollectionList(SepSegmentDatabase& sepSegmentDatabase,
-                          unsigned int maxDepth,
-                          unsigned int maxInvolvedSingularities,
+                          std::size_t maxDepth,
+                          std::size_t maxInvolvedSingularities,
                           SepSegmentCollectionMode mode,
                           Direction::LeftOrRight shiftToSide = Direction::RIGHT);
 
@@ -47,8 +47,8 @@ private:
 
 
     SepSegmentDatabase& m_sepSegmentDatabase;
-    unsigned int m_maxDepth;
-    unsigned int m_maxInvolvedSingularities;
+    std::size_t m_maxDepth;
+    std::size_t m_maxInvolvedSingularities;
     const SepSegmentCollectionMode m_mode;
     Direction::LeftOrRight m_shiftToSide;
 };

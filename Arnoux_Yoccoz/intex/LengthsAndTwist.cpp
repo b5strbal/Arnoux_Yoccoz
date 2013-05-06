@@ -8,7 +8,7 @@ balazs::LengthsAndTwist::LengthsAndTwist(const std::vector<floating_point_type> 
     if (lengths.size() == 0){
         throw std::runtime_error("The number of intervals must be at least 1.");
     }
-    for (unsigned int i = 0; i < lengths.size(); i++) {
+    for (std::size_t i = 0; i < lengths.size(); i++) {
         if (lengths[i] <= 0)
             throw std::runtime_error("The length parameters an interval exchange map must be positive.");
     }

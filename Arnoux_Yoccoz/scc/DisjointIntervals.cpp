@@ -10,7 +10,7 @@ balazs::DisjointIntervals::DisjointIntervals(const std::vector<Mod1Number>& unso
 {
     assert(unsortedPoints.size() % 2 == 0);
     std::sort(m_endpoints.begin(), m_endpoints.end());
-    for (unsigned int i = 0; i < m_endpoints.size(); i += 2) {
+    for (std::size_t i = 0; i < m_endpoints.size(); i += 2) {
         m_totalLength += distanceBetween(m_endpoints[i], m_endpoints[i + 1]);
     }
     m_totalLength = wrapsAroundEnds ? 1 - m_totalLength : m_totalLength;
@@ -33,7 +33,7 @@ bool balazs::DisjointIntervals::contains(const Mod1Number& point) const {
 
 
 std::ostream& balazs::operator<<(std::ostream& out, const DisjointIntervals& d){
-    for (unsigned int i = d.m_wrapsAroundEnds ? 1 : 0; i < d.m_endpoints.size() - 2; i += 2) {
+    for (std::size_t i = d.m_wrapsAroundEnds ? 1 : 0; i < d.m_endpoints.size() - 2; i += 2) {
         out << interval_t({d.m_endpoints[i], d.m_endpoints[i + 1]}) << " ";
     }
     if (d.m_wrapsAroundEnds) {

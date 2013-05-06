@@ -41,7 +41,7 @@ balazs::Mod1NumberIntExchange balazs::Mod1NumberIntExchange::constructTwist(cons
 }
 
 balazs::Mod1NumberIntExchange balazs::Mod1NumberIntExchange::constructLength(const LengthsAndTwist *lengthsAndTwist,
-                                                             unsigned int lengthIndex)
+                                                             std::size_t lengthIndex)
 {
     Mod1NumberIntExchange result(lengthsAndTwist);
     result.Mod1Number::operator +=(lengthsAndTwist->lengths()[lengthIndex]);
@@ -63,7 +63,7 @@ balazs::Mod1NumberIntExchange& balazs::Mod1NumberIntExchange::operator+=(const M
     assert(signature() != nullptr);
     assert(signature() == rhs.signature());
     Mod1Number::operator+=(rhs);
-    for(unsigned int i = 0; i < m_coefficients.size(); i++){
+    for(std::size_t i = 0; i < m_coefficients.size(); i++){
         m_coefficients[i] += rhs.m_coefficients[i];
     }
 
@@ -80,11 +80,11 @@ balazs::Mod1NumberIntExchange balazs::Mod1NumberIntExchange::operator-() const
 {
     assert(signature() != nullptr);
     std::vector<int> newCoefficients(m_coefficients.size());
-    for(unsigned int i = 0; i < m_coefficients.size(); i++){
+    for(std::size_t i = 0; i < m_coefficients.size(); i++){
         newCoefficients[i] = -m_coefficients[i];
     }
     if(static_cast<floating_point_type>(*this) > 0){
-        for(unsigned int i = 0; i < m_coefficients.size(); i++){
+        for(std::size_t i = 0; i < m_coefficients.size(); i++){
             newCoefficients[i]++;
         }
     }

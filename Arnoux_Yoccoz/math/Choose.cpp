@@ -3,13 +3,13 @@
 
 
 
-balazs::Choose::Choose(unsigned int n, unsigned int k) :
+balazs::Choose::Choose(std::size_t n, std::size_t k) :
 m_n(n),
-m_k(k),
-m_chosenIndices(k)
+m_k(k)
 {
-    for (unsigned int i = 0; i < k; i++) {
-        m_chosenIndices[i] = i;
+    m_chosenIndices.reserve(k);
+    for (std::size_t i = 0; i < k; i++) {
+        m_chosenIndices.push_back(i);
     }
 }
 
@@ -23,7 +23,7 @@ balazs::Choose& balazs::Choose::operator++() {
         m_chosenIndices.clear(); // indicating the element after the last one
     } else {
         m_chosenIndices[indexToIncrease]++;
-        for(unsigned int i = indexToIncrease + 1; i < m_k; i++)
+        for(std::size_t i = indexToIncrease + 1; i < m_k; i++)
             m_chosenIndices[i] = m_chosenIndices[indexToIncrease] + i - indexToIncrease;
     }
 
@@ -35,7 +35,7 @@ bool balazs::Choose::isAfterLast() const
     return m_chosenIndices.empty();
 }
 
-unsigned int balazs::Choose::operator [](unsigned int i)
+std::size_t balazs::Choose::operator [](std::size_t i)
 {
     return m_chosenIndices[i];
 }

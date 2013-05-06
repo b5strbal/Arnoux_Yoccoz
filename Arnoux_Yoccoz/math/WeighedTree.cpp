@@ -107,7 +107,7 @@ void balazs::WeighedTree::createChildren(std::vector<floating_point_type>::const
         
         
         pNode->m_children = new Node[pNode->m_numChildren];
-        for (unsigned int i = 0; i < pNode->m_numChildren; i++) {
+        for (std::size_t i = 0; i < pNode->m_numChildren; i++) {
             pNode->m_children[i].m_parent = pNode;
             pNode->m_children[i].m_weight = itBegin[i];
         }
@@ -138,7 +138,7 @@ std::vector<int> balazs::WeighedTree::degrees() const{
 
 void balazs::WeighedTree::getDegreesRecursive(std::vector<int>& degrees, Node* node) const{
     degrees.push_back(node->m_numChildren + 1);
-    for (unsigned int i = 0; i < node->m_numChildren; i++) {
+    for (std::size_t i = 0; i < node->m_numChildren; i++) {
         getDegreesRecursive(degrees, node->m_children + i);
     }
 }
@@ -147,13 +147,13 @@ void balazs::WeighedTree::getDegreesRecursive(std::vector<int>& degrees, Node* n
 
 
 
-unsigned int balazs::WeighedTree::Node::numDescendants()
+std::size_t balazs::WeighedTree::Node::numDescendants()
 {
     if(m_numChildren == 0)
         return 0;
 
-    unsigned int total = 0;
-    for(unsigned int i = 0; i < m_numChildren; i++){
+    std::size_t total = 0;
+    for(std::size_t i = 0; i < m_numChildren; i++){
         total += m_children[i].numDescendants();
     }
     return total;
@@ -171,7 +171,7 @@ balazs::WeighedTree::Node* balazs::WeighedTree::nextNode(Node* pNode){
     Node* NewNode;
     
     NewNode = pNode->firstSibling();
-    for (unsigned int i = 0; i < pNode->numSiblings(); i++) {
+    for (std::size_t i = 0; i < pNode->numSiblings(); i++) {
         if (NewNode->m_numChildren > 0) {
             return NewNode->m_children;
         }

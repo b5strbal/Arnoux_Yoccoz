@@ -24,24 +24,24 @@ namespace balazs{
 class Permutation{
 public:
     Permutation(); // Constructs the permutation on a 1-element set.
-    Permutation(const std::vector<unsigned int> &functionValues);
-    unsigned int size() const;
-    unsigned int operator[](unsigned int index) const { return m_functionValues[index]; }
+    Permutation(const std::vector<std::size_t> &functionValues);
+    std::size_t size() const;
+    std::size_t operator[](std::size_t index) const { return m_functionValues[index]; }
 
     template <typename Type>
-    std::vector<Type> operator()(const std::vector<Type>& vec) const{
+    const std::vector<Type> operator()(const std::vector<Type>& vec) const{
         if (size() != vec.size()) {
             throw std::runtime_error("A permutation can't act on a vector if the sizes are different.");
         }
         std::vector<Type> newVector(size());
-        for (unsigned int i = 0; i < size(); i++) {
+        for (std::size_t i = 0; i < size(); i++) {
             newVector[m_functionValues[i]] = vec[i];
         }
         return newVector;
     }
 
 private:
-    std::vector<unsigned int> m_functionValues;
+    std::vector<std::size_t> m_functionValues;
 };
 
 

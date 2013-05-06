@@ -57,7 +57,7 @@ public:
     static WeighedTree randomWeighedTree(int numEdges); // Random WeighedTree with prescribed number of edges
     ~WeighedTree() { delete m_root; }
     
-    unsigned int numEdges() const { return m_numEdges; }
+    std::size_t numEdges() const { return m_numEdges; }
     std::vector<int> degrees() const;
 
 
@@ -65,7 +65,7 @@ private:
     struct Node{
         floating_point_type m_weight = 0;
         Node* m_parent = NULL;
-        unsigned int m_numChildren = 0;
+        std::size_t m_numChildren = 0;
         Node* m_children = NULL;
 
         ~Node(){ delete [] m_children; }
@@ -76,8 +76,8 @@ private:
 
         inline bool isRoot() const { return m_parent == NULL ? true : false; }
         bool isLastSibling() const { return isRoot() || m_parent->lastChild() == this ? true : false; }
-        unsigned int numSiblings() const { return isRoot() ? 1 : m_parent->m_numChildren; }
-        unsigned int numDescendants();
+        std::size_t numSiblings() const { return isRoot() ? 1 : m_parent->m_numChildren; }
+        std::size_t numDescendants();
     };
 
 
@@ -99,7 +99,7 @@ private:
 
     std::vector<floating_point_type> m_definingList;
     Node* m_root;
-    unsigned int m_numEdges;
+    std::size_t m_numEdges;
     static std::default_random_engine m_randomEngine;
 };
 

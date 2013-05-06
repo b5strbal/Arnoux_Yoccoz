@@ -15,12 +15,12 @@ public:
     bool isTooCloseToADivPoint() const;
 
     const Mod1NumberIntExchange number() const { return m_mod1NumberIntExchange; }
-    unsigned int smallContainingInterval() const { return m_smallContainingInterval; }
+    std::size_t smallContainingInterval() const { return m_smallContainingInterval; }
     const Foliation& foliation() const { return *m_foliation; }
     operator Mod1NumberIntExchange() const { return m_mod1NumberIntExchange; }
 private:
     Mod1NumberIntExchange m_mod1NumberIntExchange;
-    unsigned int m_smallContainingInterval;
+    std::size_t m_smallContainingInterval;
     const Foliation* m_foliation;
 };
 

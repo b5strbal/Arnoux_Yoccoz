@@ -27,7 +27,7 @@ balazs::SepSegmentCollection::SepSegmentCollection(const SepSegmentDatabase &sep
     if(mode == SepSegmentCollectionMode::SEGMENTS_SHIFTED_TO_SAME_SIDE_FROM_RP2){
         assert(dynamic_cast<const FoliationFromRP2*>(&foliation()) != nullptr);
         m_choiceOfSingularities_RP2.reserve(foliationFromRP2().numIntervals() / 2);
-        for(unsigned int i = 0; i < foliationFromRP2().numIntervals(); i++){
+        for(std::size_t i = 0; i < foliationFromRP2().numIntervals(); i++){
             if(foliationFromRP2().intervalPermutationBeforeHalfTwist()[i] > i){
                 m_choiceOfSingularities_RP2.push_back(i);
             }
@@ -36,7 +36,7 @@ balazs::SepSegmentCollection::SepSegmentCollection(const SepSegmentDatabase &sep
 }
 
 
-balazs::sepSegmentDatabaseConstIterator_t balazs::SepSegmentCollection::operator [](unsigned int index) const
+balazs::sepSegmentDatabaseConstIterator_t balazs::SepSegmentCollection::operator [](std::size_t index) const
 {
     return m_segments[index];
 }
@@ -55,7 +55,7 @@ void balazs::SepSegmentCollection::setInitialSetting(const Choose &sepIndicesCho
     case SepSegmentCollectionMode::SEGMENTS_SHIFTED_TO_SAME_SIDE:
         m_segments.resize(2 * m_sepIndicesChoose.k());
 
-        for(unsigned int i = 0; i < m_sepIndicesChoose.k(); i++){
+        for(std::size_t i = 0; i < m_sepIndicesChoose.k(); i++){
             m_segments[2 * i] = m_sepSegmentDatabase.firstGoodSegment(m_shiftToSide, Direction::UP, m_sepIndicesChoose[i]);
             m_segments[2 * i + 1] = m_sepSegmentDatabase.firstGoodSegment(m_shiftToSide, Direction::DOWN, m_sepIndicesChoose[i]);
         }
@@ -66,7 +66,7 @@ void balazs::SepSegmentCollection::setInitialSetting(const Choose &sepIndicesCho
     case SepSegmentCollectionMode::WRAPPING_AROUND_SINGULARITIES_SYMMETRICALLY:
         m_segments.resize(2 * m_sepIndicesChoose.k());
 
-        for(unsigned int i = 0; i < m_sepIndicesChoose.k(); i++){
+        for(std::size_t i = 0; i < m_sepIndicesChoose.k(); i++){
             m_segments[2 * i] = m_sepSegmentDatabase.firstGoodSegment(Direction::LEFT, Direction::UP, m_sepIndicesChoose[i]);
             m_segments[2 * i + 1] = m_sepSegmentDatabase.firstGoodSegment(Direction::RIGHT, Direction::UP, m_sepIndicesChoose[i]);
         }
@@ -78,9 +78,9 @@ void balazs::SepSegmentCollection::setInitialSetting(const Choose &sepIndicesCho
         m_segments.resize(4 * m_sepIndicesChoose.k());
 
 
-        for(unsigned int i = 0; i < m_sepIndicesChoose.k(); i++){
-            unsigned int firstIndex = m_choiceOfSingularities_RP2[m_sepIndicesChoose[i]];
-            unsigned int secondIndex = foliationFromRP2().intervalPermutationBeforeHalfTwist()[firstIndex];
+        for(std::size_t i = 0; i < m_sepIndicesChoose.k(); i++){
+            std::size_t firstIndex = m_choiceOfSingularities_RP2[m_sepIndicesChoose[i]];
+            std::size_t secondIndex = foliationFromRP2().intervalPermutationBeforeHalfTwist()[firstIndex];
 
             m_segments[4 * i] = m_sepSegmentDatabase.firstGoodSegment(m_shiftToSide, Direction::UP, firstIndex);
             m_segments[4 * i + 1] = m_sepSegmentDatabase.firstGoodSegment(m_shiftToSide, Direction::DOWN, firstIndex);
@@ -99,8 +99,8 @@ void balazs::SepSegmentCollection::setInitialSetting(const Choose &sepIndicesCho
 
 
 
-void balazs::SepSegmentCollection::advance(unsigned int maxDepth,
-                                           unsigned int maxInvolvedSingularities)
+void balazs::SepSegmentCollection::advance(std::size_t maxDepth,
+                                           std::size_t maxInvolvedSingularities)
 {
     assert(!isEmpty());
 
@@ -114,7 +114,7 @@ void balazs::SepSegmentCollection::advance(unsigned int maxDepth,
         // One of the sepSegments is not the last one, so we can lengthen that, and set the
         // ones after it to the first.
 
-        unsigned int setToFirstAfterThis;
+        std::size_t setToFirstAfterThis;
 
         switch(m_mode)
         {
@@ -137,7 +137,7 @@ void balazs::SepSegmentCollection::advance(unsigned int maxDepth,
         case SepSegmentCollectionMode::SEGMENTS_SHIFTED_TO_SAME_SIDE_FROM_RP2:
             assert(indexToIncrease % 4 >= 2);
             m_segments[indexToIncrease]++;
-            unsigned int otherToIncrease;
+            std::size_t otherToIncrease;
             switch (indexToIncrease % 4) {
 //            case 0:
 //                otherToIncrease = indexToIncrease + 3;
@@ -162,7 +162,7 @@ void balazs::SepSegmentCollection::advance(unsigned int maxDepth,
         }
 
 
-        for (unsigned int i = setToFirstAfterThis + 1; i < m_segments.size(); i++){
+        for (std::size_t i = setToFirstAfterThis + 1; i < m_segments.size(); i++){
              setSegmentToFirst(i);
         }
 
@@ -206,7 +206,7 @@ void balazs::SepSegmentCollection::advance(unsigned int maxDepth,
 
 
 
-void balazs::SepSegmentCollection::setSegmentToFirst(unsigned int segmentIndex)
+void balazs::SepSegmentCollection::setSegmentToFirst(std::size_t segmentIndex)
 {
     m_segments[segmentIndex] =
             m_sepSegmentDatabase.firstGoodSegment(m_segments[segmentIndex]);
@@ -216,7 +216,7 @@ void balazs::SepSegmentCollection::setSegmentToFirst(unsigned int segmentIndex)
 
 
 
-unsigned int balazs::SepSegmentCollection::numInvolvedSingularities() const
+std::size_t balazs::SepSegmentCollection::numInvolvedSingularities() const
 {
     switch (m_mode) {
     case SepSegmentCollectionMode::SEGMENTS_SHIFTED_TO_SAME_SIDE:
@@ -245,8 +245,8 @@ const balazs::FoliationFromRP2 &balazs::SepSegmentCollection::foliationFromRP2()
 
 
 
-unsigned int balazs::howMuchToChooseFrom(SepSegmentCollectionMode mode,
-                                                               unsigned int numSingularities)
+std::size_t balazs::howMuchToChooseFrom(SepSegmentCollectionMode mode,
+                                                               std::size_t numSingularities)
 {
     switch (mode) {
     case SepSegmentCollectionMode::SEGMENTS_SHIFTED_TO_SAME_SIDE:

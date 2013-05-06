@@ -5,7 +5,7 @@
 balazs::IntervalPairing balazs::IntervalPairing::fromWeighedTree(const WeighedTree& wt)
 {
     std::vector<floating_point_type> lengths;
-    std::vector<unsigned int> pairing;
+    std::vector<std::size_t> pairing;
     lengths.reserve(2 * wt.numEdges());
     pairing.reserve(2 * wt.numEdges());
     fillInLengthsAndPairing(lengths, pairing, wt.m_root);
@@ -22,13 +22,13 @@ std::ostream &balazs::operator <<(std::ostream &Out, const IntervalPairing &inte
 
 
 void balazs::IntervalPairing::fillInLengthsAndPairing(std::vector<floating_point_type>& lengths,
-                                                            std::vector<unsigned int>& pairing,
+                                                            std::vector<std::size_t>& pairing,
                                                             WeighedTree::Node* pNode)
 {
-    const unsigned int PLACEHOLDER = 1986;
-    for (unsigned int i = 0; i < pNode->m_numChildren; i++) {
+    const std::size_t PLACEHOLDER = 1986;
+    for (std::size_t i = 0; i < pNode->m_numChildren; i++) {
         lengths.push_back(pNode->m_children[i].m_weight);
-        unsigned int firstIndex = pairing.size();
+        std::size_t firstIndex = pairing.size();
         pairing.push_back(PLACEHOLDER);
 
         fillInLengthsAndPairing(lengths, pairing, pNode->m_children + i);

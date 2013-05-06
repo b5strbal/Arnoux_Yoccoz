@@ -1,13 +1,13 @@
 #include "SeparatrixSegment.h"
 
 
-balazs::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, unsigned int startingSingularity, Direction::UpOrDown direction) :
+balazs::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, std::size_t startingSingularity, Direction::UpOrDown direction) :
     m_foliation(foliation),
     m_startingSingularity(startingSingularity),
     m_depth(1),
     m_endpoint(foliation.firstIntersection(startingSingularity, direction), &foliation),
     m_intervalNeighborhoods(foliation),
-    m_intervalIntersectionCount(std::vector<unsigned int>(foliation.numIntervals(), 0)),
+    m_intervalIntersectionCount(std::vector<std::size_t>(foliation.numIntervals(), 0)),
     m_direction(direction),
     m_reachedSaddleConnection(false)
 {

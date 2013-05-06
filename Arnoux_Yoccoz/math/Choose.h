@@ -21,22 +21,22 @@ namespace balazs{
 class Choose{
 public:
     Choose() : Choose(1, 1) {} // default constructor
-    Choose(unsigned int n, unsigned int k); // {0, 1, ..., k-1} in base set {0, 1, ..., n-1}
-    unsigned int n() const { return m_n; }
-    unsigned int k() const { return m_k; }
+    Choose(std::size_t n, std::size_t k); // {0, 1, ..., k-1} in base set {0, 1, ..., n-1}
+    std::size_t n() const { return m_n; }
+    std::size_t k() const { return m_k; }
     Choose& operator++();
     bool isAfterLast() const; // Returns true if the current subset is past the last subset, i.e. not valid anymore.
-    unsigned int operator[](unsigned int i);  // Returns the i'th element of the subset.
-    std::vector<unsigned int>::const_iterator begin() const { return m_chosenIndices.begin(); }
-    std::vector<unsigned int>::const_iterator end() const { return m_chosenIndices.end(); }
+    std::size_t operator[](std::size_t i);  // Returns the i'th element of the subset.
+    std::vector<std::size_t>::const_iterator begin() const { return m_chosenIndices.begin(); }
+    std::vector<std::size_t>::const_iterator end() const { return m_chosenIndices.end(); }
 
 
     // operator const std::vector<int>&(){ return m_chosenIndices; }
 
 private:
-    unsigned int m_n;    // The size of the base set.
-    unsigned int m_k;    // The size of the subset.
-    std::vector<unsigned int> m_chosenIndices;   // The list of elements in the subset.
+    std::size_t m_n;    // The size of the base set.
+    std::size_t m_k;    // The size of the subset.
+    std::vector<std::size_t> m_chosenIndices;   // The list of elements in the subset.
 };
 
 

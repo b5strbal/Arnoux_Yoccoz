@@ -10,7 +10,7 @@ balazs::SepSegmentDatabase::SepSegmentDatabase(const Foliation& foliation) :
             m_goodShiftedSeparatrixSegments[leftright][updown].resize(foliation.numIntervals());
         }
 
-        for (unsigned int i = 0; i < foliation.numIntervals(); i++) {
+        for (std::size_t i = 0; i < foliation.numIntervals(); i++) {
             m_currentSepSegments[updown].push_back(SeparatrixSegment(foliation, i, updown));
             addToGoodSegmentsIfGood(m_currentSepSegments[updown].back());
         }
@@ -18,13 +18,13 @@ balazs::SepSegmentDatabase::SepSegmentDatabase(const Foliation& foliation) :
 }
 
 
-void balazs::SepSegmentDatabase::printGoodSepSegments(unsigned int maxdepth, bool verbose){
+void balazs::SepSegmentDatabase::printGoodSepSegments(std::size_t maxdepth, bool verbose){
     if (maxdepth > 0) {
         generateSepSegments(maxdepth);
     } else
         maxdepth = INT_MAX;
     for (Direction::UpOrDown direction = Direction::UP; direction <= Direction::DOWN; direction++) {
-        for (unsigned int i = 0; i < m_foliation.numIntervals(); i++) {
+        for (std::size_t i = 0; i < m_foliation.numIntervals(); i++) {
             std::cout << i << (direction == Direction::UP ? " UP" : " DOWN") << "\n";
             for(auto it = m_goodShiftedSeparatrixSegments[Direction::RIGHT][direction][i].begin(); it !=
                 m_goodShiftedSeparatrixSegments[Direction::RIGHT][direction][i].end() && it->depth() < maxdepth; it++)
@@ -53,14 +53,14 @@ std::list<balazs::SeparatrixSegment>::const_iterator balazs::SepSegmentDatabase:
 
 
 
-std::list<balazs::SeparatrixSegment>::const_iterator balazs::SepSegmentDatabase::firstGoodSegment(Direction::LeftOrRight leftOrRight, Direction::UpOrDown upOrDown, unsigned int singularityIndex) const
+std::list<balazs::SeparatrixSegment>::const_iterator balazs::SepSegmentDatabase::firstGoodSegment(Direction::LeftOrRight leftOrRight, Direction::UpOrDown upOrDown, std::size_t singularityIndex) const
 {
     return m_goodShiftedSeparatrixSegments[leftOrRight][upOrDown][singularityIndex].begin();
 }
 
 
 
-bool balazs::SepSegmentDatabase::isLast(std::list<SeparatrixSegment>::const_iterator it, unsigned int maxDepth) const
+bool balazs::SepSegmentDatabase::isLast(std::list<SeparatrixSegment>::const_iterator it, std::size_t maxDepth) const
 {
     assert(&foliation() == &it->foliation());
     it++;
@@ -108,9 +108,9 @@ void balazs::SepSegmentDatabase::findNextSepSegment(Direction::UpOrDown directio
 
 
 
-void balazs::SepSegmentDatabase::generateSepSegments(unsigned int maxdepth){
+void balazs::SepSegmentDatabase::generateSepSegments(std::size_t maxdepth){
     for (Direction::UpOrDown direction = Direction::UP; direction <= Direction::DOWN; direction++) {
-        for (unsigned int index = 0; index < m_foliation.numIntervals(); index++) {
+        for (std::size_t index = 0; index < m_foliation.numIntervals(); index++) {
             while (!reachedSaddleConnection(direction, index) &&
                    m_currentSepSegments[direction][index].depth() < maxdepth) {
                 findNextSepSegment(direction, index);

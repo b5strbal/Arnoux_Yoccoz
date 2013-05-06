@@ -18,7 +18,7 @@ balazs::Foliation::Foliation(const TwistedIntervalExchangeMap& twistedintervalEx
     std::merge(topDivPoints().begin(), topDivPoints().end(),
                bottomDivPoints().begin(), bottomDivPoints().end(), std::back_inserter(m_allDivPoints));
 
-    for(unsigned int i = 1; i < numSeparatrices(); i++){
+    for(std::size_t i = 1; i < numSeparatrices(); i++){
         if(distanceBetween(m_allDivPoints[i - 1], m_allDivPoints[i]) < PRECISION){
             throw std::runtime_error("The foliation has a saddle connection.");
         }
@@ -115,7 +115,7 @@ std::ostream& balazs::operator<<(std::ostream& out, const Foliation& f){
 
 
 balazs::Foliation balazs::arnouxYoccozFoliation(int genus){
-    std::vector<unsigned int> permutationInput(2 * genus);
+    std::vector<std::size_t> permutationInput(2 * genus);
     std::vector<floating_point_type> lengths(2 * genus);
     floating_point_type shrinkingNumber = 1/arnouxYoccozStretchFactor(genus);
     floating_point_type currentLength = shrinkingNumber;

@@ -20,14 +20,14 @@ public:
     void findNextSepSegment(Direction::UpOrDown direction, int index);
     const SeparatrixSegment& getFirstIntersection(Direction::UpOrDown direction, int index, const DisjointIntervals& intervals);
     bool reachedSaddleConnection(Direction::UpOrDown direction, int index) const;
-    void generateSepSegments(unsigned int maxdepth);
-    void printGoodSepSegments(unsigned int maxdepth = 0, bool verbose = false);
+    void generateSepSegments(std::size_t maxdepth);
+    void printGoodSepSegments(std::size_t maxdepth = 0, bool verbose = false);
 
     std::list<SeparatrixSegment>::const_iterator firstGoodSegment(std::list<SeparatrixSegment>::const_iterator it) const;
     std::list<SeparatrixSegment>::const_iterator firstGoodSegment(Direction::LeftOrRight leftOrRight,
                                                                   Direction::UpOrDown upOrDown,
-                                                                  unsigned int singularityIndex) const;
-    bool isLast(std::list<SeparatrixSegment>::const_iterator it, unsigned int maxDepth) const;
+                                                                  std::size_t singularityIndex) const;
+    bool isLast(std::list<SeparatrixSegment>::const_iterator it, std::size_t maxDepth) const;
 
 
 
@@ -36,7 +36,7 @@ private:
     std::array<std::vector<SeparatrixSegment>, 2> m_currentSepSegments;
     std::array<std::array<std::vector<std::list<SeparatrixSegment>>, 2>, 2> m_goodShiftedSeparatrixSegments;
 
-    unsigned int numIntervals() const { return m_foliation.numIntervals(); }
+    std::size_t numIntervals() const { return m_foliation.numIntervals(); }
     void addToGoodSegmentsIfGood(const SeparatrixSegment& s);
 };
 

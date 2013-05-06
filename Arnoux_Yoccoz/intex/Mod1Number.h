@@ -78,7 +78,7 @@ std::ostream& operator<<(std::ostream& out, const interval_t& interval);
 
 
 template <typename type1, typename type2>
-unsigned int containingInterval(const std::vector<type1>& orderedList, const type2& point){
+std::size_t containingInterval(const std::vector<type1>& orderedList, const type2& point){
     int interval = std::upper_bound(orderedList.begin(), orderedList.end(), point) - orderedList.begin() - 1;
     return interval == -1 ? orderedList.size() - 1 : interval;
 }

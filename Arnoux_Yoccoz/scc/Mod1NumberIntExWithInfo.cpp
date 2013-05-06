@@ -16,7 +16,7 @@ balazs::Mod1NumberIntExWithInfo balazs::Mod1NumberIntExWithInfo::shiftedTo(Direc
 
 bool balazs::Mod1NumberIntExWithInfo::isTooCloseToADivPoint() const
 {
-    unsigned int nextInterval = integerMod(m_smallContainingInterval + 1, m_foliation->numSeparatrices());
+    std::size_t nextInterval = integerMod(m_smallContainingInterval + 1, m_foliation->numSeparatrices());
     return distanceBetween(m_foliation->allDivPoints()[m_smallContainingInterval], m_mod1NumberIntExchange) < PRECISION ||
            distanceBetween(m_mod1NumberIntExchange, m_foliation->allDivPoints()[nextInterval]) < PRECISION;
 }

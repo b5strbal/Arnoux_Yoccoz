@@ -22,15 +22,15 @@ public:
                             SepSegmentCollectionMode mode,
                             Direction::LeftOrRight shiftToSide = Direction::RIGHT);
 
-    sepSegmentDatabaseConstIterator_t operator[](unsigned int index) const;
+    sepSegmentDatabaseConstIterator_t operator[](std::size_t index) const;
     bool isEmpty() const { return m_segments.empty(); }
     void clear() { m_segments.clear(); }
-    unsigned int size() const { return m_segments.size(); }
+    std::size_t size() const { return m_segments.size(); }
     std::vector<sepSegmentDatabaseConstIterator_t>::iterator begin() { return m_segments.begin(); }
     std::vector<sepSegmentDatabaseConstIterator_t>::iterator end() { return m_segments.end(); }
     void setInitialSetting(const Choose &sepIndicesChoose);
 
-    void advance(unsigned int maxDepth, unsigned int maxInvolvedSingularities);
+    void advance(std::size_t maxDepth, std::size_t maxInvolvedSingularities);
 
     friend bool operator==(const SepSegmentCollection& lhs, const SepSegmentCollection& rhs){
         return lhs.m_segments == rhs.m_segments;
@@ -41,8 +41,8 @@ private:
                          SepSegmentCollectionMode mode,
                          Direction::LeftOrRight shiftToSide = Direction::RIGHT);
 
-    unsigned int numInvolvedSingularities() const;
-    void setSegmentToFirst(unsigned int segmentIndex);
+    std::size_t numInvolvedSingularities() const;
+    void setSegmentToFirst(std::size_t segmentIndex);
     const Foliation& foliation() const;
     const FoliationFromRP2& foliationFromRP2() const;
 
@@ -57,12 +57,12 @@ private:
     // That pairing is described by FoliationFromRP2::intervalPermutationBeforeHalfTwist().
     // This vector contains the smaller indices of the singularities in each pair.
     // So its length is half of numIntervals of the foliation.
-    std::vector<unsigned int> m_choiceOfSingularities_RP2;
+    std::vector<std::size_t> m_choiceOfSingularities_RP2;
 };
 
 
 
-unsigned int howMuchToChooseFrom(SepSegmentCollectionMode mode, unsigned int numSingularities);
+std::size_t howMuchToChooseFrom(SepSegmentCollectionMode mode, std::size_t numSingularities);
 
 
 

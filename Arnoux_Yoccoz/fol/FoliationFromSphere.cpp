@@ -33,13 +33,13 @@ balazs::FoliationFromSphere balazs::FoliationFromSphere::fromFoliationSphere(con
     std::sort(allBottomPoints.begin(), allBottomPoints.end());
 
     std::vector<floating_point_type> lengths(allConnectedPoints.size());
-    for (unsigned int i = 0; i < allConnectedPoints.size() - 1; i++) {
+    for (std::size_t i = 0; i < allConnectedPoints.size() - 1; i++) {
         lengths[i] = distanceBetween( allConnectedPointsSortedByTop[i].topPoint, allConnectedPointsSortedByTop[i + 1].topPoint);
     }
     lengths[allConnectedPoints.size() - 1] = -allConnectedPointsSortedByTop[allConnectedPoints.size() - 1].topPoint;
 
-    std::vector<unsigned int> permutationInput(allConnectedPoints.size());
-    for (unsigned int i = 0; i < allConnectedPoints.size(); i++) {
+    std::vector<std::size_t> permutationInput(allConnectedPoints.size());
+    for (std::size_t i = 0; i < allConnectedPoints.size(); i++) {
         auto it = std::lower_bound(allBottomPoints.begin(), allBottomPoints.end(), allConnectedPointsSortedByTop[i].bottomPoint);
         permutationInput[i] = it - allBottomPoints.begin() ;
     }
@@ -61,8 +61,8 @@ balazs::FoliationFromSphere balazs::FoliationFromSphere::fromFoliationSphere(con
 void balazs::FoliationFromSphere::generateTopConnectingPairs(const FoliationSphere& foliationSphere,
                                                          std::vector<ConnectedPoints>& allConnectedPoints)
 {
-    unsigned int numSeparatrices = foliationSphere.topFoliation().numSeparatrices();
-    for (unsigned int i = 0; i < numSeparatrices; i++) {
+    std::size_t numSeparatrices = foliationSphere.topFoliation().numSeparatrices();
+    for (std::size_t i = 0; i < numSeparatrices; i++) {
         if (foliationSphere.topFoliation().intervalPairing().permutation()[integerMod(i, numSeparatrices)] !=
                 integerMod(i - 1, numSeparatrices)) {
             // otherwise the current separatrix emanates from a 1-pronged singularity which is not important
@@ -88,8 +88,8 @@ void balazs::FoliationFromSphere::generateTopConnectingPairs(const FoliationSphe
 void balazs::FoliationFromSphere::generateBottomConnectingPairs(const FoliationSphere& foliationSphere,
                                                             std::vector<ConnectedPoints>& allConnectedPoints)
 {
-    unsigned int numSeparatrices = foliationSphere.bottomFoliation().numSeparatrices();
-    for (unsigned int i = 0; i < numSeparatrices; i++) {
+    std::size_t numSeparatrices = foliationSphere.bottomFoliation().numSeparatrices();
+    for (std::size_t i = 0; i < numSeparatrices; i++) {
         if (foliationSphere.bottomFoliation().intervalPairing().permutation()[i] !=
                 integerMod(i - 1, numSeparatrices) ) {
 

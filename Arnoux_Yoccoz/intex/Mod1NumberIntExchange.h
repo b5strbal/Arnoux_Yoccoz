@@ -14,7 +14,7 @@ public:
     static Mod1NumberIntExchange constructZero(const LengthsAndTwist* lengthsAndTwist);
     static Mod1NumberIntExchange constructTwist(const LengthsAndTwist* lengthsAndTwist);
     static Mod1NumberIntExchange constructLength(const LengthsAndTwist* lengthsAndTwist,
-                                                 unsigned int lengthIndex);
+                                                 std::size_t lengthIndex);
 
     // operations are allowed only objects of the same signature
     const LengthsAndTwist* signature() const { return m_parent; }

@@ -8,7 +8,7 @@ balazs::TransverseCurve::TransverseCurve(const Foliation& foliation, const SepSe
     std::vector<Mod1Number> endpoints;
     endpoints.resize(segments.size());
     m_goodSegmentIndices.resize(segments.size());
-    for (unsigned int i = 0; i < segments.size(); i++){
+    for (std::size_t i = 0; i < segments.size(); i++){
         endpoints.push_back(segments[i]->endpoint());
         m_goodSegmentIndices.push_back(&(*segments[i])); // We will probably have to find a more cleverly sorted way of storing the segments later.
        // std::cout << print() << "\n\n";
@@ -28,7 +28,7 @@ bool balazs::operator<(const TransverseCurve& c1, const TransverseCurve& c2) {
         return true;
     } else if (points1.size() > points2.size())
         return false;
-    for (unsigned int i = 0; i < points1.size(); i++) {
+    for (std::size_t i = 0; i < points1.size(); i++) {
         if (points1[i] < points2[i]) {
             return true;
         } else if (points2[i] < points1[i])

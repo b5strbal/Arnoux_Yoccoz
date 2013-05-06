@@ -41,7 +41,7 @@ const floating_point_type PRECISION = 0.00000000001L;
 
 
 
-unsigned int integerMod(int a, unsigned int b);
+std::size_t integerMod(int a, std::size_t b);
 int gcd(int a, int b);
 
 
@@ -86,7 +86,7 @@ int findInterval(const std::vector<Type>& separatingPoints,
 
 template <typename Type>
 std::ostream& operator<<(std::ostream& Out, const std::vector<Type>& vec){
-    for (unsigned int i = 0; i < vec.size(); i++) {
+    for (std::size_t i = 0; i < vec.size(); i++) {
         Out << vec[i] << " ";
         }
     return Out;

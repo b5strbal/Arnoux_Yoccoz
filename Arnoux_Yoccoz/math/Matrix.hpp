@@ -21,7 +21,7 @@ Matrix<Type>::Matrix(const std::vector<std::vector<Type>>& entries){
     if (entries[0].empty()) {
         throw std::runtime_error("The width of a matrix must be at least 1.");
     }
-    for (unsigned int i = 1; i < entries.size(); i++) {
+    for (std::size_t i = 1; i < entries.size(); i++) {
         if (entries[1].size() != entries[0].size()) {
             throw std::runtime_error("In a matrix the length of the rows must be equal.");
         }

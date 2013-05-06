@@ -15,7 +15,7 @@ void balazs::IntervalNeighborhoods::insertPoint(const Mod1NumberIntExWithInfo &n
     assert(&foliation() == &newCuttingPoint.foliation());
     assert(newCuttingPoint.number().side() != Direction::CENTER);
 
-    unsigned int indexOfInterval = newCuttingPoint.smallContainingInterval();
+    std::size_t indexOfInterval = newCuttingPoint.smallContainingInterval();
 
     if (m_cuttingPoints[indexOfInterval].isEmpty) {
         m_cuttingPoints[indexOfInterval].first = m_cuttingPoints[indexOfInterval].second = newCuttingPoint;
@@ -48,14 +48,14 @@ void balazs::IntervalNeighborhoods::insertPoint(const Mod1NumberIntExWithInfo &n
 bool balazs::IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1NumberIntExWithInfo& point) const{
     assert(&foliation() == &point.foliation());
 
-    unsigned int indexOfInterval = point.smallContainingInterval();
+    std::size_t indexOfInterval = point.smallContainingInterval();
 
     if (m_cuttingPoints[indexOfInterval].isEmpty) {
         return true;
     }
 
-    unsigned int prevIndex = integerMod(indexOfInterval - 1, m_cuttingPoints.size());
-    unsigned int nextIndex = integerMod(indexOfInterval + 1, m_cuttingPoints.size());
+    std::size_t prevIndex = integerMod(indexOfInterval - 1, m_cuttingPoints.size());
+    std::size_t nextIndex = integerMod(indexOfInterval + 1, m_cuttingPoints.size());
     bool isLeftDivPointTwoSided = m_cuttingPoints[prevIndex].isEmpty ||
             m_cuttingPoints[prevIndex].second.number() < m_foliation.allDivPoints()[indexOfInterval].shiftedTo(Direction::LEFT);
 
@@ -81,8 +81,8 @@ bool balazs::IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1N
     assert(&foliation() == &leftEndPoint.foliation());
     assert(&foliation() == &rightEndPoint.foliation());
 
-    unsigned int leftIndexOfInterval = leftEndPoint.smallContainingInterval();
-    unsigned int rightIndexOfInterval = rightEndPoint.smallContainingInterval();
+    std::size_t leftIndexOfInterval = leftEndPoint.smallContainingInterval();
+    std::size_t rightIndexOfInterval = rightEndPoint.smallContainingInterval();
 
 
     if (leftIndexOfInterval == rightIndexOfInterval) {
@@ -95,14 +95,14 @@ bool balazs::IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1N
         return false;
     }
 
-    for (unsigned int i = leftIndexOfInterval + 1; i != rightIndexOfInterval;
+    for (std::size_t i = leftIndexOfInterval + 1; i != rightIndexOfInterval;
          i = integerMod(i + 1, m_foliation.numSeparatrices())) {
         if (!m_cuttingPoints[i].isEmpty) {
             return false;
         }
     }
 
-    for (unsigned int i = leftIndexOfInterval; i != rightIndexOfInterval;
+    for (std::size_t i = leftIndexOfInterval; i != rightIndexOfInterval;
          i = integerMod(i + 1, m_foliation.numSeparatrices())) {
         if ((throughTopDivPointQ && m_foliation.isTopDivPoint(i + 1)) ||
             (!throughTopDivPointQ && !m_foliation.isTopDivPoint(i + 1))) {
@@ -117,7 +117,7 @@ bool balazs::IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1N
 
 std::ostream & balazs::operator<<(std::ostream &out, const IntervalNeighborhoods& inh)
 {
-    for (unsigned int i = 0; i < inh.m_cuttingPoints.size(); i++){
+    for (std::size_t i = 0; i < inh.m_cuttingPoints.size(); i++){
         if (inh.m_cuttingPoints[i].isEmpty) {
             out << "() ";
         } else
@@ -138,14 +138,14 @@ std::ostream & balazs::operator<<(std::ostream &out, const IntervalNeighborhoods
 //
 balazs::IntervalNeighborhoods balazs::IntervalNeighborhoods::intersect(const std::vector<const IntervalNeighborhoods*>& inbhVector)
 {
-    for(unsigned int i = 1; i < inbhVector.size(); i++){
+    for(std::size_t i = 1; i < inbhVector.size(); i++){
         assert(&inbhVector[i - 1]->foliation() == &inbhVector[i]->foliation());
     }
     assert(inbhVector.size() >= 2);
 
     //const Foliation& foliation = adpVector[0]->m_foliation;
     IntervalNeighborhoods inbh = *inbhVector[0];
-    for (unsigned int i = 0; i < inbh.m_cuttingPoints.size(); i++) {
+    for (std::size_t i = 0; i < inbh.m_cuttingPoints.size(); i++) {
         for (auto it = inbhVector.begin() + 1; it != inbhVector.end(); it++) {
             if ((*it)->m_cuttingPoints[i].isEmpty) {
             } else

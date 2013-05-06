@@ -11,7 +11,7 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
     assert(segments.size() % 2 == 0);
     assert(segments.size() >= 2);
     std::vector<char> singularities(foliation().numIntervals(), 0);
-    for (unsigned int i = 0; i < segments.size(); i += 2){
+    for (std::size_t i = 0; i < segments.size(); i += 2){
         assert(segments[i]->startingSingularity() == segments[i + 1]->startingSingularity());
         assert(singularities[segments[i]->startingSingularity()] == 0);
         singularities[segments[i]->startingSingularity()] = 1;
@@ -24,7 +24,7 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
     std::vector<std::pair<Mod1NumberIntExWithInfo, int>> endpointsAndIndices;
 
     endpointsAndIndices.reserve(segments.size());
-    for (unsigned int i = 0; i < segments.size(); i++){
+    for (std::size_t i = 0; i < segments.size(); i++){
         endpointsAndIndices.emplace_back(segments[i]->endpoint(), i);
     }
     std::sort(endpointsAndIndices.begin(), endpointsAndIndices.end());
@@ -41,10 +41,10 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
     // this part does not depend on wrapsAroundZero
     {
         std::vector<short> isEndpointIndexOdd(segments.size());
-        for (unsigned int i = 0; i < endpointsAndIndices.size(); i++) {
+        for (std::size_t i = 0; i < endpointsAndIndices.size(); i++) {
             isEndpointIndexOdd[endpointsAndIndices[i].second] = (i % 2);
         }
-        for (unsigned int i = 0; i < endpointsAndIndices.size(); i += 2) {
+        for (std::size_t i = 0; i < endpointsAndIndices.size(); i += 2) {
             if (isEndpointIndexOdd[i] == isEndpointIndexOdd[i + 1]) {
                 return {{false, false}};
             }
@@ -61,8 +61,8 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
 
 
     for (short wrapsAroundEnds = 0; wrapsAroundEnds < 2; wrapsAroundEnds++){
-        unsigned int index = 0;
-        unsigned int length = 0;
+        std::size_t index = 0;
+        std::size_t length = 0;
         do {
             if ((wrapsAroundEnds && index % 2 == 1) || (!wrapsAroundEnds && index % 2 == 0)) {
                 index = integerMod(index + 1, segments.size());
@@ -84,14 +84,14 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
 
     std::vector<const IntervalNeighborhoods*> inhVector;
     inhVector.reserve(segments.size());
-    for (unsigned int i = 0; i < segments.size(); i++) {
+    for (std::size_t i = 0; i < segments.size(); i++) {
         inhVector.push_back(&segments[i]->intervalNeighborhoods());
     }
     IntervalNeighborhoods inhIntersection = IntervalNeighborhoods::intersect(inhVector);
 
     for (short wrapsAroundEnds = 0; wrapsAroundEnds < 2; wrapsAroundEnds++){
         if (isCandidateForWrapsAroundEnds[wrapsAroundEnds]) {
-            for (unsigned int i = wrapsAroundEnds ? 1 : 0; i < segments.size(); i += 2) {
+            for (std::size_t i = wrapsAroundEnds ? 1 : 0; i < segments.size(); i += 2) {
                 int next = (i + 1) % segments.size();
                 bool throughTopDivPoint = segments[endpointsAndIndices[i].second]->direction() == Direction::DOWN &&
                         segments[endpointsAndIndices[next].second]->direction() == Direction::DOWN ? true : false;

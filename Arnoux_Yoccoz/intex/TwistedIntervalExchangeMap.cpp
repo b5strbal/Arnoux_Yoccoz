@@ -21,19 +21,19 @@ balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector
     }
 
     m_lengths.reserve(lengths.size());
-    for (unsigned int i = 0; i < lengths.size(); i++) {
+    for (std::size_t i = 0; i < lengths.size(); i++) {
         m_lengths.push_back(Mod1NumberIntExchange::constructLength(&m_lengthsAndTwist, i));
     }
 
     m_divPoints.resize(lengths.size());
     m_divPoints[0] = Mod1NumberIntExchange::constructZero(&m_lengthsAndTwist);
-    for (unsigned int i = 1; i < lengths.size(); i++) {
+    for (std::size_t i = 1; i < lengths.size(); i++) {
         m_divPoints[i] = m_divPoints[i - 1] + m_lengths[i - 1];
     }
 
     m_divPointsAfterExchange.resize(lengths.size());
     m_divPointsAfterExchange[0] = m_twist;
-    for (unsigned int i = 1; i < lengths.size(); i++) {
+    for (std::size_t i = 1; i < lengths.size(); i++) {
         m_divPointsAfterExchange[i] = m_divPointsAfterExchange[i - 1] + m_lengths[m_inversePermutation[i - 1]];
     }
     std::sort(m_divPointsAfterExchange.begin(), m_divPointsAfterExchange.end());
@@ -44,7 +44,7 @@ balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector
     m_inversePermutationWithMinimalTwist = inverse(m_permutationWithMinimalTwist);
 
     m_translations.reserve(lengths.size());
-    for (unsigned int i = 0; i < lengths.size(); i++) {
+    for (std::size_t i = 0; i < lengths.size(); i++) {
         m_translations.push_back(m_divPointsAfterExchange[m_permutationWithMinimalTwist[i]] - m_divPoints[i]);
     }
 }
@@ -56,7 +56,7 @@ balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector
 
 
 balazs::TwistedIntervalExchangeMap balazs::TwistedIntervalExchangeMap::rotateBy(int rotationAmount) const{
-    unsigned int normalizedAmount = integerMod(rotationAmount, size());
+    std::size_t normalizedAmount = integerMod(rotationAmount, size());
     if (normalizedAmount == 0) {
         return *this;
     }
@@ -122,14 +122,14 @@ std::ostream& balazs::operator<<(std::ostream& Out, const TwistedIntervalExchang
 
 
 
-//unsigned int IntervalExchangeBase::containingInterval(const Mod1Number &point) const
+//std::size_t IntervalExchangeBase::containingInterval(const Mod1Number &point) const
 //{
 ////    int interval = std::upper_bound(m_divPoints.begin(), m_divPoints.end(), point) - m_divPoints.begin() - 1;
 ////    return interval == -1 ? size() - 1 : interval;
 //    return ::containingInterval(m_divPoints, point);
 //}
 
-//unsigned int IntervalExchangeBase::containingIntervalAfterExchange(const Mod1Number &point) const
+//std::size_t IntervalExchangeBase::containingIntervalAfterExchange(const Mod1Number &point) const
 //{
 //    int interval = std::upper_bound(m_divPointsAfterExchange.begin(), m_divPointsAfterExchange.end(), point) - m_divPointsAfterExchange.begin() - 1;
 //    return interval == -1 ? size() - 1 : interval;
