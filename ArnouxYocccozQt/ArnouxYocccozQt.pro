@@ -13,7 +13,6 @@ TEMPLATE = app
 
 CONFIG += C++11
 SOURCES += main.cpp\
-        mainwindow.cpp \
     ../Arnoux_Yoccoz/fol/FoliationSphere.cpp \
     ../Arnoux_Yoccoz/fol/FoliationRP2.cpp \
     ../Arnoux_Yoccoz/fol/FoliationFromSphere.cpp \
@@ -39,9 +38,16 @@ SOURCES += main.cpp\
     ../Arnoux_Yoccoz/intex/IntervalPairing.cpp \
     ../Arnoux_Yoccoz/scc/Mod1NumberIntExWithInfo.cpp \
     ../Arnoux_Yoccoz/scc/SepSegmentCollection.cpp \
-    ../Arnoux_Yoccoz/scc/SepSegmentCollectionList.cpp
+    ../Arnoux_Yoccoz/scc/SepSegmentCollectionList.cpp \
+    ../Arnoux_Yoccoz/scc/SSCMode.cpp \
+    WelcomeWindow.cpp \
+    DocumentationWindow.cpp \
+    FoliationWindow.cpp \
+    FoliationRP2Window.cpp \
+    FoliationSphereWindow.cpp \
+    CreateFoliationWizard.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     ../Arnoux_Yoccoz/fol/FoliationSphere.h \
     ../Arnoux_Yoccoz/fol/FoliationRP2.h \
     ../Arnoux_Yoccoz/fol/FoliationFromSphere.h \
@@ -68,9 +74,18 @@ HEADERS  += mainwindow.h \
     ../Arnoux_Yoccoz/intex/IntervalPairing.h \
     ../Arnoux_Yoccoz/scc/Mod1NumberIntExWithInfo.h \
     ../Arnoux_Yoccoz/scc/SepSegmentCollection.h \
-    ../Arnoux_Yoccoz/scc/SepSegmentCollectionList.h
+    ../Arnoux_Yoccoz/scc/SepSegmentCollectionList.h \
+    ../Arnoux_Yoccoz/scc/SSCMode.h \
+    WelcomeWindow.h \
+    DocumentationWindow.h \
+    FoliationWindow.h \
+    FoliationRP2Window.h \
+    FoliationSphereWindow.h \
+    CreateFoliationWizard.h
 
-FORMS    += mainwindow.ui
+FORMS    +=
 
 OTHER_FILES += ../Arnoux_Yoccoz/FoliationRP2old.cpp \
-    ../Arnoux_Yoccoz/FoliationRP2old.h
+    ../Arnoux_Yoccoz/FoliationRP2old.h \
+    ../Arnoux_Yoccoz/io.h
+
