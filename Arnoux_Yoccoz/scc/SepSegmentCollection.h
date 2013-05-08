@@ -3,66 +3,83 @@
 
 #include "../math/Choose.h"
 #include "SepSegmentDatabase.h"
+#include "SSCMode.h"
 
 namespace balazs{
 
-enum class SepSegmentCollectionMode{
-    SEGMENTS_SHIFTED_TO_SAME_SIDE,
-    WRAPPING_AROUND_SINGULARITIES_SYMMETRICALLY,
-    SEGMENTS_SHIFTED_TO_SAME_SIDE_FROM_RP2
-};
+
+
+
 
 
 
 class SepSegmentCollection
 {
 public:
-    SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase); // empty collection
-    SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase, // first collection
-                            SepSegmentCollectionMode mode,
-                            Direction::LeftOrRight shiftToSide = Direction::RIGHT);
+    static SepSegmentCollection emptyCollection(const SepSegmentDatabase& sepSegmentDatabase, const SSCMode& sscMode);
+    static SepSegmentCollection firstCollection(const SepSegmentDatabase& sepSegmentDatabase, const SSCMode& sscMode);
 
-    sepSegmentDatabaseConstIterator_t operator[](std::size_t index) const;
+    sepSegmentDatabaseConstIterator_t operator[](std::size_t index) const { return m_segments[index]; }
     bool isEmpty() const { return m_segments.empty(); }
     void clear() { m_segments.clear(); }
     std::size_t size() const { return m_segments.size(); }
     std::vector<sepSegmentDatabaseConstIterator_t>::iterator begin() { return m_segments.begin(); }
     std::vector<sepSegmentDatabaseConstIterator_t>::iterator end() { return m_segments.end(); }
-    void setInitialSetting(const Choose &sepIndicesChoose);
+
+
+    void setInitialSetting(const Choose &sepIndicesChoose){
+        m_sepIndicesChoose = sepIndicesChoose;
+        setFirstSegments(m_sscMode.initialSegments(sepIndicesChoose));
+    }
 
     void advance(std::size_t maxDepth, std::size_t maxInvolvedSingularities);
 
     friend bool operator==(const SepSegmentCollection& lhs, const SepSegmentCollection& rhs){
         return lhs.m_segments == rhs.m_segments;
     }
+
+
 private:
-    SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase,
-                         const Choose& sepIndicesChoose,
-                         SepSegmentCollectionMode mode,
-                         Direction::LeftOrRight shiftToSide = Direction::RIGHT);
+    SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase, const SSCMode& sscMode);
+    const Foliation& foliation() const { return m_sepSegmentDatabase.foliation(); }
+    void setFirstSegments(const std::vector<SepSegmentIndex>& ssic);
+    void setSegmentToFirst(std::size_t segmentIndex){
+        m_segments[segmentIndex] = m_sepSegmentDatabase.firstGoodSegment(getSepSegmentIndex(m_segments[segmentIndex]));
+    }
 
-    std::size_t numInvolvedSingularities() const;
-    void setSegmentToFirst(std::size_t segmentIndex);
-    const Foliation& foliation() const;
-    const FoliationFromRP2& foliationFromRP2() const;
 
+private:
     const SepSegmentDatabase& m_sepSegmentDatabase;
     std::vector<sepSegmentDatabaseConstIterator_t> m_segments;
     Choose m_sepIndicesChoose;
-    SepSegmentCollectionMode m_mode;
-    Direction::LeftOrRight m_shiftToSide;
-
-    // This vector is only filled in if the underlying foliation is a FoliationFromRP2.
-    // In that case the singularities/separatrices are naturally paired up by the covering map.
-    // That pairing is described by FoliationFromRP2::intervalPermutationBeforeHalfTwist().
-    // This vector contains the smaller indices of the singularities in each pair.
-    // So its length is half of numIntervals of the foliation.
-    std::vector<std::size_t> m_choiceOfSingularities_RP2;
+    const SSCMode& m_sscMode;
 };
 
 
 
-std::size_t howMuchToChooseFrom(SepSegmentCollectionMode mode, std::size_t numSingularities);
+
+
+
+
+
+
+
+
+inline SepSegmentCollection SepSegmentCollection::emptyCollection(const SepSegmentDatabase& sepSegmentDatabase,
+                                            const SSCMode& sscMode) {
+    return SepSegmentCollection(sepSegmentDatabase, sscMode);
+}
+
+inline SepSegmentCollection SepSegmentCollection::firstCollection(const SepSegmentDatabase& sepSegmentDatabase,
+                                            const SSCMode& sscMode) {
+    SepSegmentCollection retVal(sepSegmentDatabase, sscMode);
+    retVal.setInitialSetting(Choose(retVal.m_sscMode.howMuchToChooseFrom(), 1));
+    return retVal;
+}
+
+
+
+
 
 
 

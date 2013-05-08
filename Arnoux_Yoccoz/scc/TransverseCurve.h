@@ -7,7 +7,6 @@
 
 namespace balazs{
 
-
 class TransverseCurve{
 public:
     TransverseCurve(const Foliation& foliation, const SepSegmentCollection& segments, bool wrapsAroundEnds);

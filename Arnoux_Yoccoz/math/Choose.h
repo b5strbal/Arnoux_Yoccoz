@@ -26,7 +26,7 @@ public:
     std::size_t k() const { return m_k; }
     Choose& operator++();
     bool isAfterLast() const; // Returns true if the current subset is past the last subset, i.e. not valid anymore.
-    std::size_t operator[](std::size_t i);  // Returns the i'th element of the subset.
+    std::size_t operator[](std::size_t i) const;  // Returns the i'th element of the subset.
     std::vector<std::size_t>::const_iterator begin() const { return m_chosenIndices.begin(); }
     std::vector<std::size_t>::const_iterator end() const { return m_chosenIndices.end(); }
 

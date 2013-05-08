@@ -35,7 +35,7 @@ bool balazs::Choose::isAfterLast() const
     return m_chosenIndices.empty();
 }
 
-std::size_t balazs::Choose::operator [](std::size_t i)
+std::size_t balazs::Choose::operator [](std::size_t i) const
 {
     return m_chosenIndices[i];
 }

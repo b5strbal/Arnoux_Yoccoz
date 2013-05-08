@@ -9,7 +9,16 @@
 
 namespace balazs{
 
+
 typedef std::list<SeparatrixSegment>::const_iterator sepSegmentDatabaseConstIterator_t;
+
+struct SepSegmentIndex{
+    Direction::LeftOrRight m_leftOrRight;
+    Direction::UpOrDown m_upOrDown;
+    std::size_t m_singularityIntex;
+};
+
+
 
 class SepSegmentDatabase
 {
@@ -23,10 +32,7 @@ public:
     void generateSepSegments(std::size_t maxdepth);
     void printGoodSepSegments(std::size_t maxdepth = 0, bool verbose = false);
 
-    std::list<SeparatrixSegment>::const_iterator firstGoodSegment(std::list<SeparatrixSegment>::const_iterator it) const;
-    std::list<SeparatrixSegment>::const_iterator firstGoodSegment(Direction::LeftOrRight leftOrRight,
-                                                                  Direction::UpOrDown upOrDown,
-                                                                  std::size_t singularityIndex) const;
+    std::list<SeparatrixSegment>::const_iterator firstGoodSegment(const SepSegmentIndex &index) const;
     bool isLast(std::list<SeparatrixSegment>::const_iterator it, std::size_t maxDepth) const;
 
 
@@ -41,6 +47,9 @@ private:
 };
 
 
+inline SepSegmentIndex getSepSegmentIndex(sepSegmentDatabaseConstIterator_t it){
+    return { it->side(), it->direction(), it->startingSingularity() };
+}
 
 
 }

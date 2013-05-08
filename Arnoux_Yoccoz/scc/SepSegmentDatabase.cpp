@@ -44,18 +44,11 @@ void balazs::SepSegmentDatabase::printGoodSepSegments(std::size_t maxdepth, bool
 
 
 
-std::list<balazs::SeparatrixSegment>::const_iterator balazs::SepSegmentDatabase::firstGoodSegment(std::list<SeparatrixSegment>::const_iterator it) const
+
+
+std::list<balazs::SeparatrixSegment>::const_iterator balazs::SepSegmentDatabase::firstGoodSegment(const SepSegmentIndex& index) const
 {
-    assert(&foliation() == &it->foliation());
-    return firstGoodSegment(it->side(), it->direction(), it->startingSingularity());
-}
-
-
-
-
-std::list<balazs::SeparatrixSegment>::const_iterator balazs::SepSegmentDatabase::firstGoodSegment(Direction::LeftOrRight leftOrRight, Direction::UpOrDown upOrDown, std::size_t singularityIndex) const
-{
-    return m_goodShiftedSeparatrixSegments[leftOrRight][upOrDown][singularityIndex].begin();
+    return m_goodShiftedSeparatrixSegments[index.m_leftOrRight][index.m_upOrDown][index.m_singularityIntex].begin();
 }
 
 
