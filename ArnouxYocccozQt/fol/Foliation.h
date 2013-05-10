@@ -23,11 +23,16 @@ public:
     
     std::size_t numSeparatrices() const { return 2 * numIntervals(); }
     std::size_t numIntervals() const { return m_twistedIntervalExchange.size(); }
+    std::size_t numSingularities() const { return m_singularities.size(); }
+    std::size_t genus() const { return 1 - eulerChar() / 2; }
+    int eulerChar() const;
+    std::vector<std::size_t> singularityType() const;
 
-    const TwistedIntervalExchangeMap& intExchange() const;
-    const std::vector<Mod1NumberIntExchange>& allDivPoints() const;
-    const std::vector<Mod1NumberIntExchange>& topDivPoints() const;
-    const std::vector<Mod1NumberIntExchange>& bottomDivPoints() const;
+    const TwistedIntervalExchangeMap& intExchange() const { return m_twistedIntervalExchange; }
+    const std::vector<Mod1NumberIntExchange>& allDivPoints() const { return m_allDivPoints; }
+    const std::vector<Mod1NumberIntExchange>& topDivPoints() const { return m_twistedIntervalExchange.divPoints(); }
+    const std::vector<Mod1NumberIntExchange>& bottomDivPoints() const
+        {return m_twistedIntervalExchange.divPointsAfterExchange(); }
     bool isTopDivPoint(int divPointIndex) const;
     const Mod1NumberIntExchange& firstIntersection(int singularityIndex, Direction::UpOrDown direction) const;
 
@@ -41,11 +46,15 @@ private:
     Foliation reflect() const;
     Foliation flipOver() const;
 
-protected:
+    void initSingularities();
+
+private:
     TwistedIntervalExchangeMap m_twistedIntervalExchange;
     std::vector<Mod1NumberIntExchange> m_allDivPoints;
     std::vector<short> m_isTopDivPoint;
-    //std::vector<int> m_pairOfTopDivPoints;
+
+    std::vector<std::vector<std::size_t>> m_singularities;
+    std::vector<std::size_t> m_indexOfSingularity;
 };
 
 

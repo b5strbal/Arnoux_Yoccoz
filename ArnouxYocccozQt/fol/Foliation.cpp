@@ -23,6 +23,8 @@ balazs::Foliation::Foliation(const TwistedIntervalExchangeMap& twistedintervalEx
             throw std::runtime_error("The foliation has a saddle connection.");
         }
     }
+
+    initSingularities();
 }
 
 
@@ -34,15 +36,27 @@ balazs::Foliation::Foliation(const std::vector<floating_point_type>& lengths, co
 {
 }
 
-const balazs::TwistedIntervalExchangeMap &balazs::Foliation::intExchange() const
+int balazs::Foliation::eulerChar() const
 {
-    return m_twistedIntervalExchange;
+    int retval = 0;
+    for(auto vec : m_singularities){
+        retval -= vec.size() - 1;
+    }
+    return retval;
 }
 
-const std::vector<balazs::Mod1NumberIntExchange> &balazs::Foliation::allDivPoints() const
+std::vector<std::size_t> balazs::Foliation::singularityType() const
 {
-    return m_allDivPoints;
+    std::vector<std::size_t> retval;
+    for(auto vec : m_singularities){
+        retval.push_back(vec.size() - 1);
+    }
+    std::sort(retval.begin(), retval.end(), std::greater<std::size_t>());
+    return retval;
 }
+
+
+
 
 
 
@@ -66,16 +80,8 @@ const balazs::Mod1NumberIntExchange &balazs::Foliation::firstIntersection(int si
 
 
 
-const std::vector<balazs::Mod1NumberIntExchange>& balazs::Foliation::topDivPoints() const {
-    return m_twistedIntervalExchange.divPoints();
-}
 
 
-
-
-const std::vector<balazs::Mod1NumberIntExchange>& balazs::Foliation::bottomDivPoints() const {
-    return m_twistedIntervalExchange.divPointsAfterExchange();
-}
 
 
 
@@ -97,6 +103,33 @@ balazs::Foliation balazs::Foliation::reflect() const{
 
 balazs::Foliation balazs::Foliation::flipOver() const{
     return Foliation(m_twistedIntervalExchange.invert().reverse());
+}
+
+
+
+void balazs::Foliation::initSingularities()
+{
+    std::size_t size = m_twistedIntervalExchange.size();
+    m_indexOfSingularity.resize(size);
+
+    std::vector<char> alreadyLookedAt(size, false);
+    for(std::size_t i = 0; i < size; i++){
+        if(!alreadyLookedAt[i]){
+            m_singularities.push_back(std::vector<std::size_t>(0));
+
+            std::size_t j = i;
+            do {
+                m_singularities.back().push_back(j);
+                m_indexOfSingularity[j] = m_singularities.size() - 1;
+                alreadyLookedAt[j] = true;
+
+
+                j = integerMod(j - 1, size);
+                j = m_twistedIntervalExchange.permutationWithMinimalTwist()[j];
+                j = integerMod(j + 1, size);
+            } while(j != i);
+        }
+    }
 }
 
 
