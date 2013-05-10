@@ -1,15 +1,14 @@
-#include "WelcomeWindow.h"
+#include "windows/MainWindow.h"
 #include <QApplication>
 #include <QDebug>
 #include <QString>
-#include "../Arnoux_Yoccoz/fol/Foliation.h"
 #include <sstream>
 
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    WelcomeWindow w;
+    MainWindow w;
     w.show();
 
 //    balazs::Foliation f = balazs::arnouxYoccozFoliation(3);

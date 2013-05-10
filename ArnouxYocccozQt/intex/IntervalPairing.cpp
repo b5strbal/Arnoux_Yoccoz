@@ -41,6 +41,6 @@ void balazs::IntervalPairing::fillInLengthsAndPairing(std::vector<floating_point
 
 
 balazs::IntervalPairing::IntervalPairing(const std::vector<balazs::floating_point_type> &lengths, const balazs::Permutation &permutation) :
-    m_intExchange(lengths, permutation, 0)
+    m_intExchange(lengths, permutation, 0, false)
 {
 }

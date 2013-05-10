@@ -94,8 +94,9 @@ std::ostream& balazs::operator <<(std::ostream &out, const Permutation &perm)
 }
 
 
-bool balazs::isSimple(const Permutation &perm)
+bool balazs::isMinimal(const Permutation &perm)
 {
+    if(perm.size() == 1) return true;
     for(std::size_t i = 0; i < perm.size(); i++){
         if(perm[(i + 1) % perm.size()] == (perm[i] + 1) % perm.size()){
             return false;

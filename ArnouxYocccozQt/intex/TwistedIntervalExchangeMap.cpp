@@ -10,14 +10,20 @@ balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap() :
 
 balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<floating_point_type> &lengths,
                                          const Permutation &permutation,
-                                         floating_point_type twist) :
+                                         floating_point_type twist, bool permutationMustBeMinimal) :
     m_lengthsAndTwist(lengths, twist),
     m_permutation(permutation),
     m_inversePermutation(inverse(permutation)),
     m_twist(Mod1NumberIntExchange::constructTwist(&m_lengthsAndTwist))
 {
     if(lengths.size() != permutation.size()){
-        throw std::runtime_error("The number of intervals is ambiguous.");
+        throw std::runtime_error("The size of the permutation and the number of intervals should be the same.");
+    }
+
+    if(permutationMustBeMinimal){
+        if(!isMinimal(permutation)){
+            throw std::runtime_error("The interval exchange map is not \"minimal\", i.e. the same map can be specified with smaller number of number of intervals.");
+        }
     }
 
     m_lengths.reserve(lengths.size());

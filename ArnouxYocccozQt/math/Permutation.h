@@ -45,7 +45,7 @@ private:
 };
 
 
-bool isSimple(const Permutation& perm);
+bool isMinimal(const Permutation& perm);
 
 std::ostream& operator<<(std::ostream& out, const Permutation& perm);
 Permutation operator*(const Permutation& p1, const Permutation& p2);

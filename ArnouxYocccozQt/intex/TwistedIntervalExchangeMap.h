@@ -17,7 +17,7 @@ public:
     TwistedIntervalExchangeMap(); // default constructor: the identity interval exchange on one interval.
     TwistedIntervalExchangeMap(const std::vector<floating_point_type>& lengths,
                         const Permutation& permutation,
-                        floating_point_type twist);
+                        floating_point_type twist, bool permutationMustBeMinimal = true);
 
     std::size_t size() const { return m_lengths.size(); }
     const LengthsAndTwist* signature() const { return &m_lengthsAndTwist; }
