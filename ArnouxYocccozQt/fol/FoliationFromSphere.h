@@ -2,9 +2,11 @@
 #define FOLIATIONFROMSPHERE_H
 
 #include "Foliation.h"
-#include "FoliationSphere.h"
 
 namespace balazs{
+
+class FoliationSphere;
+
 
 class FoliationFromSphere : public Foliation
 {

@@ -45,6 +45,7 @@ balazs::Direction::LeftOrRight balazs::Mod1Number::side() const
 balazs::Mod1Number &balazs::Mod1Number::operator +=(const Mod1Number &rhs)
 {
     m_position += rhs.m_position;
+    m_position = fracPart(m_position);
     m_epsilon += rhs.m_epsilon;
     return *this;
 }

@@ -1,11 +1,11 @@
 #ifndef MOD1NUMBERINTEXCHANGE_H
 #define MOD1NUMBERINTEXCHANGE_H
 
-#include "LengthsAndTwist.h"
 #include "Mod1Number.h"
 
 namespace balazs{
 
+class LengthsAndTwist;
 
 class Mod1NumberIntExchange : public Mod1Number {
 public:

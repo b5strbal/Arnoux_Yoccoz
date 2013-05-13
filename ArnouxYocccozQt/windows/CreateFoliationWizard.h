@@ -30,7 +30,10 @@ public:
     explicit CreateFoliationWizard(QWidget *parent = 0);
     
 signals:
-    
+    void foliation(balazs::Foliation* newFoliation);
+    void foliationRP2(balazs::FoliationRP2* newFoliationRP2);
+
+
 public slots:
     void fitContents(int) { adjustSize(); }
 };
@@ -101,7 +104,6 @@ public:
     bool validatePage();
 
 signals:
-    void foliation(balazs::Foliation newFoliation);
 
 public slots:
 
@@ -137,9 +139,6 @@ public:
     int nextId() const { return -1; }
     bool validatePage();
 
-signals:
-    void foliation(balazs::Foliation newFoliation);
-
 private:
     QLabel* instructions;
     QSpinBox* numIntervalSpinBox;
@@ -161,9 +160,6 @@ public:
     FoliationAYPage(QWidget *parent = 0);
     int nextId() const { return -1; }
     bool validatePage();
-
-signals:
-    void foliation(balazs::Foliation newFoliation);
 
 private:
     QLabel* instructions;
@@ -206,8 +202,6 @@ public:
     FoliationRP2WeighedTreePage(QWidget *parent = 0);
     int nextId() const { return -1; }
     bool validatePage();
-signals:
-    void foliationRP2(balazs::FoliationRP2 newFoliationRP2);
 private:
     QLabel* instructions;
     QLabel* weighedTreeLabel;
@@ -228,8 +222,7 @@ public:
     FoliationRP2RandomPage(QWidget *parent = 0);
     int nextId() const { return -1; }
     bool validatePage();
-signals:
-    void foliationRP2(balazs::FoliationRP2 newFoliationRP2);
+
 private:
     QLabel* instructions;
     QSpinBox* numEdgesSpinBox;
@@ -250,8 +243,7 @@ public:
     FoliationRP2AYPage(QWidget *parent = 0);
     int nextId() const { return -1; }
     bool validatePage();
-signals:
-    void foliationRP2(balazs::FoliationRP2 newFoliationRP2);
+
 
 private:
     QLabel* instructions;

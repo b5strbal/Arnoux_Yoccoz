@@ -1,17 +1,18 @@
 #ifndef SEPSEGMENTCOLLECTION_H
 #define SEPSEGMENTCOLLECTION_H
 
+#include <list>
 #include "../math/Choose.h"
-#include "SepSegmentDatabase.h"
-#include "SSCMode.h"
+
 
 namespace balazs{
 
 
-
-
-
-
+class SepSegmentDatabase;
+class SSCMode;
+struct SepSegmentIndex;
+class SeparatrixSegment;
+class Foliation;
 
 class SepSegmentCollection
 {
@@ -19,18 +20,15 @@ public:
     static SepSegmentCollection emptyCollection(const SepSegmentDatabase& sepSegmentDatabase, const SSCMode& sscMode);
     static SepSegmentCollection firstCollection(const SepSegmentDatabase& sepSegmentDatabase, const SSCMode& sscMode);
 
-    sepSegmentDatabaseConstIterator_t operator[](std::size_t index) const { return m_segments[index]; }
+    std::list<SeparatrixSegment>::const_iterator operator[](std::size_t index) const { return m_segments[index]; }
     bool isEmpty() const { return m_segments.empty(); }
     void clear() { m_segments.clear(); }
     std::size_t size() const { return m_segments.size(); }
-    std::vector<sepSegmentDatabaseConstIterator_t>::iterator begin() { return m_segments.begin(); }
-    std::vector<sepSegmentDatabaseConstIterator_t>::iterator end() { return m_segments.end(); }
+    std::vector<std::list<SeparatrixSegment>::const_iterator>::iterator begin() { return m_segments.begin(); }
+    std::vector<std::list<SeparatrixSegment>::const_iterator>::iterator end() { return m_segments.end(); }
 
 
-    void setInitialSetting(const Choose &sepIndicesChoose){
-        m_sepIndicesChoose = sepIndicesChoose;
-        setFirstSegments(m_sscMode.initialSegments(sepIndicesChoose));
-    }
+    void setInitialSetting(const Choose &sepIndicesChoose);
 
     void advance(std::size_t maxDepth, std::size_t maxInvolvedSingularities);
 
@@ -41,16 +39,13 @@ public:
 
 private:
     SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase, const SSCMode& sscMode);
-    const Foliation& foliation() const { return m_sepSegmentDatabase.foliation(); }
     void setFirstSegments(const std::vector<SepSegmentIndex>& ssic);
-    void setSegmentToFirst(std::size_t segmentIndex){
-        m_segments[segmentIndex] = m_sepSegmentDatabase.firstGoodSegment(getSepSegmentIndex(m_segments[segmentIndex]));
-    }
+    void setSegmentToFirst(std::size_t segmentIndex);
 
 
 private:
     const SepSegmentDatabase& m_sepSegmentDatabase;
-    std::vector<sepSegmentDatabaseConstIterator_t> m_segments;
+    std::vector<std::list<SeparatrixSegment>::const_iterator> m_segments;
     Choose m_sepIndicesChoose;
     const SSCMode& m_sscMode;
 };
@@ -70,12 +65,6 @@ inline SepSegmentCollection SepSegmentCollection::emptyCollection(const SepSegme
     return SepSegmentCollection(sepSegmentDatabase, sscMode);
 }
 
-inline SepSegmentCollection SepSegmentCollection::firstCollection(const SepSegmentDatabase& sepSegmentDatabase,
-                                            const SSCMode& sscMode) {
-    SepSegmentCollection retVal(sepSegmentDatabase, sscMode);
-    retVal.setInitialSetting(Choose(retVal.m_sscMode.howMuchToChooseFrom(), 1));
-    return retVal;
-}
 
 
 

@@ -39,14 +39,17 @@ balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector
 
     m_divPointsAfterExchange.resize(lengths.size());
     m_divPointsAfterExchange[0] = m_twist;
+    int divpointsBeforeTwist = 0;
     for (std::size_t i = 1; i < lengths.size(); i++) {
         m_divPointsAfterExchange[i] = m_divPointsAfterExchange[i - 1] + m_lengths[m_inversePermutation[i - 1]];
+        if(static_cast<floating_point_type>(m_divPointsAfterExchange[i - 1]) +
+                static_cast<floating_point_type>(m_lengths[m_inversePermutation[i - 1]]) > 1){
+            divpointsBeforeTwist = lengths.size() - i;
+        }
     }
     std::sort(m_divPointsAfterExchange.begin(), m_divPointsAfterExchange.end());
 
-    int shift = m_divPointsAfterExchange.end() -
-            std::lower_bound(m_divPointsAfterExchange.begin(), m_divPointsAfterExchange.end(), -m_twist);
-    m_permutationWithMinimalTwist = rotatingPermutation(lengths.size(), shift) * m_permutation;
+    m_permutationWithMinimalTwist = rotatingPermutation(lengths.size(), divpointsBeforeTwist) * m_permutation;
     m_inversePermutationWithMinimalTwist = inverse(m_permutationWithMinimalTwist);
 
     m_translations.reserve(lengths.size());

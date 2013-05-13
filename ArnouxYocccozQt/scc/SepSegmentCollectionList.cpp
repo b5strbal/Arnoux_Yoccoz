@@ -1,5 +1,6 @@
 #include "SepSegmentCollectionList.h"
-
+#include "SepSegmentDatabase.h"
+#include "../fol/Foliation.h"
 
 balazs::SepSegmentCollectionList::SepSegmentCollectionList(SepSegmentDatabase &sepSegmentDatabase,
                                              std::size_t maxDepth,

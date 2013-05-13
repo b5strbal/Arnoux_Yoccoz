@@ -5,6 +5,13 @@
 
 class CreateFoliationWizard;
 class DocumentationWindow;
+class QListWidget;
+class QStackedWidget;
+
+namespace balazs{
+    class Foliation;
+    class FoliationRP2;
+}
 
 class MainWindow : public QMainWindow
 {
@@ -15,21 +22,23 @@ public:
 signals:
     
 public slots:
-    void newFoliation();
+    void newFoliationWizard();
     void openDocumentation();
+    void newFoliationWindow(balazs::Foliation *pFoliation);
 
 private:
     void createMenus();
     void createActions();
     
+    QListWidget* foliationListWidget;
+    QStackedWidget* foliationPagesWidget;
+
     QMenu* fileMenu;
     QMenu* helpMenu;
     
     QAction* newFoliationAct;
     QAction* openDocumentationAct;
     
-    QTabWidget* openFoliationsTabWidget;
-
     CreateFoliationWizard* createFoliationWizard = nullptr;
     DocumentationWindow* documentationWindow = nullptr;
 };

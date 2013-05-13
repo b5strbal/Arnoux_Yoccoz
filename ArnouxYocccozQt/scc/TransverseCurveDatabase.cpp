@@ -1,8 +1,17 @@
 #include "TransverseCurveDatabase.h"
+#include "../fol/Foliation.h"
+#include "SepSegmentCollectionList.h"
+#include "SeparatrixSegment.h"
+#include "SepSegmentDatabase.h"
 
 balazs::TransverseCurveDatabase::TransverseCurveDatabase(SepSegmentDatabase &sepSegmentDatabase) :
     m_sepSegmentDatabase(sepSegmentDatabase)
 {
+}
+
+const balazs::Foliation& balazs::TransverseCurveDatabase::foliation() const
+{
+    return m_sepSegmentDatabase.foliation();
 }
 
 
@@ -61,7 +70,7 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
 
 
     for (short wrapsAroundEnds = 0; wrapsAroundEnds < 2; wrapsAroundEnds++){
-        std::size_t index = 0;
+        int index = 0;
         std::size_t length = 0;
         do {
             if ((wrapsAroundEnds && index % 2 == 1) || (!wrapsAroundEnds && index % 2 == 0)) {

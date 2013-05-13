@@ -13,8 +13,8 @@ balazs::LengthsAndTwist::LengthsAndTwist(const std::vector<floating_point_type> 
             throw std::runtime_error("The length parameters of an interval exchange map must be positive.");
     }
 
-    floating_point_type total = std::accumulate(lengths.begin(), lengths.end(), 0);
-    for (auto x : m_lengths) {
+    floating_point_type total = std::accumulate(lengths.begin(), lengths.end(), 0.0);
+    for (auto &x : m_lengths) {
         x /= total;
     }
 }

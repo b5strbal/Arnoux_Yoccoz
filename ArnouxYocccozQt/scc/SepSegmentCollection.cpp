@@ -1,11 +1,12 @@
 #include "SepSegmentCollection.h"
-
+#include "SepSegmentDatabase.h"
+#include "SSCMode.h"
 
 balazs::SepSegmentCollection::SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase, const SSCMode& sscMode) : // empty collection
     m_sepSegmentDatabase(sepSegmentDatabase),
     m_sscMode(sscMode)
 {
-    assert(&sscMode.foliation() == &foliation());
+    assert(&sscMode.foliation() == &m_sepSegmentDatabase.foliation());
 }
 
 
@@ -18,7 +19,15 @@ void balazs::SepSegmentCollection::setFirstSegments(const std::vector<SepSegment
     }
 }
 
+void balazs::SepSegmentCollection::setSegmentToFirst(std::size_t segmentIndex){
+    m_segments[segmentIndex] = m_sepSegmentDatabase.firstGoodSegment(getSepSegmentIndex(m_segments[segmentIndex]));
+}
 
+
+void balazs::SepSegmentCollection::setInitialSetting(const Choose &sepIndicesChoose){
+    m_sepIndicesChoose = sepIndicesChoose;
+    setFirstSegments(m_sscMode.initialSegments(sepIndicesChoose));
+}
 
 
 void balazs::SepSegmentCollection::advance(std::size_t maxDepth, std::size_t maxInvolvedSingularities)
@@ -81,7 +90,12 @@ void balazs::SepSegmentCollection::advance(std::size_t maxDepth, std::size_t max
 
 
 
-
+balazs::SepSegmentCollection balazs::SepSegmentCollection::firstCollection(const SepSegmentDatabase& sepSegmentDatabase,
+                                            const SSCMode& sscMode) {
+    SepSegmentCollection retVal(sepSegmentDatabase, sscMode);
+    retVal.setInitialSetting(Choose(retVal.m_sscMode.howMuchToChooseFrom(), 1));
+    return retVal;
+}
 
 
 

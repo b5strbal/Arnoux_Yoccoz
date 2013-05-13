@@ -2,9 +2,10 @@
 #define MOD1NUMBERINTEXWITHINFO_H
 
 #include "../intex/Mod1NumberIntExchange.h"
-#include "../fol/Foliation.h"
 
 namespace balazs{
+
+class Foliation;
 
 class Mod1NumberIntExWithInfo
 {

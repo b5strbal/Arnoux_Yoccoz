@@ -1,4 +1,5 @@
 #include "FoliationFromSphere.h"
+#include "FoliationSphere.h"
 
 
 balazs::FoliationFromSphere::FoliationFromSphere(const std::vector<floating_point_type> &lengths,
@@ -64,7 +65,7 @@ void balazs::FoliationFromSphere::generateTopConnectingPairs(const FoliationSphe
     std::size_t numSeparatrices = foliationSphere.topFoliation().numSeparatrices();
     for (std::size_t i = 0; i < numSeparatrices; i++) {
         if (foliationSphere.topFoliation().intervalPairing().permutation()[integerMod(i, numSeparatrices)] !=
-                integerMod(i - 1, numSeparatrices)) {
+                integerMod(static_cast<int>(i) - 1, numSeparatrices)) {
             // otherwise the current separatrix emanates from a 1-pronged singularity which is not important
 
             ConnectedPoints newConnectedPoints;
@@ -91,7 +92,7 @@ void balazs::FoliationFromSphere::generateBottomConnectingPairs(const FoliationS
     std::size_t numSeparatrices = foliationSphere.bottomFoliation().numSeparatrices();
     for (std::size_t i = 0; i < numSeparatrices; i++) {
         if (foliationSphere.bottomFoliation().intervalPairing().permutation()[i] !=
-                integerMod(i - 1, numSeparatrices) ) {
+                integerMod(static_cast<int>(i) - 1, numSeparatrices) ) {
 
             ConnectedPoints newConnectedPoints;
             newConnectedPoints.bottomPoint = static_cast<Mod1Number>(foliationSphere.bottomFoliation().intervalPairing().divPoints()[i]) + foliationSphere.twist();

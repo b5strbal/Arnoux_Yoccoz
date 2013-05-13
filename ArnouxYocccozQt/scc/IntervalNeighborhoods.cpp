@@ -48,7 +48,7 @@ void balazs::IntervalNeighborhoods::insertPoint(const Mod1NumberIntExWithInfo &n
 bool balazs::IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1NumberIntExWithInfo& point) const{
     assert(&foliation() == &point.foliation());
 
-    std::size_t indexOfInterval = point.smallContainingInterval();
+    int indexOfInterval = point.smallContainingInterval();
 
     if (m_cuttingPoints[indexOfInterval].isEmpty) {
         return true;

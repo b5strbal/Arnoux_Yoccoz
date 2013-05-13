@@ -41,7 +41,7 @@ const floating_point_type PRECISION = 0.00000000001L;
 
 
 
-std::size_t integerMod(int a, std::size_t b);
+std::size_t integerMod(int a, int b);
 int gcd(int a, int b);
 
 

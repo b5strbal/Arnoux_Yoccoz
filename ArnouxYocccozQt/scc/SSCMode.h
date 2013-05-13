@@ -1,10 +1,16 @@
 #ifndef SSCMODE_H
 #define SSCMODE_H
 
-#include "SepSegmentDatabase.h"
-#include "../math/Choose.h"
+#include <vector>
+#include "global.h"
 
 namespace balazs {
+
+class Choose;
+class SepSegmentDatabase;
+class Foliation;
+class FoliationFromRP2;
+struct SepSegmentIndex;
 
 
 
@@ -36,8 +42,8 @@ public:
     std::vector<std::size_t> segmentsToLengthen(std::size_t indexToIncrease) const { return {{ indexToIncrease }}; }
     std::vector<std::size_t> additionalSegmentsToSetToFirst(std::size_t indexToIncrease) const
         { (void)indexToIncrease; return {{}}; }
-    std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const { return sepIndicesChoose.k(); }
-    std::size_t howMuchToChooseFrom() const { return foliation().numSeparatrices(); }
+    std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const;
+    std::size_t howMuchToChooseFrom() const;
 private:
     Direction::LeftOrRight m_shiftToSide;
 };
@@ -60,8 +66,8 @@ public:
     }
     std::vector<std::size_t> additionalSegmentsToSetToFirst(std::size_t indexToIncrease) const
         { (void)indexToIncrease; return {{}}; }
-    std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const { return sepIndicesChoose.k(); }
-    std::size_t howMuchToChooseFrom() const { return foliation().numSeparatrices(); }
+    std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const;
+    std::size_t howMuchToChooseFrom() const;
 };
 
 
@@ -79,8 +85,8 @@ public:
     std::vector<SepSegmentIndex> initialSegments(const Choose &sepIndicesChoose) const;
     std::vector<std::size_t> segmentsToLengthen(std::size_t indexToIncrease) const;
     std::vector<std::size_t> additionalSegmentsToSetToFirst(std::size_t indexToIncrease) const;
-    std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const { return 2 * sepIndicesChoose.k(); }
-    std::size_t howMuchToChooseFrom() const { return foliation().numSeparatrices() / 2; }
+    std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const;
+    std::size_t howMuchToChooseFrom() const;
 private:
     Direction::LeftOrRight m_shiftToSide;
     const FoliationFromRP2& m_foliationFromRP2;

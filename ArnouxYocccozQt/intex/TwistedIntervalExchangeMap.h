@@ -6,6 +6,7 @@
 #include <cassert>
 #include "../math/Permutation.h"
 #include "Mod1NumberIntExchange.h"
+#include "LengthsAndTwist.h"
 
 namespace balazs{
 
@@ -24,7 +25,9 @@ public:
     const std::vector<Mod1NumberIntExchange>& lengths() const { return m_lengths; }
     const std::vector<Mod1NumberIntExchange>& divPoints() const { return m_divPoints; }
     const std::vector<Mod1NumberIntExchange>& divPointsAfterExchange() const { return m_divPointsAfterExchange; }
-    const Permutation& permutationWithMinimalTwist() const { return m_permutation; }
+    const Permutation& permutationWithMinimalTwist() const { return m_permutationWithMinimalTwist; }
+    const Permutation& inversePermutationWithMinimalTwist() const { return m_inversePermutationWithMinimalTwist; }
+
     //const Permutation& inversePermutation() const { return m_inversePermutation; }
     //const std::vector<Mod1NumberIntExchange>& translations() const { return m_translations; }
 

@@ -1,6 +1,8 @@
 #include "SSCMode.h"
-
-
+#include "SepSegmentDatabase.h"
+#include "../math/Choose.h"
+#include "../fol/Foliation.h"
+#include "../fol/FoliationFromRP2.h"
 
 
 std::vector<balazs::SepSegmentIndex> balazs::SSCModeShiftToSameSide::initialSegments(const Choose& sepIndicesChoose) const
@@ -13,6 +15,16 @@ std::vector<balazs::SepSegmentIndex> balazs::SSCModeShiftToSameSide::initialSegm
         retVal.push_back({ m_shiftToSide, Direction::DOWN, sepIndicesChoose[i] });
     }
     return retVal;
+}
+
+std::size_t balazs::SSCModeShiftToSameSide::numInvolvedSingularities(const Choose &sepIndicesChoose) const
+{
+    return sepIndicesChoose.k();
+}
+
+std::size_t balazs::SSCModeShiftToSameSide::howMuchToChooseFrom() const
+{
+    return foliation().numSeparatrices();
 }
 
 
@@ -36,7 +48,16 @@ std::vector<balazs::SepSegmentIndex> balazs::SSCModeSingWrap::initialSegments(co
 }
 
 
+std::size_t balazs::SSCModeSingWrap::numInvolvedSingularities(const Choose &sepIndicesChoose) const
+{
+    return sepIndicesChoose.k();
+}
 
+
+std::size_t balazs::SSCModeSingWrap::howMuchToChooseFrom() const
+{
+    return foliation().numSeparatrices();
+}
 
 
 
@@ -70,6 +91,17 @@ balazs::SSCModeShiftToSameSideFromRP2::SSCModeShiftToSameSideFromRP2(const balaz
 
 }
 
+
+std::size_t balazs::SSCModeShiftToSameSideFromRP2::numInvolvedSingularities(const Choose &sepIndicesChoose) const
+{
+    return 2 * sepIndicesChoose.k();
+}
+
+
+std::size_t balazs::SSCModeShiftToSameSideFromRP2::howMuchToChooseFrom() const
+{
+    return foliation().numSeparatrices() / 2;
+}
 
 
 

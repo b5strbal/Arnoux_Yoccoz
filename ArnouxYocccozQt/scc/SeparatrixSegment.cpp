@@ -1,5 +1,5 @@
 #include "SeparatrixSegment.h"
-
+#include "../fol/Foliation.h"
 
 balazs::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, std::size_t startingSingularity, Direction::UpOrDown direction) :
     m_foliation(foliation),

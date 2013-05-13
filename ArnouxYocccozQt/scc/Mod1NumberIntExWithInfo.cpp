@@ -1,4 +1,5 @@
 #include "Mod1NumberIntExWithInfo.h"
+#include "../fol/Foliation.h"
 
 
 balazs::Mod1NumberIntExWithInfo::Mod1NumberIntExWithInfo(const Mod1NumberIntExchange &number, const Foliation *parent) :

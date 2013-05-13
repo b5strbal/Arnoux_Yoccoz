@@ -1,10 +1,11 @@
 #ifndef FOLIATIONSPHERE_H
 #define FOLIATIONSPHERE_H
 
-#include "FoliationRP2.h"
+#include "FoliationDisk.h"
 
 namespace balazs{
 
+class FoliationRP2;
 
 // Both foliations are seen from above.
 // The top foliation is fixed in the standard position, and the bottom foliation is twisted.

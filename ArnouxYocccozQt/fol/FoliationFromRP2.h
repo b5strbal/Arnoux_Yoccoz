@@ -2,10 +2,10 @@
 #define FOLIATIONFROMRP2_H
 
 #include "FoliationFromSphere.h"
-#include "FoliationRP2.h"
 
 namespace balazs{
 
+class FoliationRP2;
 
 class FoliationFromRP2 : public FoliationFromSphere
 {

@@ -47,7 +47,8 @@ SOURCES += main.cpp\
     windows/FoliationRP2Window.cpp \
     windows/DocumentationWindow.cpp \
     windows/CreateFoliationWizard.cpp \
-    inputwidgets/TwistedIntervalExchangeInputWidget.cpp
+    drawing/drawings.cpp \
+    drawing/FoliationDrawingArea.cpp
 
 HEADERS  += scc/IntervalNeighborhoods.h \
     scc/DisjointIntervals.h \
@@ -65,7 +66,6 @@ HEADERS  += scc/IntervalNeighborhoods.h \
     intex/Mod1Number.h \
     intex/LengthsAndTwist.h \
     intex/IntervalPairing.h \
-    intex/IntervalExchangeFoliationDisk.h.autosave \
     math/WeighedTree.h \
     math/PerronFrobenius.h \
     math/Permutation.h \
@@ -86,9 +86,12 @@ HEADERS  += scc/IntervalNeighborhoods.h \
     windows/FoliationRP2Window.h \
     windows/DocumentationWindow.h \
     windows/CreateFoliationWizard.h \
-    inputwidgets/TwistedIntervalExchangeInputWidget.h
+    drawing/drawings.h \
+    drawing/FoliationDrawingArea.h \
+    qt.h
 
-FORMS    +=
+FORMS    += \
+    mainwindow.ui
 
 OTHER_FILES += FoliationRP2old.cpp \
     FoliationRP2old.h \

@@ -1,5 +1,5 @@
 #include "TransverseCurve.h"
-
+#include "SeparatrixSegment.h"
 
 
 balazs::TransverseCurve::TransverseCurve(const Foliation& foliation, const SepSegmentCollection &segments, bool wrapsAroundEnds) :

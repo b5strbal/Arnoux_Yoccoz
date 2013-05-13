@@ -4,13 +4,14 @@
 #include <array>
 #include <list>
 #include "SeparatrixSegment.h"
-#include "DisjointIntervals.h"
-#include "../fol/FoliationFromRP2.h"
+
 
 namespace balazs{
 
 
-typedef std::list<SeparatrixSegment>::const_iterator sepSegmentDatabaseConstIterator_t;
+class DisjointIntervals;
+
+
 
 struct SepSegmentIndex{
     Direction::LeftOrRight m_leftOrRight;
@@ -42,12 +43,12 @@ private:
     std::array<std::vector<SeparatrixSegment>, 2> m_currentSepSegments;
     std::array<std::array<std::vector<std::list<SeparatrixSegment>>, 2>, 2> m_goodShiftedSeparatrixSegments;
 
-    std::size_t numIntervals() const { return m_foliation.numIntervals(); }
+    std::size_t numIntervals() const;
     void addToGoodSegmentsIfGood(const SeparatrixSegment& s);
 };
 
 
-inline SepSegmentIndex getSepSegmentIndex(sepSegmentDatabaseConstIterator_t it){
+inline SepSegmentIndex getSepSegmentIndex(std::list<SeparatrixSegment>::const_iterator it){
     return { it->side(), it->direction(), it->startingSingularity() };
 }
 

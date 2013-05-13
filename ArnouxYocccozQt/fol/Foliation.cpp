@@ -45,7 +45,7 @@ int balazs::Foliation::eulerChar() const
     return retval;
 }
 
-std::vector<std::size_t> balazs::Foliation::singularityType() const
+std::vector<std::size_t> balazs::Foliation::singularityTypeOfAbelianDiff() const
 {
     std::vector<std::size_t> retval;
     for(auto vec : m_singularities){
@@ -57,6 +57,15 @@ std::vector<std::size_t> balazs::Foliation::singularityType() const
 
 
 
+
+std::vector<std::size_t> balazs::Foliation::singularityTypeProngs() const
+{
+    std::vector<std::size_t> retval = singularityTypeOfAbelianDiff();
+    for(auto &x : retval){
+        x = (x + 1) * 2;
+    }
+    return retval;
+}
 
 
 
@@ -124,9 +133,10 @@ void balazs::Foliation::initSingularities()
                 alreadyLookedAt[j] = true;
 
 
-                j = integerMod(j - 1, size);
+                j = integerMod(j + size - 1, size);
                 j = m_twistedIntervalExchange.permutationWithMinimalTwist()[j];
                 j = integerMod(j + 1, size);
+                j = m_twistedIntervalExchange.inversePermutationWithMinimalTwist()[j];
             } while(j != i);
         }
     }
@@ -164,20 +174,6 @@ balazs::Foliation balazs::arnouxYoccozFoliation(int genus){
         throw std::runtime_error("Machine precision is not enough to handle such a high genus Arnoux-Yoccox surface.");
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -1,4 +1,6 @@
 #include "FoliationSphere.h"
+#include "FoliationRP2.h"
+
 
 balazs::FoliationSphere::FoliationSphere(const FoliationDisk& topFoliation, const FoliationDisk& bottomFoliation, floating_point_type twist) :
     m_topFoliation(topFoliation),

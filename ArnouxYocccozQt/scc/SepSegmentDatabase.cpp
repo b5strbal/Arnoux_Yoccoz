@@ -1,4 +1,6 @@
 #include "SepSegmentDatabase.h"
+#include "DisjointIntervals.h"
+#include "../fol/Foliation.h"
 
 balazs::SepSegmentDatabase::SepSegmentDatabase(const Foliation& foliation) :
     m_foliation(foliation)
@@ -42,6 +44,10 @@ void balazs::SepSegmentDatabase::printGoodSepSegments(std::size_t maxdepth, bool
 }
 
 
+std::size_t balazs::SepSegmentDatabase::numIntervals() const
+{
+    return m_foliation.numIntervals();
+}
 
 
 
