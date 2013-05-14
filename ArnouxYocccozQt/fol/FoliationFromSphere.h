@@ -7,27 +7,37 @@ namespace balazs{
 
 class FoliationSphere;
 
+class FoliationFromSphereImpl{
+    friend class FoliationFromSphere;
 
-class FoliationFromSphere : public Foliation
-{
-public:
-    virtual ~FoliationFromSphere() {}
-    static FoliationFromSphere fromFoliationSphere(const FoliationSphere &foliationSphere);
-private:
-    FoliationFromSphere(const std::vector<floating_point_type>& lengths,
-                        const Permutation& permutation,
-                        floating_point_type twist);
+    FoliationFromSphereImpl(const FoliationSphere &foliationSphere);
 
     struct ConnectedPoints {
         Mod1Number topPoint;
         Mod1Number bottomPoint;
     };
 
-
     static void generateTopConnectingPairs(const FoliationSphere& foliationSphere,
                                            std::vector<ConnectedPoints>& allConnectedPoints);
     static void generateBottomConnectingPairs(const FoliationSphere& foliationSphere,
                                               std::vector<ConnectedPoints>& allConnectedPoints);
+
+    static std::vector<floating_point_type> arg_lengths;
+    static Permutation arg_permutation;
+    static floating_point_type arg_twist;
+};
+
+
+
+
+class FoliationFromSphere : private FoliationFromSphereImpl, public Foliation
+{
+public:
+    virtual ~FoliationFromSphere() {}
+    FoliationFromSphere(const FoliationSphere &foliationSphere);
+private:
+
+
 };
 
 

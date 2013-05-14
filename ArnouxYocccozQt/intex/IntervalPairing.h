@@ -11,7 +11,7 @@ namespace balazs{
 class IntervalPairing
 {
 public:
-    static IntervalPairing fromWeighedTree(const WeighedTree& wt);
+    IntervalPairing(const WeighedTree& wt);
     std::size_t size() const { return m_intExchange.size(); }
     std::vector<Mod1NumberIntExchange> divPoints() const { return m_intExchange.divPoints(); }
     const Permutation& permutation() const { return m_intExchange.permutationWithMinimalTwist(); }
@@ -25,11 +25,6 @@ public:
 
     friend std::ostream& operator<<(std::ostream& Out, const IntervalPairing& intervalPairing);
 private:
-    IntervalPairing(const std::vector<floating_point_type>& lengths, const Permutation& permutation);
-
-    static void fillInLengthsAndPairing(std::vector<floating_point_type>& lengths,
-                                 std::vector<std::size_t> &pairing,
-                                 WeighedTree::Node* pNode);
 
 
     TwistedIntervalExchangeMap m_intExchange;

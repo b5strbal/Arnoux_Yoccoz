@@ -21,8 +21,14 @@ balazs::SepSegmentCollectionList::SepSegmentCollectionList(SepSegmentDatabase &s
 
 
 
+balazs::SepSegmentCollectionList::iterator::iterator(const SepSegmentCollectionList& parent, const begin_tag&) :
+    m_parent(parent),
+    m_sepSegmentCollection(parent.m_sepSegmentDatabase, parent.m_sscMode, balazs::begin_tag())
+{
+}
 
-
-
-
-
+balazs::SepSegmentCollectionList::iterator::iterator(const SepSegmentCollectionList& parent, const end_tag&) :
+    m_parent(parent),
+    m_sepSegmentCollection(parent.m_sepSegmentDatabase, parent.m_sscMode, balazs::end_tag())
+{
+}

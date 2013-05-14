@@ -1,4 +1,4 @@
-#include "windows/MainWindow.h"
+#include "windows/WindowManager.h"
 #include <QApplication>
 #include <QDebug>
 #include <QString>
@@ -7,13 +7,10 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
 
-//    balazs::Foliation f = balazs::arnouxYoccozFoliation(3);
-//    std::ostringstream s;
-//    s << f;
-//    qDebug() << QString::fromStdString(s.str());
+    QApplication a(argc, argv);
+    WindowManager w;
+
+
     return a.exec();
 }

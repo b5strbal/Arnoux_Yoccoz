@@ -47,9 +47,12 @@ namespace balazs{
 class IntervalNeighborhoods{
 public:
     IntervalNeighborhoods(const Foliation & foliation); // empty object
+    IntervalNeighborhoods(const std::vector<const IntervalNeighborhoods*>& inbhVector);
+  //  IntervalNeighborhoods(const IntervalNeighborhoods&) = delete;
+    IntervalNeighborhoods& operator=(const IntervalNeighborhoods&) = delete;
+
     const Foliation& foliation() const { return m_foliation; }
     void insertPoint(const Mod1NumberIntExWithInfo& newCuttingPoint);
-    static IntervalNeighborhoods intersect(const std::vector<const IntervalNeighborhoods*>& inbhVector);
 
     // Decides if the point is contained in an intervals which is two sided.
     bool containsInTwoSidedInterval(const Mod1NumberIntExWithInfo& point) const;
@@ -65,9 +68,14 @@ private:
     struct CuttingPoints{
         Mod1NumberIntExWithInfo first;
         Mod1NumberIntExWithInfo second;
-        bool isEmpty = true;
+        bool isEmpty;
+    public:
+        CuttingPoints() : first(), second(), isEmpty(true) {}
     };
 
+
+    const Foliation& m_foliation;
+    std::vector<CuttingPoints> m_cuttingPoints;
     /* We store the cutting points grouped according to which interval they are in. So m_cuttingpoints has size
      * of the number of division points, and each element stores the left and right cutting point in the interval.
      * If there is no cutting point yet in an interval, CuttingPoints::isEmpty is set to true, otherwise it is false.
@@ -75,8 +83,6 @@ private:
      * So actually we store the complement of the union of the interval neighborhoods by listing the gaps in
      * each interval between the division points.
      */
-    std::vector<CuttingPoints> m_cuttingPoints;
-    const Foliation& m_foliation;
 };
 
 

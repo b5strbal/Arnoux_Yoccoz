@@ -19,6 +19,8 @@
 namespace balazs{
 
 
+class Permutation;
+
 /*!
  * \brief   A WeighedTree object represents a tree embedded into the plane with positive weights on its edges.
  * \author  Balazs Strenner, strenner@math.wisc.edu
@@ -49,16 +51,23 @@ namespace balazs{
  * \see     FoliationDisk
  */
 
+
 class WeighedTree{
-    friend class IntervalPairing;
 public:
     WeighedTree(const std::vector<floating_point_type>& definingList);
     WeighedTree(const WeighedTree& wt) : WeighedTree(wt.m_definingList) {}
+    WeighedTree& operator=(const WeighedTree&) = delete;
+
     static WeighedTree randomWeighedTree(int numEdges); // Random WeighedTree with prescribed number of edges
     ~WeighedTree() { delete m_root; }
     
     std::size_t numEdges() const { return m_numEdges; }
     std::vector<int> degrees() const;
+
+
+    std::vector<floating_point_type> getLengths() const;
+    Permutation getPairing() const;
+
 
 
 private:
@@ -92,8 +101,10 @@ private:
     
     void getDegreesRecursive(std::vector<int>& degrees, Node* node) const;
 
-
-    WeighedTree& operator=(const WeighedTree&); // assignment operator hidden
+    static void fillInLengths(std::vector<floating_point_type>& lengths,
+                                 WeighedTree::Node* pNode);
+    static void fillInPairing(std::vector<std::size_t> &pairing,
+                              WeighedTree::Node* pNode);
 
 
 

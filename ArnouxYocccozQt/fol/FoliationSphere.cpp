@@ -2,16 +2,16 @@
 #include "FoliationRP2.h"
 
 
-balazs::FoliationSphere::FoliationSphere(const FoliationDisk& topFoliation, const FoliationDisk& bottomFoliation, floating_point_type twist) :
-    m_topFoliation(topFoliation),
-    m_bottomFoliation(bottomFoliation),
+balazs::FoliationSphere::FoliationSphere(const WeighedTree &topWeighedTree, const WeighedTree &bottomWeighedTree, floating_point_type twist) :
+    m_topFoliation(topWeighedTree),
+    m_bottomFoliation(bottomWeighedTree),
     m_twist(twist)
 {
 }
 
 
 balazs::FoliationSphere::FoliationSphere(const FoliationRP2& foliationRP2) :
-    FoliationSphere(foliationRP2.foliationDisk(), foliationRP2.foliationDisk(), 0.5)
+    FoliationSphere(foliationRP2.foliationDisk().weighedTree(), foliationRP2.foliationDisk().weighedTree(), 0.5)
 {
 }
 

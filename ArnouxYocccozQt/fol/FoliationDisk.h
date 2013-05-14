@@ -47,6 +47,9 @@ class FoliationDisk
 {
 public:
     FoliationDisk(const WeighedTree& wt);
+    FoliationDisk(const FoliationDisk&) = delete;
+    FoliationDisk& operator=(const FoliationDisk&) = delete;
+
     const WeighedTree& weighedTree() const { return m_weighedTree; }
     const IntervalPairing& intervalPairing() const { return m_intervalPairing; }
     int numSeparatrices() const { return m_intervalPairing.size(); }

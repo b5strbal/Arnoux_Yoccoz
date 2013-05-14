@@ -1,13 +1,31 @@
 #include "SepSegmentCollection.h"
 #include "SepSegmentDatabase.h"
 #include "SSCMode.h"
+#include "../intex/Mod1Number.h"
 
-balazs::SepSegmentCollection::SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase, const SSCMode& sscMode) : // empty collection
+balazs::SepSegmentCollection::SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase,
+                                                   const SSCMode& sscMode,
+                                                   const begin_tag &) : // first/begin collection
+    m_sepSegmentDatabase(sepSegmentDatabase),
+    m_sscMode(sscMode)
+{
+    assert(&sscMode.foliation() == &m_sepSegmentDatabase.foliation());
+    setInitialSetting(Choose(sscMode.howMuchToChooseFrom(), 1));
+}
+
+
+balazs::SepSegmentCollection::SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase,
+                                                   const SSCMode& sscMode,
+                                                   const end_tag &) : // empty/end collection
     m_sepSegmentDatabase(sepSegmentDatabase),
     m_sscMode(sscMode)
 {
     assert(&sscMode.foliation() == &m_sepSegmentDatabase.foliation());
 }
+
+
+
+
 
 
 
@@ -90,27 +108,13 @@ void balazs::SepSegmentCollection::advance(std::size_t maxDepth, std::size_t max
 
 
 
-balazs::SepSegmentCollection balazs::SepSegmentCollection::firstCollection(const SepSegmentDatabase& sepSegmentDatabase,
-                                            const SSCMode& sscMode) {
-    SepSegmentCollection retVal(sepSegmentDatabase, sscMode);
-    retVal.setInitialSetting(Choose(retVal.m_sscMode.howMuchToChooseFrom(), 1));
-    return retVal;
+
+std::vector<balazs::Mod1Number> balazs::getEndpoints(const balazs::SepSegmentCollection &collection)
+{
+    std::vector<Mod1Number> endpoints;
+    endpoints.reserve(collection.size());
+    for (std::size_t i = 0; i < collection.size(); i++){
+        endpoints.push_back(collection[i]->endpoint());
+    }
+    return endpoints;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

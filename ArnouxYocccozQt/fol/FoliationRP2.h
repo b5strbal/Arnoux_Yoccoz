@@ -13,15 +13,20 @@ namespace balazs{
 class FoliationRP2
 {
 public:
-    FoliationRP2(const FoliationDisk &fd);
+    FoliationRP2(const WeighedTree &wt);
+    FoliationRP2(std::size_t numWeighedTreeEdges); // random foliation
+    FoliationRP2(); // the Arnoux-Yoccox foliation
+    FoliationRP2(const FoliationRP2&) = delete;
+    FoliationRP2& operator=(const FoliationRP2&) = delete;
     const FoliationDisk& foliationDisk() const { return m_foliationDisk; }
 
 private:
     FoliationDisk m_foliationDisk;
+    static const floating_point_type alpha;
+
 };
 
-FoliationRP2 randomFoliationRP2(std::size_t numWeighedTreeEdges);
-FoliationRP2 arnouxYoccozRP2();
+
 std::ostream& operator<<(std::ostream& out, const FoliationRP2& f);
 
 

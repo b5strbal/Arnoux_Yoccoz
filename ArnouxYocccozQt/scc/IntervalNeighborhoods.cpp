@@ -4,8 +4,8 @@
 
 
 balazs::IntervalNeighborhoods::IntervalNeighborhoods(const Foliation & foliation) :
-    m_cuttingPoints(foliation.numSeparatrices()),
-    m_foliation(foliation)
+    m_foliation(foliation),
+    m_cuttingPoints(foliation.numSeparatrices())
 {
 }
 
@@ -47,6 +47,7 @@ void balazs::IntervalNeighborhoods::insertPoint(const Mod1NumberIntExWithInfo &n
 //
 bool balazs::IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1NumberIntExWithInfo& point) const{
     assert(&foliation() == &point.foliation());
+//    qDebug() << *this << "\n";
 
     int indexOfInterval = point.smallContainingInterval();
 
@@ -62,6 +63,9 @@ bool balazs::IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1NumberI
     bool isRightDivPointTwoSided = m_cuttingPoints[nextIndex].isEmpty ||
             m_foliation.allDivPoints()[nextIndex].shiftedTo(Direction::RIGHT) < m_cuttingPoints[nextIndex].first.number();
 
+//    qDebug() << m_cuttingPoints[indexOfInterval].first.number() << " " <<
+//                m_cuttingPoints[indexOfInterval].second.number() << " " <<
+//                point.number() << "\n";
     if ((point < m_cuttingPoints[indexOfInterval].first && isLeftDivPointTwoSided)
             || (m_cuttingPoints[indexOfInterval].second < point && isRightDivPointTwoSided))
     {
@@ -136,30 +140,29 @@ std::ostream & balazs::operator<<(std::ostream &out, const IntervalNeighborhoods
 // The union of cutting points in all the IntervalNeighborhoods are taken and the resulting object,
 // generally with shorter intervals around the division point are returned.
 //
-balazs::IntervalNeighborhoods balazs::IntervalNeighborhoods::intersect(const std::vector<const IntervalNeighborhoods*>& inbhVector)
+balazs::IntervalNeighborhoods::IntervalNeighborhoods(const std::vector<const IntervalNeighborhoods*>& inbhVector) :
+    m_foliation(inbhVector[0]->foliation()),
+    m_cuttingPoints(inbhVector[0]->m_cuttingPoints.size())
 {
     for(std::size_t i = 1; i < inbhVector.size(); i++){
         assert(&inbhVector[i - 1]->foliation() == &inbhVector[i]->foliation());
     }
     assert(inbhVector.size() >= 2);
 
-    //const Foliation& foliation = adpVector[0]->m_foliation;
-    IntervalNeighborhoods inbh = *inbhVector[0];
-    for (std::size_t i = 0; i < inbh.m_cuttingPoints.size(); i++) {
-        for (auto it = inbhVector.begin() + 1; it != inbhVector.end(); it++) {
+    for (std::size_t i = 0; i < m_cuttingPoints.size(); i++) {
+        for (auto it = inbhVector.begin(); it != inbhVector.end(); it++) {
             if ((*it)->m_cuttingPoints[i].isEmpty) {
             } else
-            if (inbh.m_cuttingPoints[i].isEmpty) {
-                inbh.m_cuttingPoints[i].first = (*it)->m_cuttingPoints[i].first;
-                inbh.m_cuttingPoints[i].second = (*it)->m_cuttingPoints[i].second;
-                inbh.m_cuttingPoints[i].isEmpty = false;
+            if (m_cuttingPoints[i].isEmpty) {
+                m_cuttingPoints[i].first = (*it)->m_cuttingPoints[i].first;
+                m_cuttingPoints[i].second = (*it)->m_cuttingPoints[i].second;
+                m_cuttingPoints[i].isEmpty = false;
             } else {
-                inbh.m_cuttingPoints[i].first = std::min(inbh.m_cuttingPoints[i].first, (*it)->m_cuttingPoints[i].first);
-                inbh.m_cuttingPoints[i].second = std::max(inbh.m_cuttingPoints[i].second, (*it)->m_cuttingPoints[i].second);
+                m_cuttingPoints[i].first = std::min(m_cuttingPoints[i].first, (*it)->m_cuttingPoints[i].first);
+                m_cuttingPoints[i].second = std::max(m_cuttingPoints[i].second, (*it)->m_cuttingPoints[i].second);
             }
         }
     }
-    return inbh;
 }
 
 

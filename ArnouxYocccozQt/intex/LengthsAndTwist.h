@@ -11,6 +11,9 @@ class LengthsAndTwist
 {
 public:
     LengthsAndTwist(const std::vector<floating_point_type>& lengths, floating_point_type twist);
+    LengthsAndTwist(const LengthsAndTwist&) = delete;
+    LengthsAndTwist& operator=(const LengthsAndTwist&) = delete;
+
     const std::vector<floating_point_type>& lengths() const { return m_lengths; }
     const floating_point_type& twist() const { return m_twist; }
 private:

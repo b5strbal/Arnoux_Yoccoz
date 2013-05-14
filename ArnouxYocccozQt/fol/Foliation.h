@@ -6,6 +6,7 @@
 
 namespace balazs{
 
+struct flip_over_tag {};
 
 /*!
  * \brief   An orientable foliation on an orientable surface.
@@ -18,7 +19,13 @@ public:
     Foliation(const std::vector<floating_point_type>& lengths,
               const Permutation& permutation,
               floating_point_type twist);
-    virtual ~Foliation() {}
+    Foliation(const Foliation& foliation, int rotationAmount, const rotate_tag&) ;
+    Foliation(const Foliation& foliation, const reverse_tag&);
+    Foliation(const Foliation& foliation, const flip_over_tag&);
+    Foliation(int genus); // the Arnoux-Yoccoz foliations
+    Foliation(const Foliation&) = delete;
+    Foliation& operator=(const Foliation&) = delete;
+    virtual ~Foliation() = default;
 
     
     std::size_t numSeparatrices() const { return 2 * numIntervals(); }
@@ -38,18 +45,14 @@ public:
     const std::vector<std::size_t>& indexOfSingularity() const { return m_indexOfSingularity; }
     const Mod1NumberIntExchange& firstIntersection(int singularityIndex, Direction::UpOrDown direction) const;
 
-    Foliation rotateBy(int rotationAmount) const;
-    Foliation reflect() const;
-    Foliation flipOver() const;
+
 
     friend std::ostream& operator<<(std::ostream& out, const Foliation& f);
 
-
 private:
-    Foliation(const TwistedIntervalExchangeMap&);
-
 
     void initSingularities();
+    void init();
 
 private:
     TwistedIntervalExchangeMap m_twistedIntervalExchange;
@@ -61,9 +64,9 @@ private:
 };
 
 
+Permutation arnouxYoccozPermutation(int genus);
+std::vector<floating_point_type> arnouxYoccozLengths(int genus);
 
-
-Foliation arnouxYoccozFoliation(int genus);
 
 
 }

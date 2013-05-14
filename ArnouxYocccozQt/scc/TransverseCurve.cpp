@@ -3,18 +3,10 @@
 
 
 balazs::TransverseCurve::TransverseCurve(const Foliation& foliation, const SepSegmentCollection &segments, bool wrapsAroundEnds) :
+    m_goodSegmentIndices(segments),
+    m_disjointIntervals(getEndpoints(segments), wrapsAroundEnds),
     m_foliation(foliation)
 {
-    std::vector<Mod1Number> endpoints;
-    endpoints.resize(segments.size());
-    m_goodSegmentIndices.resize(segments.size());
-    for (std::size_t i = 0; i < segments.size(); i++){
-        endpoints.push_back(segments[i]->endpoint());
-        m_goodSegmentIndices.push_back(&(*segments[i])); // We will probably have to find a more cleverly sorted way of storing the segments later.
-       // std::cout << print() << "\n\n";
-    }
-    m_disjointIntervals = DisjointIntervals(endpoints, wrapsAroundEnds);
-
 }
 
 
@@ -44,7 +36,7 @@ std::ostream& balazs::operator<<(std::ostream& out, const TransverseCurve& tc)
 {
     out << "Separatrix segments:\n";
     for (auto goodSegmentIndex : tc.m_goodSegmentIndices){
-        out << goodSegmentIndex << "\n";
+        out << *goodSegmentIndex << "\n";
     }
     out << "Connecting arcs: " << tc.m_disjointIntervals << "\n";
     out << "Length: " << tc.length();

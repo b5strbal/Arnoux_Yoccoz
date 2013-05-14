@@ -41,14 +41,16 @@ SOURCES += main.cpp\
     fol/FoliationFromRP2.cpp \
     fol/FoliationDisk.cpp \
     fol/Foliation.cpp \
-    windows/MainWindow.cpp \
-    windows/FoliationWindow.cpp \
-    windows/FoliationSphereWindow.cpp \
-    windows/FoliationRP2Window.cpp \
     windows/DocumentationWindow.cpp \
     windows/CreateFoliationWizard.cpp \
-    drawing/drawings.cpp \
-    drawing/FoliationDrawingArea.cpp
+    drawing/FoliationDrawingArea.cpp \
+    windows/foliationWidgets/SepSegmentSearchWidget.cpp \
+    windows/FoliationMainWindow.cpp \
+    windows/WindowManager.cpp \
+    windows/FileMenu.cpp \
+    windows/HelpMenu.cpp \
+    windows/FoliationManager.cpp \
+    windows/foliationWidgets/FoliationDataTableWidget.cpp
 
 HEADERS  += scc/IntervalNeighborhoods.h \
     scc/DisjointIntervals.h \
@@ -79,16 +81,17 @@ HEADERS  += scc/IntervalNeighborhoods.h \
     fol/FoliationFromRP2.h \
     fol/FoliationDisk.h \
     fol/Foliation.h \
-    windows/MainWindow.h.autosave \
-    windows/MainWindow.h \
-    windows/FoliationWindow.h \
-    windows/FoliationSphereWindow.h \
-    windows/FoliationRP2Window.h \
     windows/DocumentationWindow.h \
     windows/CreateFoliationWizard.h \
-    drawing/drawings.h \
     drawing/FoliationDrawingArea.h \
-    qt.h
+    qt.h \
+    windows/foliationWidgets/SepSegmentSearchWidget.h \
+    windows/FoliationMainWindow.h \
+    windows/WindowManager.h \
+    windows/FileMenu.h \
+    windows/HelpMenu.h \
+    windows/FoliationManager.h \
+    windows/foliationWidgets/FoliationDataTableWidget.h
 
 FORMS    += \
     mainwindow.ui

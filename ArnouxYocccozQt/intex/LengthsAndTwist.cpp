@@ -1,5 +1,6 @@
 #include "LengthsAndTwist.h"
 #include <numeric>
+#include <iostream>
 
 balazs::LengthsAndTwist::LengthsAndTwist(const std::vector<floating_point_type> &lengths, floating_point_type twist) :
     m_lengths(lengths),
@@ -17,4 +18,5 @@ balazs::LengthsAndTwist::LengthsAndTwist(const std::vector<floating_point_type> 
     for (auto &x : m_lengths) {
         x /= total;
     }
+    std::cout << this << "\n";
 }

@@ -10,6 +10,9 @@ namespace balazs{
 class TransverseCurve{
 public:
     TransverseCurve(const Foliation& foliation, const SepSegmentCollection& segments, bool wrapsAroundEnds);
+    TransverseCurve(const TransverseCurve&) = delete;
+    TransverseCurve& operator=(const TransverseCurve&) = delete;
+
     floating_point_type length() const { return m_disjointIntervals.totalLength(); }
     friend std::ostream & operator<<(std::ostream &out, const TransverseCurve &tc);
 
@@ -18,7 +21,7 @@ public:
 
 
 private:
-    std::vector<const SeparatrixSegment*> m_goodSegmentIndices;
+    SepSegmentCollection m_goodSegmentIndices;
     DisjointIntervals m_disjointIntervals;
     const Foliation& m_foliation;
 };

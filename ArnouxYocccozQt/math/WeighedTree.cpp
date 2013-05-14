@@ -7,7 +7,7 @@
 //
 
 #include "WeighedTree.h"
-
+#include "Permutation.h"
 
 std::default_random_engine balazs::WeighedTree::m_randomEngine(static_cast<int>(time(NULL)));
 
@@ -26,10 +26,6 @@ balazs::WeighedTree::WeighedTree(const std::vector<floating_point_type>& definin
 balazs::WeighedTree balazs::WeighedTree::randomWeighedTree(int numEdges){
     return WeighedTree(randomDefiningList(numEdges));
 }
-
-
-
-
 
 
 
@@ -85,6 +81,16 @@ std::vector<balazs::floating_point_type> balazs::WeighedTree::randomDefiningList
 
 
 
+
+
+
+
+
+
+
+
+
+
 void balazs::WeighedTree::createChildren(std::vector<floating_point_type>::const_iterator itBegin,
                                  std::vector<floating_point_type>::const_iterator itEnd,
                                  Node* pNode){
@@ -133,6 +139,24 @@ std::vector<int> balazs::WeighedTree::degrees() const{
 }
 
 
+std::vector<balazs::floating_point_type> balazs::WeighedTree::getLengths() const
+{
+    std::vector<floating_point_type> lengths;
+    lengths.reserve(2 * numEdges());
+    fillInLengths(lengths, m_root);
+    return lengths;
+
+}
+
+balazs::Permutation balazs::WeighedTree::getPairing() const
+{
+    std::vector<std::size_t> pairing;
+    pairing.reserve(2 * numEdges());
+    fillInPairing(pairing, m_root);
+    return Permutation(pairing);
+}
+
+
 
 
 
@@ -143,6 +167,28 @@ void balazs::WeighedTree::getDegreesRecursive(std::vector<int>& degrees, Node* n
     }
 }
 
+void balazs::WeighedTree::fillInLengths(std::vector<balazs::floating_point_type> &lengths, balazs::WeighedTree::Node *pNode)
+{
+    for (std::size_t i = 0; i < pNode->m_numChildren; i++) {
+        lengths.push_back(pNode->m_children[i].m_weight);
+        fillInLengths(lengths, pNode->m_children + i);
+        lengths.push_back(pNode->m_children[i].m_weight);
+    }
+}
+
+void balazs::WeighedTree::fillInPairing(std::vector<std::size_t> &pairing, balazs::WeighedTree::Node *pNode)
+{
+    const std::size_t PLACEHOLDER = 1986;
+    for (std::size_t i = 0; i < pNode->m_numChildren; i++) {
+        std::size_t firstIndex = pairing.size();
+        pairing.push_back(PLACEHOLDER);
+
+        fillInPairing(pairing, pNode->m_children + i);
+
+        pairing[firstIndex] = pairing.size(); // replacing PLACEHOLDER by the index of the true pair
+        pairing.push_back(firstIndex);
+    }
+}
 
 
 

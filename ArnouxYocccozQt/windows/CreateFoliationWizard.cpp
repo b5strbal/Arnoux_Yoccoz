@@ -297,7 +297,7 @@ FoliationAYPage::FoliationAYPage(QWidget *parent)
 bool FoliationAYPage::validatePage(){
     try{
         CreateFoliationWizard* wiz = dynamic_cast<CreateFoliationWizard*>(wizard());
-        emit(wiz->foliation(new balazs::Foliation(balazs::arnouxYoccozFoliation(genusSpinBox->value()))));
+        emit(wiz->foliation(new balazs::Foliation(genusSpinBox->value())));
         return true;
     }
     catch (const std::exception& e){
@@ -397,7 +397,7 @@ bool FoliationRP2WeighedTreePage::validatePage(){
 
     try{
         CreateFoliationWizard* wiz = dynamic_cast<CreateFoliationWizard*>(wizard());
-        emit(wiz->foliationRP2(new balazs::FoliationRP2(balazs::FoliationDisk(balazs::WeighedTree(weights)))));
+        emit(wiz->foliationRP2(new balazs::FoliationRP2(balazs::WeighedTree(weights))));
         return true;
     }
     catch (const std::exception& e){
@@ -437,7 +437,7 @@ FoliationRP2RandomPage::FoliationRP2RandomPage(QWidget *parent)
 bool FoliationRP2RandomPage::validatePage(){
     try{
         CreateFoliationWizard* wiz = dynamic_cast<CreateFoliationWizard*>(wizard());
-        emit(wiz->foliationRP2(new balazs::FoliationRP2(balazs::randomFoliationRP2(numEdgesSpinBox->value()))));
+        emit(wiz->foliationRP2(new balazs::FoliationRP2(numEdgesSpinBox->value())));
         return true;
     }
     catch (const std::exception& e){
@@ -466,7 +466,7 @@ FoliationRP2AYPage::FoliationRP2AYPage(QWidget *parent)
 bool FoliationRP2AYPage::validatePage(){
     try{
         CreateFoliationWizard* wiz = dynamic_cast<CreateFoliationWizard*>(wizard());
-        emit(wiz->foliationRP2(new balazs::FoliationRP2(balazs::arnouxYoccozRP2())));
+        emit(wiz->foliationRP2(new balazs::FoliationRP2()));
         return true;
     }
     catch (const std::exception& e){

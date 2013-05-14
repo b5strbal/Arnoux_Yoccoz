@@ -64,7 +64,12 @@ bool balazs::SepSegmentDatabase::isLast(std::list<SeparatrixSegment>::const_iter
     assert(&foliation() == &it->foliation());
     it++;
     return (it == m_goodShiftedSeparatrixSegments[it->side()][it->direction()][it->startingSingularity()].end() ||
-    it->depth() > maxDepth);
+            it->depth() > maxDepth);
+}
+
+const std::list<balazs::SeparatrixSegment> &balazs::SepSegmentDatabase::goodSegmentList(const balazs::SepSegmentIndex &index) const
+{
+    return m_goodShiftedSeparatrixSegments[index.m_leftOrRight][index.m_upOrDown][index.m_singularityIntex];
 }
 
 

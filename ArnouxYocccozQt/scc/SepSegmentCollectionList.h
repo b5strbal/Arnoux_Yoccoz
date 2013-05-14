@@ -15,15 +15,14 @@ class SepSegmentCollectionList
 public:
     class iterator{
     public:
-        static iterator beginIterator(const SepSegmentCollectionList& parent);
-        static iterator endIterator(const SepSegmentCollectionList& parent);
+        iterator(const SepSegmentCollectionList& parent, const begin_tag&);
+        iterator(const SepSegmentCollectionList& parent, const end_tag&);
         const SepSegmentCollection& operator*() const { return m_sepSegmentCollection; }
         iterator& operator++()
             { m_sepSegmentCollection.advance(m_parent.m_maxDepth, m_parent.m_maxInvolvedSingularities); return *this; }
 
     private:
-        iterator(const SepSegmentCollectionList& parent, const SepSegmentCollection &ssc)
-            : m_parent(parent), m_sepSegmentCollection(ssc) {}
+
 
         const SepSegmentCollectionList& m_parent;
         SepSegmentCollection m_sepSegmentCollection;
@@ -36,9 +35,11 @@ public:
                           std::size_t maxDepth,
                           std::size_t maxInvolvedSingularities,
                           const SSCMode& sscMode);
+    SepSegmentCollectionList(const SepSegmentCollectionList&) = delete;
+    SepSegmentCollectionList& operator=(const SepSegmentCollectionList&) = delete;
 
-    iterator begin() const { return iterator::beginIterator(*this); }
-    iterator end() const { return iterator::endIterator(*this); }
+    iterator begin() const { return iterator(*this, balazs::begin_tag()); }
+    iterator end() const { return iterator(*this, balazs::end_tag()); }
 
 
 private:
@@ -51,19 +52,6 @@ private:
 
 
 
-
-inline SepSegmentCollectionList::iterator
-SepSegmentCollectionList::iterator::beginIterator(const SepSegmentCollectionList &parent)
-{
-    return iterator(parent, SepSegmentCollection::firstCollection(parent.m_sepSegmentDatabase, parent.m_sscMode));
-}
-
-
-inline SepSegmentCollectionList::iterator
-SepSegmentCollectionList::iterator::endIterator(const SepSegmentCollectionList &parent)
-{
-    return iterator(parent, SepSegmentCollection::emptyCollection(parent.m_sepSegmentDatabase, parent.m_sscMode));
-}
 
 
 

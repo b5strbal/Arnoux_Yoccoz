@@ -12,6 +12,17 @@
 #include <vector>
 #include <cassert>
 #include <cmath>
+#include <QDebug>
+#include <sstream>
+
+
+template <typename Type>
+QDebug operator<<(QDebug debug, const Type& x){
+    std::stringstream s;
+    s << x;
+    debug << QString::fromStdString(s.str()) << "\n";
+    return debug;
+}
 
 namespace balazs{
 

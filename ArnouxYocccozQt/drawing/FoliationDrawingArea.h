@@ -5,6 +5,7 @@
 
 namespace balazs{
     class Foliation;
+    class SeparatrixSegment;
 }
 
 class FoliationDrawingArea : public QWidget
@@ -15,26 +16,33 @@ public:
     
     QSize minimumSizeHint() const { return QSize(200, 200); }
     QSize sizeHint() const { return QSize(500, 500); }
+
+
+
 signals:
     
 public slots:
-    void setPermutationCheckBoxState(int state);
-    void setLengthsCheckBoxState(int state);
-    void setFillingCheckBoxState(int state);
-    void setPermFontSize(int size);
-    void setLengthsFontSize(int size);
-
+    void setPermutationLabels(bool visible);
+    void setLengthsLabels(bool visible);
+    void setColoredFilling(bool visible);
 protected:
     void paintEvent(QPaintEvent *event);
     
 private:
-    void paintFoliation(QPainter &painter, int w, int h);
+    void paint(QPainter &painter, int w, int h);
+    void paintFoliation(QPainter &painter, int folW, int folH);
+    void paintLengthLabels(QPainter &painter, int folW, int folH);
+    void paintPermutationLabels(QPainter &painter, int folW, int folH);
+    void paintFilling(QPainter &painter, int folW, int folH);
+    void paintSepSegments(QPainter &painter, int folW, int folHh);
 
-    Qt::CheckState permutationCheckBoxState;
-    Qt::CheckState lengthsCheckBoxState;
-    Qt::CheckState fillingCheckBoxState;
+    bool permutationLabelsShown;
+    bool lengthsLabelsShown;
+    bool coloredFillingShown;
     int permFontSize;
     int lengthsFontSize;
+
+    QList<balazs::SeparatrixSegment*> d;
 
     const balazs::Foliation& m_foliation;
 };

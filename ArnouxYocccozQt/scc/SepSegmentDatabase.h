@@ -25,6 +25,8 @@ class SepSegmentDatabase
 {
 public:
     SepSegmentDatabase(const Foliation& foliation);
+    SepSegmentDatabase(const SepSegmentDatabase&) = delete;
+    SepSegmentDatabase& operator=(const SepSegmentDatabase&) = delete;
 
     const Foliation& foliation() const { return m_foliation; }
     void findNextSepSegment(Direction::UpOrDown direction, int index);
@@ -35,16 +37,17 @@ public:
 
     std::list<SeparatrixSegment>::const_iterator firstGoodSegment(const SepSegmentIndex &index) const;
     bool isLast(std::list<SeparatrixSegment>::const_iterator it, std::size_t maxDepth) const;
+    const std::list<SeparatrixSegment>& goodSegmentList(const SepSegmentIndex& index) const;
 
+private:
+    std::size_t numIntervals() const;
+    void addToGoodSegmentsIfGood(const SeparatrixSegment& s);
 
 
 private:
     const Foliation& m_foliation;
     std::array<std::vector<SeparatrixSegment>, 2> m_currentSepSegments;
     std::array<std::array<std::vector<std::list<SeparatrixSegment>>, 2>, 2> m_goodShiftedSeparatrixSegments;
-
-    std::size_t numIntervals() const;
-    void addToGoodSegmentsIfGood(const SeparatrixSegment& s);
 };
 
 

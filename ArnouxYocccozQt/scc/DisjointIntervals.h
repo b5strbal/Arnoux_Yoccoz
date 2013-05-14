@@ -25,6 +25,9 @@ public:
     //! \warning Whether or not there are two coinciding points or two that are too close to
     //!          each other is not checked.
     DisjointIntervals(const std::vector<Mod1Number>& unsortedPoints, bool wrapsAroundEnds);
+    DisjointIntervals(const DisjointIntervals&) = delete;
+    DisjointIntervals& operator=(const DisjointIntervals&) = delete;
+
 
     //! Returns the ordered list of endpoints.
     const std::vector<Mod1Number>& endpoints() const { return m_endpoints; }

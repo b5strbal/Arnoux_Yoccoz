@@ -2,15 +2,15 @@
 #include "FoliationSphere.h"
 
 
-balazs::FoliationFromSphere::FoliationFromSphere(const std::vector<floating_point_type> &lengths,
-                                                 const Permutation &permutation,
-                                                 floating_point_type twist) :
-    Foliation(lengths, permutation, twist)
-{
-}
 
 
-balazs::FoliationFromSphere balazs::FoliationFromSphere::fromFoliationSphere(const FoliationSphere &foliationSphere)
+std::vector<balazs::floating_point_type> balazs::FoliationFromSphereImpl::arg_lengths;
+balazs::Permutation balazs::FoliationFromSphereImpl::arg_permutation;
+balazs::floating_point_type balazs::FoliationFromSphereImpl::arg_twist;
+
+
+balazs::FoliationFromSphereImpl::FoliationFromSphereImpl(const FoliationSphere &foliationSphere)
+
 {
     std::vector<ConnectedPoints> allConnectedPoints;
     allConnectedPoints.reserve(foliationSphere.topFoliation().numSeparatrices() + foliationSphere.bottomFoliation().numSeparatrices());
@@ -33,21 +33,20 @@ balazs::FoliationFromSphere balazs::FoliationFromSphere::fromFoliationSphere(con
 
     std::sort(allBottomPoints.begin(), allBottomPoints.end());
 
-    std::vector<floating_point_type> lengths(allConnectedPoints.size());
+    arg_lengths.resize(allConnectedPoints.size());
     for (std::size_t i = 0; i < allConnectedPoints.size() - 1; i++) {
-        lengths[i] = distanceBetween( allConnectedPointsSortedByTop[i].topPoint, allConnectedPointsSortedByTop[i + 1].topPoint);
+        arg_lengths[i] = distanceBetween( allConnectedPointsSortedByTop[i].topPoint, allConnectedPointsSortedByTop[i + 1].topPoint);
     }
-    lengths[allConnectedPoints.size() - 1] = -allConnectedPointsSortedByTop[allConnectedPoints.size() - 1].topPoint;
+    arg_lengths[allConnectedPoints.size() - 1] = -allConnectedPointsSortedByTop[allConnectedPoints.size() - 1].topPoint;
 
     std::vector<std::size_t> permutationInput(allConnectedPoints.size());
     for (std::size_t i = 0; i < allConnectedPoints.size(); i++) {
         auto it = std::lower_bound(allBottomPoints.begin(), allBottomPoints.end(), allConnectedPointsSortedByTop[i].bottomPoint);
         permutationInput[i] = it - allBottomPoints.begin() ;
     }
-    Permutation permutation(permutationInput);
-    floating_point_type twist = allBottomPoints[0];
 
-    return FoliationFromSphere(lengths, permutation, twist);
+    arg_permutation = Permutation(permutationInput);
+    arg_twist = allBottomPoints[0];
 }
 
 
@@ -55,11 +54,7 @@ balazs::FoliationFromSphere balazs::FoliationFromSphere::fromFoliationSphere(con
 
 
 
-
-
-
-
-void balazs::FoliationFromSphere::generateTopConnectingPairs(const FoliationSphere& foliationSphere,
+void balazs::FoliationFromSphereImpl::generateTopConnectingPairs(const FoliationSphere& foliationSphere,
                                                          std::vector<ConnectedPoints>& allConnectedPoints)
 {
     std::size_t numSeparatrices = foliationSphere.topFoliation().numSeparatrices();
@@ -86,7 +81,7 @@ void balazs::FoliationFromSphere::generateTopConnectingPairs(const FoliationSphe
 
 
 
-void balazs::FoliationFromSphere::generateBottomConnectingPairs(const FoliationSphere& foliationSphere,
+void balazs::FoliationFromSphereImpl::generateBottomConnectingPairs(const FoliationSphere& foliationSphere,
                                                             std::vector<ConnectedPoints>& allConnectedPoints)
 {
     std::size_t numSeparatrices = foliationSphere.bottomFoliation().numSeparatrices();
@@ -106,3 +101,22 @@ void balazs::FoliationFromSphere::generateBottomConnectingPairs(const FoliationS
         }
     }
 }
+
+
+
+
+balazs::FoliationFromSphere::FoliationFromSphere(const FoliationSphere &foliationSphere) :
+    FoliationFromSphereImpl(foliationSphere),
+    Foliation(arg_lengths, arg_permutation, arg_twist)
+{
+}
+
+
+
+
+
+
+
+
+
+

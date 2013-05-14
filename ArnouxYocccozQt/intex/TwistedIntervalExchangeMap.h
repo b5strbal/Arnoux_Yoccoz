@@ -11,7 +11,9 @@
 namespace balazs{
 
 
-
+struct rotate_tag {};
+struct reverse_tag {};
+struct invert_tag {};
 
 class TwistedIntervalExchangeMap{
 public:
@@ -19,6 +21,8 @@ public:
     TwistedIntervalExchangeMap(const std::vector<floating_point_type>& lengths,
                         const Permutation& permutation,
                         floating_point_type twist, bool permutationMustBeMinimal = true);
+    TwistedIntervalExchangeMap(const TwistedIntervalExchangeMap&) = delete;
+    TwistedIntervalExchangeMap& operator=(const TwistedIntervalExchangeMap&) = delete;
 
     std::size_t size() const { return m_lengths.size(); }
     const LengthsAndTwist* signature() const { return &m_lengthsAndTwist; }
@@ -40,10 +44,9 @@ public:
     Mod1NumberType applyInverseTo(const Mod1NumberType& point) const{
         return point - m_translations[m_inversePermutationWithMinimalTwist[containingInterval(divPointsAfterExchange(), point)]];
     }
-
-    TwistedIntervalExchangeMap rotateBy(int rotationAmount) const;
-    TwistedIntervalExchangeMap reverse() const;
-    TwistedIntervalExchangeMap invert() const;
+    TwistedIntervalExchangeMap(const TwistedIntervalExchangeMap& intExchange, int rotationAmount, const rotate_tag&);
+    TwistedIntervalExchangeMap(const TwistedIntervalExchangeMap& intExchange, const reverse_tag&);
+    TwistedIntervalExchangeMap(const TwistedIntervalExchangeMap& intExchange, const invert_tag&);
 
     //    std::size_t containingInterval(const Mod1Number& point) const;
     //    std::size_t containingIntervalAfterExchange(const Mod1Number& point) const;
@@ -62,6 +65,21 @@ private:
     std::vector<Mod1NumberIntExchange> m_divPoints;
     std::vector<Mod1NumberIntExchange> m_divPointsAfterExchange;
     std::vector<Mod1NumberIntExchange> m_translations;
+
+
+    static std::vector<floating_point_type> newLengthsRotate(const TwistedIntervalExchangeMap& intExchange,
+                                                      int normalizedRotationAmount);
+    static std::vector<floating_point_type> newLengthsReverse(const TwistedIntervalExchangeMap& intExchange);
+    static std::vector<floating_point_type> newLengthsInvert(const TwistedIntervalExchangeMap& intExchange);
+
+    static Permutation newPermutationRotate(const TwistedIntervalExchangeMap& intExchange,
+                                                      int normalizedRotationAmount);
+    static Permutation newPermutationReverse(const TwistedIntervalExchangeMap& intExchange);
+
+
+    static floating_point_type newTwistRotate(const TwistedIntervalExchangeMap& intExchange, int normalizedRotationAmount);
+
+
 };
 
 }

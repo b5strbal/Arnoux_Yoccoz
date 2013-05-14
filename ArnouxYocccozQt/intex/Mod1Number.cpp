@@ -64,7 +64,11 @@ balazs::Mod1Number balazs::Mod1Number::operator -() const
 // all (0, -n) points, but we don't use points with higher n.
 //
 bool balazs::operator<(const Mod1Number& p1, const Mod1Number& p2){
-    if(p1.m_position < p2.m_position || p1.m_epsilon < p2.m_epsilon)
+    if(p1.m_position < p2.m_position)
+        return true;
+    if(p1.m_position > p2.m_position)
+        return false;
+    if(p1.m_epsilon < p2.m_epsilon)
         return true;
     return false;
 }

@@ -96,7 +96,7 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
     for (std::size_t i = 0; i < segments.size(); i++) {
         inhVector.push_back(&segments[i]->intervalNeighborhoods());
     }
-    IntervalNeighborhoods inhIntersection = IntervalNeighborhoods::intersect(inhVector);
+    IntervalNeighborhoods inhIntersection(inhVector);
 
     for (short wrapsAroundEnds = 0; wrapsAroundEnds < 2; wrapsAroundEnds++){
         if (isCandidateForWrapsAroundEnds[wrapsAroundEnds]) {
@@ -123,7 +123,7 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
 
 void balazs::TransverseCurveDatabase::applyToStoredTransverseCurves(void (*function)(const TransverseCurve&)){
    assert(function != nullptr);
-   for ( auto curve : m_transverseCurves )
+   for ( auto &curve : m_transverseCurves )
         function(curve);
 }
 

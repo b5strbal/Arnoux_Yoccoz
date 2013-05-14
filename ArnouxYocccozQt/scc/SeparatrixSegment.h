@@ -10,6 +10,9 @@ namespace balazs{
 class SeparatrixSegment{
 public:
     SeparatrixSegment(const Foliation& foliation, std::size_t startingSingularity, Direction::UpOrDown direction);
+ //   SeparatrixSegment(const SeparatrixSegment&) = delete;
+    SeparatrixSegment& operator=(const SeparatrixSegment&) = delete;
+
     friend std::ostream& operator<<(std::ostream& out, const SeparatrixSegment& s);
     bool reachedSaddleConnection() const { return m_reachedSaddleConnection; }
     void lengthen();

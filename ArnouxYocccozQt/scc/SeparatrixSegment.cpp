@@ -50,7 +50,7 @@ void balazs::SeparatrixSegment::lengthen()
 
 bool balazs::SeparatrixSegment::isGood() const
 {
-    assert(!isCentered());
+    //assert(!isCentered());
     return m_intervalNeighborhoods.containsInTwoSidedInterval(m_endpoint);
 }
 
@@ -59,12 +59,14 @@ void balazs::SeparatrixSegment::shiftTo(Direction::LeftOrRight side)
     assert(isCentered());
     m_endpoint = m_endpoint.shiftedTo(side);
 
-    // inserting the first intersection that we have previously omitted
-    Mod1NumberIntExWithInfo pointToInsert(m_foliation.firstIntersection(m_startingSingularity,
+    if(m_depth > 1){
+        // inserting the first intersection that we have previously omitted
+        Mod1NumberIntExWithInfo pointToInsert(m_foliation.firstIntersection(m_startingSingularity,
                                                                         m_direction).shiftedTo(side), &m_foliation);
-    m_intervalNeighborhoods.insertPoint(pointToInsert);
+        m_intervalNeighborhoods.insertPoint(pointToInsert);
+        m_intervalIntersectionCount[pointToInsert.smallContainingInterval()]++;
+    }
 
-    m_intervalIntersectionCount[pointToInsert.smallContainingInterval()]++;
 }
 
 
