@@ -2,7 +2,6 @@
 #define LENGTHSANDTWIST_H
 
 #include <vector>
-#include "../global.h"
 
 namespace balazs{
 
@@ -10,15 +9,15 @@ namespace balazs{
 class LengthsAndTwist
 {
 public:
-    LengthsAndTwist(const std::vector<floating_point_type>& lengths, floating_point_type twist);
+    LengthsAndTwist(const std::vector<long double>& lengths, long double twist);
     LengthsAndTwist(const LengthsAndTwist&) = delete;
     LengthsAndTwist& operator=(const LengthsAndTwist&) = delete;
 
-    const std::vector<floating_point_type>& lengths() const { return m_lengths; }
-    const floating_point_type& twist() const { return m_twist; }
+    const std::vector<long double>& lengths() const { return m_lengths; }
+    const long double& twist() const { return m_twist; }
 private:
-    std::vector<floating_point_type> m_lengths;
-    floating_point_type m_twist;
+    std::vector<long double> m_lengths;
+    long double m_twist;
 };
 
 }

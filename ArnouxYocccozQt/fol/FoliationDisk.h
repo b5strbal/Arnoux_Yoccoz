@@ -54,7 +54,6 @@ public:
     const IntervalPairing& intervalPairing() const { return m_intervalPairing; }
     int numSeparatrices() const { return m_intervalPairing.size(); }
    // const std::vector<Mod1NumberIntExchange>& divPoints() const { return m_intervalPairing.divPoints(); }
-    friend std::ostream& operator<<(std::ostream& out, const FoliationDisk& d);
 
 private:
     IntervalPairing m_intervalPairing; // the interval exchange representation

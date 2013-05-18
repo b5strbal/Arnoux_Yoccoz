@@ -2,7 +2,7 @@
 #define __Arnoux_Yoccoz__Foliation__
 
 #include "../intex/TwistedIntervalExchangeMap.h"
-
+#include "VDirection.h"
 
 namespace balazs{
 
@@ -16,9 +16,9 @@ struct flip_over_tag {};
  */
 class Foliation{
 public:
-    Foliation(const std::vector<floating_point_type>& lengths,
+    Foliation(const std::vector<long double>& lengths,
               const Permutation& permutation,
-              floating_point_type twist);
+              long double twist);
     Foliation(const Foliation& foliation, int rotationAmount, const rotate_tag&) ;
     Foliation(const Foliation& foliation, const reverse_tag&);
     Foliation(const Foliation& foliation, const flip_over_tag&);
@@ -43,11 +43,10 @@ public:
         { return m_twistedIntervalExchange.divPointsAfterExchange(); }
     bool isTopDivPoint(int divPointIndex) const;
     const std::vector<std::size_t>& indexOfSingularity() const { return m_indexOfSingularity; }
-    const Mod1NumberIntExchange& firstIntersection(int singularityIndex, Direction::UpOrDown direction) const;
+    const Mod1NumberIntExchange& firstIntersection(int singularityIndex, VDirection direction) const;
 
 
 
-    friend std::ostream& operator<<(std::ostream& out, const Foliation& f);
 
 private:
 
@@ -65,7 +64,7 @@ private:
 
 
 Permutation arnouxYoccozPermutation(int genus);
-std::vector<floating_point_type> arnouxYoccozLengths(int genus);
+std::vector<long double> arnouxYoccozLengths(int genus);
 
 
 

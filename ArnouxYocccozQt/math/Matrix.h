@@ -9,16 +9,23 @@
 #ifndef __Arnoux_Yoccoz__Matrix__
 #define __Arnoux_Yoccoz__Matrix__
 
-#include <iostream>
+#include <ostream>
 #include <vector>
-#include "../global.h"
 #include <deque>
+#include <cassert>
+#include <cmath>
 
 namespace balazs{
 
 
-static const floating_point_type ALLOWED_ERROR = 0.0000000000000001;
+static const long double ALLOWED_ERROR = 0.0000000000000001;
 
+
+//int gcd(int a, int b);
+
+inline int gcd(int a, int b){
+    return b == 0 ? a : gcd(b, a % b);
+}
 
 
 template <typename Type>
@@ -60,7 +67,7 @@ protected:
 };
 
 
-void normalize(Matrix<floating_point_type>& matrix);
+void normalize(Matrix<long double>& matrix);
 
 
 //--------//

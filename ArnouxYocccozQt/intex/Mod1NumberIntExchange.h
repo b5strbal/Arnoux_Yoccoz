@@ -2,6 +2,7 @@
 #define MOD1NUMBERINTEXCHANGE_H
 
 #include "Mod1Number.h"
+#include <vector>
 
 namespace balazs{
 
@@ -10,7 +11,7 @@ class LengthsAndTwist;
 class Mod1NumberIntExchange : public Mod1Number {
 public:
     Mod1NumberIntExchange() : m_parent(nullptr) {} // Constructs uninitialized obj.
-
+    virtual ~Mod1NumberIntExchange() = default;
     static Mod1NumberIntExchange constructZero(const LengthsAndTwist* lengthsAndTwist);
     static Mod1NumberIntExchange constructTwist(const LengthsAndTwist* lengthsAndTwist);
     static Mod1NumberIntExchange constructLength(const LengthsAndTwist* lengthsAndTwist,
@@ -22,7 +23,7 @@ public:
     Mod1NumberIntExchange& operator+=(const Mod1NumberIntExchange& rhs);
     Mod1NumberIntExchange operator-() const;
 
-    Mod1NumberIntExchange shiftedTo(Direction::LeftOrRight side) const;
+    Mod1NumberIntExchange shiftedTo(HDirection side) const;
     const std::vector<int>& coefficients() const { return m_coefficients; }
     int twistCoeff() const { return m_twistCoeff; }
 

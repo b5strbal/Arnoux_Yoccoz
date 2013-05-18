@@ -2,7 +2,7 @@
 #define SSCMODE_H
 
 #include <vector>
-#include "global.h"
+#include "../intex/HDirection.h"
 
 namespace balazs {
 
@@ -36,7 +36,7 @@ private:
 class SSCModeShiftToSameSide : public SSCMode
 {
 public:
-    SSCModeShiftToSameSide(const Foliation& foliation, Direction::LeftOrRight shiftToSide)
+    SSCModeShiftToSameSide(const Foliation& foliation, HDirection shiftToSide)
         : SSCMode(foliation), m_shiftToSide(shiftToSide) {}
     std::vector<SepSegmentIndex> initialSegments(const Choose &sepIndicesChoose) const;
     std::vector<std::size_t> segmentsToLengthen(std::size_t indexToIncrease) const { return {{ indexToIncrease }}; }
@@ -45,7 +45,7 @@ public:
     std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const;
     std::size_t howMuchToChooseFrom() const;
 private:
-    Direction::LeftOrRight m_shiftToSide;
+    HDirection m_shiftToSide;
 };
 
 
@@ -60,10 +60,7 @@ class SSCModeSingWrap : public SSCMode
 public:
     SSCModeSingWrap(const Foliation& foliation) : SSCMode(foliation) {}
     std::vector<SepSegmentIndex> initialSegments(const Choose &sepIndicesChoose) const;
-    std::vector<std::size_t> segmentsToLengthen(std::size_t indexToIncrease) const {
-        assert(indexToIncrease % 2 == 1);
-        return {{ indexToIncrease-1, indexToIncrease }};
-    }
+    std::vector<std::size_t> segmentsToLengthen(std::size_t indexToIncrease) const;
     std::vector<std::size_t> additionalSegmentsToSetToFirst(std::size_t indexToIncrease) const
         { (void)indexToIncrease; return {{}}; }
     std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const;
@@ -81,14 +78,14 @@ public:
 class SSCModeShiftToSameSideFromRP2 : public SSCMode
 {
 public:
-    SSCModeShiftToSameSideFromRP2(const Foliation& foliation, Direction::LeftOrRight shiftToSide);
+    SSCModeShiftToSameSideFromRP2(const Foliation& foliation, HDirection shiftToSide);
     std::vector<SepSegmentIndex> initialSegments(const Choose &sepIndicesChoose) const;
     std::vector<std::size_t> segmentsToLengthen(std::size_t indexToIncrease) const;
     std::vector<std::size_t> additionalSegmentsToSetToFirst(std::size_t indexToIncrease) const;
     std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const;
     std::size_t howMuchToChooseFrom() const;
 private:
-    Direction::LeftOrRight m_shiftToSide;
+    HDirection m_shiftToSide;
     const FoliationFromRP2& m_foliationFromRP2;
 
     // This vector is only filled in if the underlying foliation is a FoliationFromRP2.

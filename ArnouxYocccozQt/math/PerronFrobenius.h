@@ -9,11 +9,7 @@
 #ifndef __Arnoux_Yoccoz__PerronFrobenius__
 #define __Arnoux_Yoccoz__PerronFrobenius__
 
-#include <iostream>
-#include <vector>
 //#include "Eigen/Eigenvalues"
-#include "../global.h"
-#include <limits>
 #include "Matrix.h"
 
 namespace balazs{
@@ -25,14 +21,14 @@ public:
     int size() const{ return m_squareMatrix.size(); }
     long getEntry(int i, int j) const { return m_squareMatrix.getEntry(i, j); }
     PerronFrobeniusMatrix transpose() const { return PerronFrobeniusMatrix(m_squareMatrix.transpose()); }
-    std::vector<floating_point_type> perronFrobEigenvector();
-    floating_point_type perronFrobEigenvalue();
+    std::vector<long double> perronFrobEigenvector();
+    long double perronFrobEigenvalue();
     
     
 private:
     SquareMatrix<long> m_squareMatrix;
-    std::vector<floating_point_type> m_perronFrobEigenvector;
-    floating_point_type m_perronFrobEigenvalue;
+    std::vector<long double> m_perronFrobEigenvector;
+    long double m_perronFrobEigenvalue;
     
     SquareMatrix<long> powerUp();
     void initEigenData();
@@ -41,7 +37,7 @@ private:
     
 };
 
-floating_point_type arnouxYoccozStretchFactor(int genus);
+long double arnouxYoccozStretchFactor(int genus);
 
 }
 

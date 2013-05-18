@@ -1,6 +1,5 @@
 #include "CreateFoliationWizard.h"
-#include "DocumentationWindow.h"
-#include "MainWindow.h"
+//#include "DocumentationWindow.h"
 #include "../fol/Foliation.h"
 #include "../fol/FoliationRP2.h"
 #include <QLabel>
@@ -176,7 +175,7 @@ bool FoliationIntExchangePage::validatePage(){
 
     bool ok;
 
-    std::vector<balazs::floating_point_type> lengths;
+    std::vector<long double> lengths;
     for(QString s : lengthsStringList){
         lengths.push_back(s.toDouble(&ok));
         if(!ok){
@@ -198,7 +197,7 @@ bool FoliationIntExchangePage::validatePage(){
         }
     }
 
-    balazs::floating_point_type twist = twistLineEdit->text().toDouble(&ok);
+    long double twist = twistLineEdit->text().toDouble(&ok);
     if(!ok){
         QMessageBox msg;
         msg.setText(tr("The twist should be a single real number."));
@@ -384,7 +383,7 @@ bool FoliationRP2WeighedTreePage::validatePage(){
 
     bool ok;
 
-    std::vector<balazs::floating_point_type> weights;
+    std::vector<long double> weights;
     for(QString s : stringList){
         weights.push_back(s.toDouble(&ok));
         if(!ok){

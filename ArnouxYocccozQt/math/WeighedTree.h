@@ -9,12 +9,7 @@
 #ifndef __Arnoux_Yoccoz__WeighedTree__
 #define __Arnoux_Yoccoz__WeighedTree__
 
-#include <iostream>
 #include <vector>
-#include <random>
-#include <stdlib.h>
-#include "../global.h"
-#include <cassert>
 
 namespace balazs{
 
@@ -54,7 +49,7 @@ class Permutation;
 
 class WeighedTree{
 public:
-    WeighedTree(const std::vector<floating_point_type>& definingList);
+    WeighedTree(const std::vector<long double>& definingList);
     WeighedTree(const WeighedTree& wt) : WeighedTree(wt.m_definingList) {}
     WeighedTree& operator=(const WeighedTree&) = delete;
 
@@ -65,14 +60,14 @@ public:
     std::vector<int> degrees() const;
 
 
-    std::vector<floating_point_type> getLengths() const;
+    std::vector<long double> getLengths() const;
     Permutation getPairing() const;
 
 
 
 private:
     struct Node{
-        floating_point_type m_weight = 0;
+        long double m_weight = 0;
         Node* m_parent = NULL;
         std::size_t m_numChildren = 0;
         Node* m_children = NULL;
@@ -93,25 +88,24 @@ private:
 
     // Generates a random list of weights that is used to construct a random object.
     // It is guaranteed that a valid sequence is produced, no further assertions are needed.
-    static std::vector<floating_point_type> randomDefiningList(int NumEdges);
+    static std::vector<long double> randomDefiningList(int NumEdges);
     Node* nextNode(Node*);
-    void createChildren(std::vector<floating_point_type>::const_iterator itBegin,
-                        std::vector<floating_point_type>::const_iterator itEnd,
+    void createChildren(std::vector<long double>::const_iterator itBegin,
+                        std::vector<long double>::const_iterator itEnd,
                         Node* pNode);
     
     void getDegreesRecursive(std::vector<int>& degrees, Node* node) const;
 
-    static void fillInLengths(std::vector<floating_point_type>& lengths,
+    static void fillInLengths(std::vector<long double>& lengths,
                                  WeighedTree::Node* pNode);
     static void fillInPairing(std::vector<std::size_t> &pairing,
                               WeighedTree::Node* pNode);
 
 
 
-    std::vector<floating_point_type> m_definingList;
+    std::vector<long double> m_definingList;
     Node* m_root;
     std::size_t m_numEdges;
-    static std::default_random_engine m_randomEngine;
 };
 
 

@@ -1,7 +1,6 @@
 #include "IntervalNeighborhoods.h"
 #include "../fol/Foliation.h"
-
-
+#include <cassert>
 
 balazs::IntervalNeighborhoods::IntervalNeighborhoods(const Foliation & foliation) :
     m_foliation(foliation),
@@ -13,16 +12,16 @@ balazs::IntervalNeighborhoods::IntervalNeighborhoods(const Foliation & foliation
 
 void balazs::IntervalNeighborhoods::insertPoint(const Mod1NumberIntExWithInfo &newCuttingPoint){
     assert(&foliation() == &newCuttingPoint.foliation());
-    assert(newCuttingPoint.number().side() != Direction::CENTER);
+ //   assert(newCuttingPoint.number().side() != Direction::CENTER);
 
     std::size_t indexOfInterval = newCuttingPoint.smallContainingInterval();
 
     if (m_cuttingPoints[indexOfInterval].isEmpty) {
         m_cuttingPoints[indexOfInterval].first = m_cuttingPoints[indexOfInterval].second = newCuttingPoint;
         m_cuttingPoints[indexOfInterval].isEmpty = false;
-    } else if (newCuttingPoint < m_cuttingPoints[indexOfInterval].first)
+    } else if (localLess(newCuttingPoint, m_cuttingPoints[indexOfInterval].first))
         m_cuttingPoints[indexOfInterval].first = newCuttingPoint;
-    else if (m_cuttingPoints[indexOfInterval].second < newCuttingPoint)
+    else if (localLess(m_cuttingPoints[indexOfInterval].second, newCuttingPoint))
         m_cuttingPoints[indexOfInterval].second = newCuttingPoint;
 }
 
@@ -47,27 +46,23 @@ void balazs::IntervalNeighborhoods::insertPoint(const Mod1NumberIntExWithInfo &n
 //
 bool balazs::IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1NumberIntExWithInfo& point) const{
     assert(&foliation() == &point.foliation());
-//    qDebug() << *this << "\n";
 
-    int indexOfInterval = point.smallContainingInterval();
+    std::size_t indexOfInterval = point.smallContainingInterval();
 
     if (m_cuttingPoints[indexOfInterval].isEmpty) {
         return true;
     }
 
-    std::size_t prevIndex = integerMod(indexOfInterval - 1, m_cuttingPoints.size());
-    std::size_t nextIndex = integerMod(indexOfInterval + 1, m_cuttingPoints.size());
+    std::size_t prevIndex = (indexOfInterval + (m_cuttingPoints.size() - 1)) % m_cuttingPoints.size();
+    std::size_t nextIndex = (indexOfInterval + 1) % m_cuttingPoints.size();
     bool isLeftDivPointTwoSided = m_cuttingPoints[prevIndex].isEmpty ||
-            m_cuttingPoints[prevIndex].second.number() < m_foliation.allDivPoints()[indexOfInterval].shiftedTo(Direction::LEFT);
+            m_cuttingPoints[prevIndex].second.number() != m_foliation.allDivPoints()[indexOfInterval].shiftedTo(HDirection::Left);
 
     bool isRightDivPointTwoSided = m_cuttingPoints[nextIndex].isEmpty ||
-            m_foliation.allDivPoints()[nextIndex].shiftedTo(Direction::RIGHT) < m_cuttingPoints[nextIndex].first.number();
+            m_foliation.allDivPoints()[nextIndex].shiftedTo(HDirection::Right) != m_cuttingPoints[nextIndex].first.number();
 
-//    qDebug() << m_cuttingPoints[indexOfInterval].first.number() << " " <<
-//                m_cuttingPoints[indexOfInterval].second.number() << " " <<
-//                point.number() << "\n";
-    if ((point < m_cuttingPoints[indexOfInterval].first && isLeftDivPointTwoSided)
-            || (m_cuttingPoints[indexOfInterval].second < point && isRightDivPointTwoSided))
+    if ((localLess(point, m_cuttingPoints[indexOfInterval].first) && isLeftDivPointTwoSided)
+            || (localLess(m_cuttingPoints[indexOfInterval].second, point) && isRightDivPointTwoSided))
     {
         return true;
     }
@@ -92,24 +87,26 @@ bool balazs::IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1N
     if (leftIndexOfInterval == rightIndexOfInterval) {
         return false;
     }
-    if (!m_cuttingPoints[leftIndexOfInterval].isEmpty && leftEndPoint < m_cuttingPoints[leftIndexOfInterval].second) {
+    if (!m_cuttingPoints[leftIndexOfInterval].isEmpty &&
+            localLess(leftEndPoint,  m_cuttingPoints[leftIndexOfInterval].second)) {
         return false;
     }
-    if (!m_cuttingPoints[rightIndexOfInterval].isEmpty && m_cuttingPoints[rightIndexOfInterval].first < rightEndPoint) {
+    if (!m_cuttingPoints[rightIndexOfInterval].isEmpty &&
+            localLess(m_cuttingPoints[rightIndexOfInterval].first, rightEndPoint)) {
         return false;
     }
 
     for (std::size_t i = leftIndexOfInterval + 1; i != rightIndexOfInterval;
-         i = integerMod(i + 1, m_foliation.numSeparatrices())) {
+         i = (i + 1) % m_foliation.numSeparatrices()) {
         if (!m_cuttingPoints[i].isEmpty) {
             return false;
         }
     }
 
-    for (std::size_t i = leftIndexOfInterval; i != rightIndexOfInterval;
-         i = integerMod(i + 1, m_foliation.numSeparatrices())) {
-        if ((throughTopDivPointQ && m_foliation.isTopDivPoint(i + 1)) ||
-            (!throughTopDivPointQ && !m_foliation.isTopDivPoint(i + 1))) {
+    for (std::size_t i = rightIndexOfInterval; i != leftIndexOfInterval;
+         i = (i + (m_foliation.numSeparatrices() - 1)) % m_foliation.numSeparatrices()) {
+        if ((throughTopDivPointQ && m_foliation.isTopDivPoint(i)) ||
+            (!throughTopDivPointQ && !m_foliation.isTopDivPoint(i))) {
             return true;
         }
     }
@@ -119,17 +116,28 @@ bool balazs::IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1N
 
 
 
-std::ostream & balazs::operator<<(std::ostream &out, const IntervalNeighborhoods& inh)
+bool balazs::IntervalNeighborhoods::localLess(const Mod1NumberIntExWithInfo &lhs, const Mod1NumberIntExWithInfo &rhs)
 {
-    for (std::size_t i = 0; i < inh.m_cuttingPoints.size(); i++){
-        if (inh.m_cuttingPoints[i].isEmpty) {
-            out << "() ";
-        } else
-            out << "(" << inh.m_cuttingPoints[i].first.number() << ","
-                << inh.m_cuttingPoints[i].second.number() << ") ";
+    assert(lhs.smallContainingInterval() == rhs.smallContainingInterval());
+    if(lhs.smallContainingInterval() < lhs.foliation().numSeparatrices() - 1){
+        return lhs < rhs;
     }
-    return out;
+    long double lValue = lhs.number();
+    long double rValue = rhs.number();
+    if(lValue != 0 && rValue != 0){
+        return lhs < rhs;
+    }
+    if(lValue != 0){
+        return true;
+    }
+    if(rValue != 0){
+        return false;
+    }
+    return lhs < rhs;
 }
+
+
+
 
 
 
@@ -154,26 +162,14 @@ balazs::IntervalNeighborhoods::IntervalNeighborhoods(const std::vector<const Int
             if ((*it)->m_cuttingPoints[i].isEmpty) {
             } else
             if (m_cuttingPoints[i].isEmpty) {
-                m_cuttingPoints[i].first = (*it)->m_cuttingPoints[i].first;
-                m_cuttingPoints[i].second = (*it)->m_cuttingPoints[i].second;
-                m_cuttingPoints[i].isEmpty = false;
+                m_cuttingPoints[i] = (*it)->m_cuttingPoints[i];
             } else {
-                m_cuttingPoints[i].first = std::min(m_cuttingPoints[i].first, (*it)->m_cuttingPoints[i].first);
-                m_cuttingPoints[i].second = std::max(m_cuttingPoints[i].second, (*it)->m_cuttingPoints[i].second);
+                m_cuttingPoints[i].first = std::min(m_cuttingPoints[i].first, (*it)->m_cuttingPoints[i].first, localLess);
+                m_cuttingPoints[i].second = std::max(m_cuttingPoints[i].second, (*it)->m_cuttingPoints[i].second, localLess);
             }
         }
     }
 }
-
-
-
-
-
- 
-
-
-
-
 
 
 

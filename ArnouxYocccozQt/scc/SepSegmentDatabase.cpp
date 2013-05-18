@@ -1,47 +1,27 @@
 #include "SepSegmentDatabase.h"
 #include "DisjointIntervals.h"
 #include "../fol/Foliation.h"
+#include <cassert>
 
 balazs::SepSegmentDatabase::SepSegmentDatabase(const Foliation& foliation) :
     m_foliation(foliation)
 {
-    for(Direction::UpOrDown updown = Direction::UP; updown <= Direction::DOWN; updown++){
-        m_currentSepSegments[updown].reserve(foliation.numIntervals());
+    for(VDirection vDirection : {VDirection::Up, VDirection::Down}){
+        m_currentSepSegments[vDirection].reserve(foliation.numIntervals());
 
-        for(Direction::LeftOrRight leftright = Direction::LEFT; leftright <= Direction::RIGHT; leftright++){
-            m_goodShiftedSeparatrixSegments[leftright][updown].resize(foliation.numIntervals());
+        for(HDirection hDirection : {HDirection::Left, HDirection::Right}){
+            m_goodShiftedSeparatrixSegments[hDirection][vDirection].resize(foliation.numIntervals());
         }
 
         for (std::size_t i = 0; i < foliation.numIntervals(); i++) {
-            m_currentSepSegments[updown].push_back(SeparatrixSegment(foliation, i, updown));
-            addToGoodSegmentsIfGood(m_currentSepSegments[updown].back());
+            m_currentSepSegments[vDirection].push_back(SeparatrixSegment(foliation, i, vDirection));
+            addToGoodSegmentsIfGood(m_currentSepSegments[vDirection].back());
         }
     }
 }
 
 
-void balazs::SepSegmentDatabase::printGoodSepSegments(std::size_t maxdepth, bool verbose){
-    if (maxdepth > 0) {
-        generateSepSegments(maxdepth);
-    } else
-        maxdepth = INT_MAX;
-    for (Direction::UpOrDown direction = Direction::UP; direction <= Direction::DOWN; direction++) {
-        for (std::size_t i = 0; i < m_foliation.numIntervals(); i++) {
-            std::cout << i << (direction == Direction::UP ? " UP" : " DOWN") << "\n";
-            for(auto it = m_goodShiftedSeparatrixSegments[Direction::RIGHT][direction][i].begin(); it !=
-                m_goodShiftedSeparatrixSegments[Direction::RIGHT][direction][i].end() && it->depth() < maxdepth; it++)
-            {
-                if (verbose) {                  // only prints segments shifted to right
-                    std::cout << *it << "\n\n";
-                } else
-                    std::cout << it->depth() << " ";
-            }
-            if (!verbose) {
-                std::cout << "\n\n";
-            }
-        }
-    }
-}
+
 
 
 std::size_t balazs::SepSegmentDatabase::numIntervals() const
@@ -54,7 +34,7 @@ std::size_t balazs::SepSegmentDatabase::numIntervals() const
 
 std::list<balazs::SeparatrixSegment>::const_iterator balazs::SepSegmentDatabase::firstGoodSegment(const SepSegmentIndex& index) const
 {
-    return m_goodShiftedSeparatrixSegments[index.m_leftOrRight][index.m_upOrDown][index.m_singularityIntex].begin();
+    return m_goodShiftedSeparatrixSegments.at(index.hDirection).at(index.vDirection)[index.singularityIntex].begin();
 }
 
 
@@ -63,13 +43,13 @@ bool balazs::SepSegmentDatabase::isLast(std::list<SeparatrixSegment>::const_iter
 {
     assert(&foliation() == &it->foliation());
     it++;
-    return (it == m_goodShiftedSeparatrixSegments[it->side()][it->direction()][it->startingSingularity()].end() ||
+    return (it == m_goodShiftedSeparatrixSegments.at(it->side()).at(it->vDirection())[it->startingSingularity()].end() ||
             it->depth() > maxDepth);
 }
 
 const std::list<balazs::SeparatrixSegment> &balazs::SepSegmentDatabase::goodSegmentList(const balazs::SepSegmentIndex &index) const
 {
-    return m_goodShiftedSeparatrixSegments[index.m_leftOrRight][index.m_upOrDown][index.m_singularityIntex];
+    return m_goodShiftedSeparatrixSegments.at(index.hDirection).at(index.vDirection)[index.singularityIntex];
 }
 
 
@@ -78,11 +58,11 @@ const std::list<balazs::SeparatrixSegment> &balazs::SepSegmentDatabase::goodSegm
 void balazs::SepSegmentDatabase::addToGoodSegmentsIfGood(const SeparatrixSegment &s)
 {
     if (!s.reachedSaddleConnection() && s.isGood()) {
-        for(Direction::LeftOrRight leftright = Direction::LEFT; leftright <= Direction::RIGHT; leftright++){
-            m_goodShiftedSeparatrixSegments[leftright][s.direction()][s.startingSingularity()].push_back(s);
-            m_goodShiftedSeparatrixSegments[leftright][s.direction()][s.startingSingularity()].back().shiftTo(leftright);
-            if(!m_goodShiftedSeparatrixSegments[leftright][s.direction()][s.startingSingularity()].back().isGood()){
-                m_goodShiftedSeparatrixSegments[leftright][s.direction()][s.startingSingularity()].pop_back();
+        for(HDirection hDirection : {HDirection::Left, HDirection::Right}){
+            m_goodShiftedSeparatrixSegments[hDirection][s.vDirection()][s.startingSingularity()].push_back(s);
+            m_goodShiftedSeparatrixSegments[hDirection][s.vDirection()][s.startingSingularity()].back().shiftTo(hDirection);
+            if(!m_goodShiftedSeparatrixSegments[hDirection][s.vDirection()][s.startingSingularity()].back().isGood()){
+                m_goodShiftedSeparatrixSegments[hDirection][s.vDirection()][s.startingSingularity()].pop_back();
             }
         }
     }
@@ -93,14 +73,14 @@ void balazs::SepSegmentDatabase::addToGoodSegmentsIfGood(const SeparatrixSegment
 
 
 
-bool balazs::SepSegmentDatabase::reachedSaddleConnection(Direction::UpOrDown direction, int index) const
+bool balazs::SepSegmentDatabase::reachedSaddleConnection(VDirection vDirection, int index) const
 {
-    return m_currentSepSegments[direction][index].reachedSaddleConnection();
+    return m_currentSepSegments.at(vDirection)[index].reachedSaddleConnection();
 }
 
 
 
-void balazs::SepSegmentDatabase::findNextSepSegment(Direction::UpOrDown direction, int index){
+void balazs::SepSegmentDatabase::findNextSepSegment(VDirection direction, int index){
     assert(!reachedSaddleConnection(direction, index));
 
     SeparatrixSegment& segment = m_currentSepSegments[direction][index];
@@ -113,11 +93,11 @@ void balazs::SepSegmentDatabase::findNextSepSegment(Direction::UpOrDown directio
 
 
 void balazs::SepSegmentDatabase::generateSepSegments(std::size_t maxdepth){
-    for (Direction::UpOrDown direction = Direction::UP; direction <= Direction::DOWN; direction++) {
+    for (VDirection vDirection : {VDirection::Up, VDirection::Down}) {
         for (std::size_t index = 0; index < m_foliation.numIntervals(); index++) {
-            while (!reachedSaddleConnection(direction, index) &&
-                   m_currentSepSegments[direction][index].depth() < maxdepth) {
-                findNextSepSegment(direction, index);
+            while (!reachedSaddleConnection(vDirection, index) &&
+                   m_currentSepSegments[vDirection][index].depth() < maxdepth) {
+                findNextSepSegment(vDirection, index);
             }
         }
     }
@@ -129,12 +109,12 @@ void balazs::SepSegmentDatabase::generateSepSegments(std::size_t maxdepth){
 // However, in the appliations, we use a special collection of intervals (a subset of an IntervalNeighborhoods),
 // where the first intersection is always a good separatrix segment. More precisely, both the left and right
 // shifts of the first intersection are good, so it is enough to check only the right ones for instance.
-const balazs::SeparatrixSegment& balazs::SepSegmentDatabase::getFirstIntersection(Direction::UpOrDown direction,
+const balazs::SeparatrixSegment& balazs::SepSegmentDatabase::getFirstIntersection(VDirection direction,
                                                                     int index,
                                                                     const DisjointIntervals& intervals)
 {
-    for (auto &segment : m_goodShiftedSeparatrixSegments[Direction::RIGHT][direction][index]) {
-        Mod1Number centeredEndpoint = segment.endpoint().shiftedTo(Direction::CENTER);
+    for (auto &segment : m_goodShiftedSeparatrixSegments[HDirection::Right][direction][index]) {
+        Mod1Number centeredEndpoint = segment.endpoint().shiftedTo(HDirection::Center);
         if (intervals.contains(centeredEndpoint)) { // we are gonna have to catch an error here?
             return segment;
         }

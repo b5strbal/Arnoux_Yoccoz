@@ -103,7 +103,7 @@
 
 
 
-const floating_point_type ERROR = 0.0000001;
+const long double ERROR = 0.0000001;
 
 
 struct ExceptionFoundSaddleConnection : public std::exception {};
@@ -116,7 +116,7 @@ struct ExceptionNoObjectFound {};
 class FoliationRP2 : public FoliationDisk {
 public:
 /* DONE */	FoliationRP2(const WeighedTree& wt);
-/* DONE */    FoliationRP2(const std::vector<floating_point_type>& Lengths, const std::vector<int>& Pair);
+/* DONE */    FoliationRP2(const std::vector<long double>& Lengths, const std::vector<int>& Pair);
     void PrintGoodShiftedSeparatrixSegmentsVerbose(int Depth);
     void PrintGoodShiftedSeparatrixSegmentsConcise(int Depth);
     void PrintGoodCurves(int Depth);

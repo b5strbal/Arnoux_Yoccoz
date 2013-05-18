@@ -1,16 +1,16 @@
 #include "TwistedIntervalExchangeMap.h"
-
+#include "ContainingInterval.h"
 
 
 
 balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap() :
-    TwistedIntervalExchangeMap(std::vector<floating_point_type>(1, 1), Permutation(), 0)
+    TwistedIntervalExchangeMap(std::vector<long double>(1, 1), Permutation(), 0)
 {
 }
 
-balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<floating_point_type> &lengths,
+balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<long double> &lengths,
                                          const Permutation &permutation,
-                                         floating_point_type twist, bool permutationMustBeMinimal) :
+                                         long double twist, bool permutationMustBeMinimal) :
     m_lengthsAndTwist(lengths, twist),
     m_permutation(permutation),
     m_inversePermutation(inverse(permutation)),
@@ -31,7 +31,7 @@ balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector
         m_lengths.push_back(Mod1NumberIntExchange::constructLength(&m_lengthsAndTwist, i));
     }
 
-    std::cout << &m_lengthsAndTwist << "\n";
+   // std::cout << &m_lengthsAndTwist << "\n";
 
     m_divPoints.resize(lengths.size());
     m_divPoints[0] = Mod1NumberIntExchange::constructZero(&m_lengthsAndTwist);
@@ -44,8 +44,8 @@ balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector
     int divpointsBeforeTwist = 0;
     for (std::size_t i = 1; i < lengths.size(); i++) {
         m_divPointsAfterExchange[i] = m_divPointsAfterExchange[i - 1] + m_lengths[m_inversePermutation[i - 1]];
-        if(static_cast<floating_point_type>(m_divPointsAfterExchange[i - 1]) +
-                static_cast<floating_point_type>(m_lengths[m_inversePermutation[i - 1]]) > 1){
+        if(static_cast<long double>(m_divPointsAfterExchange[i - 1]) +
+                static_cast<long double>(m_lengths[m_inversePermutation[i - 1]]) > 1){
             divpointsBeforeTwist = lengths.size() - i;
         }
     }
@@ -75,7 +75,7 @@ balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const TwistedInte
 
 
 
-std::vector<balazs::floating_point_type>
+std::vector<long double>
 balazs::TwistedIntervalExchangeMap::newLengthsRotate(const balazs::TwistedIntervalExchangeMap &intExchange,
                                                      int normalizedRotationAmount)
 {
@@ -83,7 +83,7 @@ balazs::TwistedIntervalExchangeMap::newLengthsRotate(const balazs::TwistedInterv
         normalizedRotationAmount = intExchange.size();
     }
 
-    std::vector<floating_point_type> newLengths(intExchange.size());
+    std::vector<long double> newLengths(intExchange.size());
     std::rotate_copy(intExchange.m_lengths.begin(), intExchange.m_lengths.end() - normalizedRotationAmount,
                   intExchange.m_lengths.end(), newLengths.begin());
     return newLengths;
@@ -104,15 +104,15 @@ balazs::TwistedIntervalExchangeMap::newPermutationRotate(const balazs::TwistedIn
 
 
 
-balazs::floating_point_type
+long double
 balazs::TwistedIntervalExchangeMap::newTwistRotate(const balazs::TwistedIntervalExchangeMap &intExchange,
                                                    int normalizedRotationAmount)
 {
     if(normalizedRotationAmount == 0){
         return intExchange.m_twist;
     }
-    floating_point_type rotationDistance = -intExchange.m_divPoints[intExchange.size() - normalizedRotationAmount];
-    return static_cast<floating_point_type>(intExchange.m_twist) + rotationDistance;
+    long double rotationDistance = -intExchange.m_divPoints[intExchange.size() - normalizedRotationAmount];
+    return static_cast<long double>(intExchange.m_twist) + rotationDistance;
 }
 
 
@@ -134,10 +134,10 @@ balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const TwistedInte
 {
 }
 
-std::vector<balazs::floating_point_type>
+std::vector<long double>
 balazs::TwistedIntervalExchangeMap::newLengthsReverse(const balazs::TwistedIntervalExchangeMap &intExchange)
 {
-    std::vector<floating_point_type> newLengths(intExchange.size());
+    std::vector<long double> newLengths(intExchange.size());
     std::reverse_copy(intExchange.m_lengths.begin(), intExchange.m_lengths.end(), newLengths.begin());
     return newLengths;
 }
@@ -160,11 +160,11 @@ balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const TwistedInte
 {
 }
 
-std::vector<balazs::floating_point_type>
+std::vector<long double>
 balazs::TwistedIntervalExchangeMap::newLengthsInvert(const balazs::TwistedIntervalExchangeMap &intExchange)
 {
     std::vector<Mod1NumberIntExchange> newLengths(intExchange.m_permutation(intExchange.m_lengths));
-    return std::vector<floating_point_type>(newLengths.begin(), newLengths.end());
+    return std::vector<long double>(newLengths.begin(), newLengths.end());
 }
 
 
@@ -172,14 +172,7 @@ balazs::TwistedIntervalExchangeMap::newLengthsInvert(const balazs::TwistedInterv
 
 
 
-std::ostream& balazs::operator<<(std::ostream& Out, const TwistedIntervalExchangeMap& twistedIntervalExchange){
-    Out << "Lengths: " << twistedIntervalExchange.m_lengths << "\n";
-    Out << "Permutation: " << twistedIntervalExchange.m_permutation << "\n";
-    Out << "Twist:" << twistedIntervalExchange.m_twist << "\n";
-    Out << "Translations: " << twistedIntervalExchange.m_translations;
 
-    return Out;
-}
 
 
 

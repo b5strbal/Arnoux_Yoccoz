@@ -11,7 +11,7 @@
 
 
 
-balazs::Foliation::Foliation(const std::vector<floating_point_type>& lengths, const Permutation& permutation, floating_point_type twist) :
+balazs::Foliation::Foliation(const std::vector<long double>& lengths, const Permutation& permutation, long double twist) :
     m_twistedIntervalExchange(lengths, permutation, twist)
 {
     init();
@@ -87,9 +87,9 @@ bool balazs::Foliation::isTopDivPoint(int divPointIndex) const{
 
 
 
-const balazs::Mod1NumberIntExchange &balazs::Foliation::firstIntersection(int singularityIndex, Direction::UpOrDown direction) const
+const balazs::Mod1NumberIntExchange &balazs::Foliation::firstIntersection(int singularityIndex, VDirection direction) const
 {
-    if (direction == Direction::UP) {
+    if (direction == VDirection::Up) {
         return bottomDivPoints()[m_twistedIntervalExchange.permutationWithMinimalTwist()[singularityIndex]];
     } else
         return topDivPoints()[singularityIndex];
@@ -119,9 +119,9 @@ void balazs::Foliation::initSingularities()
                 alreadyLookedAt[j] = true;
 
 
-                j = integerMod(j + size - 1, size);
+                j = (j + (size - 1)) % size;
                 j = m_twistedIntervalExchange.permutationWithMinimalTwist()[j];
-                j = integerMod(j + 1, size);
+                j = (j + 1) % size;
                 j = m_twistedIntervalExchange.inversePermutationWithMinimalTwist()[j];
             } while(j != i);
         }
@@ -135,7 +135,7 @@ void balazs::Foliation::init()
     m_allDivPoints.reserve(numSeparatrices());
     std::merge(topDivPoints().begin(), topDivPoints().end(),
                bottomDivPoints().begin(), bottomDivPoints().end(), std::back_inserter(m_allDivPoints));
-
+ //   qDebug() << dynamic_cast<Mod1Number&>(m_allDivPoints[0]) << "ssss";
     for(std::size_t i = 1; i < numSeparatrices(); i++){
         if(distanceBetween(m_allDivPoints[i - 1], m_allDivPoints[i]) < PRECISION){
             throw std::runtime_error("The foliation has a saddle connection.");
@@ -148,10 +148,6 @@ void balazs::Foliation::init()
 
 
 
-std::ostream& balazs::operator<<(std::ostream& out, const Foliation& f){
-    out << f.m_twistedIntervalExchange;
-    return out;
-}
 
 
 
@@ -172,11 +168,11 @@ balazs::Permutation balazs::arnouxYoccozPermutation(int genus)
 }
 
 
-std::vector<balazs::floating_point_type> balazs::arnouxYoccozLengths(int genus)
+std::vector<long double> balazs::arnouxYoccozLengths(int genus)
 {
-    std::vector<floating_point_type> lengths(2 * genus);
-    floating_point_type shrinkingNumber = 1/arnouxYoccozStretchFactor(genus);
-    floating_point_type currentLength = shrinkingNumber;
+    std::vector<long double> lengths(2 * genus);
+    long double shrinkingNumber = 1/arnouxYoccozStretchFactor(genus);
+    long double currentLength = shrinkingNumber;
     for (int i = 0; i < genus; i++) {
         lengths[2 * i] = lengths[2 * i + 1] = currentLength;
         currentLength *= shrinkingNumber;

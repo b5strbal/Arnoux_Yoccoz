@@ -13,8 +13,7 @@ public:
     TransverseCurve(const TransverseCurve&) = delete;
     TransverseCurve& operator=(const TransverseCurve&) = delete;
 
-    floating_point_type length() const { return m_disjointIntervals.totalLength(); }
-    friend std::ostream & operator<<(std::ostream &out, const TransverseCurve &tc);
+    long double length() const { return m_disjointIntervals.totalLength(); }
 
     friend bool operator<(const TransverseCurve& c1, const TransverseCurve& c2);
 

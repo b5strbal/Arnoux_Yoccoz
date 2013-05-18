@@ -7,7 +7,7 @@
 //
 
 #include "PerronFrobenius.h"
-
+#include <cmath>
 
 
 
@@ -64,7 +64,7 @@ balazs::SquareMatrix<long> balazs::PerronFrobeniusMatrix::powerUp(){
 
 
 
-std::vector<balazs::floating_point_type> balazs::PerronFrobeniusMatrix::perronFrobEigenvector()
+std::vector<long double> balazs::PerronFrobeniusMatrix::perronFrobEigenvector()
 {
     if (!isEigenDataDefined()) {
         initEigenData();
@@ -73,7 +73,7 @@ std::vector<balazs::floating_point_type> balazs::PerronFrobeniusMatrix::perronFr
 }
 
 
-balazs::floating_point_type balazs::PerronFrobeniusMatrix::perronFrobEigenvalue()
+long double balazs::PerronFrobeniusMatrix::perronFrobEigenvalue()
 {
     if (!isEigenDataDefined()) {
         initEigenData();
@@ -89,11 +89,11 @@ balazs::floating_point_type balazs::PerronFrobeniusMatrix::perronFrobEigenvalue(
 void balazs::PerronFrobeniusMatrix::initEigenData(){
     m_perronFrobEigenvector.resize(size());
 
-    SquareMatrix<floating_point_type> hugeMatrix = powerUp();
-    Vector<floating_point_type> convergingVector = hugeMatrix.column(0);
+    SquareMatrix<long double> hugeMatrix = powerUp();
+    Vector<long double> convergingVector = hugeMatrix.column(0);
     normalize(convergingVector);
     
-    Vector<floating_point_type> previousVector(convergingVector.height());
+    Vector<long double> previousVector(convergingVector.height());
     int count = 0;
     while (!isCloseEnough(previousVector, convergingVector) && count < 5) {
         previousVector = convergingVector;
@@ -104,7 +104,7 @@ void balazs::PerronFrobeniusMatrix::initEigenData(){
    // std::cout << count;
     m_perronFrobEigenvector = convergingVector.toStandardVector();
     
-    m_perronFrobEigenvalue = (SquareMatrix<floating_point_type>(m_squareMatrix) * convergingVector).getEntry(0, 0) / convergingVector.getEntry(0);
+    m_perronFrobEigenvalue = (SquareMatrix<long double>(m_squareMatrix) * convergingVector).getEntry(0, 0) / convergingVector.getEntry(0);
 
 }
 
@@ -115,8 +115,8 @@ void balazs::PerronFrobeniusMatrix::initEigenData(){
 
 
 
-balazs::floating_point_type balazs::arnouxYoccozStretchFactor(int genus){
-    SquareMatrix<floating_point_type> matrix(genus);
+long double balazs::arnouxYoccozStretchFactor(int genus){
+    SquareMatrix<long double> matrix(genus);
     
     matrix.setEntry(0, 0, 1);
     matrix.setEntry(0, genus - 1, 1);

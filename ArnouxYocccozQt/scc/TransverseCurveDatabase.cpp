@@ -4,6 +4,8 @@
 #include "SeparatrixSegment.h"
 #include "SepSegmentDatabase.h"
 
+#include <cassert>
+
 balazs::TransverseCurveDatabase::TransverseCurveDatabase(SepSegmentDatabase &sepSegmentDatabase) :
     m_sepSegmentDatabase(sepSegmentDatabase)
 {
@@ -24,7 +26,7 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
         assert(segments[i]->startingSingularity() == segments[i + 1]->startingSingularity());
         assert(singularities[segments[i]->startingSingularity()] == 0);
         singularities[segments[i]->startingSingularity()] = 1;
-        assert(segments[i]->direction() != segments[i + 1]->direction() ||
+        assert(segments[i]->vDirection() != segments[i + 1]->vDirection() ||
                segments[i]->side() != segments[i + 1]->side());
     }
 
@@ -70,17 +72,17 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
 
 
     for (short wrapsAroundEnds = 0; wrapsAroundEnds < 2; wrapsAroundEnds++){
-        int index = 0;
+        std::size_t index = 0;
         std::size_t length = 0;
         do {
             if ((wrapsAroundEnds && index % 2 == 1) || (!wrapsAroundEnds && index % 2 == 0)) {
-                index = integerMod(index + 1, segments.size());
+                index = (index + 1) % segments.size();
             } else
-                index = integerMod(index - 1, segments.size());
+                index = (index + (segments.size()- 1)) % segments.size();
             int pair = endpointsAndIndices[index].second % 2 == 0 ? endpointsAndIndices[index].second + 1 :
             endpointsAndIndices[index].second - 1;
             auto it = std::lower_bound(endpoints.begin(), endpoints.end(), segments[pair]->endpoint());
-            index = integerMod(it - endpoints.begin(), segments.size());
+            index = (it - endpoints.begin()) % segments.size();
             length += 2;
         } while (index != 0);
         if (length < segments.size()) {
@@ -102,8 +104,8 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
         if (isCandidateForWrapsAroundEnds[wrapsAroundEnds]) {
             for (std::size_t i = wrapsAroundEnds ? 1 : 0; i < segments.size(); i += 2) {
                 int next = (i + 1) % segments.size();
-                bool throughTopDivPoint = segments[endpointsAndIndices[i].second]->direction() == Direction::DOWN &&
-                        segments[endpointsAndIndices[next].second]->direction() == Direction::DOWN ? true : false;
+                bool throughTopDivPoint = segments[endpointsAndIndices[i].second]->vDirection() == VDirection::Down &&
+                        segments[endpointsAndIndices[next].second]->vDirection() == VDirection::Down ? true : false;
 
 
                 if (!inhIntersection.containsIntervalThroughADivPoint(endpointsAndIndices[i].first,

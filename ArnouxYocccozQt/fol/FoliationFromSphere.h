@@ -22,9 +22,9 @@ class FoliationFromSphereImpl{
     static void generateBottomConnectingPairs(const FoliationSphere& foliationSphere,
                                               std::vector<ConnectedPoints>& allConnectedPoints);
 
-    static std::vector<floating_point_type> arg_lengths;
+    static std::vector<long double> arg_lengths;
     static Permutation arg_permutation;
-    static floating_point_type arg_twist;
+    static long double arg_twist;
 };
 
 

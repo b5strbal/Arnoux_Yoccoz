@@ -322,7 +322,7 @@ FoliationRP2::TransitionData FoliationRP2::CutAlongCurve(const GoodOneSidedCurve
     std::vector<SeparatrixSegment*> Segment(m_NumSeparatrices);
     
     
-    floating_point_type NewCircumference = 2 * GoodCurve.m_ConnectingArc.GetLength();
+    long double NewCircumference = 2 * GoodCurve.m_ConnectingArc.GetLength();
     const CirclePoint& LeftEndpoint = GoodCurve.m_ConnectingArc.GetLeftEndpoint();
     for (int i = 0; i < m_NumSeparatrices; i++) {
         Segment[i] = &GetFirstIntersection(i, GoodCurve.m_ConnectingArc, RIGHT);
@@ -333,7 +333,7 @@ FoliationRP2::TransitionData FoliationRP2::CutAlongCurve(const GoodOneSidedCurve
     }
     
     std::vector<CirclePoint> DivPoints(DivPointsUnordered);
-    std::vector<floating_point_type> Lengths(m_NumSeparatrices);
+    std::vector<long double> Lengths(m_NumSeparatrices);
     std::vector<int> Pair(m_NumSeparatrices);
     
     
@@ -439,9 +439,9 @@ void FoliationRP2::FindNewPseudoAnosovs(const GoodOneSidedCurve& GoodCurve){
                     // std::cout << Matrix << std::endl << std::endl;
                     
                     if (Matrix.IsPerronFrobenius()) {
-                        std::vector<floating_point_type> SmallLengthVector = Matrix.GetPFEigenvector();
+                        std::vector<long double> SmallLengthVector = Matrix.GetPFEigenvector();
                         
-                        std::vector<floating_point_type> NewLengths(m_NumSeparatrices);
+                        std::vector<long double> NewLengths(m_NumSeparatrices);
                         for (int j = 0; j < m_NumSeparatrices/2; j++) {
                             NewLengths[2 * j] = SmallLengthVector[j];
                             NewLengths[m_Pair[2 * j]] = SmallLengthVector[j];
@@ -638,7 +638,7 @@ AlmostPFMatrix FoliationRP2::GetSmallMatrix(const TransitionData& td){
 
 
 
-/* DONE */FoliationRP2::FoliationRP2(const std::vector<floating_point_type>& Lengths, const std::vector<int>& Pair) :
+/* DONE */FoliationRP2::FoliationRP2(const std::vector<long double>& Lengths, const std::vector<int>& Pair) :
     FoliationDisk(Lengths, Pair)
 {
     Init();

@@ -10,9 +10,7 @@
 #ifndef ArnouxYoccoz_UnitIntervalPoint_h
 #define ArnouxYoccoz_UnitIntervalPoint_h
 
-#include <iostream>
-#include <cassert>
-#include "../global.h"
+#include "HDirection.h"
 
 namespace balazs{
 
@@ -38,28 +36,34 @@ namespace balazs{
  */
 
 
+
+// Calculates the fractional part of a real number. E.g. fracPart(2.3) = 0.3, fracPart(-1.8) = 0.2.
+long double fracPart(long double x);
+const long double PRECISION = 0.00000000001L;
+
+
 class Mod1Number {
 public:
-    Mod1Number(floating_point_type position = 0, int epsilon = 0);
-    Mod1Number shiftedTo(Direction::LeftOrRight side) const;
-    Direction::LeftOrRight side() const;
+    Mod1Number(long double position = 0, int epsilon = 0);
+    virtual ~Mod1Number() = default;
+    Mod1Number shiftedTo(HDirection side) const;
+    HDirection side() const;
     Mod1Number& operator+=(const Mod1Number& rhs);
     Mod1Number operator-() const;
     friend bool operator<(const Mod1Number& p1, const Mod1Number& p2);
-    friend std::ostream& operator<<(std::ostream& out, const Mod1Number& p);
-    operator floating_point_type() const { return m_position; }
+    operator long double() const { return m_position; }
 private:
-    floating_point_type m_position; // The position of the point.
+    long double m_position; // The position of the point.
     int m_epsilon;                  // The infinitesimal shift.
 };
 
 
 
-floating_point_type distanceBetween(const Mod1Number& p1, const Mod1Number& p2);
+long double distanceBetween(const Mod1Number& p1, const Mod1Number& p2);
 Mod1Number operator+(const Mod1Number& p1, const Mod1Number& p2);
-Mod1Number operator+(const Mod1Number& p1, const floating_point_type& p2);
+Mod1Number operator+(const Mod1Number& p1, const long double& p2);
 Mod1Number operator-(const Mod1Number& p1, const Mod1Number& p2);
-Mod1Number operator-(const Mod1Number& p1, const floating_point_type& p2);
+Mod1Number operator-(const Mod1Number& p1, const long double& p2);
 bool operator>(const Mod1Number& p1, const Mod1Number& p2);
 bool operator==(const Mod1Number& p1, const Mod1Number& p2);
 bool operator!=(const Mod1Number& p1, const Mod1Number& p2);
@@ -68,20 +72,11 @@ bool operator>=(const Mod1Number& p1, const Mod1Number& p2);
 
 
 
-typedef struct{
-    Mod1Number leftEndpoint;
-    Mod1Number rightEndpoint;
-} interval_t;
-
-std::ostream& operator<<(std::ostream& out, const interval_t& interval);
 
 
 
-template <typename type1, typename type2>
-std::size_t containingInterval(const std::vector<type1>& orderedList, const type2& point){
-    int interval = std::upper_bound(orderedList.begin(), orderedList.end(), point) - orderedList.begin() - 1;
-    return interval == -1 ? orderedList.size() - 1 : interval;
-}
+
+
 
 }
 

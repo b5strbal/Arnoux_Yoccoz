@@ -5,11 +5,14 @@
 #include <vector>
 
 class QDockWidget;
+class QStackedWidget;
 class QListWidget;
 class FileMenu;
 class HelpMenu;
 class WindowManager;
 class FoliationManager;
+
+class FoliationListWidget;
 
 namespace balazs{
     class Foliation;
@@ -27,28 +30,21 @@ public slots:
 
 private slots:
     void openSepSegmentSearch();
-    void setActiveFoliation(int index);
 
-  //  void setPermFontSize(int fontSize);
     void rotateFoliationLeft();
     void rotateFoliationRight();
     void reverseFoliation();
     void flipOverFoliation();
-
+    void updateMenus(int newActiveIndex);
 
 private:
     const balazs::Foliation& activeFoliation() const;
     FoliationManager& activeFolationManager() const;
+    int activeIndex() const;
 
     void createMenus(const WindowManager& manager);
     void createActions();
-  //  void updateConnections();
-    void addDockWidgets();
-    void removeDockWidgets();
 
-    int activeFoliationIndex;
-
- //   std::vector<std::unique_ptr<FoliationManager>> foliations;
 
     QList<FoliationManager*> foliations;
 
@@ -56,7 +52,10 @@ private:
     QDockWidget* foliationDataTableDockWidget;
     QDockWidget* sepSegmentSearchDockWidget;
 
-    QListWidget* foliationListWidget;
+    FoliationListWidget* foliationListWidget;
+    QStackedWidget* foliationDataTableStackedWidget;
+    QStackedWidget* sepSegmentSearchStackedWidget;
+    QStackedWidget* drawingAreaStackWidget;
 
     QAction* findSepSegmentsAct;
 
@@ -75,5 +74,10 @@ private:
 //    QToolBar* toolBar;
 
 };
+
+
+
+
+
 
 #endif // FOLIATIONMAINWINDOW_H

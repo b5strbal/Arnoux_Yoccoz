@@ -40,14 +40,12 @@ public:
     bool contains(const Mod1Number& point) const;
 
     //! Returns the total length of the intervals.
-    floating_point_type totalLength() const { return m_totalLength; }
+    long double totalLength() const { return m_totalLength; }
 
-    //! Prints the objects to a string.
-    friend std::ostream& operator<<(std::ostream& out, const DisjointIntervals& d);
 private:
     std::vector<Mod1Number> m_endpoints; // The ordered list of endpoints.
     bool m_wrapsAroundEnds;              // Whether 0 is in one of the intervals.
-    floating_point_type m_totalLength;   // The total length of the intervals.
+    long double m_totalLength;   // The total length of the intervals.
 };
 
 

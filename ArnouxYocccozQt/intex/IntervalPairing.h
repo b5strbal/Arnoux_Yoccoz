@@ -2,11 +2,11 @@
 #define INTERVALPAIRING_H
 
 #include "TwistedIntervalExchangeMap.h"
-#include "../math/WeighedTree.h"
 
 namespace balazs{
 
 
+class WeighedTree;
 
 class IntervalPairing
 {
@@ -23,7 +23,6 @@ public:
                 (m_intExchange.divPoints()[intervalIndex] - point);
     }
 
-    friend std::ostream& operator<<(std::ostream& Out, const IntervalPairing& intervalPairing);
 private:
 
 

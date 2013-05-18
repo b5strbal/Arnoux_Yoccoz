@@ -32,16 +32,7 @@ bool balazs::operator<(const TransverseCurve& c1, const TransverseCurve& c2) {
 
 
 
-std::ostream& balazs::operator<<(std::ostream& out, const TransverseCurve& tc)
-{
-    out << "Separatrix segments:\n";
-    for (auto goodSegmentIndex : tc.m_goodSegmentIndices){
-        out << *goodSegmentIndex << "\n";
-    }
-    out << "Connecting arcs: " << tc.m_disjointIntervals << "\n";
-    out << "Length: " << tc.length();
-    return out;
-}
+
 
 
 bool balazs::transverseCurve_compare::operator()(const TransverseCurve* cp1, const TransverseCurve* cp2)

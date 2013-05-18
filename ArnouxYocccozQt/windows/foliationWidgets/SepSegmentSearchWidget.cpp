@@ -7,6 +7,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QTableWidget>
+#include <QHeaderView>
 
 SepSegmentSearchWidget::SepSegmentSearchWidget(const balazs::Foliation& foliation, QWidget *parent) :
     QWidget(parent),
@@ -25,15 +26,17 @@ SepSegmentSearchWidget::SepSegmentSearchWidget(const balazs::Foliation& foliatio
     lineLayout->addStretch(1);
 
     resultTable = new QTableWidget;
-    resultTable->setColumnCount(foliation.numIntervals() * 4);
+    resultTable->setRowCount(foliation.numIntervals() * 4);
     QStringList headers;
-    for(int i = 0; i < resultTable->columnCount(); i++){
+    for(int i = 0; i < resultTable->rowCount(); i++){
         QString lr = i % 2 == 0 ? tr("Left") : tr("Right");
-        QString up = i % 4 < 2 ? tr("Up") : tr("Down");
+        QString ud = i % 4 < 2 ? tr("Up") : tr("Down");
         QString index = QString::number(i / 4);
-        headers << index + "/" + up + "/" + lr;
+        headers << index + "/" + ud + "/" + lr;
     }
-    resultTable->setHorizontalHeaderLabels(headers);
+    resultTable->setVerticalHeaderLabels(headers);
+    resultTable->horizontalHeader()->setDefaultSectionSize(30);
+    resultTable->verticalHeader()->setDefaultSectionSize(20);
 
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
@@ -43,34 +46,93 @@ SepSegmentSearchWidget::SepSegmentSearchWidget(const balazs::Foliation& foliatio
     setLayout(mainLayout);
 
     connect(searchButton, SIGNAL(clicked()), this, SLOT(fillOutTable()));
+    connect(resultTable, SIGNAL(cellPressed(int,int)), this, SLOT(drawSepSegment(int,int)));
 }
+
+
+
+int rowIndex(const balazs::SepSegmentIndex& ssIndex)
+{
+    int retval = 0;
+    retval += 4 * ssIndex.singularityIntex;
+    retval += ssIndex.vDirection == balazs::VDirection::Up ? 0 : 2;
+    retval += ssIndex.hDirection == balazs::HDirection::Left ? 0 : 1;
+    return retval;
+}
+
+
+
+
+
+
+
+
 
 
 void SepSegmentSearchWidget::fillOutTable()
 {
-    sepSegmentDatabase.generateSepSegments(depthSpinBox->value());
+    std::size_t maxDepth = depthSpinBox->value();
+    sepSegmentDatabase.generateSepSegments(maxDepth);
+
+    std::size_t maxRowLengths = 0;
+    for(std::size_t index = 0; index < sepSegmentDatabase.foliation().numIntervals(); index++){
+        for(balazs::VDirection vDirection : {balazs::VDirection::Up, balazs::VDirection::Down}){
+            for(balazs::HDirection hDirection : {balazs::HDirection::Left, balazs::HDirection::Right}){
+                balazs::SepSegmentIndex ssIndex = { hDirection, vDirection, index };
+                const std::list<balazs::SeparatrixSegment>& list = sepSegmentDatabase.goodSegmentList(ssIndex);
+
+                std::size_t countRow = 0;
+                for(auto it = list.begin(); it != list.end() && it->depth() <= maxDepth; it++){
+                    countRow++;
+                }
+                maxRowLengths = std::max(maxRowLengths, countRow);
+            }
+        }
+    }
+    resultTable->clearContents();
+    resultTable->setColumnCount(maxRowLengths);
 
     for(std::size_t index = 0; index < sepSegmentDatabase.foliation().numIntervals(); index++){
-        for(balazs::Direction::UpOrDown upOrDown = balazs::Direction::UP;
-            upOrDown <= balazs::Direction::DOWN; upOrDown++){
-
-            for(balazs::Direction::LeftOrRight leftOrRight = balazs::Direction::LEFT;
-                leftOrRight <= balazs::Direction::RIGHT; leftOrRight++){
-
-                balazs::SepSegmentIndex ssIndex = { leftOrRight, upOrDown, index };
+        for(balazs::VDirection vDirection : {balazs::VDirection::Up, balazs::VDirection::Down}){
+            for(balazs::HDirection hDirection : {balazs::HDirection::Left, balazs::HDirection::Right}){
+                balazs::SepSegmentIndex ssIndex = { hDirection, vDirection, index };
 
                 const std::list<balazs::SeparatrixSegment>& list = sepSegmentDatabase.goodSegmentList(ssIndex);
 
-                int count = 1;
+                int rowIndex = ::rowIndex(ssIndex);
+                int columnIndex = 0;
                 for(auto &segment : list){
                     QTableWidgetItem* item = new QTableWidgetItem(QString::number(segment.depth()));
-                    if(resultTable->rowCount() < count){
-                        resultTable->setRowCount(resultTable->rowCount() + 1);
-                    }
+                    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
-                    resultTable->setItem(4 * index + 2 * upOrDown + leftOrRight, count, item);
+                    resultTable->setItem(rowIndex, columnIndex++, item);
                 }
             }
         }
     }
+}
+
+
+balazs::SepSegmentIndex ssIndex(int rowIndex)
+{
+    balazs::SepSegmentIndex retval;
+    retval.singularityIntex = rowIndex / 4;
+    retval.vDirection = rowIndex % 4 < 2 ? balazs::VDirection::Up : balazs::VDirection::Down;
+    retval.hDirection = rowIndex % 2 == 0 ? balazs::HDirection::Left : balazs::HDirection::Right;
+    return retval;
+}
+
+
+void SepSegmentSearchWidget::drawSepSegment(int row, int column)
+{
+    QTableWidgetItem* item = resultTable->item(row, column);
+    if(!item) emit(drawSepSegment(nullptr));
+    std::size_t depth = item->text().toULong();
+    balazs::SepSegmentIndex ssIndex = ::ssIndex(row);
+
+    auto it = sepSegmentDatabase.goodSegmentList(ssIndex).begin();
+    while(it->depth() != depth){
+        it++;
+    }
+    emit(drawSepSegment(&(*it)));
 }

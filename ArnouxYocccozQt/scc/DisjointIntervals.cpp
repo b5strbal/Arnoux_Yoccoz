@@ -1,5 +1,7 @@
 #include "DisjointIntervals.h"
+#include "../intex/ContainingInterval.h"
 
+#include <cassert>
 
 
 
@@ -18,7 +20,7 @@ balazs::DisjointIntervals::DisjointIntervals(const std::vector<Mod1Number>& unso
 
 
 bool balazs::DisjointIntervals::contains(const Mod1Number& point) const {
-    assert(point.side() == Direction::CENTER);
+    assert(point.side() == HDirection::Center);
     int containingIntervalIndex = containingInterval(m_endpoints, point);
 
     if ((containingIntervalIndex % 2 == 0 && !m_wrapsAroundEnds) ||
@@ -32,13 +34,4 @@ bool balazs::DisjointIntervals::contains(const Mod1Number& point) const {
 
 
 
-std::ostream& balazs::operator<<(std::ostream& out, const DisjointIntervals& d){
-    for (std::size_t i = d.m_wrapsAroundEnds ? 1 : 0; i < d.m_endpoints.size() - 2; i += 2) {
-        out << interval_t({d.m_endpoints[i], d.m_endpoints[i + 1]}) << " ";
-    }
-    if (d.m_wrapsAroundEnds) {
-        out << interval_t({d.m_endpoints.back(), d.m_endpoints.front()});
-    } else
-        out << interval_t({d.m_endpoints[d.m_endpoints.size() - 2], d.m_endpoints.back()});
-    return out;
-}
+

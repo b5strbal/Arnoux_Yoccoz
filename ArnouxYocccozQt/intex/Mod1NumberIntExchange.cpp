@@ -1,6 +1,6 @@
 #include "Mod1NumberIntExchange.h"
 #include "LengthsAndTwist.h"
-
+#include <cassert>
 
 
 
@@ -15,6 +15,7 @@ balazs::Mod1NumberIntExchange::Mod1NumberIntExchange(const LengthsAndTwist* leng
     m_parent(lengthsAndTwist)
 {
     assert(lengthsAndTwist != nullptr);
+   // qDebug() << m_coefficients << "\n";
 }
 
 
@@ -68,7 +69,7 @@ balazs::Mod1NumberIntExchange& balazs::Mod1NumberIntExchange::operator+=(const M
         m_coefficients[i] += rhs.m_coefficients[i];
     }
 
-    if(static_cast<floating_point_type>(*this) + static_cast<floating_point_type>(rhs) >= 1){
+    if(static_cast<long double>(*this) + static_cast<long double>(rhs) >= 1){
         for(auto coeff : m_coefficients)
             coeff--;
     }
@@ -84,7 +85,7 @@ balazs::Mod1NumberIntExchange balazs::Mod1NumberIntExchange::operator-() const
     for(std::size_t i = 0; i < m_coefficients.size(); i++){
         newCoefficients[i] = -m_coefficients[i];
     }
-    if(static_cast<floating_point_type>(*this) > 0){
+    if(static_cast<long double>(*this) > 0){
         for(std::size_t i = 0; i < m_coefficients.size(); i++){
             newCoefficients[i]++;
         }
@@ -94,7 +95,7 @@ balazs::Mod1NumberIntExchange balazs::Mod1NumberIntExchange::operator-() const
 
 
 
-balazs::Mod1NumberIntExchange balazs::Mod1NumberIntExchange::shiftedTo(Direction::LeftOrRight side) const
+balazs::Mod1NumberIntExchange balazs::Mod1NumberIntExchange::shiftedTo(HDirection side) const
 {
     return Mod1NumberIntExchange(m_parent, Mod1Number::shiftedTo(side), m_coefficients, m_twistCoeff);
 }

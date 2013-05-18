@@ -1,8 +1,7 @@
 #include "LengthsAndTwist.h"
 #include <numeric>
-#include <iostream>
 
-balazs::LengthsAndTwist::LengthsAndTwist(const std::vector<floating_point_type> &lengths, floating_point_type twist) :
+balazs::LengthsAndTwist::LengthsAndTwist(const std::vector<long double> &lengths, long double twist) :
     m_lengths(lengths),
     m_twist(twist)
 {
@@ -14,9 +13,8 @@ balazs::LengthsAndTwist::LengthsAndTwist(const std::vector<floating_point_type> 
             throw std::runtime_error("The length parameters of an interval exchange map must be positive.");
     }
 
-    floating_point_type total = std::accumulate(lengths.begin(), lengths.end(), 0.0);
+    long double total = std::accumulate(lengths.begin(), lengths.end(), 0.0);
     for (auto &x : m_lengths) {
         x /= total;
     }
-    std::cout << this << "\n";
 }

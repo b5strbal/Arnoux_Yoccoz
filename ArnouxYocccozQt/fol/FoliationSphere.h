@@ -11,22 +11,21 @@ class FoliationRP2;
 // The top foliation is fixed in the standard position, and the bottom foliation is twisted.
 class FoliationSphere{
 public:
-    FoliationSphere(const WeighedTree& topWeighedTree, const WeighedTree& bottomWeighedTree, floating_point_type twist);
+    FoliationSphere(const WeighedTree& topWeighedTree, const WeighedTree& bottomWeighedTree, long double twist);
     FoliationSphere(const FoliationSphere&) = delete;
     FoliationSphere& operator=(const FoliationSphere&) = delete;
 
     FoliationSphere(const FoliationRP2& foliationRP2);
     const FoliationDisk& topFoliation() const { return m_topFoliation; }
     const FoliationDisk& bottomFoliation() const { return m_bottomFoliation; }
-    floating_point_type twist() const { return m_twist; }
+    long double twist() const { return m_twist; }
 
 private:
     FoliationDisk m_topFoliation;
     FoliationDisk m_bottomFoliation;
-    floating_point_type m_twist;
+    long double m_twist;
 };
 
-std::ostream& operator<<(std::ostream& Out, const FoliationSphere&);
 
 
 }

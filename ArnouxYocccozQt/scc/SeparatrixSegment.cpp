@@ -1,14 +1,17 @@
 #include "SeparatrixSegment.h"
 #include "../fol/Foliation.h"
+#include "../intex/ContainingInterval.h"
+#include "../intex/HDirection.h"
+#include <cassert>
 
-balazs::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, std::size_t startingSingularity, Direction::UpOrDown direction) :
+balazs::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, std::size_t startingSingularity, VDirection direction) :
     m_foliation(foliation),
     m_startingSingularity(startingSingularity),
     m_depth(1),
     m_endpoint(foliation.firstIntersection(startingSingularity, direction), &foliation),
     m_intervalNeighborhoods(foliation),
     m_intervalIntersectionCount(std::vector<std::size_t>(foliation.numIntervals(), 0)),
-    m_direction(direction),
+    m_vDirection(direction),
     m_reachedSaddleConnection(false)
 {
 }
@@ -18,16 +21,6 @@ balazs::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, std::si
 
 
 
-std::ostream& balazs::operator<<(std::ostream& out, const SeparatrixSegment& s)
-{
-    out << "SEPARATRIX SEGMENT\n";
-    out << "(" << s.m_startingSingularity << ", ";
-    out << s.m_depth << ", ";
-    out << (s.m_direction == Direction::DOWN ? "down" : "up") << ", ";
-    out << s.m_endpoint.number() << ")\n";
-
-    return out;
-}
 
 
 void balazs::SeparatrixSegment::lengthen()
@@ -38,7 +31,7 @@ void balazs::SeparatrixSegment::lengthen()
         m_intervalNeighborhoods.insertPoint(m_endpoint);
     }
     m_depth++;
-    Mod1NumberIntExchange newPoint = (m_direction == Direction::UP) ?
+    Mod1NumberIntExchange newPoint = (m_vDirection == VDirection::Up) ?
                 m_foliation.intExchange().applyTo(m_endpoint.number()) :
                 m_foliation.intExchange().applyInverseTo(m_endpoint.number());
     m_endpoint = Mod1NumberIntExWithInfo(newPoint, &m_foliation);
@@ -48,13 +41,22 @@ void balazs::SeparatrixSegment::lengthen()
     }
 }
 
+
+
+
+
+
 bool balazs::SeparatrixSegment::isGood() const
 {
     //assert(!isCentered());
+//    if(m_direction == VDirection::Down && m_depth == 12){
+//        int a;
+//        a = a + 1;
+//    }
     return m_intervalNeighborhoods.containsInTwoSidedInterval(m_endpoint);
 }
 
-void balazs::SeparatrixSegment::shiftTo(Direction::LeftOrRight side)
+void balazs::SeparatrixSegment::shiftTo(HDirection side)
 {
     assert(isCentered());
     m_endpoint = m_endpoint.shiftedTo(side);
@@ -62,9 +64,9 @@ void balazs::SeparatrixSegment::shiftTo(Direction::LeftOrRight side)
     if(m_depth > 1){
         // inserting the first intersection that we have previously omitted
         Mod1NumberIntExWithInfo pointToInsert(m_foliation.firstIntersection(m_startingSingularity,
-                                                                        m_direction).shiftedTo(side), &m_foliation);
+                                                                        m_vDirection).shiftedTo(side), &m_foliation);
         m_intervalNeighborhoods.insertPoint(pointToInsert);
-        m_intervalIntersectionCount[pointToInsert.smallContainingInterval()]++;
+        m_intervalIntersectionCount[containingInterval(m_foliation.topDivPoints(), pointToInsert)]++;
     }
 
 }

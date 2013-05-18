@@ -4,13 +4,18 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+#QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ArnouxYocccozQt
 TEMPLATE = app
+#CFLAGS += -Weverything
+#QMAKE_CFLAGS += -Weverything
+#CONFIG = warn_on
+QMAKE_CXXFLAGS += -Wextra
 
+CONFIG += console
 CONFIG += C++11
 SOURCES += main.cpp\
     scc/SeparatrixSegment.cpp \
@@ -23,7 +28,6 @@ SOURCES += main.cpp\
     scc/SepSegmentCollection.cpp \
     scc/SSCMode.cpp \
     scc/SepSegmentCollectionList.cpp \
-    global.cpp \
     intex/TwistedIntervalExchangeMap.cpp \
     intex/Mod1NumberIntExchange.cpp \
     intex/Mod1Number.cpp \
@@ -32,7 +36,6 @@ SOURCES += main.cpp\
     math/WeighedTree.cpp \
     math/PerronFrobenius.cpp \
     math/Permutation.cpp \
-    math/Modint.cpp \
     math/Matrix.cpp \
     math/Choose.cpp \
     fol/FoliationSphere.cpp \
@@ -50,7 +53,9 @@ SOURCES += main.cpp\
     windows/FileMenu.cpp \
     windows/HelpMenu.cpp \
     windows/FoliationManager.cpp \
-    windows/foliationWidgets/FoliationDataTableWidget.cpp
+    windows/foliationWidgets/FoliationDataTableWidget.cpp \
+    io.cpp \
+    windows/foliationWidgets/FoliationListWidget.cpp
 
 HEADERS  += scc/IntervalNeighborhoods.h \
     scc/DisjointIntervals.h \
@@ -62,7 +67,6 @@ HEADERS  += scc/IntervalNeighborhoods.h \
     scc/SSCMode.h \
     scc/SepSegmentCollectionList.h \
     scc/SepSegmentCollection.h \
-    global.h \
     intex/TwistedIntervalExchangeMap.h \
     intex/Mod1NumberIntExchange.h \
     intex/Mod1Number.h \
@@ -71,7 +75,6 @@ HEADERS  += scc/IntervalNeighborhoods.h \
     math/WeighedTree.h \
     math/PerronFrobenius.h \
     math/Permutation.h \
-    math/Modint.h \
     math/Matrix.hpp \
     math/Matrix.h \
     math/Choose.h \
@@ -91,12 +94,16 @@ HEADERS  += scc/IntervalNeighborhoods.h \
     windows/FileMenu.h \
     windows/HelpMenu.h \
     windows/FoliationManager.h \
-    windows/foliationWidgets/FoliationDataTableWidget.h
+    windows/foliationWidgets/FoliationDataTableWidget.h \
+    intex/ContainingInterval.h \
+    fol/VDirection.h \
+    intex/HDirection.h \
+    io.h \
+    windows/foliationWidgets/FoliationListWidget.h
 
 FORMS    += \
     mainwindow.ui
 
 OTHER_FILES += FoliationRP2old.cpp \
-    FoliationRP2old.h \
-    io.h
+    FoliationRP2old.h
 

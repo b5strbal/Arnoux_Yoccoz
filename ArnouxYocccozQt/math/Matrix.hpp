@@ -247,7 +247,6 @@ bool SquareMatrix<Type>::isPrimitive() const {
             }
         }
     }
-    std::cout << gcdOfCycles;
     return false;
 }
 

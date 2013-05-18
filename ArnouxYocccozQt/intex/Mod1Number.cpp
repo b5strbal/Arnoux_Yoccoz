@@ -6,40 +6,41 @@
  */
 
 #include "Mod1Number.h"
- 
-
-// const floating_point_type UnitIntervalPoint::PRECISION = ;
+#include <cmath>
 
 
+long double balazs::fracPart(long double x){ return x - floor(x); }
 
-balazs::Mod1Number::Mod1Number(floating_point_type position, int epsilon) :
+
+
+balazs::Mod1Number::Mod1Number(long double position, int epsilon) :
     m_position(fracPart(position)),
     m_epsilon(epsilon)
 {
 }
 
-balazs::Mod1Number balazs::Mod1Number::shiftedTo(Direction::LeftOrRight side) const
+balazs::Mod1Number balazs::Mod1Number::shiftedTo(HDirection side) const
 {
     switch(side){
-    case Direction::LEFT:
+    case HDirection::Left:
         return Mod1Number(m_position, -1);
         break;
-    case Direction::RIGHT:
+    case HDirection::Right:
         return Mod1Number(m_position, 1);
         break;
-    case Direction::CENTER:
+    case HDirection::Center:
         return Mod1Number(m_position, 0);
         break;
     }
 }
 
-balazs::Direction::LeftOrRight balazs::Mod1Number::side() const
+balazs::HDirection balazs::Mod1Number::side() const
 {
     if(m_epsilon < 0)
-        return Direction::LEFT;
+        return HDirection::Left;
     if(m_epsilon > 0)
-        return Direction::RIGHT;
-    return Direction::CENTER;
+        return HDirection::Right;
+    return HDirection::Center;
 }
 
 balazs::Mod1Number &balazs::Mod1Number::operator +=(const Mod1Number &rhs)
@@ -77,22 +78,7 @@ bool balazs::operator<(const Mod1Number& p1, const Mod1Number& p2){
 
 
 
-std::ostream& balazs::operator<<(std::ostream& out, const Mod1Number& p){
-    out << p.m_position;
-    if(p.m_epsilon > 0)
-        out << "(+" << p.m_epsilon << "eps)";
-    else if(p.m_epsilon < 0)
-        out << "(" << p.m_epsilon << "eps)";
-    return out;
-}
 
-
-
-
-std::ostream& balazs::operator<<(std::ostream& out, const interval_t& interval){
-    out << "[" << interval.leftEndpoint << "," << interval.rightEndpoint << "]";
-    return out;
-}
 
 
 
@@ -137,13 +123,13 @@ balazs::Mod1Number balazs::operator-(const Mod1Number& p1, const Mod1Number& p2)
 }
 
 
-balazs::Mod1Number balazs::operator +(const Mod1Number &p1, const floating_point_type &p2)
+balazs::Mod1Number balazs::operator +(const Mod1Number &p1, const long double &p2)
 {
     return p1 + Mod1Number(p2);
 }
 
 
-balazs::Mod1Number balazs::operator -(const Mod1Number &p1, const floating_point_type &p2)
+balazs::Mod1Number balazs::operator -(const Mod1Number &p1, const long double &p2)
 {
     return p1 - Mod1Number(p2);
 }
@@ -153,10 +139,10 @@ balazs::Mod1Number balazs::operator -(const Mod1Number &p1, const floating_point
 //
 // It looks for c2 on the RIGHT of c1, so the return value may be bigger than 0.5.
 // E.g. DistaceBetween(UnitIntervalPoint(0.8, LEFT), UnitIntervalPoint(0.1)) is 0.3.
-// floating_point_type distanceBetween(const UnitIntervalPoint& p1, const UnitIntervalPoint& p2)
+// long double distanceBetween(const UnitIntervalPoint& p1, const UnitIntervalPoint& p2)
 //
-balazs::floating_point_type balazs::distanceBetween(const Mod1Number& p1, const Mod1Number& p2)
+long double balazs::distanceBetween(const Mod1Number& p1, const Mod1Number& p2)
 {
-    return static_cast<floating_point_type>(p2 - p1);
+    return static_cast<long double>(p2 - p1);
 }
 

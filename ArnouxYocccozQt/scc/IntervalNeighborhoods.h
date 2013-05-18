@@ -63,8 +63,9 @@ public:
                                       const Mod1NumberIntExWithInfo& rightEndPoint,
                                       bool throughTopDivPointQ) const;
 
-    friend std::ostream & operator<<(std::ostream &out, const IntervalNeighborhoods& inh);
 private:
+    static bool localLess(const Mod1NumberIntExWithInfo& lhs, const Mod1NumberIntExWithInfo& rhs);
+
     struct CuttingPoints{
         Mod1NumberIntExWithInfo first;
         Mod1NumberIntExWithInfo second;

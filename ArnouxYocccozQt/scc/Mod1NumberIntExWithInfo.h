@@ -12,10 +12,10 @@ class Mod1NumberIntExWithInfo
 public:
     Mod1NumberIntExWithInfo() : m_foliation(nullptr) {} // Constructs uninitialized obj.
     Mod1NumberIntExWithInfo(const Mod1NumberIntExchange& number, const Foliation* parent);
-    Mod1NumberIntExWithInfo shiftedTo(Direction::LeftOrRight side) const;
+    Mod1NumberIntExWithInfo shiftedTo(HDirection side) const;
     bool isTooCloseToADivPoint() const;
 
-    const Mod1NumberIntExchange number() const { return m_mod1NumberIntExchange; }
+    const Mod1NumberIntExchange& number() const { return m_mod1NumberIntExchange; }
     std::size_t smallContainingInterval() const { return m_smallContainingInterval; }
     const Foliation& foliation() const { return *m_foliation; }
     operator Mod1NumberIntExchange() const { return m_mod1NumberIntExchange; }

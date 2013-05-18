@@ -1,12 +1,14 @@
 #include "FoliationDrawingArea.h"
 #include "../fol/Foliation.h"
+#include "../scc/SeparatrixSegment.h"
 #include <QPainter>
 #include <QDebug>
 //#include <QFont>
 
 FoliationDrawingArea::FoliationDrawingArea(const balazs::Foliation &foliation, QWidget *parent) :
     QWidget(parent),
-    m_foliation(foliation)
+    m_foliation(foliation),
+    pSepSegment(nullptr)
 {
     permFontSize = lengthsFontSize = 10;
     setBackgroundRole(QPalette::Base);
@@ -33,17 +35,11 @@ void FoliationDrawingArea::setColoredFilling(bool visible)
     update();
 }
 
-//void FoliationDrawingArea::setPermFontSize(int size)
-//{
-//    permFontSize = size;
-//    update();
-//}
-
-//void FoliationDrawingArea::setLengthsFontSize(int size)
-//{
-//    lengthsFontSize = size;
-//    update();
-//}
+void FoliationDrawingArea::drawSepSegment(const balazs::SeparatrixSegment *pSegment)
+{
+    pSepSegment = pSegment;
+    update();
+}
 
 
 
@@ -71,8 +67,16 @@ void FoliationDrawingArea::paint(QPainter &painter, int w, int h)
     paintFoliation(painter, folW, folH);
     paintLengthLabels(painter, folW, folH);
     paintPermutationLabels(painter, folW, folH);
-    paintSepSegments(painter, folW, folH);
+    paintSepSegment(painter, folW, folH);
 }
+
+
+inline double heightOfSingularity(const balazs::Foliation& foliation, std::size_t sepIndex, int folH)
+{
+    return  folH * (foliation.indexOfSingularity()[sepIndex] + 1.0) / (foliation.numSingularities() + 1.0);
+}
+
+
 
 
 void FoliationDrawingArea::paintFoliation(QPainter &painter, int folW, int folH)
@@ -81,8 +85,7 @@ void FoliationDrawingArea::paintFoliation(QPainter &painter, int folW, int folH)
     painter.drawRect(0, 0, folW, folH);
 
     for(std::size_t i = 0; i < m_foliation.numIntervals(); i++){
-        double singularityHeight =
-                folH * (m_foliation.indexOfSingularity()[i] + 1.0) / (m_foliation.numSingularities() + 1.0);
+        double singularityHeight = heightOfSingularity(m_foliation, i, folH);
 
         QPointF topPoint(folW * m_foliation.topDivPoints()[i], 0);
         QPointF middlePoint(folW * m_foliation.topDivPoints()[i], singularityHeight);
@@ -137,7 +140,7 @@ void FoliationDrawingArea::paintPermutationLabels(QPainter &painter, int folW, i
             QRectF rect;
             if(bottomIndex < m_foliation.numIntervals() - 1 ||
                     balazs::distanceBetween(m_foliation.bottomDivPoints()[bottomIndex], 1) >=
-                    static_cast<balazs::floating_point_type>(m_foliation.intExchange().lengths()[i]) / 2){
+                    static_cast<long double>(m_foliation.intExchange().lengths()[i]) / 2){
                 rect = QRectF(folW * m_foliation.bottomDivPoints()[bottomIndex], folH + 2,
                               folW * m_foliation.intExchange().lengths()[i], 10000);
             } else {
@@ -174,11 +177,39 @@ void FoliationDrawingArea::paintFilling(QPainter &painter, int folW, int folH)
             }
 
         }
-
-
     }
 }
 
-void FoliationDrawingArea::paintSepSegments(QPainter &painter, int folW, int folHh)
+
+
+void FoliationDrawingArea::paintSepSegment(QPainter &painter, int folW, int folH)
 {
+    if(!pSepSegment) return;
+    painter.setPen(QPen(Qt::blue, 2));
+
+    // initializing the subsegment of depth 1
+    balazs::SeparatrixSegment segment(pSepSegment->foliation(),
+                                           pSepSegment->startingSingularity(), pSepSegment->vDirection());
+    double shift = pSepSegment->side() == balazs::HDirection::Left ? -1.0 : 1.0;
+    double singularityHeight = heightOfSingularity(m_foliation, segment.startingSingularity(), folH);
+    double w = folW * static_cast<double>(m_foliation.topDivPoints()[segment.startingSingularity()]);
+
+    if(segment.vDirection() == balazs::VDirection::Down){
+        painter.drawLine(w + shift, singularityHeight, w + shift, folH);
+
+        while(segment.depth() < pSepSegment->depth()){
+            segment.lengthen();
+            w = folW * static_cast<double>(segment.endpoint().number());
+            painter.drawLine(w + shift, 0, w + shift, folH);
+        }
+
+    } else {
+        painter.drawLine(w + shift, singularityHeight, w + shift, 0);
+        while(segment.depth() < pSepSegment->depth()){
+            w = folW * static_cast<double>(segment.endpoint().number());
+
+            painter.drawLine(w + shift, 0, w + shift, folH);
+            segment.lengthen();
+        }
+    }
 }

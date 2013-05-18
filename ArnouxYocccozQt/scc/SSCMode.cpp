@@ -3,7 +3,7 @@
 #include "../math/Choose.h"
 #include "../fol/Foliation.h"
 #include "../fol/FoliationFromRP2.h"
-
+#include <cassert>
 
 std::vector<balazs::SepSegmentIndex> balazs::SSCModeShiftToSameSide::initialSegments(const Choose& sepIndicesChoose) const
 {
@@ -11,8 +11,8 @@ std::vector<balazs::SepSegmentIndex> balazs::SSCModeShiftToSameSide::initialSegm
 
     retVal.reserve(2 * sepIndicesChoose.k());
     for(std::size_t i = 0; i < sepIndicesChoose.k(); i++){
-        retVal.push_back({ m_shiftToSide, Direction::UP, sepIndicesChoose[i] });
-        retVal.push_back({ m_shiftToSide, Direction::DOWN, sepIndicesChoose[i] });
+        retVal.push_back({ m_shiftToSide, VDirection::Up, sepIndicesChoose[i] });
+        retVal.push_back({ m_shiftToSide, VDirection::Down, sepIndicesChoose[i] });
     }
     return retVal;
 }
@@ -40,8 +40,8 @@ std::vector<balazs::SepSegmentIndex> balazs::SSCModeSingWrap::initialSegments(co
 
     retVal.reserve(2 * sepIndicesChoose.k());
     for(std::size_t i = 0; i < sepIndicesChoose.k(); i++){
-        retVal.push_back({ Direction::LEFT, Direction::UP, sepIndicesChoose[i] });
-        retVal.push_back({ Direction::RIGHT, Direction::UP, sepIndicesChoose[i] });
+        retVal.push_back({ HDirection::Left, VDirection::Up, sepIndicesChoose[i] });
+        retVal.push_back({ HDirection::Right, VDirection::Up, sepIndicesChoose[i] });
     }
     return retVal;
 
@@ -60,6 +60,10 @@ std::size_t balazs::SSCModeSingWrap::howMuchToChooseFrom() const
 }
 
 
+std::vector<std::size_t> balazs::SSCModeSingWrap::segmentsToLengthen(std::size_t indexToIncrease) const {
+    assert(indexToIncrease % 2 == 1);
+    return {{ indexToIncrease-1, indexToIncrease }};
+}
 
 
 
@@ -77,7 +81,7 @@ std::size_t balazs::SSCModeSingWrap::howMuchToChooseFrom() const
 
 
 
-balazs::SSCModeShiftToSameSideFromRP2::SSCModeShiftToSameSideFromRP2(const balazs::Foliation &foliation, balazs::Direction::LeftOrRight shiftToSide)
+balazs::SSCModeShiftToSameSideFromRP2::SSCModeShiftToSameSideFromRP2(const Foliation &foliation, HDirection shiftToSide)
     : SSCMode(foliation),
       m_shiftToSide(shiftToSide),
       m_foliationFromRP2(dynamic_cast<const FoliationFromRP2&>(this->foliation()))
@@ -114,10 +118,10 @@ std::vector<balazs::SepSegmentIndex> balazs::SSCModeShiftToSameSideFromRP2::init
         std::size_t firstIndex = m_choiceOfSingularities_RP2[sepIndicesChoose[i]];
         std::size_t secondIndex = m_foliationFromRP2.intervalPermutationBeforeHalfTwist()[firstIndex];
 
-        retVal.push_back({ m_shiftToSide, Direction::UP, firstIndex });
-        retVal.push_back({ m_shiftToSide, Direction::DOWN, firstIndex });
-        retVal.push_back({ m_shiftToSide, Direction::UP, secondIndex });
-        retVal.push_back({ m_shiftToSide, Direction::DOWN, secondIndex });
+        retVal.push_back({ m_shiftToSide, VDirection::Up, firstIndex });
+        retVal.push_back({ m_shiftToSide, VDirection::Down, firstIndex });
+        retVal.push_back({ m_shiftToSide, VDirection::Up, secondIndex });
+        retVal.push_back({ m_shiftToSide, VDirection::Down, secondIndex });
     }
     return retVal;
 }

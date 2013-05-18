@@ -14,6 +14,9 @@ FoliationManager::FoliationManager(std::unique_ptr<balazs::Foliation> foliation,
     pFoliationDataTableWidget = new FoliationDataTableWidget(*pFoliation);
     pSepSegmentSearchWidget = new SepSegmentSearchWidget(*pFoliation);
     createViewMenu();
+
+    connect(pSepSegmentSearchWidget, SIGNAL(drawSepSegment(const balazs::SeparatrixSegment*)),
+            pDrawingArea, SLOT(drawSepSegment(const balazs::SeparatrixSegment*)));
 }
 
 FoliationManager::~FoliationManager() = default;

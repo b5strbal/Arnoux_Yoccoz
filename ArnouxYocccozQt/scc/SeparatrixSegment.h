@@ -2,30 +2,30 @@
 #define SEPARATRIXSEGMENT_H
 
 #include "IntervalNeighborhoods.h"
-
+#include "../fol/VDirection.h"
+#include "../intex/HDirection.h"
 
 namespace balazs{
 
 
 class SeparatrixSegment{
 public:
-    SeparatrixSegment(const Foliation& foliation, std::size_t startingSingularity, Direction::UpOrDown direction);
+    SeparatrixSegment(const Foliation& foliation, std::size_t startingSingularity, VDirection vDirection);
  //   SeparatrixSegment(const SeparatrixSegment&) = delete;
     SeparatrixSegment& operator=(const SeparatrixSegment&) = delete;
 
-    friend std::ostream& operator<<(std::ostream& out, const SeparatrixSegment& s);
     bool reachedSaddleConnection() const { return m_reachedSaddleConnection; }
     void lengthen();
     bool isGood() const;
-    bool isCentered() const { return m_endpoint.number().side() == Direction::CENTER; }
-    void shiftTo(Direction::LeftOrRight side);
+    bool isCentered() const { return m_endpoint.number().side() == HDirection::Center; }
+    void shiftTo(HDirection side);
 
     const Foliation& foliation() const { return m_foliation; }
-    Direction::LeftOrRight side() const { return m_endpoint.number().side(); }
+    HDirection side() const { return m_endpoint.number().side(); }
     std::size_t depth() const { return m_depth; }
     const Mod1NumberIntExWithInfo& endpoint() const { return m_endpoint; }
     std::size_t startingSingularity() const { return m_startingSingularity; }
-    Direction::UpOrDown direction() const { return m_direction; }
+    VDirection vDirection() const { return m_vDirection; }
     const IntervalNeighborhoods& intervalNeighborhoods() const { return m_intervalNeighborhoods; }
 
 private:
@@ -35,7 +35,7 @@ private:
     Mod1NumberIntExWithInfo m_endpoint;
     IntervalNeighborhoods m_intervalNeighborhoods;
     std::vector<std::size_t> m_intervalIntersectionCount;
-    Direction::UpOrDown m_direction;
+    VDirection m_vDirection;
     bool m_reachedSaddleConnection;
 };
 

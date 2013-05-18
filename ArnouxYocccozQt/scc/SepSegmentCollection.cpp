@@ -2,6 +2,7 @@
 #include "SepSegmentDatabase.h"
 #include "SSCMode.h"
 #include "../intex/Mod1Number.h"
+#include <cassert>
 
 balazs::SepSegmentCollection::SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase,
                                                    const SSCMode& sscMode,

@@ -4,9 +4,9 @@
 
 
 
-std::vector<balazs::floating_point_type> balazs::FoliationFromSphereImpl::arg_lengths;
+std::vector<long double> balazs::FoliationFromSphereImpl::arg_lengths;
 balazs::Permutation balazs::FoliationFromSphereImpl::arg_permutation;
-balazs::floating_point_type balazs::FoliationFromSphereImpl::arg_twist;
+long double balazs::FoliationFromSphereImpl::arg_twist;
 
 
 balazs::FoliationFromSphereImpl::FoliationFromSphereImpl(const FoliationSphere &foliationSphere)
@@ -59,15 +59,15 @@ void balazs::FoliationFromSphereImpl::generateTopConnectingPairs(const Foliation
 {
     std::size_t numSeparatrices = foliationSphere.topFoliation().numSeparatrices();
     for (std::size_t i = 0; i < numSeparatrices; i++) {
-        if (foliationSphere.topFoliation().intervalPairing().permutation()[integerMod(i, numSeparatrices)] !=
-                integerMod(static_cast<int>(i) - 1, numSeparatrices)) {
+        if (foliationSphere.topFoliation().intervalPairing().permutation()[i % numSeparatrices] !=
+                (i + (numSeparatrices- 1)) % numSeparatrices) {
             // otherwise the current separatrix emanates from a 1-pronged singularity which is not important
 
             ConnectedPoints newConnectedPoints;
             newConnectedPoints.topPoint = foliationSphere.topFoliation().intervalPairing().divPoints()[i];
 
             int indexOfConnectedSeparatrix =
-                    integerMod(foliationSphere.topFoliation().intervalPairing().permutation()[i]+ 1, numSeparatrices);
+                    (foliationSphere.topFoliation().intervalPairing().permutation()[i] + 1) % numSeparatrices;
             Mod1Number middlePoint =
                     foliationSphere.topFoliation().intervalPairing().divPoints()[indexOfConnectedSeparatrix];
 
@@ -87,12 +87,12 @@ void balazs::FoliationFromSphereImpl::generateBottomConnectingPairs(const Foliat
     std::size_t numSeparatrices = foliationSphere.bottomFoliation().numSeparatrices();
     for (std::size_t i = 0; i < numSeparatrices; i++) {
         if (foliationSphere.bottomFoliation().intervalPairing().permutation()[i] !=
-                integerMod(static_cast<int>(i) - 1, numSeparatrices) ) {
+                (i + (numSeparatrices- 1)) % numSeparatrices) {
 
             ConnectedPoints newConnectedPoints;
             newConnectedPoints.bottomPoint = static_cast<Mod1Number>(foliationSphere.bottomFoliation().intervalPairing().divPoints()[i]) + foliationSphere.twist();
 
-            int indexOfConnectedSeparatrix = integerMod(foliationSphere.bottomFoliation().intervalPairing().permutation()[i] + 1, numSeparatrices);
+            int indexOfConnectedSeparatrix = (foliationSphere.bottomFoliation().intervalPairing().permutation()[i] + 1) % numSeparatrices;
             Mod1Number middlePoint = static_cast<Mod1Number>(foliationSphere.topFoliation().intervalPairing().divPoints()[indexOfConnectedSeparatrix]) + foliationSphere.twist();
 
             newConnectedPoints.topPoint = foliationSphere.topFoliation().intervalPairing().applyTo(middlePoint);

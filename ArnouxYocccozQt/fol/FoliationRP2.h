@@ -22,12 +22,11 @@ public:
 
 private:
     FoliationDisk m_foliationDisk;
-    static const floating_point_type alpha;
+    static const long double alpha;
 
 };
 
 
-std::ostream& operator<<(std::ostream& out, const FoliationRP2& f);
 
 
 

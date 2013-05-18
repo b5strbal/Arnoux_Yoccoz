@@ -8,11 +8,12 @@
 
 #include "WeighedTree.h"
 #include "Permutation.h"
+#include <random>
 
-std::default_random_engine balazs::WeighedTree::m_randomEngine(static_cast<int>(time(NULL)));
 
 
-balazs::WeighedTree::WeighedTree(const std::vector<floating_point_type>& definingList) :
+
+balazs::WeighedTree::WeighedTree(const std::vector<long double>& definingList) :
     m_definingList(definingList)
 {
     m_root = new Node;
@@ -31,17 +32,19 @@ balazs::WeighedTree balazs::WeighedTree::randomWeighedTree(int numEdges){
 
 
 
-std::vector<balazs::floating_point_type> balazs::WeighedTree::randomDefiningList(int numEdges){
+std::vector<long double> balazs::WeighedTree::randomDefiningList(int numEdges){
+    static std::default_random_engine m_randomEngine(static_cast<int>(time(NULL)));
+
     if (numEdges == 1) {    // there is only one tree with one edge
-        return std::vector<floating_point_type>(1, 1);
+        return std::vector<long double>(1, 1);
     }
     
     if (numEdges < 3) {
         throw std::runtime_error("A weighed tree must have one or at least three edges.");
     }
-    std::vector<floating_point_type> definingList;
+    std::vector<long double> definingList;
     
-    std::uniform_real_distribution<floating_point_type> RealDistribution(0,1);
+    std::uniform_real_distribution<long double> RealDistribution(0,1);
     definingList.push_back(RealDistribution(m_randomEngine)); // creating the first child of the root
 
     int remains = numEdges - 1;
@@ -60,7 +63,7 @@ std::vector<balazs::floating_point_type> balazs::WeighedTree::randomDefiningList
 
         // Now generating the right number of weights.
         for (int i = 0; i < NextSequence; i++) {
-            floating_point_type RandomReal = 0;
+            long double RandomReal = 0;
             while (RandomReal == 0) {                   // making sure the random real generator didn't give us 0
                 RandomReal = RealDistribution(m_randomEngine);
             }
@@ -91,10 +94,10 @@ std::vector<balazs::floating_point_type> balazs::WeighedTree::randomDefiningList
 
 
 
-void balazs::WeighedTree::createChildren(std::vector<floating_point_type>::const_iterator itBegin,
-                                 std::vector<floating_point_type>::const_iterator itEnd,
+void balazs::WeighedTree::createChildren(std::vector<long double>::const_iterator itBegin,
+                                 std::vector<long double>::const_iterator itEnd,
                                  Node* pNode){
-    std::vector<floating_point_type>::const_iterator it = itBegin;
+    std::vector<long double>::const_iterator it = itBegin;
     while (it != itEnd && *it != 0) {
         if (*it < 0) {
             throw std::runtime_error("Weights of weighed trees must be positive.");
@@ -139,9 +142,9 @@ std::vector<int> balazs::WeighedTree::degrees() const{
 }
 
 
-std::vector<balazs::floating_point_type> balazs::WeighedTree::getLengths() const
+std::vector<long double> balazs::WeighedTree::getLengths() const
 {
-    std::vector<floating_point_type> lengths;
+    std::vector<long double> lengths;
     lengths.reserve(2 * numEdges());
     fillInLengths(lengths, m_root);
     return lengths;
@@ -167,7 +170,7 @@ void balazs::WeighedTree::getDegreesRecursive(std::vector<int>& degrees, Node* n
     }
 }
 
-void balazs::WeighedTree::fillInLengths(std::vector<balazs::floating_point_type> &lengths, balazs::WeighedTree::Node *pNode)
+void balazs::WeighedTree::fillInLengths(std::vector<long double> &lengths, balazs::WeighedTree::Node *pNode)
 {
     for (std::size_t i = 0; i < pNode->m_numChildren; i++) {
         lengths.push_back(pNode->m_children[i].m_weight);

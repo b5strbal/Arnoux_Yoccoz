@@ -25,6 +25,7 @@ public slots:
     void setPermutationLabels(bool visible);
     void setLengthsLabels(bool visible);
     void setColoredFilling(bool visible);
+    void drawSepSegment(const balazs::SeparatrixSegment* pSegment);
 protected:
     void paintEvent(QPaintEvent *event);
     
@@ -34,7 +35,7 @@ private:
     void paintLengthLabels(QPainter &painter, int folW, int folH);
     void paintPermutationLabels(QPainter &painter, int folW, int folH);
     void paintFilling(QPainter &painter, int folW, int folH);
-    void paintSepSegments(QPainter &painter, int folW, int folHh);
+    void paintSepSegment(QPainter &painter, int folW, int folH);
 
     bool permutationLabelsShown;
     bool lengthsLabelsShown;
@@ -42,7 +43,7 @@ private:
     int permFontSize;
     int lengthsFontSize;
 
-    QList<balazs::SeparatrixSegment*> d;
+    const balazs::SeparatrixSegment* pSepSegment;
 
     const balazs::Foliation& m_foliation;
 };

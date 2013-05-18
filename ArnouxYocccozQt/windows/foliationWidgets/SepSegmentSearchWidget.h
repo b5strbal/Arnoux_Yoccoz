@@ -20,13 +20,16 @@ public:
     explicit SepSegmentSearchWidget(const balazs::Foliation& foliation, QWidget *parent = 0);
     
 signals:
-    
+    void drawSepSegment(const balazs::SeparatrixSegment*);
 public slots:
 
 private slots:
     void fillOutTable();
+    void drawSepSegment(int row, int column);
 
-private:
+private:    
+
+
     QLabel* depthLabel;
     QSpinBox* depthSpinBox;
     QPushButton* searchButton;

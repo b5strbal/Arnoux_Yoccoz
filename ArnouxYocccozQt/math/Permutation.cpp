@@ -1,6 +1,6 @@
 #include "Permutation.h"
-#include "../global.h"
-#include <iostream>
+
+
 
 balazs::Permutation::Permutation() : m_functionValues(1, 0)
 {
@@ -86,12 +86,7 @@ std::size_t balazs::Permutation::size() const
 }
 
 
-std::ostream& balazs::operator <<(std::ostream &out, const Permutation &perm)
-{
-    for (std::size_t i = 0; i < perm.size(); i++)
-        out << perm[i] << " ";
-    return out;
-}
+
 
 
 bool balazs::isMinimal(const Permutation &perm)
@@ -103,4 +98,11 @@ bool balazs::isMinimal(const Permutation &perm)
         }
     }
     return true;
+}
+
+
+
+std::size_t balazs::integerMod(int a, int b){
+    int result = a % b;
+    return result >= 0 ? result : result + b;
 }

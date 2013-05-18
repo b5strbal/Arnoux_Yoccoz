@@ -5,6 +5,7 @@
 
 namespace balazs{
 
+std::size_t integerMod(int a, int b);
 
 /*!
  * \brief The Permutation class represents a permutation on integers 0, 1, ..., n-1.
@@ -47,7 +48,6 @@ private:
 
 bool isMinimal(const Permutation& perm);
 
-std::ostream& operator<<(std::ostream& out, const Permutation& perm);
 Permutation operator*(const Permutation& p1, const Permutation& p2);
 
 Permutation inverse(const Permutation& perm);

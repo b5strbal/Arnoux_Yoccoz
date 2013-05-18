@@ -1,4 +1,5 @@
 #include "IntervalPairing.h"
+#include "../math/WeighedTree.h"
 
 
 
@@ -7,12 +8,7 @@ balazs::IntervalPairing::IntervalPairing(const WeighedTree& wt)
 {
 }
 
-std::ostream &balazs::operator <<(std::ostream &Out, const IntervalPairing &intervalPairing)
-{
-    Out << "Lengths: " << intervalPairing.m_intExchange.lengths() << "\n";
-    Out << "Permutation: " << intervalPairing.permutation();
-    return Out;
-}
+
 
 
 

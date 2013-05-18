@@ -2,8 +2,7 @@
 #define CREATEFOLIATIONWIZARD_H
 
 #include <QWizard>
-#include "../fol/Foliation.h"
-#include "../fol/FoliationRP2.h"
+
 
 
 class QLabel;

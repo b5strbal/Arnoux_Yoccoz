@@ -1,7 +1,7 @@
 #include "FoliationRP2.h"
 #include "../math/PerronFrobenius.h"
 
-const balazs::floating_point_type balazs::FoliationRP2::alpha(1/balazs::arnouxYoccozStretchFactor(3));
+const long double balazs::FoliationRP2::alpha(1/balazs::arnouxYoccozStretchFactor(3));
 
 
 balazs::FoliationRP2::FoliationRP2(const WeighedTree &wt)
@@ -20,13 +20,6 @@ balazs::FoliationRP2::FoliationRP2(const WeighedTree &wt)
 balazs::FoliationRP2::FoliationRP2()
     : m_foliationDisk(WeighedTree({ alpha + pow(alpha,2), pow(alpha,2) + pow(alpha, 3), pow(alpha, 3) + alpha }))
 {
-}
-
-
-std::ostream& balazs::operator <<(std::ostream &out, const FoliationRP2 &f)
-{
-    out << f.foliationDisk();
-    return out;
 }
 
 
