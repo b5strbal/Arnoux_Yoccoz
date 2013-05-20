@@ -36,14 +36,14 @@ private:
 class SSCModeShiftToSameSide : public SSCMode
 {
 public:
-    SSCModeShiftToSameSide(const Foliation& foliation, HDirection shiftToSide)
-        : SSCMode(foliation), m_shiftToSide(shiftToSide) {}
-    std::vector<SepSegmentIndex> initialSegments(const Choose &sepIndicesChoose) const;
-    std::vector<std::size_t> segmentsToLengthen(std::size_t indexToIncrease) const { return {{ indexToIncrease }}; }
-    std::vector<std::size_t> additionalSegmentsToSetToFirst(std::size_t indexToIncrease) const
+    SSCModeShiftToSameSide(const Foliation& foliation, HDirection shiftToSide);
+    virtual ~SSCModeShiftToSameSide() {}
+    virtual std::vector<SepSegmentIndex> initialSegments(const Choose &sepIndicesChoose) const;
+    virtual std::vector<std::size_t> segmentsToLengthen(std::size_t indexToIncrease) const { return {{ indexToIncrease }}; }
+    virtual std::vector<std::size_t> additionalSegmentsToSetToFirst(std::size_t indexToIncrease) const
         { (void)indexToIncrease; return {{}}; }
-    std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const;
-    std::size_t howMuchToChooseFrom() const;
+    virtual std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const;
+    virtual std::size_t howMuchToChooseFrom() const;
 private:
     HDirection m_shiftToSide;
 };
@@ -59,12 +59,13 @@ class SSCModeSingWrap : public SSCMode
 {
 public:
     SSCModeSingWrap(const Foliation& foliation) : SSCMode(foliation) {}
-    std::vector<SepSegmentIndex> initialSegments(const Choose &sepIndicesChoose) const;
-    std::vector<std::size_t> segmentsToLengthen(std::size_t indexToIncrease) const;
-    std::vector<std::size_t> additionalSegmentsToSetToFirst(std::size_t indexToIncrease) const
+    virtual ~SSCModeSingWrap() {}
+    virtual std::vector<SepSegmentIndex> initialSegments(const Choose &sepIndicesChoose) const;
+    virtual std::vector<std::size_t> segmentsToLengthen(std::size_t indexToIncrease) const;
+    virtual std::vector<std::size_t> additionalSegmentsToSetToFirst(std::size_t indexToIncrease) const
         { (void)indexToIncrease; return {{}}; }
-    std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const;
-    std::size_t howMuchToChooseFrom() const;
+    virtual std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const;
+    virtual std::size_t howMuchToChooseFrom() const;
 };
 
 
@@ -79,11 +80,12 @@ class SSCModeShiftToSameSideFromRP2 : public SSCMode
 {
 public:
     SSCModeShiftToSameSideFromRP2(const Foliation& foliation, HDirection shiftToSide);
-    std::vector<SepSegmentIndex> initialSegments(const Choose &sepIndicesChoose) const;
-    std::vector<std::size_t> segmentsToLengthen(std::size_t indexToIncrease) const;
-    std::vector<std::size_t> additionalSegmentsToSetToFirst(std::size_t indexToIncrease) const;
-    std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const;
-    std::size_t howMuchToChooseFrom() const;
+    virtual ~SSCModeShiftToSameSideFromRP2() {}
+    virtual std::vector<SepSegmentIndex> initialSegments(const Choose &sepIndicesChoose) const;
+    virtual std::vector<std::size_t> segmentsToLengthen(std::size_t indexToIncrease) const;
+    virtual std::vector<std::size_t> additionalSegmentsToSetToFirst(std::size_t indexToIncrease) const;
+    virtual std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const;
+    virtual std::size_t howMuchToChooseFrom() const;
 private:
     HDirection m_shiftToSide;
     const FoliationFromRP2& m_foliationFromRP2;

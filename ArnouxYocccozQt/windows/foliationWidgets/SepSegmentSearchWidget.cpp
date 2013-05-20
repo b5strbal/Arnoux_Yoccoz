@@ -11,7 +11,7 @@
 
 SepSegmentSearchWidget::SepSegmentSearchWidget(const balazs::Foliation& foliation, QWidget *parent) :
     QWidget(parent),
-    sepSegmentDatabase(foliation)
+    m_sepSegmentDatabase(foliation)
 {
     depthLabel = new QLabel(tr("Depth:"));
     depthSpinBox = new QSpinBox;
@@ -72,14 +72,14 @@ int rowIndex(const balazs::SepSegmentIndex& ssIndex)
 void SepSegmentSearchWidget::fillOutTable()
 {
     std::size_t maxDepth = depthSpinBox->value();
-    sepSegmentDatabase.generateSepSegments(maxDepth);
+    m_sepSegmentDatabase.generateSepSegments(maxDepth);
 
     std::size_t maxRowLengths = 0;
-    for(std::size_t index = 0; index < sepSegmentDatabase.foliation().numIntervals(); index++){
+    for(std::size_t index = 0; index < m_sepSegmentDatabase.foliation().numIntervals(); index++){
         for(balazs::VDirection vDirection : {balazs::VDirection::Up, balazs::VDirection::Down}){
             for(balazs::HDirection hDirection : {balazs::HDirection::Left, balazs::HDirection::Right}){
                 balazs::SepSegmentIndex ssIndex = { hDirection, vDirection, index };
-                const std::list<balazs::SeparatrixSegment>& list = sepSegmentDatabase.goodSegmentList(ssIndex);
+                const std::list<balazs::SeparatrixSegment>& list = m_sepSegmentDatabase.goodSegmentList(ssIndex);
 
                 std::size_t countRow = 0;
                 for(auto it = list.begin(); it != list.end() && it->depth() <= maxDepth; it++){
@@ -92,12 +92,12 @@ void SepSegmentSearchWidget::fillOutTable()
     resultTable->clearContents();
     resultTable->setColumnCount(maxRowLengths);
 
-    for(std::size_t index = 0; index < sepSegmentDatabase.foliation().numIntervals(); index++){
+    for(std::size_t index = 0; index < m_sepSegmentDatabase.foliation().numIntervals(); index++){
         for(balazs::VDirection vDirection : {balazs::VDirection::Up, balazs::VDirection::Down}){
             for(balazs::HDirection hDirection : {balazs::HDirection::Left, balazs::HDirection::Right}){
                 balazs::SepSegmentIndex ssIndex = { hDirection, vDirection, index };
 
-                const std::list<balazs::SeparatrixSegment>& list = sepSegmentDatabase.goodSegmentList(ssIndex);
+                const std::list<balazs::SeparatrixSegment>& list = m_sepSegmentDatabase.goodSegmentList(ssIndex);
 
                 int rowIndex = ::rowIndex(ssIndex);
                 int columnIndex = 0;
@@ -130,7 +130,7 @@ void SepSegmentSearchWidget::drawSepSegment(int row, int column)
     std::size_t depth = item->text().toULong();
     balazs::SepSegmentIndex ssIndex = ::ssIndex(row);
 
-    auto it = sepSegmentDatabase.goodSegmentList(ssIndex).begin();
+    auto it = m_sepSegmentDatabase.goodSegmentList(ssIndex).begin();
     while(it->depth() != depth){
         it++;
     }

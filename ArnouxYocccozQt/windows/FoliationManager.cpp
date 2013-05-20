@@ -3,6 +3,7 @@
 #include "../drawing/FoliationDrawingArea.h"
 #include "foliationWidgets/SepSegmentSearchWidget.h"
 #include "foliationWidgets/FoliationDataTableWidget.h"
+#include "foliationWidgets/TransverseCurveSearchWidget.h"
 
 #include <QMenu>
 
@@ -13,10 +14,13 @@ FoliationManager::FoliationManager(std::unique_ptr<balazs::Foliation> foliation,
     pDrawingArea = new FoliationDrawingArea(*pFoliation);
     pFoliationDataTableWidget = new FoliationDataTableWidget(*pFoliation);
     pSepSegmentSearchWidget = new SepSegmentSearchWidget(*pFoliation);
+    pTransverseCurveSearchWidget = new TransverseCurveSearchWidget(pSepSegmentSearchWidget->sepSegmentDatabase());
     createViewMenu();
 
     connect(pSepSegmentSearchWidget, SIGNAL(drawSepSegment(const balazs::SeparatrixSegment*)),
             pDrawingArea, SLOT(drawSepSegment(const balazs::SeparatrixSegment*)));
+    connect(pTransverseCurveSearchWidget, SIGNAL(drawTransverseCurves(const balazs::TransverseCurve*)),
+            pDrawingArea, SLOT(drawTransverseCurve(const balazs::TransverseCurve*)));
 }
 
 FoliationManager::~FoliationManager() = default;
@@ -30,6 +34,11 @@ const balazs::Foliation& FoliationManager::foliation() const
 SepSegmentSearchWidget *FoliationManager::sepSegmentSearchWidget() const
 {
     return pSepSegmentSearchWidget;
+}
+
+TransverseCurveSearchWidget *FoliationManager::transverseCurveSearchWidget() const
+{
+    return pTransverseCurveSearchWidget;
 }
 
 FoliationDrawingArea *FoliationManager::drawingArea() const

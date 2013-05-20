@@ -131,7 +131,7 @@ void balazs::TransverseCurveDatabase::applyToStoredTransverseCurves(void (*funct
 
 
 
-void balazs::TransverseCurveDatabase::generateTransverseCurves(int maxdepth, int numLeafComponents, const SSCMode& sscmode, void (*function)(const TransverseCurve&)){
+void balazs::TransverseCurveDatabase::generateTransverseCurves(int maxdepth, int numLeafComponents, std::shared_ptr<SSCMode> sscmode, void (*function)(const TransverseCurve&)){
     //m_sepSegmentDatabase.generateSepSegments(maxdepth);
     SepSegmentCollectionList collections(m_sepSegmentDatabase, maxdepth, numLeafComponents,
                                       sscmode);

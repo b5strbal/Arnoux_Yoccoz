@@ -7,8 +7,9 @@
 
 FoliationDrawingArea::FoliationDrawingArea(const balazs::Foliation &foliation, QWidget *parent) :
     QWidget(parent),
-    m_foliation(foliation),
-    pSepSegment(nullptr)
+    pSepSegment(nullptr),
+    pTransverseCurve(nullptr),
+    m_foliation(foliation)
 {
     permFontSize = lengthsFontSize = 10;
     setBackgroundRole(QPalette::Base);
@@ -41,6 +42,12 @@ void FoliationDrawingArea::drawSepSegment(const balazs::SeparatrixSegment *pSegm
     update();
 }
 
+void FoliationDrawingArea::drawTransverseCurve(const balazs::TransverseCurve *pTCurve)
+{
+    pTransverseCurve = pTCurve;
+    update();
+}
+
 
 
 
@@ -68,6 +75,7 @@ void FoliationDrawingArea::paint(QPainter &painter, int w, int h)
     paintLengthLabels(painter, folW, folH);
     paintPermutationLabels(painter, folW, folH);
     paintSepSegment(painter, folW, folH);
+    paintTransverseCurve(painter, folW, folH);
 }
 
 
@@ -212,4 +220,10 @@ void FoliationDrawingArea::paintSepSegment(QPainter &painter, int folW, int folH
             segment.lengthen();
         }
     }
+}
+
+void FoliationDrawingArea::paintTransverseCurve(QPainter &painter, int folW, int folH)
+{
+    if(!pTransverseCurve) return;
+    painter.setPen(QPen(Qt::green, 2));
 }

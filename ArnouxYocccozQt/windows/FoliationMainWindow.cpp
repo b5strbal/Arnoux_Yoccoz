@@ -7,6 +7,7 @@
 #include "foliationWidgets/FoliationDataTableWidget.h"
 #include "foliationWidgets/SepSegmentSearchWidget.h"
 #include "foliationWidgets/FoliationListWidget.h"
+#include "foliationWidgets/TransverseCurveSearchWidget.h"
 //#include "WindowManager.h"
 
 #include <QAction>
@@ -43,6 +44,11 @@ FoliationMainWindow::FoliationMainWindow(const WindowManager &manager, QWidget *
     addDockWidget(Qt::BottomDockWidgetArea, sepSegmentSearchDockWidget);
     sepSegmentSearchDockWidget->hide();
 
+    transverseCurveSearchStackedWidget = new QStackedWidget;
+    transverseCurveSearchDockWidget = new QDockWidget(tr("Find transverse curves"));
+    transverseCurveSearchDockWidget->setWidget(transverseCurveSearchStackedWidget);
+    addDockWidget(Qt::BottomDockWidgetArea, transverseCurveSearchDockWidget);
+    transverseCurveSearchDockWidget->hide();
 
     createActions();
     createMenus(manager);
@@ -75,6 +81,7 @@ void FoliationMainWindow::createNewFoliation(balazs::Foliation *pFoliation)
     drawingAreaStackWidget->addWidget(foliations.back()->drawingArea());
     foliationDataTableStackedWidget->addWidget(foliations.back()->foliationDataTableWidget());
     sepSegmentSearchStackedWidget->addWidget(foliations.back()->sepSegmentSearchWidget());
+    transverseCurveSearchStackedWidget->addWidget(foliations.back()->transverseCurveSearchWidget());
 
     foliationListWidget->setCurrentRow(foliationListWidget->count() - 1);
 }
@@ -126,6 +133,9 @@ void FoliationMainWindow::createActions()
     findSepSegmentsAct = new QAction(tr("Find good separatrix segments..."), this);
     connect(findSepSegmentsAct, SIGNAL(triggered()), this, SLOT(openSepSegmentSearch()), Qt::UniqueConnection);
 
+    findTransverseCurvesAct = new QAction(tr("Find transverse curves..."), this);
+    connect(findTransverseCurvesAct, SIGNAL(triggered()), this, SLOT(openTransverseCurveSearch()));
+
     rotateLeftAct = new QAction(tr("Rotate to Left"), this);
     rotateRightAct = new QAction(tr("Rotate to Right"), this);
     reverseAct = new QAction(tr("Reverse"), this);
@@ -170,6 +180,11 @@ void FoliationMainWindow::openSepSegmentSearch()
     sepSegmentSearchDockWidget->show();
 }
 
+void FoliationMainWindow::openTransverseCurveSearch()
+{
+    transverseCurveSearchDockWidget->show();
+}
+
 
 
 
@@ -180,6 +195,7 @@ void FoliationMainWindow::createMenus(const WindowManager& manager)
 
     searchMenu = new QMenu(tr("Search"));
     searchMenu->addAction(findSepSegmentsAct);
+    searchMenu->addAction(findTransverseCurvesAct);
 
     toolsMenu = new QMenu(tr("Tools"));
     reparametrizeMenu = toolsMenu->addMenu(tr("Reparametrize Foliation"));

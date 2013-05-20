@@ -6,7 +6,9 @@
 namespace balazs{
     class Foliation;
     class SeparatrixSegment;
+    class TransverseCurve;
 }
+
 
 class FoliationDrawingArea : public QWidget
 {
@@ -26,6 +28,7 @@ public slots:
     void setLengthsLabels(bool visible);
     void setColoredFilling(bool visible);
     void drawSepSegment(const balazs::SeparatrixSegment* pSegment);
+    void drawTransverseCurve(const balazs::TransverseCurve* pTCurve);
 protected:
     void paintEvent(QPaintEvent *event);
     
@@ -36,6 +39,7 @@ private:
     void paintPermutationLabels(QPainter &painter, int folW, int folH);
     void paintFilling(QPainter &painter, int folW, int folH);
     void paintSepSegment(QPainter &painter, int folW, int folH);
+    void paintTransverseCurve(QPainter &painter, int folW, int folH);
 
     bool permutationLabelsShown;
     bool lengthsLabelsShown;
@@ -44,7 +48,7 @@ private:
     int lengthsFontSize;
 
     const balazs::SeparatrixSegment* pSepSegment;
-
+    const balazs::TransverseCurve* pTransverseCurve;
     const balazs::Foliation& m_foliation;
 };
 

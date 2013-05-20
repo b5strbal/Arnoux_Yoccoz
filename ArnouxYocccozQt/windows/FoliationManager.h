@@ -5,6 +5,7 @@
 
 class FoliationDataTableWidget;
 class SepSegmentSearchWidget;
+class TransverseCurveSearchWidget;
 class FoliationDrawingArea;
 class QDockWidget;
 class QMenu;
@@ -24,13 +25,10 @@ public:
     virtual ~FoliationManager();
     const balazs::Foliation& foliation() const;
     SepSegmentSearchWidget* sepSegmentSearchWidget() const;
+    TransverseCurveSearchWidget* transverseCurveSearchWidget() const;
     FoliationDataTableWidget* foliationDataTableWidget() const;
     FoliationDrawingArea* drawingArea() const;
     QMenu* viewMenu() const;
-//    bool foliationDataTableShown() const { return m_foliationDataTableShown; }
-//    bool sepSegmentSearchShown() const { return m_sepSegmentSearchShown; }
-//    void setFoliationDataTableShown(bool b) { m_foliationDataTableShown = b; }
-//    void setSepSegmentSearchShown(bool b) { m_sepSegmentSearchShown = b; }
 
 
 signals:
@@ -50,10 +48,8 @@ private:
 
     FoliationDrawingArea* pDrawingArea;
     FoliationDataTableWidget* pFoliationDataTableWidget;
-   // bool m_foliationDataTableShown;
     SepSegmentSearchWidget* pSepSegmentSearchWidget;
-   // bool m_sepSegmentSearchShown;
-
+    TransverseCurveSearchWidget* pTransverseCurveSearchWidget;
 };
 
 #endif // FOLIATIONMANAGER_H

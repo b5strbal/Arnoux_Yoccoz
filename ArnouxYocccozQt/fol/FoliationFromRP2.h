@@ -18,6 +18,7 @@ private:
     Permutation m_intervalPermutationBeforeHalfTwist;
 };
 
+bool comesFromRP2(const Foliation& foliation);
 
 }
 

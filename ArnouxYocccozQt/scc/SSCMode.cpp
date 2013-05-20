@@ -5,6 +5,13 @@
 #include "../fol/FoliationFromRP2.h"
 #include <cassert>
 
+balazs::SSCModeShiftToSameSide::SSCModeShiftToSameSide(const Foliation& foliation, HDirection shiftToSide)
+    : SSCMode(foliation), m_shiftToSide(shiftToSide)
+{
+    assert(shiftToSide != HDirection::Center);
+}
+
+
 std::vector<balazs::SepSegmentIndex> balazs::SSCModeShiftToSameSide::initialSegments(const Choose& sepIndicesChoose) const
 {
     std::vector<SepSegmentIndex> retVal;
@@ -84,8 +91,9 @@ std::vector<std::size_t> balazs::SSCModeSingWrap::segmentsToLengthen(std::size_t
 balazs::SSCModeShiftToSameSideFromRP2::SSCModeShiftToSameSideFromRP2(const Foliation &foliation, HDirection shiftToSide)
     : SSCMode(foliation),
       m_shiftToSide(shiftToSide),
-      m_foliationFromRP2(dynamic_cast<const FoliationFromRP2&>(this->foliation()))
+      m_foliationFromRP2(dynamic_cast<const FoliationFromRP2&>(foliation))
 {
+    assert(shiftToSide != HDirection::Center);
     m_choiceOfSingularities_RP2.reserve(m_foliationFromRP2.numIntervals() / 2);
     for(std::size_t i = 0; i < m_foliationFromRP2.numIntervals(); i++){
         if(m_foliationFromRP2.intervalPermutationBeforeHalfTwist()[i] > i){
@@ -94,6 +102,7 @@ balazs::SSCModeShiftToSameSideFromRP2::SSCModeShiftToSameSideFromRP2(const Folia
     }
 
 }
+
 
 
 std::size_t balazs::SSCModeShiftToSameSideFromRP2::numInvolvedSingularities(const Choose &sepIndicesChoose) const

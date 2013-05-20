@@ -6,7 +6,7 @@
 balazs::SepSegmentCollectionList::SepSegmentCollectionList(SepSegmentDatabase &sepSegmentDatabase,
                                              std::size_t maxDepth,
                                              std::size_t maxInvolvedSingularities,
-                                             const SSCMode &sscMode) :
+                                             std::shared_ptr<SSCMode> sscMode) :
     m_sepSegmentDatabase(sepSegmentDatabase),
     m_maxDepth(maxDepth),
     m_maxInvolvedSingularities(maxInvolvedSingularities),

@@ -16,7 +16,7 @@ public:
     TransverseCurveDatabase& operator=(const TransverseCurveDatabase&) = delete;
 
     void applyToStoredTransverseCurves(void (*function)(const TransverseCurve&));
-    void generateTransverseCurves(int maxdepth, int numLeafComponents, const SSCMode& sscmode, void (*function)(const TransverseCurve&) = nullptr);
+    void generateTransverseCurves(int maxdepth, int numLeafComponents, std::shared_ptr<SSCMode> sscmode, void (*function)(const TransverseCurve&) = nullptr);
     const Foliation& foliation() const;
 
 private:

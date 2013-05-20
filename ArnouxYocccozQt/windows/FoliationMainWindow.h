@@ -30,6 +30,7 @@ public slots:
 
 private slots:
     void openSepSegmentSearch();
+    void openTransverseCurveSearch();
 
     void rotateFoliationLeft();
     void rotateFoliationRight();
@@ -51,13 +52,16 @@ private:
     QDockWidget* foliationListDockWidget;
     QDockWidget* foliationDataTableDockWidget;
     QDockWidget* sepSegmentSearchDockWidget;
+    QDockWidget* transverseCurveSearchDockWidget;
 
     FoliationListWidget* foliationListWidget;
     QStackedWidget* foliationDataTableStackedWidget;
     QStackedWidget* sepSegmentSearchStackedWidget;
     QStackedWidget* drawingAreaStackWidget;
+    QStackedWidget* transverseCurveSearchStackedWidget;
 
     QAction* findSepSegmentsAct;
+    QAction* findTransverseCurvesAct;
 
     QMenu* reparametrizeMenu;
     QAction* rotateLeftAct;

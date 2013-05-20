@@ -8,10 +8,10 @@ namespace balazs{
 
 
 class SepSegmentDatabase;
-class SSCMode;
 struct SepSegmentIndex;
 class SeparatrixSegment;
 class Foliation;
+class SSCMode;
 class Mod1Number;
 
 struct begin_tag {};
@@ -24,8 +24,10 @@ public:
 
    // SepSegmentCollection(const SepSegmentCollection&) = delete;
     SepSegmentCollection& operator=(const SepSegmentCollection&) = delete;
-    SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase, const SSCMode& sscMode, const begin_tag&);
-    SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase, const SSCMode& sscMode, const end_tag&);
+    SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase,
+                         std::shared_ptr<SSCMode> sscMode, const begin_tag&);
+    SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase,
+                         std::shared_ptr<SSCMode> sscMode, const end_tag&);
 
     std::list<SeparatrixSegment>::const_iterator operator[](std::size_t index) const { return m_segments[index]; }
     bool isEmpty() const { return m_segments.empty(); }
@@ -53,7 +55,7 @@ private:
     const SepSegmentDatabase& m_sepSegmentDatabase;
     std::vector<std::list<SeparatrixSegment>::const_iterator> m_segments;
     Choose m_sepIndicesChoose;
-    const SSCMode& m_sscMode;
+    std::shared_ptr<SSCMode> m_sscMode;
 };
 
 

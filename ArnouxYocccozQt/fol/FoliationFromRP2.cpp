@@ -15,5 +15,7 @@ const balazs::Permutation &balazs::FoliationFromRP2::intervalPermutationBeforeHa
 }
 
 
-
-
+bool balazs::comesFromRP2(const balazs::Foliation &foliation)
+{
+    return dynamic_cast<const balazs::FoliationFromRP2*>(&foliation) != nullptr;
+}

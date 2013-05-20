@@ -18,7 +18,8 @@ class SepSegmentSearchWidget : public QWidget
     Q_OBJECT
 public:
     explicit SepSegmentSearchWidget(const balazs::Foliation& foliation, QWidget *parent = 0);
-    
+    balazs::SepSegmentDatabase& sepSegmentDatabase() { return m_sepSegmentDatabase; }
+
 signals:
     void drawSepSegment(const balazs::SeparatrixSegment*);
 public slots:
@@ -36,7 +37,7 @@ private:
 
     QTableWidget* resultTable;
 
-    balazs::SepSegmentDatabase sepSegmentDatabase;
+    balazs::SepSegmentDatabase m_sepSegmentDatabase;
 };
 
 #endif // SEPSEGMENTSEARCHWIDGET_H

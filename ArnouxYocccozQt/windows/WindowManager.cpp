@@ -13,7 +13,7 @@ WindowManager::WindowManager(QObject *parent) :
 
     createFoliationWizard = new CreateFoliationWizard;
     connect(createFoliationWizard, SIGNAL(foliation(balazs::Foliation*)),
-            foliationMainWindow, SLOT(createNewFoliationWindow(balazs::Foliation*)));
+            foliationMainWindow, SLOT(createNewFoliation(balazs::Foliation*)));
 
     documentationWindow = new DocumentationWindow;
 

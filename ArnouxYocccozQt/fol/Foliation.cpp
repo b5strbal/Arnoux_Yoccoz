@@ -153,10 +153,6 @@ void balazs::Foliation::init()
 
 
 
-
-
-
-
 balazs::Permutation balazs::arnouxYoccozPermutation(int genus)
 {
     std::vector<std::size_t> permutationInput(2 * genus);

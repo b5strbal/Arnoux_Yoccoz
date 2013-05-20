@@ -5,23 +5,23 @@
 #include <cassert>
 
 balazs::SepSegmentCollection::SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase,
-                                                   const SSCMode& sscMode,
+                                                   std::shared_ptr<SSCMode> sscMode,
                                                    const begin_tag &) : // first/begin collection
     m_sepSegmentDatabase(sepSegmentDatabase),
     m_sscMode(sscMode)
 {
-    assert(&sscMode.foliation() == &m_sepSegmentDatabase.foliation());
-    setInitialSetting(Choose(sscMode.howMuchToChooseFrom(), 1));
+    assert(&sscMode->foliation() == &m_sepSegmentDatabase.foliation());
+    setInitialSetting(Choose(sscMode->howMuchToChooseFrom(), 1));
 }
 
 
 balazs::SepSegmentCollection::SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase,
-                                                   const SSCMode& sscMode,
+                                                   std::shared_ptr<SSCMode> sscMode,
                                                    const end_tag &) : // empty/end collection
     m_sepSegmentDatabase(sepSegmentDatabase),
     m_sscMode(sscMode)
 {
-    assert(&sscMode.foliation() == &m_sepSegmentDatabase.foliation());
+    assert(&sscMode->foliation() == &m_sepSegmentDatabase.foliation());
 }
 
 
@@ -45,7 +45,7 @@ void balazs::SepSegmentCollection::setSegmentToFirst(std::size_t segmentIndex){
 
 void balazs::SepSegmentCollection::setInitialSetting(const Choose &sepIndicesChoose){
     m_sepIndicesChoose = sepIndicesChoose;
-    setFirstSegments(m_sscMode.initialSegments(sepIndicesChoose));
+    setFirstSegments(m_sscMode->initialSegments(sepIndicesChoose));
 }
 
 
@@ -62,7 +62,7 @@ void balazs::SepSegmentCollection::advance(std::size_t maxDepth, std::size_t max
         // One of the sepSegments is not the last one, so we can lengthen that, and set the
         // ones after it to the first.
 
-        for (std::size_t index : m_sscMode.segmentsToLengthen(indexToIncrease)){
+        for (std::size_t index : m_sscMode->segmentsToLengthen(indexToIncrease)){
             m_segments[index]++;
         }
 
@@ -70,7 +70,7 @@ void balazs::SepSegmentCollection::advance(std::size_t maxDepth, std::size_t max
              setSegmentToFirst(index);
         }
 
-        for (std::size_t index : m_sscMode.additionalSegmentsToSetToFirst(indexToIncrease)){
+        for (std::size_t index : m_sscMode->additionalSegmentsToSetToFirst(indexToIncrease)){
             setSegmentToFirst(index);
         }
 
@@ -90,10 +90,10 @@ void balazs::SepSegmentCollection::advance(std::size_t maxDepth, std::size_t max
             // Even m_sepIndicesChoose was the last one. Now we can try to increase the k-value of Choose,
             // i.e. take larger subsets.
 
-            if(m_sscMode.numInvolvedSingularities(m_sepIndicesChoose) < maxInvolvedSingularities){
+            if(m_sscMode->numInvolvedSingularities(m_sepIndicesChoose) < maxInvolvedSingularities){
                 // We can make subsets larger.
 
-                setInitialSetting(Choose(m_sscMode.howMuchToChooseFrom(),
+                setInitialSetting(Choose(m_sscMode->howMuchToChooseFrom(),
                                          m_sepIndicesChoose.k() + 1));
 
             } else {

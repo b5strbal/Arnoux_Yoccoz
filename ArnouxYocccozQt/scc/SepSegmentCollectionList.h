@@ -34,7 +34,7 @@ public:
     SepSegmentCollectionList(SepSegmentDatabase& sepSegmentDatabase,
                           std::size_t maxDepth,
                           std::size_t maxInvolvedSingularities,
-                          const SSCMode& sscMode);
+                          std::shared_ptr<SSCMode> sscMode);
     SepSegmentCollectionList(const SepSegmentCollectionList&) = delete;
     SepSegmentCollectionList& operator=(const SepSegmentCollectionList&) = delete;
 
@@ -46,7 +46,7 @@ private:
     SepSegmentDatabase& m_sepSegmentDatabase;
     std::size_t m_maxDepth;
     std::size_t m_maxInvolvedSingularities;
-    const SSCMode& m_sscMode;
+    std::shared_ptr<SSCMode> m_sscMode;
 };
 
 

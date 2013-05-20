@@ -49,7 +49,6 @@ public:
 
 
 private:
-
     void initSingularities();
     void init();
 
