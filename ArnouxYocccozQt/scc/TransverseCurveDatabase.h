@@ -19,6 +19,7 @@ public:
  //   void applyToStoredTransverseCurves(void (*function)(const TransverseCurve&));
     void generateTransverseCurves(int maxdepth, int maxInvolvedSingularities, const bool &quit, std::mutex& mutex);
     const Foliation& foliation() const;
+    const SSCMode& mode() const { return *m_sscMode; }
 
 private:
     SepSegmentDatabase& m_sepSegmentDatabase;

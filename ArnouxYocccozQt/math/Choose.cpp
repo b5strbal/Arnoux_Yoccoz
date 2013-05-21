@@ -1,6 +1,6 @@
 #include "Choose.h"
 #include <cassert>
-
+#include <cmath>
 
 
 balazs::Choose::Choose(std::size_t n, std::size_t k) :
@@ -38,4 +38,20 @@ bool balazs::Choose::isAfterLast() const
 std::size_t balazs::Choose::operator [](std::size_t i) const
 {
     return m_chosenIndices[i];
+}
+
+
+
+
+std::size_t balazs::choose(std::size_t n, std::size_t k)
+{
+    assert(k > 0);
+    if(k > n) return 0;
+
+    long double retval = 1;
+    for(std::size_t i = 0; i < k; i++){
+        retval *= n - i;
+        retval /= i + 1;
+    }
+    return floor(retval + 0.5);
 }

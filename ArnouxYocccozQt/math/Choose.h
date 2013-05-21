@@ -40,6 +40,8 @@ private:
 };
 
 
+std::size_t choose(std::size_t n, std::size_t k);
+
 }
 
 #endif // CHOOSE_H

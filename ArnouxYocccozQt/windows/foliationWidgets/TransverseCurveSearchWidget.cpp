@@ -15,6 +15,7 @@
 #include <QTreeWidget>
 #include <QMessageBox>
 #include <QThread>
+#include <cmath>
 
 QString TransverseCurveSearchWidget::shiftToLeftSideString = tr("Shift leaf segments to left");
 QString TransverseCurveSearchWidget::shiftToRightSideString = tr("Shift leaf segments to right");
@@ -52,6 +53,14 @@ TransverseCurveSearchWidget::TransverseCurveSearchWidget(balazs::SepSegmentDatab
     maxDepthSpinBox = new QSpinBox;
     maxDepthSpinBox->setRange(1, INT_MAX);
 
+    estimatedTimeLabel = new QLabel;
+    estimatedTimeLabel->setStyleSheet("QLabel { color : red; }");
+
+    connect(modeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setEstimatedTimeLabel(int)));
+    connect(maxInvoledSingularitiesSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setEstimatedTimeLabel(int)));
+    connect(maxDepthSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setEstimatedTimeLabel(int)));
+    setEstimatedTimeLabel();
+
     searchButton = new QPushButton(tr("Search"));
     connect(searchButton, SIGNAL(clicked()), this, SLOT(startSearch()));
 
@@ -66,9 +75,15 @@ TransverseCurveSearchWidget::TransverseCurveSearchWidget(balazs::SepSegmentDatab
     lineLayout->addWidget(maxInvoledSingularitiesSpinBox);
     lineLayout->addWidget(maxDepthLabel);
     lineLayout->addWidget(maxDepthSpinBox);
-    lineLayout->addWidget(searchButton);
-    lineLayout->addWidget(stopButton);
     lineLayout->addStretch(1);
+
+
+    QHBoxLayout* lineLayout2 = new QHBoxLayout;
+    lineLayout2->addStretch(1);
+    lineLayout2->addWidget(estimatedTimeLabel);
+    lineLayout2->addWidget(searchButton);
+    lineLayout2->addWidget(stopButton);
+    lineLayout2->addStretch(1);
 
 
 
@@ -76,6 +91,7 @@ TransverseCurveSearchWidget::TransverseCurveSearchWidget(balazs::SepSegmentDatab
 
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addLayout(lineLayout);
+    mainLayout->addLayout(lineLayout2);
     mainLayout->addWidget(tcTreeWidget);
 
     setLayout(mainLayout);
@@ -111,6 +127,29 @@ void TransverseCurveSearchWidget::createMaps()
                 std::shared_ptr<balazs::SSCMode>(pSSCMode));
         tcDatabaseMap[s] = std::unique_ptr<balazs::TransverseCurveDatabase>(p);
     }
+}
+
+double TransverseCurveSearchWidget::estimatedTime()
+{
+    double retval = 0;
+    const QString &s = modeComboBox->currentText();
+    if(s == shiftToLeftSideString || s == shiftToRightSideString){
+        for(int k = 1; k <= maxInvoledSingularitiesSpinBox->value(); k++){
+            retval += balazs::choose(sepSegmentDatabase.foliation().numIntervals(), k) *
+                    pow(maxDepthSpinBox->value(), 2 * k);
+        }
+    } else if(s == wrapOnSingularitiesString){
+        for(int k = 1; k <= maxInvoledSingularitiesSpinBox->value(); k++){
+            retval += balazs::choose(sepSegmentDatabase.foliation().numIntervals(), k) *
+                    pow(maxDepthSpinBox->value(), k);
+        }
+    } else if(s == shiftToLeftSideRP2String || s == shiftToRightSideRP2String){
+        for(int k = 1; k <= maxInvoledSingularitiesSpinBox->value()/2; k++){
+            retval += balazs::choose(sepSegmentDatabase.foliation().numIntervals()/2, k) *
+                    pow(maxDepthSpinBox->value(), 2 * k);
+        }
+    }
+    return retval / 40000;
 }
 
 
@@ -173,5 +212,11 @@ void TransverseCurveSearchWidget::finishedSearching()
 //    box.exec();
 }
 
+
+void TransverseCurveSearchWidget::setEstimatedTimeLabel(int nothing)
+{
+    (void)nothing;
+    estimatedTimeLabel->setText(tr("Rough estimated time: %1 seconds").arg(static_cast<long>(estimatedTime())));
+}
 
 

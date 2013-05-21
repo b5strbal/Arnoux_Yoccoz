@@ -33,9 +33,12 @@ private slots:
     void startSearch();
     void stopSearching();
     void finishedSearching();
+    void setEstimatedTimeLabel(int nothing = 0);
+
 
 private:
     void createMaps();
+    double estimatedTime();
 
     bool stopSearch;
     std::mutex mutex;
@@ -60,6 +63,7 @@ private:
     QSpinBox* maxInvoledSingularitiesSpinBox;
     QLabel* maxDepthLabel;
     QSpinBox* maxDepthSpinBox;
+    QLabel* estimatedTimeLabel;
     QPushButton* searchButton;
     QPushButton* stopButton;
 
