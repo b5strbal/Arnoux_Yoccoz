@@ -4,7 +4,7 @@
 #include "../fol/Foliation.h"
 #include "FoliationManager.h"
 #include "../drawing/FoliationDrawingArea.h"
-#include "foliationWidgets/FoliationDataTableWidget.h"
+#include "foliationWidgets/FoliationDataTreeWidget.h"
 #include "foliationWidgets/SepSegmentSearchWidget.h"
 #include "foliationWidgets/FoliationListWidget.h"
 #include "foliationWidgets/TransverseCurveSearchWidget.h"

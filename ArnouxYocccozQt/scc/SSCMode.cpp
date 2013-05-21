@@ -31,7 +31,7 @@ std::size_t balazs::SSCModeShiftToSameSide::numInvolvedSingularities(const Choos
 
 std::size_t balazs::SSCModeShiftToSameSide::howMuchToChooseFrom() const
 {
-    return foliation().numSeparatrices();
+    return foliation().numIntervals();
 }
 
 
@@ -63,7 +63,7 @@ std::size_t balazs::SSCModeSingWrap::numInvolvedSingularities(const Choose &sepI
 
 std::size_t balazs::SSCModeSingWrap::howMuchToChooseFrom() const
 {
-    return foliation().numSeparatrices();
+    return foliation().numIntervals();
 }
 
 
@@ -113,7 +113,7 @@ std::size_t balazs::SSCModeShiftToSameSideFromRP2::numInvolvedSingularities(cons
 
 std::size_t balazs::SSCModeShiftToSameSideFromRP2::howMuchToChooseFrom() const
 {
-    return foliation().numSeparatrices() / 2;
+    return foliation().numIntervals() / 2;
 }
 
 

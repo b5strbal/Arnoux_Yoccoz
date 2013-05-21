@@ -53,10 +53,10 @@ SOURCES += main.cpp\
     windows/FileMenu.cpp \
     windows/HelpMenu.cpp \
     windows/FoliationManager.cpp \
-    windows/foliationWidgets/FoliationDataTableWidget.cpp \
     io.cpp \
     windows/foliationWidgets/FoliationListWidget.cpp \
-    windows/foliationWidgets/TransverseCurveSearchWidget.cpp
+    windows/foliationWidgets/TransverseCurveSearchWidget.cpp \
+    windows/foliationWidgets/FoliationDataTreeWidget.cpp
 
 HEADERS  += scc/IntervalNeighborhoods.h \
     scc/DisjointIntervals.h \
@@ -95,13 +95,13 @@ HEADERS  += scc/IntervalNeighborhoods.h \
     windows/FileMenu.h \
     windows/HelpMenu.h \
     windows/FoliationManager.h \
-    windows/foliationWidgets/FoliationDataTableWidget.h \
     intex/ContainingInterval.h \
     fol/VDirection.h \
     intex/HDirection.h \
     io.h \
     windows/foliationWidgets/FoliationListWidget.h \
-    windows/foliationWidgets/TransverseCurveSearchWidget.h
+    windows/foliationWidgets/TransverseCurveSearchWidget.h \
+    windows/foliationWidgets/FoliationDataTreeWidget.h
 
 FORMS    += \
     mainwindow.ui

@@ -2,7 +2,7 @@
 #include "../fol/Foliation.h"
 #include "../drawing/FoliationDrawingArea.h"
 #include "foliationWidgets/SepSegmentSearchWidget.h"
-#include "foliationWidgets/FoliationDataTableWidget.h"
+#include "foliationWidgets/FoliationDataTreeWidget.h"
 #include "foliationWidgets/TransverseCurveSearchWidget.h"
 
 #include <QMenu>
@@ -12,7 +12,7 @@ FoliationManager::FoliationManager(std::unique_ptr<balazs::Foliation> foliation,
     pFoliation(std::move(foliation))
 {
     pDrawingArea = new FoliationDrawingArea(*pFoliation);
-    pFoliationDataTableWidget = new FoliationDataTableWidget(*pFoliation);
+    pFoliationDataTableWidget = new FoliationDataTreeWidget(*pFoliation);
     pSepSegmentSearchWidget = new SepSegmentSearchWidget(*pFoliation);
     pTransverseCurveSearchWidget = new TransverseCurveSearchWidget(pSepSegmentSearchWidget->sepSegmentDatabase());
     createViewMenu();
@@ -52,7 +52,7 @@ QMenu *FoliationManager::viewMenu() const
 }
 
 
-FoliationDataTableWidget* FoliationManager::foliationDataTableWidget() const
+FoliationDataTreeWidget* FoliationManager::foliationDataTableWidget() const
 {
     return pFoliationDataTableWidget;
 }

@@ -9,20 +9,21 @@ namespace balazs{
 
 class TransverseCurve{
 public:
-    TransverseCurve(const Foliation& foliation, const SepSegmentCollection& segments, bool wrapsAroundEnds);
+    TransverseCurve(const SepSegmentCollection& segments, bool wrapsAroundEnds);
     TransverseCurve(const TransverseCurve&) = delete;
     TransverseCurve& operator=(const TransverseCurve&) = delete;
 
     long double length() const { return m_disjointIntervals.totalLength(); }
+    const SepSegmentCollection& sepSegmentCollection() const { return m_sepSegmentCollection; }
+    const DisjointIntervals& disjointIntervals() const { return m_disjointIntervals; }
 
     friend bool operator<(const TransverseCurve& c1, const TransverseCurve& c2);
 
 
 
 private:
-    SepSegmentCollection m_goodSegmentIndices;
+    SepSegmentCollection m_sepSegmentCollection;
     DisjointIntervals m_disjointIntervals;
-    const Foliation& m_foliation;
 };
 
 

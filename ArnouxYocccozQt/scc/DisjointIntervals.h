@@ -19,33 +19,21 @@ namespace balazs{
 
 class DisjointIntervals{
 public:
-    DisjointIntervals() {} // Empty set
+  //  DisjointIntervals() {} // Empty set
 
-    //! \brief Constructs an object from an unordered list of points, wrapping around 0 or not.
-    //! \warning Whether or not there are two coinciding points or two that are too close to
-    //!          each other is not checked.
     DisjointIntervals(const std::vector<Mod1Number>& unsortedPoints, bool wrapsAroundEnds);
     DisjointIntervals(const DisjointIntervals&) = delete;
     DisjointIntervals& operator=(const DisjointIntervals&) = delete;
 
-
-    //! Returns the ordered list of endpoints.
     const std::vector<Mod1Number>& endpoints() const { return m_endpoints; }
-
-    //! Decides if there is an interval that wraps around 0.
     bool wrapsAroundEnds() const { return m_wrapsAroundEnds; }
-
-    //! Decides if a point is contained in any of the intervals.
-    //! \throws ExceptionContainingIntervalNotUnique    If point is too close to one of the endpoints.
     bool contains(const Mod1Number& point) const;
-
-    //! Returns the total length of the intervals.
     long double totalLength() const { return m_totalLength; }
 
 private:
     std::vector<Mod1Number> m_endpoints; // The ordered list of endpoints.
     bool m_wrapsAroundEnds;              // Whether 0 is in one of the intervals.
-    long double m_totalLength;   // The total length of the intervals.
+    long double m_totalLength;           // The total length of the intervals.
 };
 
 

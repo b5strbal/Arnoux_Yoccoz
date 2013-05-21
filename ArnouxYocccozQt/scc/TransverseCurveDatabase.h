@@ -11,16 +11,17 @@ namespace balazs{
 class TransverseCurveDatabase
 {
 public:
-    TransverseCurveDatabase(SepSegmentDatabase& sepSegmentDatabase);
+    TransverseCurveDatabase(SepSegmentDatabase& sepSegmentDatabase, std::shared_ptr<SSCMode> sscMode);
     TransverseCurveDatabase(const TransverseCurveDatabase&) = delete;
     TransverseCurveDatabase& operator=(const TransverseCurveDatabase&) = delete;
 
-    void applyToStoredTransverseCurves(void (*function)(const TransverseCurve&));
-    void generateTransverseCurves(int maxdepth, int numLeafComponents, std::shared_ptr<SSCMode> sscmode, void (*function)(const TransverseCurve&) = nullptr);
+ //   void applyToStoredTransverseCurves(void (*function)(const TransverseCurve&));
+    void generateTransverseCurves(int maxdepth, int maxInvolvedSingularities);
     const Foliation& foliation() const;
 
 private:
     SepSegmentDatabase& m_sepSegmentDatabase;
+    std::shared_ptr<SSCMode> m_sscMode;
     std::set<TransverseCurve> m_transverseCurves;
 
     std::array<bool, 2> whichTransverseCurvesExist(const SepSegmentCollection& segments);

@@ -41,7 +41,7 @@ public:
     virtual std::vector<SepSegmentIndex> initialSegments(const Choose &sepIndicesChoose) const;
     virtual std::vector<std::size_t> segmentsToLengthen(std::size_t indexToIncrease) const { return {{ indexToIncrease }}; }
     virtual std::vector<std::size_t> additionalSegmentsToSetToFirst(std::size_t indexToIncrease) const
-        { (void)indexToIncrease; return {{}}; }
+        { (void)indexToIncrease; return std::vector<std::size_t>(); }
     virtual std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const;
     virtual std::size_t howMuchToChooseFrom() const;
 private:
@@ -63,7 +63,7 @@ public:
     virtual std::vector<SepSegmentIndex> initialSegments(const Choose &sepIndicesChoose) const;
     virtual std::vector<std::size_t> segmentsToLengthen(std::size_t indexToIncrease) const;
     virtual std::vector<std::size_t> additionalSegmentsToSetToFirst(std::size_t indexToIncrease) const
-        { (void)indexToIncrease; return {{}}; }
+    { (void)indexToIncrease; return std::vector<std::size_t>(); }
     virtual std::size_t numInvolvedSingularities(const Choose &sepIndicesChoose) const;
     virtual std::size_t howMuchToChooseFrom() const;
 };

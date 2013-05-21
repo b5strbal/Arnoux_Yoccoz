@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-class FoliationDataTableWidget;
+class FoliationDataTreeWidget;
 class SepSegmentSearchWidget;
 class TransverseCurveSearchWidget;
 class FoliationDrawingArea;
@@ -26,7 +26,7 @@ public:
     const balazs::Foliation& foliation() const;
     SepSegmentSearchWidget* sepSegmentSearchWidget() const;
     TransverseCurveSearchWidget* transverseCurveSearchWidget() const;
-    FoliationDataTableWidget* foliationDataTableWidget() const;
+    FoliationDataTreeWidget* foliationDataTableWidget() const;
     FoliationDrawingArea* drawingArea() const;
     QMenu* viewMenu() const;
 
@@ -47,7 +47,7 @@ private:
     std::unique_ptr<balazs::Foliation> pFoliation;
 
     FoliationDrawingArea* pDrawingArea;
-    FoliationDataTableWidget* pFoliationDataTableWidget;
+    FoliationDataTreeWidget* pFoliationDataTableWidget;
     SepSegmentSearchWidget* pSepSegmentSearchWidget;
     TransverseCurveSearchWidget* pTransverseCurveSearchWidget;
 };

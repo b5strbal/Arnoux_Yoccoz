@@ -2,10 +2,9 @@
 #include "SeparatrixSegment.h"
 
 
-balazs::TransverseCurve::TransverseCurve(const Foliation& foliation, const SepSegmentCollection &segments, bool wrapsAroundEnds) :
-    m_goodSegmentIndices(segments),
-    m_disjointIntervals(getEndpoints(segments), wrapsAroundEnds),
-    m_foliation(foliation)
+balazs::TransverseCurve::TransverseCurve(const SepSegmentCollection &segments, bool wrapsAroundEnds) :
+    m_sepSegmentCollection(segments),
+    m_disjointIntervals(getEndpoints(segments), wrapsAroundEnds)
 {
 }
 

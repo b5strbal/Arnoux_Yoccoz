@@ -1,8 +1,8 @@
-#include "FoliationDataTableWidget.h"
+#include "FoliationDataTreeWidget.h"
 #include "../../fol/Foliation.h"
 #include "../../qt.h"
 
-FoliationDataTableWidget::FoliationDataTableWidget(const balazs::Foliation &foliation, QWidget *parent) :
+FoliationDataTreeWidget::FoliationDataTreeWidget(const balazs::Foliation &foliation, QWidget *parent) :
     QTreeWidget(parent),
     m_foliation(foliation)
 {
@@ -43,7 +43,7 @@ FoliationDataTableWidget::FoliationDataTableWidget(const balazs::Foliation &foli
     update();
 }
 
-void FoliationDataTableWidget::update()
+void FoliationDataTreeWidget::update()
 {
     eulerCharItem->setText(1, tr("%1").arg(m_foliation.eulerChar()));
     genusItem->setText(1, tr("%1").arg(m_foliation.genus()));

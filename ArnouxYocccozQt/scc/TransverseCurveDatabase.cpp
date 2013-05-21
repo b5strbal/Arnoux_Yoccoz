@@ -6,8 +6,9 @@
 
 #include <cassert>
 
-balazs::TransverseCurveDatabase::TransverseCurveDatabase(SepSegmentDatabase &sepSegmentDatabase) :
-    m_sepSegmentDatabase(sepSegmentDatabase)
+balazs::TransverseCurveDatabase::TransverseCurveDatabase(SepSegmentDatabase &sepSegmentDatabase, std::shared_ptr<SSCMode> sscMode) :
+    m_sepSegmentDatabase(sepSegmentDatabase),
+    m_sscMode(sscMode)
 {
 }
 
@@ -123,36 +124,34 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
 
 
 
-void balazs::TransverseCurveDatabase::applyToStoredTransverseCurves(void (*function)(const TransverseCurve&)){
-   assert(function != nullptr);
-   for ( auto &curve : m_transverseCurves )
-        function(curve);
-}
+//void balazs::TransverseCurveDatabase::applyToStoredTransverseCurves(void (*function)(const TransverseCurve&)){
+//   assert(function != nullptr);
+//   for ( auto &curve : m_transverseCurves )
+//        function(curve);
+//}
 
 
 
-void balazs::TransverseCurveDatabase::generateTransverseCurves(int maxdepth, int numLeafComponents, std::shared_ptr<SSCMode> sscmode, void (*function)(const TransverseCurve&)){
-    //m_sepSegmentDatabase.generateSepSegments(maxdepth);
-    SepSegmentCollectionList collections(m_sepSegmentDatabase, maxdepth, numLeafComponents,
-                                      sscmode);
+void balazs::TransverseCurveDatabase::generateTransverseCurves(int maxdepth, int maxInvolvedSingularities){
+    m_sepSegmentDatabase.generateSepSegments(maxdepth);
+    SepSegmentCollectionList collections(m_sepSegmentDatabase, maxdepth, maxInvolvedSingularities,
+                                      m_sscMode);
 
     for (const SepSegmentCollection& sepSegmentCollection : collections) {
+        for(auto segment : sepSegmentCollection){
+            int depth = segment->depth();
+            int sing = segment->startingSingularity();
+            int nothing = sing;
+        }
+
         std::array<bool, 2> isWrapsAroundEndsGood = whichTransverseCurvesExist(sepSegmentCollection);
         for (short wrapsAroundEnds = 0; wrapsAroundEnds < 2; wrapsAroundEnds++ ) {
             if (isWrapsAroundEndsGood[wrapsAroundEnds]) {
-                auto ret = m_transverseCurves.emplace(foliation(), sepSegmentCollection, wrapsAroundEnds).first;
-                if (function != nullptr) {
-                    function(*ret);
-                }
+                m_transverseCurves.emplace(sepSegmentCollection, wrapsAroundEnds);
             }
         }
     }
 }
-
-
-
-
-
 
 
 

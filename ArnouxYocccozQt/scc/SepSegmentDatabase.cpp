@@ -42,9 +42,9 @@ std::list<balazs::SeparatrixSegment>::const_iterator balazs::SepSegmentDatabase:
 bool balazs::SepSegmentDatabase::isLast(std::list<SeparatrixSegment>::const_iterator it, std::size_t maxDepth) const
 {
     assert(&foliation() == &it->foliation());
-    it++;
-    return (it == m_goodShiftedSeparatrixSegments.at(it->side()).at(it->vDirection())[it->startingSingularity()].end() ||
-            it->depth() > maxDepth);
+    std::list<SeparatrixSegment>::const_iterator nextIt = std::next(it);
+    return (nextIt == m_goodShiftedSeparatrixSegments.at(it->side()).at(it->vDirection())[it->startingSingularity()].end() ||
+            nextIt->depth() > maxDepth);
 }
 
 const std::list<balazs::SeparatrixSegment> &balazs::SepSegmentDatabase::goodSegmentList(const balazs::SepSegmentIndex &index) const

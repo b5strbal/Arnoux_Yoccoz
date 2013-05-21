@@ -7,6 +7,7 @@ namespace balazs{
     class Foliation;
     class SeparatrixSegment;
     class TransverseCurve;
+
 }
 
 
@@ -34,12 +35,6 @@ protected:
     
 private:
     void paint(QPainter &painter, int w, int h);
-    void paintFoliation(QPainter &painter, int folW, int folH);
-    void paintLengthLabels(QPainter &painter, int folW, int folH);
-    void paintPermutationLabels(QPainter &painter, int folW, int folH);
-    void paintFilling(QPainter &painter, int folW, int folH);
-    void paintSepSegment(QPainter &painter, int folW, int folH);
-    void paintTransverseCurve(QPainter &painter, int folW, int folH);
 
     bool permutationLabelsShown;
     bool lengthsLabelsShown;
@@ -52,6 +47,13 @@ private:
     const balazs::Foliation& m_foliation;
 };
 
+//void paintFoliation(const balazs::Foliation& foliation, QPainter &painter, int folW, int folH);
+//void paintLengthLabels(const balazs::Foliation& foliation, QPainter &painter, int folW, int folH);
+//void paintPermutationLabels(const balazs::Foliation& foliation, QPainter &painter, int folW, int folH);
+//void paintFilling(const balazs::Foliation& foliation, QPainter &painter, int folW, int folH);
+//void paintSepSegment(const balazs::SeparatrixSegment& sepSegment, QPainter &painter, int folW, int folH);
+//void paintTransverseCurve(const balazs::TransverseCurve& tc, QPainter &painter, int folW, int folH);
+//void paintDisjointIntervals(const balazs::DisjointIntervals dIntervals, QPainter &painter, int folW, int folH);
 
 
 
