@@ -13,12 +13,17 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QTreeWidget>
+#include <QMessageBox>
+#include <QThread>
 
 QString TransverseCurveSearchWidget::shiftToLeftSideString = tr("Shift leaf segments to left");
 QString TransverseCurveSearchWidget::shiftToRightSideString = tr("Shift leaf segments to right");
 QString TransverseCurveSearchWidget::wrapOnSingularitiesString = tr("Wrap leaf segments onto singularities");
 QString TransverseCurveSearchWidget::shiftToLeftSideRP2String = tr("Shift leaf segments to left (lifts of curves from RP2)");
 QString TransverseCurveSearchWidget::shiftToRightSideRP2String = tr("Shift leaf segments to right (lifts of curves from RP2)");
+
+
+
 
 TransverseCurveSearchWidget::TransverseCurveSearchWidget(balazs::SepSegmentDatabase &ssDatabase, QWidget *parent) :
     QWidget(parent),
@@ -48,7 +53,10 @@ TransverseCurveSearchWidget::TransverseCurveSearchWidget(balazs::SepSegmentDatab
     maxDepthSpinBox->setRange(1, INT_MAX);
 
     searchButton = new QPushButton(tr("Search"));
-    connect(searchButton, SIGNAL(clicked()), this, SLOT(onSearchButtonClicked()));
+    connect(searchButton, SIGNAL(clicked()), this, SLOT(startSearch()));
+
+    stopButton = new QPushButton(tr("Stop"));
+    connect(stopButton, SIGNAL(clicked()), this, SLOT(stopSearching()));
 
 
     QHBoxLayout* lineLayout = new QHBoxLayout;
@@ -59,6 +67,7 @@ TransverseCurveSearchWidget::TransverseCurveSearchWidget(balazs::SepSegmentDatab
     lineLayout->addWidget(maxDepthLabel);
     lineLayout->addWidget(maxDepthSpinBox);
     lineLayout->addWidget(searchButton);
+    lineLayout->addWidget(stopButton);
     lineLayout->addStretch(1);
 
 
@@ -108,12 +117,61 @@ void TransverseCurveSearchWidget::createMaps()
 
 
 
-void TransverseCurveSearchWidget::onSearchButtonClicked()
-{
-    const QString &s = modeComboBox->currentText();
-    tcDatabaseMap.at(s)->generateTransverseCurves(maxDepthSpinBox->value(), maxInvoledSingularitiesSpinBox->value());
 
+
+
+
+
+
+
+void TransverseCurveSearchWidget::startSearch()
+{
+    QThread* thread = new QThread;
+    const QString &s = modeComboBox->currentText();
+    TransverseCurveSearch* tcSearch = new TransverseCurveSearch(*tcDatabaseMap.at(s),
+                                                                maxDepthSpinBox->value(),
+                                                                maxInvoledSingularitiesSpinBox->value(),
+                                                                stopSearch, mutex);
+
+    stopSearch = false;
+
+    connect(thread, SIGNAL(started()), tcSearch, SLOT(start()));
+    connect(tcSearch, SIGNAL(finished()), this, SLOT(finishedSearching()));
+    connect(tcSearch, SIGNAL(finished()), thread, SLOT(quit()));
+    connect(thread, SIGNAL(finished()), tcSearch, SLOT(deleteLater()));
+    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+
+    stopButton->setEnabled(true);
+    maxDepthSpinBox->setEnabled(false);
+    maxInvoledSingularitiesSpinBox->setEnabled(false);
+    modeComboBox->setEnabled(false);
+    searchButton->setEnabled(false);
+
+    tcSearch->moveToThread(thread);
+
+    thread->start();
 
 }
+
+
+void TransverseCurveSearchWidget::stopSearching()
+{
+    std::lock_guard<std::mutex> lk(mutex);
+    stopSearch = true;
+}
+
+void TransverseCurveSearchWidget::finishedSearching()
+{
+    stopButton->setEnabled(false);
+    maxDepthSpinBox->setEnabled(true);
+    maxInvoledSingularitiesSpinBox->setEnabled(true);
+    modeComboBox->setEnabled(true);
+    searchButton->setEnabled(true);
+
+//    QMessageBox box;
+//    box.setText("Finished search!");
+//    box.exec();
+}
+
 
 

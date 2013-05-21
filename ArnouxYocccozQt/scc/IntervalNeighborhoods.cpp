@@ -96,7 +96,7 @@ bool balazs::IntervalNeighborhoods::containsIntervalThroughADivPoint(const Mod1N
         return false;
     }
 
-    for (std::size_t i = leftIndexOfInterval + 1; i != rightIndexOfInterval;
+    for (std::size_t i = (leftIndexOfInterval + 1) % m_foliation.numSeparatrices(); i != rightIndexOfInterval;
          i = (i + 1) % m_foliation.numSeparatrices()) {
         if (!m_cuttingPoints[i].isEmpty) {
             return false;

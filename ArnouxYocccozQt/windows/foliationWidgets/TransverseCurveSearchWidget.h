@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QMap>
 #include "../../scc/TransverseCurveDatabase.h"
+#include <mutex>
+#include <QMessageBox>
 
 class QTreeWidget;
 class QTreeWidgetItem;
@@ -28,10 +30,15 @@ signals:
 public slots:
     
 private slots:
-    void onSearchButtonClicked();
+    void startSearch();
+    void stopSearching();
+    void finishedSearching();
 
 private:
     void createMaps();
+
+    bool stopSearch;
+    std::mutex mutex;
 
     balazs::SepSegmentDatabase& sepSegmentDatabase;
 
@@ -54,6 +61,7 @@ private:
     QLabel* maxDepthLabel;
     QSpinBox* maxDepthSpinBox;
     QPushButton* searchButton;
+    QPushButton* stopButton;
 
     QTreeWidget* tcTreeWidget;
 //    QTreeWidgetItem* shiftToLeftItem;
@@ -61,6 +69,48 @@ private:
 //    QTreeWidgetItem* wrapOnSingularitiesItem;
 //    QTreeWidgetItem* shiftToLeftRP2Item;
 //    QTreeWidgetItem* shiftToRightRP2Item;
+};
+
+
+
+
+
+class TransverseCurveSearch : public QObject{
+    Q_OBJECT
+public:
+    TransverseCurveSearch(balazs::TransverseCurveDatabase& tcDatabase,
+                          int maxdepth,
+                          int maxInvolvedSingularities,
+                          const bool& stopSearch,
+                          std::mutex& mutex,
+                          QObject* parent = 0)
+        : QObject(parent),
+          m_tcDatabase(tcDatabase),
+          m_maxdepth(maxdepth),
+          m_maxInvolvedSingularities(maxInvolvedSingularities),
+          m_stopSearch(stopSearch),
+          m_mutex(mutex)
+    {}
+    ~TransverseCurveSearch() = default;
+
+public slots:
+    void start(){
+        m_tcDatabase.generateTransverseCurves(m_maxdepth, m_maxInvolvedSingularities, m_stopSearch, m_mutex);
+
+        emit(finished());
+    }
+
+
+signals:
+    void finished();
+
+private:
+    balazs::TransverseCurveDatabase& m_tcDatabase;
+    int m_maxdepth;
+    int m_maxInvolvedSingularities;
+
+    const bool& m_stopSearch;
+    std::mutex& m_mutex;
 };
 
 #endif // TRANSVERSECURVESEARCHWIDGET_H

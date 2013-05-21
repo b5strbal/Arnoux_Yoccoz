@@ -2,6 +2,7 @@
 #define TRANSVERSECURVEDATABASE_H
 
 #include <set>
+#include <mutex>
 #include <array>
 #include "TransverseCurve.h"
 
@@ -16,7 +17,7 @@ public:
     TransverseCurveDatabase& operator=(const TransverseCurveDatabase&) = delete;
 
  //   void applyToStoredTransverseCurves(void (*function)(const TransverseCurve&));
-    void generateTransverseCurves(int maxdepth, int maxInvolvedSingularities);
+    void generateTransverseCurves(int maxdepth, int maxInvolvedSingularities, const bool &quit, std::mutex& mutex);
     const Foliation& foliation() const;
 
 private:

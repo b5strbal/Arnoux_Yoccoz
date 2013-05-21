@@ -5,6 +5,7 @@
 #include "SepSegmentDatabase.h"
 
 #include <cassert>
+//#include <mutex>
 
 balazs::TransverseCurveDatabase::TransverseCurveDatabase(SepSegmentDatabase &sepSegmentDatabase, std::shared_ptr<SSCMode> sscMode) :
     m_sepSegmentDatabase(sepSegmentDatabase),
@@ -132,7 +133,10 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
 
 
 
-void balazs::TransverseCurveDatabase::generateTransverseCurves(int maxdepth, int maxInvolvedSingularities){
+void balazs::TransverseCurveDatabase::generateTransverseCurves(int maxdepth,
+                                                               int maxInvolvedSingularities,
+                                                               const bool& quit, std::mutex& mutex)
+{
     m_sepSegmentDatabase.generateSepSegments(maxdepth);
     SepSegmentCollectionList collections(m_sepSegmentDatabase, maxdepth, maxInvolvedSingularities,
                                       m_sscMode);
@@ -149,6 +153,10 @@ void balazs::TransverseCurveDatabase::generateTransverseCurves(int maxdepth, int
             if (isWrapsAroundEndsGood[wrapsAroundEnds]) {
                 m_transverseCurves.emplace(sepSegmentCollection, wrapsAroundEnds);
             }
+        }
+        std::lock_guard<std::mutex> lk(mutex);
+        if(quit){
+            break;
         }
     }
 }
