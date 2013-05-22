@@ -1,6 +1,6 @@
 #include "FoliationManager.h"
 #include "../fol/Foliation.h"
-#include "../drawing/FoliationDrawingArea.h"
+#include "foliationWidgets/FoliationDrawingArea.h"
 #include "foliationWidgets/SepSegmentSearchWidget.h"
 #include "foliationWidgets/FoliationDataTreeWidget.h"
 #include "foliationWidgets/TransverseCurveSearchWidget.h"

@@ -131,6 +131,7 @@ void TransverseCurveSearchWidget::createMaps()
                 std::shared_ptr<balazs::SSCMode>(pSSCMode));
         tcDatabaseMap[s] = std::unique_ptr<balazs::TransverseCurveDatabase>(p);
     }
+    tcTreeWidget->resizeColumnToContents(0);
 }
 
 
@@ -163,10 +164,15 @@ double TransverseCurveSearchWidget::estimatedTime()
 void TransverseCurveSearchWidget::displayResults()
 {
     const QString &s = modeComboBox->currentText();
-    //TransverseCurveTreeWidgetItem* item;
+    foreach(QTreeWidgetItem* item, topWidgetItemMap[s]->takeChildren()){
+        topWidgetItemMap[s]->removeChild(item);
+        delete item;
+    }
+
     for(const auto& tc : *tcDatabaseMap[s]){
         new TransverseCurveTreeWidgetItem(tc, topWidgetItemMap[s]);
     }
+    topWidgetItemMap[s]->setExpanded(true);
 }
 
 

@@ -46,7 +46,6 @@ SOURCES += main.cpp\
     fol/Foliation.cpp \
     windows/DocumentationWindow.cpp \
     windows/CreateFoliationWizard.cpp \
-    drawing/FoliationDrawingArea.cpp \
     windows/foliationWidgets/SepSegmentSearchWidget.cpp \
     windows/FoliationMainWindow.cpp \
     windows/WindowManager.cpp \
@@ -57,7 +56,8 @@ SOURCES += main.cpp\
     windows/foliationWidgets/FoliationListWidget.cpp \
     windows/foliationWidgets/TransverseCurveSearchWidget.cpp \
     windows/foliationWidgets/FoliationDataTreeWidget.cpp \
-    windows/foliationWidgets/TransverseCurveTreeWidgetItem.cpp
+    windows/foliationWidgets/TransverseCurveTreeWidgetItem.cpp \
+    windows/foliationWidgets/FoliationDrawingArea.cpp
 
 HEADERS  += scc/IntervalNeighborhoods.h \
     scc/DisjointIntervals.h \
@@ -88,7 +88,6 @@ HEADERS  += scc/IntervalNeighborhoods.h \
     fol/Foliation.h \
     windows/DocumentationWindow.h \
     windows/CreateFoliationWizard.h \
-    drawing/FoliationDrawingArea.h \
     qt.h \
     windows/foliationWidgets/SepSegmentSearchWidget.h \
     windows/FoliationMainWindow.h \
@@ -103,7 +102,9 @@ HEADERS  += scc/IntervalNeighborhoods.h \
     windows/foliationWidgets/FoliationListWidget.h \
     windows/foliationWidgets/TransverseCurveSearchWidget.h \
     windows/foliationWidgets/FoliationDataTreeWidget.h \
-    windows/foliationWidgets/TransverseCurveTreeWidgetItem.h
+    windows/foliationWidgets/TransverseCurveTreeWidgetItem.h \
+    windows/foliationWidgets/FoliationDrawingArea.h
+
 
 FORMS    += \
     mainwindow.ui

@@ -3,7 +3,7 @@
 #include "HelpMenu.h"
 #include "../fol/Foliation.h"
 #include "FoliationManager.h"
-#include "../drawing/FoliationDrawingArea.h"
+#include "foliationWidgets/FoliationDrawingArea.h"
 #include "foliationWidgets/FoliationDataTreeWidget.h"
 #include "foliationWidgets/SepSegmentSearchWidget.h"
 #include "foliationWidgets/FoliationListWidget.h"

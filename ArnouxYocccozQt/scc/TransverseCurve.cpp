@@ -25,7 +25,7 @@ bool balazs::operator<(const TransverseCurve& c1, const TransverseCurve& c2) {
         } else if (points2[i] < points1[i])
             return false;
     }
-    return true;
+    return false;
 }
 
 
