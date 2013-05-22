@@ -54,7 +54,7 @@ SepSegmentSearchWidget::SepSegmentSearchWidget(const balazs::Foliation& foliatio
 int rowIndex(const balazs::SepSegmentIndex& ssIndex)
 {
     int retval = 0;
-    retval += 4 * ssIndex.singularityIntex;
+    retval += 4 * ssIndex.singularityIndex;
     retval += ssIndex.vDirection == balazs::VDirection::Up ? 0 : 2;
     retval += ssIndex.hDirection == balazs::HDirection::Left ? 0 : 1;
     return retval;
@@ -116,7 +116,7 @@ void SepSegmentSearchWidget::fillOutTable()
 balazs::SepSegmentIndex ssIndex(int rowIndex)
 {
     balazs::SepSegmentIndex retval;
-    retval.singularityIntex = rowIndex / 4;
+    retval.singularityIndex = rowIndex / 4;
     retval.vDirection = rowIndex % 4 < 2 ? balazs::VDirection::Up : balazs::VDirection::Down;
     retval.hDirection = rowIndex % 2 == 0 ? balazs::HDirection::Left : balazs::HDirection::Right;
     return retval;
@@ -126,7 +126,11 @@ balazs::SepSegmentIndex ssIndex(int rowIndex)
 void SepSegmentSearchWidget::drawSepSegment(int row, int column)
 {
     QTableWidgetItem* item = resultTable->item(row, column);
-    if(!item) emit(drawSepSegment(nullptr));
+    if(!item){
+        emit(drawSepSegment(nullptr));
+        return;
+    }
+
     std::size_t depth = item->text().toULong();
     balazs::SepSegmentIndex ssIndex = ::ssIndex(row);
 

@@ -39,7 +39,7 @@ void balazs::SepSegmentCollection::setFirstSegments(const std::vector<SepSegment
 }
 
 void balazs::SepSegmentCollection::setSegmentToFirst(std::size_t segmentIndex){
-    m_segments[segmentIndex] = m_sepSegmentDatabase.firstGoodSegment(getSepSegmentIndex(m_segments[segmentIndex]));
+    m_segments[segmentIndex] = m_sepSegmentDatabase.firstGoodSegment(index(*m_segments[segmentIndex]));
 }
 
 

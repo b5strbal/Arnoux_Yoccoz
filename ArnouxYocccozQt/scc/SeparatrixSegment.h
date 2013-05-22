@@ -7,21 +7,24 @@
 
 namespace balazs{
 
+struct SepSegmentIndex{
+    HDirection hDirection;
+    VDirection vDirection;
+    std::size_t singularityIndex;
+};
 
 class SeparatrixSegment{
 public:
-    SeparatrixSegment(const Foliation& foliation, std::size_t startingSingularity, VDirection vDirection);
+    SeparatrixSegment(const Foliation& foliation, const SepSegmentIndex& ssIndex);
  //   SeparatrixSegment(const SeparatrixSegment&) = delete;
     SeparatrixSegment& operator=(const SeparatrixSegment&) = delete;
 
     bool reachedSaddleConnection() const { return m_reachedSaddleConnection; }
     void lengthen();
     bool isGood() const;
-    bool isCentered() const { return m_endpoint.number().side() == HDirection::Center; }
-    void shiftTo(HDirection side);
 
     const Foliation& foliation() const { return m_foliation; }
-    HDirection side() const { return m_endpoint.number().side(); }
+    HDirection hDirection() const { return m_endpoint.number().side(); }
     std::size_t depth() const { return m_depth; }
     const Mod1NumberIntExWithInfo& endpoint() const { return m_endpoint; }
     std::size_t startingSingularity() const { return m_startingSingularity; }
@@ -39,7 +42,9 @@ private:
     bool m_reachedSaddleConnection;
 };
 
-
+inline SepSegmentIndex index(const SeparatrixSegment& s){
+    return { s.hDirection(), s.vDirection(), s.startingSingularity() };
+}
 
 }
 

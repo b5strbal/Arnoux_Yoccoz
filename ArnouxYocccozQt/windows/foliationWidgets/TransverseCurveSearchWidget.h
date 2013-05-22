@@ -34,7 +34,7 @@ private slots:
     void stopSearching();
     void finishedSearching();
     void setEstimatedTimeLabel(int nothing = 0);
-    void onCurrentItemChanged(QTreeWidgetItem* current,QTreeWidgetItem* previous);
+    void onCurrentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem *);
 
 private:
     void createMaps();

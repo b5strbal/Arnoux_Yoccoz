@@ -174,9 +174,8 @@ void paintFilling(const balazs::Foliation& foliation, QPainter &painter, int fol
 void paintSepSegment(const balazs::SeparatrixSegment &sepSegment, QPainter &painter, int folW, int folH)
 {
     // initializing the subsegment of depth 1
-    balazs::SeparatrixSegment segment(sepSegment.foliation(),
-                                           sepSegment.startingSingularity(), sepSegment.vDirection());
-    double shift = sepSegment.side() == balazs::HDirection::Left ? -1.0 : 1.0;
+    balazs::SeparatrixSegment segment(sepSegment.foliation(), index(sepSegment));
+    double shift = sepSegment.hDirection() == balazs::HDirection::Left ? -1.0 : 1.0;
     double singularityHeight = heightOfSingularity(sepSegment.foliation(), segment.startingSingularity(), folH);
     double w = folW * static_cast<double>(sepSegment.foliation().topDivPoints()[segment.startingSingularity()]);
 

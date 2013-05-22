@@ -87,13 +87,6 @@ bool balazs::Foliation::isTopDivPoint(int divPointIndex) const{
 
 
 
-const balazs::Mod1NumberIntExchange &balazs::Foliation::firstIntersection(int singularityIndex, VDirection direction) const
-{
-    if (direction == VDirection::Up) {
-        return bottomDivPoints()[m_twistedIntervalExchange.permutationWithMinimalTwist()[singularityIndex]];
-    } else
-        return topDivPoints()[singularityIndex];
-}
 
 
 

@@ -78,6 +78,7 @@ std::vector<Mod1Number> getEndpoints(const SepSegmentCollection& collection);
 
 
 
+
 }
 
 #endif // SEPSEGMENTCOLLECTION_H

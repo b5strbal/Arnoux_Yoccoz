@@ -234,7 +234,7 @@ void TransverseCurveSearchWidget::setEstimatedTimeLabel(int nothing)
     estimatedTimeLabel->setText(tr("Rough estimated time: %1 seconds").arg(static_cast<long>(estimatedTime())));
 }
 
-void TransverseCurveSearchWidget::onCurrentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+void TransverseCurveSearchWidget::onCurrentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem*)
 {
     TransverseCurveTreeWidgetItem* item = dynamic_cast<TransverseCurveTreeWidgetItem*>(current);
     if(item){

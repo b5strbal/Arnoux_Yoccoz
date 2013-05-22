@@ -29,7 +29,7 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
         assert(singularities[segments[i]->startingSingularity()] == 0);
         singularities[segments[i]->startingSingularity()] = 1;
         assert(segments[i]->vDirection() != segments[i + 1]->vDirection() ||
-               segments[i]->side() != segments[i + 1]->side());
+               segments[i]->hDirection() != segments[i + 1]->hDirection());
     }
 
 
@@ -142,11 +142,11 @@ void balazs::TransverseCurveDatabase::generateTransverseCurves(int maxdepth,
                                       m_sscMode);
 
     for (const SepSegmentCollection& sepSegmentCollection : collections) {
-        for(auto segment : sepSegmentCollection){
-            int depth = segment->depth();
-            int sing = segment->startingSingularity();
-            int nothing = sing;
-        }
+//        for(auto segment : sepSegmentCollection){
+//            int depth = segment->depth();
+//            int sing = segment->startingSingularity();
+//            int nothing = sing;
+//        }
 
         std::array<bool, 2> isWrapsAroundEndsGood = whichTransverseCurvesExist(sepSegmentCollection);
         for (short wrapsAroundEnds = 0; wrapsAroundEnds < 2; wrapsAroundEnds++ ) {

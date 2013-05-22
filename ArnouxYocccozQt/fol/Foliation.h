@@ -43,7 +43,6 @@ public:
         { return m_twistedIntervalExchange.divPointsAfterExchange(); }
     bool isTopDivPoint(int divPointIndex) const;
     const std::vector<std::size_t>& indexOfSingularity() const { return m_indexOfSingularity; }
-    const Mod1NumberIntExchange& firstIntersection(int singularityIndex, VDirection direction) const;
 
 
 
