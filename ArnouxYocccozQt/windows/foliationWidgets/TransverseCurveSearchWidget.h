@@ -25,7 +25,7 @@ class TransverseCurveSearchWidget : public QWidget
 public:
     explicit TransverseCurveSearchWidget(balazs::SepSegmentDatabase& ssDatabase, QWidget *parent = 0);
 signals:
-    void drawTransverseCurves(const balazs::TransverseCurve*);
+    void drawTransverseCurve(const balazs::TransverseCurve*);
 
 public slots:
     
@@ -34,11 +34,12 @@ private slots:
     void stopSearching();
     void finishedSearching();
     void setEstimatedTimeLabel(int nothing = 0);
-
+    void onCurrentItemChanged(QTreeWidgetItem* current,QTreeWidgetItem* previous);
 
 private:
     void createMaps();
     double estimatedTime();
+    void displayResults();
 
     bool stopSearch;
     std::mutex mutex;
@@ -95,7 +96,6 @@ public:
           m_stopSearch(stopSearch),
           m_mutex(mutex)
     {}
-    ~TransverseCurveSearch() = default;
 
 public slots:
     void start(){

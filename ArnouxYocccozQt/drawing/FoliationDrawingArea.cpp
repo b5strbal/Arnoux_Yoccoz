@@ -184,6 +184,7 @@ void paintSepSegment(const balazs::SeparatrixSegment &sepSegment, QPainter &pain
         painter.drawLine(w + shift, singularityHeight, w + shift, folH);
 
         while(segment.depth() < sepSegment.depth()){
+            painter.drawLine(w + shift, folH, w + shift, 1.05 * folH);
             segment.lengthen();
             w = folW * static_cast<double>(segment.endpoint().number());
             painter.drawLine(w + shift, 0, w + shift, folH);
@@ -191,10 +192,13 @@ void paintSepSegment(const balazs::SeparatrixSegment &sepSegment, QPainter &pain
 
     } else {
         painter.drawLine(w + shift, singularityHeight, w + shift, 0);
-        while(segment.depth() < sepSegment.depth()){
-            w = folW * static_cast<double>(segment.endpoint().number());
+        w = folW * static_cast<double>(segment.endpoint().number());
+        painter.drawLine(w + shift, folH, w + shift, 1.05 * folH);
 
+        while(segment.depth() < sepSegment.depth()){
             painter.drawLine(w + shift, 0, w + shift, folH);
+            w = folW * static_cast<double>(segment.endpoint().number());
+            painter.drawLine(w + shift, folH, w + shift, 1.05 * folH);
             segment.lengthen();
         }
     }
@@ -260,7 +264,7 @@ void FoliationDrawingArea::paint(QPainter &painter, int w, int h)
     }
 
     if(pTransverseCurve){
-        painter.setPen(QPen(Qt::green, 2));
+        painter.setPen(QPen(Qt::red, 3));
         paintTransverseCurve(*pTransverseCurve, painter, folW, folH);
     }
 }

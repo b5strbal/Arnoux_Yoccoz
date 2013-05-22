@@ -4,6 +4,7 @@
 #include "../../fol/FoliationFromRP2.h"
 #include "../../scc/SSCMode.h"
 #include "../../scc/SepSegmentDatabase.h"
+#include "TransverseCurveTreeWidgetItem.h"
 
 #include <cassert>
 #include <QLabel>
@@ -33,8 +34,11 @@ TransverseCurveSearchWidget::TransverseCurveSearchWidget(balazs::SepSegmentDatab
     tcTreeWidget = new QTreeWidget;
     tcTreeWidget->setColumnCount(4);
     QStringList list;
-    list << tr("Mode");
+    list << tr("Mode") << tr("Length");
     tcTreeWidget->setHeaderLabels(list);
+
+    connect(tcTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
+            this, SLOT(onCurrentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
 
     createMaps();
 
@@ -87,8 +91,6 @@ TransverseCurveSearchWidget::TransverseCurveSearchWidget(balazs::SepSegmentDatab
 
 
 
-
-
     QVBoxLayout* mainLayout = new QVBoxLayout;
     mainLayout->addLayout(lineLayout);
     mainLayout->addLayout(lineLayout2);
@@ -96,6 +98,8 @@ TransverseCurveSearchWidget::TransverseCurveSearchWidget(balazs::SepSegmentDatab
 
     setLayout(mainLayout);
 }
+
+
 
 void TransverseCurveSearchWidget::createMaps()
 {
@@ -129,6 +133,8 @@ void TransverseCurveSearchWidget::createMaps()
     }
 }
 
+
+
 double TransverseCurveSearchWidget::estimatedTime()
 {
     double retval = 0;
@@ -150,6 +156,17 @@ double TransverseCurveSearchWidget::estimatedTime()
         }
     }
     return retval / 40000;
+}
+
+
+
+void TransverseCurveSearchWidget::displayResults()
+{
+    const QString &s = modeComboBox->currentText();
+    //TransverseCurveTreeWidgetItem* item;
+    for(const auto& tc : *tcDatabaseMap[s]){
+        new TransverseCurveTreeWidgetItem(tc, topWidgetItemMap[s]);
+    }
 }
 
 
@@ -207,9 +224,7 @@ void TransverseCurveSearchWidget::finishedSearching()
     modeComboBox->setEnabled(true);
     searchButton->setEnabled(true);
 
-//    QMessageBox box;
-//    box.setText("Finished search!");
-//    box.exec();
+    displayResults();
 }
 
 
@@ -217,6 +232,14 @@ void TransverseCurveSearchWidget::setEstimatedTimeLabel(int nothing)
 {
     (void)nothing;
     estimatedTimeLabel->setText(tr("Rough estimated time: %1 seconds").arg(static_cast<long>(estimatedTime())));
+}
+
+void TransverseCurveSearchWidget::onCurrentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+{
+    TransverseCurveTreeWidgetItem* item = dynamic_cast<TransverseCurveTreeWidgetItem*>(current);
+    if(item){
+        emit(drawTransverseCurve(&item->transverseCurve()));
+    }
 }
 
 

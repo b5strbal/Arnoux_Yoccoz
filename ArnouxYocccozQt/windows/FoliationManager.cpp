@@ -19,7 +19,7 @@ FoliationManager::FoliationManager(std::unique_ptr<balazs::Foliation> foliation,
 
     connect(pSepSegmentSearchWidget, SIGNAL(drawSepSegment(const balazs::SeparatrixSegment*)),
             pDrawingArea, SLOT(drawSepSegment(const balazs::SeparatrixSegment*)));
-    connect(pTransverseCurveSearchWidget, SIGNAL(drawTransverseCurves(const balazs::TransverseCurve*)),
+    connect(pTransverseCurveSearchWidget, SIGNAL(drawTransverseCurve(const balazs::TransverseCurve*)),
             pDrawingArea, SLOT(drawTransverseCurve(const balazs::TransverseCurve*)));
 }
 

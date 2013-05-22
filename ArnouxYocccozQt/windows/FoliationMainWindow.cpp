@@ -59,6 +59,8 @@ FoliationMainWindow::FoliationMainWindow(const WindowManager &manager, QWidget *
     connect(foliationListWidget, SIGNAL(currentRowChanged(int)),
             sepSegmentSearchStackedWidget, SLOT(setCurrentIndex(int)));
     connect(foliationListWidget, SIGNAL(currentRowChanged(int)),
+            transverseCurveSearchStackedWidget, SLOT(setCurrentIndex(int)));
+    connect(foliationListWidget, SIGNAL(currentRowChanged(int)),
             drawingAreaStackWidget, SLOT(setCurrentIndex(int)));
     connect(foliationListWidget, SIGNAL(currentRowChanged(int)),
             this, SLOT(updateMenus(int)));

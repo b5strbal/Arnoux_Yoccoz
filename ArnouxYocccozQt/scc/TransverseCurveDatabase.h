@@ -20,6 +20,8 @@ public:
     void generateTransverseCurves(int maxdepth, int maxInvolvedSingularities, const bool &quit, std::mutex& mutex);
     const Foliation& foliation() const;
     const SSCMode& mode() const { return *m_sscMode; }
+    std::set<TransverseCurve>::const_iterator begin() const { return m_transverseCurves.begin(); }
+    std::set<TransverseCurve>::const_iterator end() const { return m_transverseCurves.end(); }
 
 private:
     SepSegmentDatabase& m_sepSegmentDatabase;
