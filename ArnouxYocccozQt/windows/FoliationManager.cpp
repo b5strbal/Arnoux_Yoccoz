@@ -19,8 +19,8 @@ FoliationManager::FoliationManager(std::unique_ptr<balazs::Foliation> foliation,
 
     connect(pSepSegmentSearchWidget, SIGNAL(drawSepSegment(const balazs::SeparatrixSegment*)),
             pDrawingArea, SLOT(drawSepSegment(const balazs::SeparatrixSegment*)));
-    connect(pTransverseCurveSearchWidget, SIGNAL(drawTransverseCurve(const balazs::TransverseCurve*)),
-            pDrawingArea, SLOT(drawTransverseCurve(const balazs::TransverseCurve*)));
+    connect(pTransverseCurveSearchWidget, SIGNAL(drawTransverseCurve(const balazs::TransverseCurveData*)),
+            pDrawingArea, SLOT(drawTransverseCurve(const balazs::TransverseCurveData*)));
 }
 
 FoliationManager::~FoliationManager() = default;
@@ -76,11 +76,18 @@ void FoliationManager::createViewMenu()
     lengthsLabelsAct->setChecked(true);
     coloredfillingAct->setChecked(true);
 
+    touchingSepSegmentsAct = new QAction(tr("Show touching separatrix segments"), this);
+    touchingSepSegmentsAct->setCheckable(true);
+    connect(touchingSepSegmentsAct, SIGNAL(toggled(bool)), pDrawingArea, SLOT(setTouchingSepSegments(bool)));
+    touchingSepSegmentsAct->setChecked(true);
 
     m_viewMenu = new QMenu(tr("View"));
     m_viewMenu->addAction(permutationLabelsAct);
     m_viewMenu->addAction(lengthsLabelsAct);
     m_viewMenu->addAction(coloredfillingAct);
+
+    transverseCurveMenu = m_viewMenu->addMenu(tr("Transverse curves"));
+    transverseCurveMenu->addAction(touchingSepSegmentsAct);
 }
 
 

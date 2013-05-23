@@ -128,7 +128,6 @@ void balazs::Foliation::init()
     m_allDivPoints.reserve(numSeparatrices());
     std::merge(topDivPoints().begin(), topDivPoints().end(),
                bottomDivPoints().begin(), bottomDivPoints().end(), std::back_inserter(m_allDivPoints));
- //   qDebug() << dynamic_cast<Mod1Number&>(m_allDivPoints[0]) << "ssss";
     for(std::size_t i = 1; i < numSeparatrices(); i++){
         if(distanceBetween(m_allDivPoints[i - 1], m_allDivPoints[i]) < PRECISION){
             throw std::runtime_error("The foliation has a saddle connection.");

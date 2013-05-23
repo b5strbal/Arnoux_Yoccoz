@@ -15,7 +15,6 @@ balazs::Mod1NumberIntExchange::Mod1NumberIntExchange(const LengthsAndTwist* leng
     m_parent(lengthsAndTwist)
 {
     assert(lengthsAndTwist != nullptr);
-   // qDebug() << m_coefficients << "\n";
 }
 
 

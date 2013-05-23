@@ -5,17 +5,17 @@
 
 
 
-balazs::DisjointIntervals::DisjointIntervals(const std::vector<Mod1Number>& unsortedPoints, bool wrapsAroundEnds) :
+balazs::DisjointIntervals::DisjointIntervals(const std::vector<Mod1NumberIntExchange> &unsortedPoints, bool wrapsAroundEnds) :
     m_endpoints(unsortedPoints),
     m_wrapsAroundEnds(wrapsAroundEnds),
-    m_totalLength(0)
+    m_totalLength(m_endpoints[0] - m_endpoints[0]) // zero
 {
     assert(unsortedPoints.size() % 2 == 0);
     std::sort(m_endpoints.begin(), m_endpoints.end());
     for (std::size_t i = 0; i < m_endpoints.size(); i += 2) {
-        m_totalLength += distanceBetween(m_endpoints[i], m_endpoints[i + 1]);
+        m_totalLength += m_endpoints[i + 1] - m_endpoints[i];
     }
-    m_totalLength = wrapsAroundEnds ? 1 - m_totalLength : m_totalLength;
+    m_totalLength = wrapsAroundEnds ? -m_totalLength : m_totalLength;
 }
 
 

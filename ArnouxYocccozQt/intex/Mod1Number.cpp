@@ -146,3 +146,14 @@ long double balazs::distanceBetween(const Mod1Number& p1, const Mod1Number& p2)
     return static_cast<long double>(p2 - p1);
 }
 
+
+bool balazs::isBetween(const balazs::Mod1Number &leftPoint, const balazs::Mod1Number &rightPoint, const balazs::Mod1Number &middlePoint)
+{
+    if(leftPoint <= middlePoint && middlePoint <= rightPoint){
+        return true;
+    }
+    if(rightPoint < leftPoint && (leftPoint <= middlePoint || middlePoint <= rightPoint)){
+        return true;
+    }
+    return false;
+}

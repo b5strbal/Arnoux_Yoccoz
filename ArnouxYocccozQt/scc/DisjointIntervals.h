@@ -21,19 +21,19 @@ class DisjointIntervals{
 public:
   //  DisjointIntervals() {} // Empty set
 
-    DisjointIntervals(const std::vector<Mod1Number>& unsortedPoints, bool wrapsAroundEnds);
+    DisjointIntervals(const std::vector<Mod1NumberIntExchange>& unsortedPoints, bool wrapsAroundEnds);
     DisjointIntervals(const DisjointIntervals&) = delete;
     DisjointIntervals& operator=(const DisjointIntervals&) = delete;
 
-    const std::vector<Mod1Number>& endpoints() const { return m_endpoints; }
+    const std::vector<Mod1NumberIntExchange>& endpoints() const { return m_endpoints; }
     bool wrapsAroundEnds() const { return m_wrapsAroundEnds; }
     bool contains(const Mod1Number& point) const;
-    long double totalLength() const { return m_totalLength; }
+    Mod1NumberIntExchange totalLength() const { return m_totalLength; }
 
 private:
-    std::vector<Mod1Number> m_endpoints; // The ordered list of endpoints.
+    std::vector<Mod1NumberIntExchange> m_endpoints; // The ordered list of endpoints.
     bool m_wrapsAroundEnds;              // Whether 0 is in one of the intervals.
-    long double m_totalLength;           // The total length of the intervals.
+    Mod1NumberIntExchange m_totalLength;           // The total length of the intervals.
 };
 
 

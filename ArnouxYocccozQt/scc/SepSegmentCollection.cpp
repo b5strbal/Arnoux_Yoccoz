@@ -108,14 +108,13 @@ void balazs::SepSegmentCollection::advance(std::size_t maxDepth, std::size_t max
 
 
 
-
-
-std::vector<balazs::Mod1Number> balazs::getEndpoints(const balazs::SepSegmentCollection &collection)
+std::vector<balazs::Mod1NumberIntExchange> balazs::getEndpoints(const SepSegmentCollection &collection)
 {
-    std::vector<Mod1Number> endpoints;
+    std::vector<Mod1NumberIntExchange> endpoints;
     endpoints.reserve(collection.size());
     for (std::size_t i = 0; i < collection.size(); i++){
         endpoints.push_back(collection[i]->endpoint());
     }
     return endpoints;
 }
+

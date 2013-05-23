@@ -17,6 +17,7 @@ public:
     TransverseCurveDatabase& operator=(const TransverseCurveDatabase&) = delete;
 
  //   void applyToStoredTransverseCurves(void (*function)(const TransverseCurve&));
+    SepSegmentDatabase& sepSegmentDatabase() { return m_sepSegmentDatabase; }
     void generateTransverseCurves(int maxdepth, int maxInvolvedSingularities, const bool &quit, std::mutex& mutex);
     const Foliation& foliation() const;
     const SSCMode& mode() const { return *m_sscMode; }

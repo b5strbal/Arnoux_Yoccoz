@@ -2,22 +2,23 @@
 #define TRANSVERSECURVETREEWIDGETITEM_H
 
 #include <QTreeWidgetItem>
+#include "../../scc/TransverseCurveData.h"
 
 namespace balazs{
-    class TransverseCurve;
+    class TransverseCurveData;
 }
 
 class TransverseCurveTreeWidgetItem : public QTreeWidgetItem
 {
 public:
-    explicit TransverseCurveTreeWidgetItem(const balazs::TransverseCurve& tc, QTreeWidgetItem *parent = 0);
-    const balazs::TransverseCurve& transverseCurve() const { return m_transverseCurve; }
+    explicit TransverseCurveTreeWidgetItem(balazs::TransverseCurveData&& tcData, QTreeWidgetItem *parent = 0);
+    const balazs::TransverseCurveData& transverseCurveData() const;
 signals:
     
 public slots:
 
 private:
-    const balazs::TransverseCurve& m_transverseCurve;
+    balazs::TransverseCurveData m_transverseCurveData;
     
 };
 
