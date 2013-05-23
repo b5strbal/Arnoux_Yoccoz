@@ -58,7 +58,7 @@ private:
 };
 
 
-
+bool isBetween(const Mod1Number& leftPoint, const Mod1Number& rightPoint, const Mod1Number& middlePoint);
 long double distanceBetween(const Mod1Number& p1, const Mod1Number& p2);
 Mod1Number operator+(const Mod1Number& p1, const Mod1Number& p2);
 Mod1Number operator+(const Mod1Number& p1, const long double& p2);

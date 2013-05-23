@@ -3,9 +3,11 @@
 
 #include "DisjointIntervals.h"
 #include "SepSegmentCollection.h"
-
+#include "../math/Permutation.h"
 
 namespace balazs{
+
+
 
 class TransverseCurve{
 public:
@@ -13,7 +15,6 @@ public:
     TransverseCurve(const TransverseCurve&) = delete;
     TransverseCurve& operator=(const TransverseCurve&) = delete;
 
-    long double length() const { return m_disjointIntervals.totalLength(); }
     const SepSegmentCollection& sepSegmentCollection() const { return m_sepSegmentCollection; }
     const DisjointIntervals& disjointIntervals() const { return m_disjointIntervals; }
 

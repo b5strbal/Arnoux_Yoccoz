@@ -15,7 +15,7 @@ class QSpinBox;
 class QPushButton;
 
 namespace balazs{
-    class TransverseCurve;
+    class TransverseCurveData;
     class SepSegmentDatabase;
 }
 
@@ -25,7 +25,7 @@ class TransverseCurveSearchWidget : public QWidget
 public:
     explicit TransverseCurveSearchWidget(balazs::SepSegmentDatabase& ssDatabase, QWidget *parent = 0);
 signals:
-    void drawTransverseCurve(const balazs::TransverseCurve*);
+    void drawTransverseCurve(const balazs::TransverseCurveData*);
 
 public slots:
     

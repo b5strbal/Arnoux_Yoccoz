@@ -1,18 +1,25 @@
 #include "TransverseCurve.h"
-#include "SeparatrixSegment.h"
+
+
+
 
 
 balazs::TransverseCurve::TransverseCurve(const SepSegmentCollection &segments, bool wrapsAroundEnds) :
     m_sepSegmentCollection(segments),
-    m_disjointIntervals(getEndpoints(segments), wrapsAroundEnds)
+    m_disjointIntervals(getEndpoints(m_sepSegmentCollection), wrapsAroundEnds)
 {
 }
 
 
 
+
+
+
+
+
 bool balazs::operator<(const TransverseCurve& c1, const TransverseCurve& c2) {
-    if (c1.length() > c2.length()) return true;
-    if (c1.length() < c2.length()) return false;
+    if (c1.disjointIntervals().totalLength() > c2.disjointIntervals().totalLength()) return true;
+    if (c1.disjointIntervals().totalLength() < c2.disjointIntervals().totalLength()) return false;
     auto &points1 = c1.m_disjointIntervals.endpoints();
     auto &points2 = c2.m_disjointIntervals.endpoints();
     if (points1.size() < points2.size()) {
@@ -27,9 +34,6 @@ bool balazs::operator<(const TransverseCurve& c1, const TransverseCurve& c2) {
     }
     return false;
 }
-
-
-
 
 
 

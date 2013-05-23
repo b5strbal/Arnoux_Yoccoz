@@ -42,7 +42,8 @@ private:
     QAction* permutationLabelsAct;
     QAction* lengthsLabelsAct;
     QAction* coloredfillingAct;
-
+    QMenu* transverseCurveMenu;
+    QAction* touchingSepSegmentsAct;
 
     std::unique_ptr<balazs::Foliation> pFoliation;
 

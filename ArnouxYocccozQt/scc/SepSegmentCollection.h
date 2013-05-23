@@ -12,7 +12,7 @@ struct SepSegmentIndex;
 class SeparatrixSegment;
 class Foliation;
 class SSCMode;
-class Mod1Number;
+class Mod1NumberIntExchange;
 
 struct begin_tag {};
 struct end_tag {};
@@ -30,6 +30,7 @@ public:
                          std::shared_ptr<SSCMode> sscMode, const end_tag&);
 
     std::list<SeparatrixSegment>::const_iterator operator[](std::size_t index) const { return m_segments[index]; }
+    const SepSegmentDatabase& sepSegmentDatabase() const { return m_sepSegmentDatabase; }
     bool isEmpty() const { return m_segments.empty(); }
     void clear() { m_segments.clear(); }
     std::size_t size() const { return m_segments.size(); }
@@ -59,21 +60,8 @@ private:
 };
 
 
-std::vector<Mod1Number> getEndpoints(const SepSegmentCollection& collection);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+std::vector<Mod1NumberIntExchange> getEndpoints(const SepSegmentCollection &collection);
 
 
 

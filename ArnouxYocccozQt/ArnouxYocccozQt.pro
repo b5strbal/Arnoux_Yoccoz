@@ -57,7 +57,8 @@ SOURCES += main.cpp\
     windows/foliationWidgets/TransverseCurveSearchWidget.cpp \
     windows/foliationWidgets/FoliationDataTreeWidget.cpp \
     windows/foliationWidgets/TransverseCurveTreeWidgetItem.cpp \
-    windows/foliationWidgets/FoliationDrawingArea.cpp
+    windows/foliationWidgets/FoliationDrawingArea.cpp \
+    scc/TransverseCurveData.cpp
 
 HEADERS  += scc/IntervalNeighborhoods.h \
     scc/DisjointIntervals.h \
@@ -103,7 +104,8 @@ HEADERS  += scc/IntervalNeighborhoods.h \
     windows/foliationWidgets/TransverseCurveSearchWidget.h \
     windows/foliationWidgets/FoliationDataTreeWidget.h \
     windows/foliationWidgets/TransverseCurveTreeWidgetItem.h \
-    windows/foliationWidgets/FoliationDrawingArea.h
+    windows/foliationWidgets/FoliationDrawingArea.h \
+    scc/TransverseCurveData.h
 
 
 FORMS    += \

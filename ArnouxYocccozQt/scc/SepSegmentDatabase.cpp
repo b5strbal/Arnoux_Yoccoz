@@ -111,7 +111,7 @@ const balazs::SeparatrixSegment& balazs::SepSegmentDatabase::getFirstIntersectio
             return segment;
         }
     }
-    while (!intervals.contains(m_currentSepSegments[ssIndex.hDirection][ssIndex.vDirection][ssIndex.singularityIndex].endpoint())) {
+    while (!intervals.contains(m_currentSepSegments[ssIndex.hDirection][ssIndex.vDirection][ssIndex.singularityIndex].endpoint().shiftedTo(HDirection::Center))) {
         if (reachedSaddleConnection(ssIndex)) {
             throw std::runtime_error("getFirstIntersection: First intersection cannot be found, because we found a saddle connection.");
         }
