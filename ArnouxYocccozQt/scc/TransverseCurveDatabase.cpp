@@ -150,7 +150,7 @@ void balazs::TransverseCurveDatabase::generateTransverseCurves(int maxdepth,
         std::array<bool, 2> isWrapsAroundEndsGood = whichTransverseCurvesExist(sepSegmentCollection);
         for (short wrapsAroundEnds = 0; wrapsAroundEnds < 2; wrapsAroundEnds++ ) {
             if (isWrapsAroundEndsGood[wrapsAroundEnds]) {
-                m_transverseCurves.emplace(sepSegmentCollection, wrapsAroundEnds);
+                m_transverseCurves.emplace(sepSegmentCollection, wrapsAroundEnds, m_sepSegmentDatabase);
             }
         }
         std::lock_guard<std::mutex> lk(mutex);

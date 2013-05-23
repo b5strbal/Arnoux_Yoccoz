@@ -7,6 +7,7 @@
 namespace balazs{
 
 struct flip_over_tag {};
+class SmallFoliation;
 
 /*!
  * \brief   An orientable foliation on an orientable surface.
@@ -23,6 +24,7 @@ public:
     Foliation(const Foliation& foliation, const reverse_tag&);
     Foliation(const Foliation& foliation, const flip_over_tag&);
     Foliation(int genus); // the Arnoux-Yoccoz foliations
+    Foliation(const SmallFoliation& smallFoliation);
     Foliation(const Foliation&) = delete;
     Foliation& operator=(const Foliation&) = delete;
     virtual ~Foliation() = default;
@@ -64,7 +66,7 @@ private:
 Permutation arnouxYoccozPermutation(int genus);
 std::vector<long double> arnouxYoccozLengths(int genus);
 
-
+bool isEqual(const Foliation& f1, const Foliation& f2, long double allowedError);
 
 }
 

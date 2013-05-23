@@ -8,7 +8,7 @@
 
 #include "Foliation.h"
 #include "../math/PerronFrobenius.h"
-
+#include "../scc/SmallFoliation.h"
 
 
 balazs::Foliation::Foliation(const std::vector<long double>& lengths, const Permutation& permutation, long double twist) :
@@ -37,9 +37,15 @@ balazs::Foliation::Foliation(const Foliation& foliation, const flip_over_tag&)
 }
 
 balazs::Foliation::Foliation(int genus)
-    :   m_twistedIntervalExchange(arnouxYoccozLengths(genus), arnouxYoccozPermutation(genus), 0.5)
+    :   Foliation(arnouxYoccozLengths(genus), arnouxYoccozPermutation(genus), 0.5)
 {
-    init();
+}
+
+balazs::Foliation::Foliation(const SmallFoliation &smallFoliation)
+    :   Foliation(smallFoliation.normalizedLengths(),
+                  smallFoliation.permutationWithMinimalTwist(),
+                  smallFoliation.normalizedTwist())
+{
 }
 
 
@@ -168,3 +174,27 @@ std::vector<long double> balazs::arnouxYoccozLengths(int genus)
     return lengths;
 }
 
+
+bool balazs::isEqual(const balazs::Foliation &f1, const balazs::Foliation &f2, long double allowedError)
+{
+    // checking permutation
+    if(f1.intExchange().permutationWithMinimalTwist() != f2.intExchange().permutationWithMinimalTwist()){
+        return false;
+    }
+
+    // checking lengths
+    for(std::size_t i = 0; i < f1.numIntervals(); i++){
+        if(fabs(static_cast<double>(f1.intExchange().lengths()[i]) -
+                static_cast<double>(f2.intExchange().lengths()[i])) > allowedError){
+            return false;
+        }
+    }
+
+    // checking twist
+    if(fabs(static_cast<double>(f1.intExchange().divPointsAfterExchange()[0]) -
+            static_cast<double>(f2.intExchange().divPointsAfterExchange()[0])) > allowedError){
+        return false;
+    }
+
+    return true;
+}

@@ -48,6 +48,8 @@ private:
 
 bool isMinimal(const Permutation& perm);
 
+bool operator==(const Permutation& lhs, const Permutation& rhs);
+bool operator!=(const Permutation& lhs, const Permutation& rhs);
 Permutation operator*(const Permutation& p1, const Permutation& p2);
 
 Permutation inverse(const Permutation& perm);

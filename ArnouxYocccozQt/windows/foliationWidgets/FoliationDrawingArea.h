@@ -6,8 +6,7 @@
 namespace balazs{
     class Foliation;
     class SeparatrixSegment;
-    class TransverseCurveData;
-
+    class TransverseCurve;
 }
 
 
@@ -30,7 +29,7 @@ public slots:
     void setColoredFilling(bool visible);
     void setTouchingSepSegments(bool visible);
     void drawSepSegment(const balazs::SeparatrixSegment* pSegment);
-    void drawTransverseCurve(const balazs::TransverseCurveData* pTCData);
+    void drawTransverseCurve(const balazs::TransverseCurve* ptc);
 protected:
     void paintEvent(QPaintEvent *event);
     
@@ -46,7 +45,7 @@ private:
     int lengthsFontSize;
 
     const balazs::SeparatrixSegment* pSepSegment;
-    const balazs::TransverseCurveData* pTransverseCurveData;
+    const balazs::TransverseCurve* pTransverseCurve;
     const balazs::Foliation& m_foliation;
 };
 

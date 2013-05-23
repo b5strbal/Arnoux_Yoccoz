@@ -106,3 +106,23 @@ std::size_t balazs::integerMod(int a, int b){
     int result = a % b;
     return result >= 0 ? result : result + b;
 }
+
+
+bool balazs::operator ==(const balazs::Permutation &lhs, const balazs::Permutation &rhs)
+{
+    if(lhs.size() != rhs.size()){
+        return false;
+    }
+    for(std::size_t i = 0; i < lhs.size(); i++){
+        if(lhs[i] != rhs[i]){
+            return false;
+        }
+    }
+    return true;
+}
+
+
+bool balazs::operator !=(const balazs::Permutation &lhs, const balazs::Permutation &rhs)
+{
+    return !(lhs == rhs);
+}

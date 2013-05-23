@@ -24,6 +24,11 @@ balazs::SepSegmentCollection::SepSegmentCollection(const SepSegmentDatabase& sep
     assert(&sscMode->foliation() == &m_sepSegmentDatabase.foliation());
 }
 
+const balazs::Foliation &balazs::SepSegmentCollection::foliation() const
+{
+    return m_sepSegmentDatabase.foliation();
+}
+
 
 
 

@@ -3,14 +3,13 @@
 #include "../../scc/SeparatrixSegment.h"
 #include "../../scc/TransverseCurve.h"
 #include "../../scc/DisjointIntervals.h"
-#include "../../scc/TransverseCurveData.h"
 #include <QPainter>
 //#include <QFont>
 
 FoliationDrawingArea::FoliationDrawingArea(const balazs::Foliation &foliation, QWidget *parent) :
     QWidget(parent),
     pSepSegment(nullptr),
-    pTransverseCurveData(nullptr),
+    pTransverseCurve(nullptr),
     m_foliation(foliation)
 {
     permFontSize = lengthsFontSize = 10;
@@ -50,9 +49,9 @@ void FoliationDrawingArea::drawSepSegment(const balazs::SeparatrixSegment *pSegm
     update();
 }
 
-void FoliationDrawingArea::drawTransverseCurve(const balazs::TransverseCurveData *pTCData)
+void FoliationDrawingArea::drawTransverseCurve(const balazs::TransverseCurve *ptc)
 {
-    pTransverseCurveData = pTCData;
+    pTransverseCurve = ptc;
     update();
 }
 
@@ -233,12 +232,12 @@ void paintTransverseCurve(const balazs::TransverseCurve& tc, QPainter &painter, 
     paintDisjointIntervals(tc.disjointIntervals(), painter, folW, folH);
 }
 
-void paintTouchingSepSegments(const balazs::TransverseCurveData& tcData, QPainter &painter, int folW, int folH)
+void paintTouchingSepSegments(const balazs::TransverseCurve& tc, QPainter &painter, int folW, int folH)
 {
-    for(std::size_t i = 0; i < tcData.lengths().size(); i++){
-        paintSepSegment(tcData.touchingSepSegment({balazs::HDirection::Right,
+    for(std::size_t i = 0; i < tc.foliation().numIntervals(); i++){
+        paintSepSegment(tc.touchingSepSegment({balazs::HDirection::Right,
                                                    balazs::VDirection::Down, i}), painter, folW, folH);
-        paintSepSegment(tcData.touchingSepSegment({balazs::HDirection::Right,
+        paintSepSegment(tc.touchingSepSegment({balazs::HDirection::Right,
                                                    balazs::VDirection::Up, i}), painter, folW, folH);
     }
 }
@@ -276,13 +275,13 @@ void FoliationDrawingArea::paint(QPainter &painter, int w, int h)
         paintSepSegment(*pSepSegment, painter, folW, folH);
     }
 
-    if(pTransverseCurveData){
+    if(pTransverseCurve){
         painter.setPen(QPen(Qt::red, 3));
-        paintTransverseCurve(pTransverseCurveData->transverseCurve(), painter, folW, folH);
+        paintTransverseCurve(*pTransverseCurve, painter, folW, folH);
 
         if(touchingSepSegmentsShown){
             painter.setPen(QPen(Qt::darkGreen, 2, Qt::DashDotLine));
-            paintTouchingSepSegments(*pTransverseCurveData, painter, folW, folH);
+            paintTouchingSepSegments(*pTransverseCurve, painter, folW, folH);
         }
     }
 

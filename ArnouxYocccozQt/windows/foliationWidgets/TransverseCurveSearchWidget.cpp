@@ -1,6 +1,5 @@
 #include "TransverseCurveSearchWidget.h"
 #include "../../scc/TransverseCurve.h"
-#include "../../scc/TransverseCurveData.h"
 #include "../../scc/TransverseCurveDatabase.h"
 #include "../../fol/FoliationFromRP2.h"
 #include "../../scc/SSCMode.h"
@@ -33,9 +32,10 @@ TransverseCurveSearchWidget::TransverseCurveSearchWidget(balazs::SepSegmentDatab
     sepSegmentDatabase(ssDatabase)
 {
     tcTreeWidget = new QTreeWidget;
-    tcTreeWidget->setColumnCount(4);
+    tcTreeWidget->setFont(QFont("Times", 12));
+   // tcTreeWidget->setColumnCount(4);
     QStringList list;
-    list << tr("Mode") << tr("Length") << tr("Singularity permutation") << tr("New lengths") << tr("New permutation") << tr("New twist");
+    list << tr("Mode") << tr("Length") << tr("Singularity permutation") << tr("New lengths") << tr("New permutation") << tr("New twist") << tr("Normalized lengths") << tr("Normalized twist");
     tcTreeWidget->setHeaderLabels(list);
 
     connect(tcTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
@@ -172,7 +172,7 @@ void TransverseCurveSearchWidget::displayResults()
 
     for(const auto& tc : *tcDatabaseMap[s]){
 
-        new TransverseCurveTreeWidgetItem(balazs::TransverseCurveData(tc, tcDatabaseMap[s]->sepSegmentDatabase()), topWidgetItemMap[s]);
+        new TransverseCurveTreeWidgetItem(tc, topWidgetItemMap[s]);
     }
     topWidgetItemMap[s]->setExpanded(true);
 }
@@ -246,7 +246,7 @@ void TransverseCurveSearchWidget::onCurrentItemChanged(QTreeWidgetItem *current,
 {
     TransverseCurveTreeWidgetItem* item = dynamic_cast<TransverseCurveTreeWidgetItem*>(current);
     if(item){
-        emit(drawTransverseCurve(&item->transverseCurveData()));
+        emit(drawTransverseCurve(&item->transverseCurve()));
     }
 }
 

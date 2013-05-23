@@ -31,6 +31,7 @@ public:
 
     std::list<SeparatrixSegment>::const_iterator operator[](std::size_t index) const { return m_segments[index]; }
     const SepSegmentDatabase& sepSegmentDatabase() const { return m_sepSegmentDatabase; }
+    const Foliation& foliation() const;
     bool isEmpty() const { return m_segments.empty(); }
     void clear() { m_segments.clear(); }
     std::size_t size() const { return m_segments.size(); }
