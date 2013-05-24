@@ -14,23 +14,24 @@ balazs::TransverseCurve::TransverseCurve(const SepSegmentCollection &segments, b
     assert(&m_sepSegmentDatabase == &m_sepSegmentCollection.sepSegmentDatabase());
 
     initIntervalsInOrder();
+    initTouchingSegments();
 
     m_topIntersections.reserve(foliation().numIntervals());
     for(std::size_t i = 0; i < foliation().numIntervals(); i++){
-        m_topIntersections.push_back(touchingSepSegment({HDirection::Right,
-                                                         VDirection::Down, i}).endpoint().shiftedTo(HDirection::Center));
+        m_topIntersections.push_back(touchingSepSegment({HDirection::Right, VDirection::Down, i},
+                                                        SepSegmentDatabase::Centered).endpoint().shiftedTo(HDirection::Center));
     }
 
     m_bottomRightIntersections.reserve(foliation().numIntervals());
     for(std::size_t i = 0; i < foliation().numIntervals(); i++){
-        m_topIntersections.push_back(touchingSepSegment({HDirection::Right,
-                                                         VDirection::Up, i}).endpoint().shiftedTo(HDirection::Center));
+        m_bottomRightIntersections.push_back(touchingSepSegment({HDirection::Right, VDirection::Up, i},
+                                                        SepSegmentDatabase::Centered).endpoint().shiftedTo(HDirection::Center));
     }
 
     m_bottomLeftIntersections.reserve(foliation().numIntervals());
     for(std::size_t i = 0; i < foliation().numIntervals(); i++){
-        m_bottomLeftIntersections.push_back(touchingSepSegment({HDirection::Left,
-                                                         VDirection::Up, i}).endpoint().shiftedTo(HDirection::Center));
+        m_bottomLeftIntersections.push_back(touchingSepSegment({HDirection::Left, VDirection::Up, i},
+                                                               SepSegmentDatabase::Centered).endpoint().shiftedTo(HDirection::Center));
     }
 }
 
@@ -68,10 +69,29 @@ void balazs::TransverseCurve::initIntervalsInOrder()
 }
 
 
-
-const balazs::SeparatrixSegment &balazs::TransverseCurve::touchingSepSegment(const SepSegmentIndex &ssIndex) const
+void balazs::TransverseCurve::initTouchingSegments()
 {
-    return m_sepSegmentDatabase.getFirstIntersection(ssIndex, m_disjointIntervals);
+    for(HDirection hDirection : {HDirection::Left, HDirection::Right}){
+        for(VDirection vDirection : {VDirection::Down, VDirection::Up }){
+            for(SepSegmentDatabase::ShiftMode shiftmode :
+            {SepSegmentDatabase::Centered, SepSegmentDatabase::ShiftedEvenMore}){
+                for(std::size_t i = 0; i < foliation().numIntervals(); i++){
+                    m_touchingSegments[hDirection][vDirection][shiftmode].push_back(
+                                &m_sepSegmentDatabase.getFirstIntersection({hDirection, vDirection, i},
+                                                        m_disjointIntervals, shiftmode));
+                }
+
+            }
+        }
+    }
+}
+
+
+
+const balazs::SeparatrixSegment &balazs::TransverseCurve::touchingSepSegment(const SepSegmentIndex &ssIndex,
+                                                                             SepSegmentDatabase::ShiftMode shiftMode) const
+{
+    return *m_touchingSegments.at(ssIndex.hDirection).at(ssIndex.vDirection).at(shiftMode)[ssIndex.singularityIndex];
 }
 
 
@@ -80,7 +100,7 @@ const balazs::SeparatrixSegment &balazs::TransverseCurve::touchingSepSegment(con
 balazs::Mod1NumberIntExchange balazs::TransverseCurve::distanceOnCurve(const Mod1NumberIntExchange &x,
                                                                        const Mod1NumberIntExchange &y) const
 {
-    assert(m_disjointIntervals.contains(x) && m_disjointIntervals.contains(y));
+    assert(m_disjointIntervals.strictlyContains(x) && m_disjointIntervals.strictlyContains(y));
     std::size_t index;
     std::size_t nextIndex;
     for(index = 0; index < m_intervalsInOrder.size(); index += 2){

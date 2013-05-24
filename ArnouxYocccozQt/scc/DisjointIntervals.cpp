@@ -19,12 +19,12 @@ balazs::DisjointIntervals::DisjointIntervals(const std::vector<Mod1NumberIntExch
 }
 
 
-bool balazs::DisjointIntervals::contains(const Mod1Number& point) const {
-    assert(point.side() == HDirection::Center);
+bool balazs::DisjointIntervals::strictlyContains(const Mod1Number& point) const {
+ //   assert(point.side() == HDirection::Center);
     int containingIntervalIndex = containingInterval(m_endpoints, point);
 
-    if ((containingIntervalIndex % 2 == 0 && !m_wrapsAroundEnds) ||
-            (containingIntervalIndex % 2 == 1 && m_wrapsAroundEnds)) {
+    if (((containingIntervalIndex % 2 == 0 && !m_wrapsAroundEnds) ||
+         (containingIntervalIndex % 2 == 1 && m_wrapsAroundEnds)) && m_endpoints[containingIntervalIndex] != point) {
         return true;
     }
     return false;

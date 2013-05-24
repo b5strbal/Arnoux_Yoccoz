@@ -7,6 +7,7 @@
 
 #include "Mod1Number.h"
 #include <cmath>
+#include <cassert>
 
 
 long double balazs::fracPart(long double x){ return x - floor(x); }
@@ -31,6 +32,16 @@ balazs::Mod1Number balazs::Mod1Number::shiftedTo(HDirection side) const
     case HDirection::Center:
         return Mod1Number(m_position, 0);
         break;
+    }
+}
+
+balazs::Mod1Number balazs::Mod1Number::shiftEvenMore() const
+{
+    assert(m_epsilon != 0);
+    if(m_epsilon < 0){
+        return Mod1Number(m_position, m_epsilon - 1);
+    } else {
+        return Mod1Number(m_position, m_epsilon + 1);
     }
 }
 

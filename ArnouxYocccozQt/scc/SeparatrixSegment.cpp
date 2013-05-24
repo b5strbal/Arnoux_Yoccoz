@@ -44,6 +44,9 @@ balazs::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, const S
     m_vDirection(ssIndex.vDirection),
     m_reachedSaddleConnection(false)
 {
+    if(m_vDirection == VDirection::Down){
+        m_intervalIntersectionCount[containingInterval(m_foliation.topDivPoints(), m_endpoint)]++;
+    }
 }
 
 
@@ -52,7 +55,9 @@ balazs::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, const S
 
 void balazs::SeparatrixSegment::lengthen()
 {
-    m_intervalIntersectionCount[containingInterval(m_foliation.topDivPoints(), m_endpoint)]++;
+    if(m_vDirection == VDirection::Up){
+        m_intervalIntersectionCount[containingInterval(m_foliation.topDivPoints(), m_endpoint)]++;
+    }
     m_intervalNeighborhoods.insertPoint(m_endpoint);
 
     m_depth++;
@@ -61,6 +66,9 @@ void balazs::SeparatrixSegment::lengthen()
                 m_foliation.intExchange().applyInverseTo(m_endpoint.number());
     m_endpoint = Mod1NumberIntExWithInfo(newPoint, &m_foliation);
 
+    if(m_vDirection == VDirection::Down){
+        m_intervalIntersectionCount[containingInterval(m_foliation.topDivPoints(), m_endpoint)]++;
+    }
     if(m_endpoint.isTooCloseToADivPoint()){
         m_reachedSaddleConnection = true;
     }

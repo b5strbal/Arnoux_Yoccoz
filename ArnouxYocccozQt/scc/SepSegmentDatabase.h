@@ -20,13 +20,15 @@ class DisjointIntervals;
 class SepSegmentDatabase
 {
 public:
+    enum ShiftMode { Centered, ShiftedEvenMore };
+
     SepSegmentDatabase(const Foliation& foliation);
     SepSegmentDatabase(const SepSegmentDatabase&) = delete;
     SepSegmentDatabase& operator=(const SepSegmentDatabase&) = delete;
 
     const Foliation& foliation() const { return m_foliation; }
     void findNextSepSegment(const SepSegmentIndex &ssIndex);
-    const SeparatrixSegment& getFirstIntersection(const SepSegmentIndex& ssIndex, const DisjointIntervals& intervals);
+    const SeparatrixSegment& getFirstIntersection(const SepSegmentIndex& ssIndex, const DisjointIntervals& intervals, ShiftMode shiftMode);
     bool reachedSaddleConnection(const SepSegmentIndex &ssIndex) const;
     void generateSepSegments(std::size_t maxdepth);
 

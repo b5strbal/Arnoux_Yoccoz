@@ -30,6 +30,7 @@ public:
     std::size_t startingSingularity() const { return m_startingSingularity; }
     VDirection vDirection() const { return m_vDirection; }
     const IntervalNeighborhoods& intervalNeighborhoods() const { return m_intervalNeighborhoods; }
+    const std::vector<std::size_t> intervalIntersectionCount() const { return m_intervalIntersectionCount; }
 
 private:
     const Foliation& m_foliation;

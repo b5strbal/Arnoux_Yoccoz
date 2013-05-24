@@ -47,6 +47,7 @@ public:
     Mod1Number(long double position = 0, int epsilon = 0);
     virtual ~Mod1Number() = default;
     Mod1Number shiftedTo(HDirection side) const;
+    Mod1Number shiftEvenMore() const;
     HDirection side() const;
     Mod1Number& operator+=(const Mod1Number& rhs);
     Mod1Number operator-() const;

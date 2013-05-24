@@ -3,7 +3,9 @@
 
 #include "DisjointIntervals.h"
 #include "SepSegmentCollection.h"
+#include "SepSegmentDatabase.h"
 #include "../math/Permutation.h"
+#include <map>
 
 namespace balazs{
 
@@ -26,7 +28,7 @@ public:
     const std::vector<Mod1NumberIntExchange>& bottomLeftIntersections() const { return m_bottomLeftIntersections; }
 
     Mod1NumberIntExchange distanceOnCurve(const Mod1NumberIntExchange& x, const Mod1NumberIntExchange& y) const;
-    const SeparatrixSegment& touchingSepSegment(const SepSegmentIndex& ssIndex) const;
+    const SeparatrixSegment& touchingSepSegment(const SepSegmentIndex& ssIndex, SepSegmentDatabase::ShiftMode shiftMode) const;
 
 
     friend bool operator<(const TransverseCurve& c1, const TransverseCurve& c2);
@@ -35,7 +37,7 @@ public:
 
 private:
     void initIntervalsInOrder();
-
+    void initTouchingSegments();
 
     SepSegmentCollection m_sepSegmentCollection;
     DisjointIntervals m_disjointIntervals;
@@ -45,6 +47,8 @@ private:
     std::vector<Mod1NumberIntExchange> m_topIntersections;
     std::vector<Mod1NumberIntExchange> m_bottomRightIntersections;
     std::vector<Mod1NumberIntExchange> m_bottomLeftIntersections;
+
+    std::map<HDirection, std::map<VDirection, std::map<SepSegmentDatabase::ShiftMode, std::vector<const SeparatrixSegment*>>>> m_touchingSegments;
 };
 
 

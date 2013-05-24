@@ -27,7 +27,7 @@ public:
 
     const std::vector<Mod1NumberIntExchange>& endpoints() const { return m_endpoints; }
     bool wrapsAroundEnds() const { return m_wrapsAroundEnds; }
-    bool contains(const Mod1Number& point) const;
+    bool strictlyContains(const Mod1Number& point) const;
     Mod1NumberIntExchange totalLength() const { return m_totalLength; }
 
 private:

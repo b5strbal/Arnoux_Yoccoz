@@ -102,20 +102,42 @@ void balazs::SepSegmentDatabase::generateSepSegments(std::size_t maxdepth){
 // where the first intersection is always a good separatrix segment. More precisely, both the left and right
 // shifts of the first intersection are good, so it is enough to check only the right ones for instance.
 const balazs::SeparatrixSegment& balazs::SepSegmentDatabase::getFirstIntersection(const SepSegmentIndex& ssIndex,
-                                                                    const DisjointIntervals& intervals)
+                                                                    const DisjointIntervals& intervals, ShiftMode shiftMode)
 {
+    Mod1Number correctedEndpoint;
     for (auto &segment :
          m_goodShiftedSeparatrixSegments[ssIndex.hDirection][ssIndex.vDirection][ssIndex.singularityIndex]) {
-        Mod1Number centeredEndpoint = segment.endpoint().shiftedTo(HDirection::Center);
-        if (intervals.contains(centeredEndpoint)) { // we are gonna have to catch an error here?
+        switch(shiftMode){
+        case Centered:
+            correctedEndpoint = segment.endpoint().shiftedTo(HDirection::Center);
+            break;
+
+        case ShiftedEvenMore:
+            correctedEndpoint = segment.endpoint().number().shiftEvenMore();
+            break;
+        }
+        if (intervals.strictlyContains(correctedEndpoint)) { // we are gonna have to catch an error here?
             return segment;
         }
     }
-    while (!intervals.contains(m_currentSepSegments[ssIndex.hDirection][ssIndex.vDirection][ssIndex.singularityIndex].endpoint().shiftedTo(HDirection::Center))) {
+    while (!intervals.strictlyContains(correctedEndpoint))
+    {
+        findNextSepSegment(ssIndex);
         if (reachedSaddleConnection(ssIndex)) {
             throw std::runtime_error("getFirstIntersection: First intersection cannot be found, because we found a saddle connection.");
         }
-        findNextSepSegment(ssIndex);
+
+        Mod1Number ep = m_currentSepSegments[ssIndex.hDirection][ssIndex.vDirection][ssIndex.singularityIndex].endpoint();
+        switch(shiftMode){
+        case Centered:
+            correctedEndpoint = ep.shiftedTo(HDirection::Center);
+            break;
+
+        case ShiftedEvenMore:
+            correctedEndpoint = ep.shiftEvenMore();
+            break;
+        }
+
     }
     return m_currentSepSegments[ssIndex.hDirection][ssIndex.vDirection][ssIndex.singularityIndex];
 }

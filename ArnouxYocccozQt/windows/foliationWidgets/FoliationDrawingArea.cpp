@@ -3,6 +3,7 @@
 #include "../../scc/SeparatrixSegment.h"
 #include "../../scc/TransverseCurve.h"
 #include "../../scc/DisjointIntervals.h"
+#include "../../scc/SepSegmentDatabase.h"
 #include <QPainter>
 //#include <QFont>
 
@@ -236,9 +237,9 @@ void paintTouchingSepSegments(const balazs::TransverseCurve& tc, QPainter &paint
 {
     for(std::size_t i = 0; i < tc.foliation().numIntervals(); i++){
         paintSepSegment(tc.touchingSepSegment({balazs::HDirection::Right,
-                                                   balazs::VDirection::Down, i}), painter, folW, folH);
+                                                   balazs::VDirection::Down, i}, balazs::SepSegmentDatabase::Centered), painter, folW, folH);
         paintSepSegment(tc.touchingSepSegment({balazs::HDirection::Right,
-                                                   balazs::VDirection::Up, i}), painter, folW, folH);
+                                                   balazs::VDirection::Up, i}, balazs::SepSegmentDatabase::Centered), painter, folW, folH);
     }
 }
 
