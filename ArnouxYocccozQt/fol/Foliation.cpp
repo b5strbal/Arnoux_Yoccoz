@@ -43,7 +43,7 @@ balazs::Foliation::Foliation(int genus)
 
 balazs::Foliation::Foliation(const SmallFoliation &smallFoliation)
     :   Foliation(smallFoliation.normalizedLengths(),
-                  smallFoliation.permutationWithMinimalTwist(),
+                  smallFoliation.permutation(),
                   smallFoliation.normalizedTwist())
 {
 }

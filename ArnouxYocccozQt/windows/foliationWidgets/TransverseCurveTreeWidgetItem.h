@@ -10,6 +10,7 @@ class TransverseCurveTreeWidgetItem : public QTreeWidgetItem
 public:
     explicit TransverseCurveTreeWidgetItem(const balazs::TransverseCurve& tc, QTreeWidgetItem *parent = 0);
     const balazs::TransverseCurve& transverseCurve() const;
+    void generateCandidates();
 signals:
     
 public slots:

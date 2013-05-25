@@ -3,7 +3,7 @@
 
 #include "../math/Permutation.h"
 #include "Mod1NumberIntExchange.h"
-#include "LengthsAndTwist.h"
+//#include "LengthsAndTwist.h"
 #include "ContainingInterval.h"
 
 namespace balazs{
@@ -15,7 +15,7 @@ struct invert_tag {};
 
 class TwistedIntervalExchangeMap{
 public:
-    TwistedIntervalExchangeMap(); // default constructor: the identity interval exchange on one interval.
+   // TwistedIntervalExchangeMap(); // default constructor: the identity interval exchange on one interval.
     TwistedIntervalExchangeMap(const std::vector<long double>& lengths,
                         const Permutation& permutation,
                         long double twist, bool permutationMustBeMinimal = true);
@@ -23,8 +23,9 @@ public:
     TwistedIntervalExchangeMap& operator=(const TwistedIntervalExchangeMap&) = delete;
 
     std::size_t size() const { return m_lengths.size(); }
-    const LengthsAndTwist* signature() const { return &m_lengthsAndTwist; }
+  //  const LengthsAndTwist* signature() const { return &m_lengthsAndTwist; }
     const std::vector<Mod1NumberIntExchange>& lengths() const { return m_lengths; }
+    const Mod1NumberIntExchange& twist() const { return m_twist; }
     const std::vector<Mod1NumberIntExchange>& divPoints() const { return m_divPoints; }
     const std::vector<Mod1NumberIntExchange>& divPointsAfterExchange() const { return m_divPointsAfterExchange; }
     const Permutation& permutationWithMinimalTwist() const { return m_permutationWithMinimalTwist; }
@@ -52,7 +53,7 @@ public:
 
 
 private:
-    LengthsAndTwist m_lengthsAndTwist;
+   // LengthsAndTwist m_lengthsAndTwist;
     std::vector<Mod1NumberIntExchange> m_lengths;
     Permutation m_permutation;          // Permutation of intervals before the twist.
     Permutation m_inversePermutation;   // The inverse of the above.

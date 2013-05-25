@@ -6,7 +6,8 @@
 
 balazs::SmallFoliation::SmallFoliation(const balazs::TransverseCurve &tc,
                                        std::size_t referenceZeroIndex, bool flippedOver, bool orientationReversing)
-    : m_totalLength(tc.disjointIntervals().totalLength())
+    : m_transverseCurve(tc),
+      m_totalLength(tc.disjointIntervals().totalLength())
 {
     assert(referenceZeroIndex < tc.foliation().numIntervals());
 
@@ -97,11 +98,7 @@ balazs::SmallFoliation::SmallFoliation(const balazs::TransverseCurve &tc,
             }
 
             }
-
         }
-
-
-
     }
     m_permutation = Permutation(permutationInput);
 
@@ -129,14 +126,99 @@ balazs::SmallFoliation::SmallFoliation(const balazs::TransverseCurve &tc,
     m_normalizedTwist = m_twist / m_totalLength;
 
 
+    initTransitionMatrix();
 }
 
 
 
-void balazs::SmallFoliation::initStripHeights()
+const Eigen::MatrixXd &balazs::SmallFoliation::transitionMatrix() const
 {
-
+    return m_transitionMatrix;
 }
+
+const Eigen::EigenSolver<Eigen::MatrixXd>::EigenvalueType &balazs::SmallFoliation::eigenvalues()
+{
+    initEigenSolver();
+    return *m_eigenvalues;
+}
+
+const Eigen::EigenSolver<Eigen::MatrixXd>::EigenvectorsType &balazs::SmallFoliation::eigenvectors()
+{
+    initEigenSolver();
+    return *m_eigenvectors;
+}
+
+
+
+bool allEntriesPositive(const Eigen::VectorXcd& vector){
+    for(int i = 0; i < vector.rows(); i++){
+        if(vector(i).imag() != 0 || vector(i).real() <= 0){
+            return false;
+        }
+    }
+    return true;
+}
+
+
+
+
+
+
+balazs::SmallFoliation::WhatIsWrong balazs::SmallFoliation::isGoodCandidate()
+{
+    WhatIsWrong currentProblem = Permutation_Does_Not_Match;
+
+    if(permutation() != m_transverseCurve.foliation().intExchange().permutationWithMinimalTwist())
+        return currentProblem;
+
+    currentProblem = No_Appropriate_EigenValue;
+
+    initEigenSolver();
+
+    for(int i = 0; i < m_eigenvalues->rows(); i++){
+        if((*m_eigenvalues)[i].imag() == 0 && (*m_eigenvalues)[i].real() > 0 && (*m_eigenvalues)[i].real() < 1){
+            currentProblem = std::max(currentProblem, No_Positive_EigenVector);
+
+            if(allEntriesPositive(-m_eigenvectors->col(i)) || allEntriesPositive(m_eigenvectors->col(i)))
+                return Nothing;
+        }
+    }
+    return currentProblem;
+}
+
+
+
+void balazs::SmallFoliation::initTransitionMatrix()
+{
+    m_transitionMatrix.resize(m_lengths.size() + 1, m_lengths.size() + 1);
+    for(std::size_t i = 0; i < m_lengths.size(); i++){
+        m_lengths[i].adjustCoefficients();
+        for(std::size_t j = 0; j < m_lengths.size(); j++){
+            m_transitionMatrix(i, j) = m_lengths[i].coefficients()[j];
+        }
+        m_transitionMatrix(i, m_lengths.size()) = m_lengths[i].twistCoeff();
+    }
+    m_twist.adjustCoefficients();
+    for(std::size_t j = 0; j < m_lengths.size(); j++){
+        m_transitionMatrix(m_lengths.size(), j) = m_twist.coefficients()[j];
+    }
+    m_transitionMatrix(m_lengths.size(), m_lengths.size()) = m_twist.twistCoeff();
+}
+
+void balazs::SmallFoliation::initEigenSolver()
+{
+    if(!m_eigenvalues){
+        Eigen::EigenSolver<Eigen::MatrixXd> es(m_transitionMatrix);
+        if(es.info() != Eigen::Success){
+            throw std::runtime_error("Eigenvalues cannot be computed.");
+        }
+        m_eigenvalues.reset(new Eigen::EigenSolver<Eigen::MatrixXd>::EigenvalueType(es.eigenvalues()));
+        m_eigenvectors.reset(new Eigen::EigenSolver<Eigen::MatrixXd>::EigenvectorsType(es.eigenvectors()));
+    }
+}
+
+
+
 
 
 

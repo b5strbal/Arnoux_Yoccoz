@@ -6,7 +6,7 @@ balazs::Mod1NumberIntExWithInfo::Mod1NumberIntExWithInfo(const Mod1NumberIntExch
     m_mod1NumberIntExchange(number),
     m_foliation(parent)
 {
-    assert(parent->intExchange().signature() == number.signature());
+    assert(&parent->intExchange() == number.parent());
     m_smallContainingInterval = containingInterval(m_foliation->allDivPoints(), number);
 }
 

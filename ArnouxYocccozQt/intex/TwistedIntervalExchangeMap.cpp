@@ -1,20 +1,18 @@
 #include "TwistedIntervalExchangeMap.h"
 #include "ContainingInterval.h"
+#include <numeric>
 
 
-
-balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap() :
-    TwistedIntervalExchangeMap(std::vector<long double>(1, 1), Permutation(), 0)
-{
-}
+//balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap() :
+//    TwistedIntervalExchangeMap(std::vector<long double>(1, 1), Permutation(), 0)
+//{
+//}
 
 balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector<long double> &lengths,
                                          const Permutation &permutation,
                                          long double twist, bool permutationMustBeMinimal) :
-    m_lengthsAndTwist(lengths, twist),
     m_permutation(permutation),
-    m_inversePermutation(inverse(permutation)),
-    m_twist(Mod1NumberIntExchange::constructTwist(&m_lengthsAndTwist))
+    m_inversePermutation(inverse(permutation))
 {
     if(lengths.size() != permutation.size()){
         throw std::runtime_error("The size of the permutation and the number of intervals should be the same.");
@@ -26,33 +24,64 @@ balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector
         }
     }
 
-    m_lengths.reserve(lengths.size());
+    if (lengths.size() == 0){
+        throw std::runtime_error("The number of intervals must be at least 1.");
+    }
     for (std::size_t i = 0; i < lengths.size(); i++) {
-        m_lengths.push_back(Mod1NumberIntExchange::constructLength(&m_lengthsAndTwist, i));
+        if (lengths[i] <= 0)
+            throw std::runtime_error("The length parameters of an interval exchange map must be positive.");
     }
 
-   // std::cout << &m_lengthsAndTwist << "\n";
+    long double total = std::accumulate(lengths.begin(), lengths.end(), 0.0);
 
-    m_divPoints.resize(lengths.size());
-    m_divPoints[0] = Mod1NumberIntExchange::constructZero(&m_lengthsAndTwist);
+
+
+
+    m_lengths.reserve(lengths.size());
+    std::vector<int> coefficients;
+    coefficients.resize(lengths.size());
+    for (std::size_t i = 0; i < lengths.size(); i++) {
+        coefficients[i] = 1;
+        m_lengths.push_back(Mod1NumberIntExchange(this, lengths[i] / total, coefficients, 0));
+        coefficients[i] = 0;
+    }
+
+
+    m_divPoints.reserve(lengths.size());
+    m_divPoints.push_back(Mod1NumberIntExchange(this, 0, coefficients, 0));
     for (std::size_t i = 1; i < lengths.size(); i++) {
-        m_divPoints[i] = m_divPoints[i - 1] + m_lengths[i - 1];
+        m_divPoints.push_back(m_divPoints[i - 1] + m_lengths[i - 1]);
     }
 
-    m_divPointsAfterExchange.resize(lengths.size());
-    m_divPointsAfterExchange[0] = m_twist;
+
+    std::vector<Mod1Number> divPointsAfter;
+    divPointsAfter.resize(lengths.size());
+    divPointsAfter[0] = twist;
     int divpointsBeforeTwist = 0;
     for (std::size_t i = 1; i < lengths.size(); i++) {
-        m_divPointsAfterExchange[i] = m_divPointsAfterExchange[i - 1] + m_lengths[m_inversePermutation[i - 1]];
-        if(static_cast<long double>(m_divPointsAfterExchange[i - 1]) +
+        divPointsAfter[i] = divPointsAfter[i - 1] + m_lengths[m_inversePermutation[i - 1]];
+        if(static_cast<long double>(divPointsAfter[i - 1]) +
                 static_cast<long double>(m_lengths[m_inversePermutation[i - 1]]) > 1){
             divpointsBeforeTwist = lengths.size() - i;
         }
     }
-    std::sort(m_divPointsAfterExchange.begin(), m_divPointsAfterExchange.end());
+    m_twist = Mod1NumberIntExchange(this, *std::min_element(divPointsAfter.begin(),
+                                                   divPointsAfter.end()), coefficients, 1);
+
 
     m_permutationWithMinimalTwist = rotatingPermutation(lengths.size(), divpointsBeforeTwist) * m_permutation;
     m_inversePermutationWithMinimalTwist = inverse(m_permutationWithMinimalTwist);
+
+
+    m_divPointsAfterExchange.resize(lengths.size());
+    m_divPointsAfterExchange[0] = m_twist;
+    for (std::size_t i = 1; i < lengths.size(); i++) {
+        m_divPointsAfterExchange[i] = m_divPointsAfterExchange[i - 1] +
+                m_lengths[m_inversePermutationWithMinimalTwist[i - 1]];
+    }
+    std::sort(m_divPointsAfterExchange.begin(), m_divPointsAfterExchange.end());
+
+
 
     m_translations.reserve(lengths.size());
     for (std::size_t i = 0; i < lengths.size(); i++) {

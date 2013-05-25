@@ -34,6 +34,8 @@ private slots:
     void finishedSearching();
     void setEstimatedTimeLabel(int nothing = 0);
     void onCurrentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem *);
+    void generateCandidates();
+
 
 private:
     void createMaps();
@@ -66,6 +68,8 @@ private:
     QLabel* estimatedTimeLabel;
     QPushButton* searchButton;
     QPushButton* stopButton;
+
+    QPushButton* generateCandidatesButton;
 
     QTreeWidget* tcTreeWidget;
 //    QTreeWidgetItem* shiftToLeftItem;

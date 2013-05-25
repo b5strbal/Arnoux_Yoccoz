@@ -35,8 +35,15 @@ TransverseCurveSearchWidget::TransverseCurveSearchWidget(balazs::SepSegmentDatab
     tcTreeWidget->setFont(QFont("Times", 12));
    // tcTreeWidget->setColumnCount(4);
     QStringList list;
-    list << tr("Mode") << tr("Length") << tr("Singularity permutation") << tr("New lengths") << tr("New permutation") << tr("New twist") << tr("Normalized lengths") << tr("Normalized twist");
+    list << tr("Length") << tr("Lengths/twist") << tr("N. lengths/twist") << tr("Permutation") <<
+            tr("Transition matrix") << tr("Inverse matrix");
+    for(std::size_t i = 0; i <= sepSegmentDatabase.foliation().numIntervals(); i++){
+        list << tr("Eigenvector %1").arg(i);
+    }
     tcTreeWidget->setHeaderLabels(list);
+    for(std::size_t i = 0; i <= sepSegmentDatabase.foliation().numIntervals(); i++){
+        tcTreeWidget->setColumnWidth(6 + i, 130);
+    }
 
     connect(tcTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
             this, SLOT(onCurrentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
@@ -72,6 +79,8 @@ TransverseCurveSearchWidget::TransverseCurveSearchWidget(balazs::SepSegmentDatab
     stopButton = new QPushButton(tr("Stop"));
     connect(stopButton, SIGNAL(clicked()), this, SLOT(stopSearching()));
 
+    generateCandidatesButton = new QPushButton(tr("Generate pseudo-anosov candidates"));
+    connect(generateCandidatesButton, SIGNAL(clicked()), this, SLOT(generateCandidates()));
 
     QHBoxLayout* lineLayout = new QHBoxLayout;
     lineLayout->addWidget(modeLabel);
@@ -88,6 +97,7 @@ TransverseCurveSearchWidget::TransverseCurveSearchWidget(balazs::SepSegmentDatab
     lineLayout2->addWidget(estimatedTimeLabel);
     lineLayout2->addWidget(searchButton);
     lineLayout2->addWidget(stopButton);
+    lineLayout2->addWidget(generateCandidatesButton);
     lineLayout2->addStretch(1);
 
 
@@ -179,7 +189,13 @@ void TransverseCurveSearchWidget::displayResults()
 
 
 
-
+void TransverseCurveSearchWidget::generateCandidates()
+{
+    const QString &s = modeComboBox->currentText();
+    for(int i = 0; i < topWidgetItemMap[s]->childCount(); i++){
+        dynamic_cast<TransverseCurveTreeWidgetItem*>(topWidgetItemMap[s]->child(i))->generateCandidates();
+    }
+}
 
 
 
@@ -210,6 +226,7 @@ void TransverseCurveSearchWidget::startSearch()
     maxInvoledSingularitiesSpinBox->setEnabled(false);
     modeComboBox->setEnabled(false);
     searchButton->setEnabled(false);
+    generateCandidatesButton->setEnabled(false);
 
     tcSearch->moveToThread(thread);
 
@@ -231,6 +248,7 @@ void TransverseCurveSearchWidget::finishedSearching()
     maxInvoledSingularitiesSpinBox->setEnabled(true);
     modeComboBox->setEnabled(true);
     searchButton->setEnabled(true);
+    generateCandidatesButton->setEnabled(true);
 
     displayResults();
 }
@@ -249,5 +267,7 @@ void TransverseCurveSearchWidget::onCurrentItemChanged(QTreeWidgetItem *current,
         emit(drawTransverseCurve(&item->transverseCurve()));
     }
 }
+
+
 
 
