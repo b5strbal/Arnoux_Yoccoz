@@ -153,21 +153,21 @@ double TransverseCurveSearchWidget::estimatedTime()
     const QString &s = modeComboBox->currentText();
     if(s == shiftToLeftSideString || s == shiftToRightSideString){
         for(int k = 1; k <= maxInvoledSingularitiesSpinBox->value(); k++){
-            retval += balazs::choose(sepSegmentDatabase.foliation().numIntervals(), k) *
+            retval += k * balazs::choose(sepSegmentDatabase.foliation().numIntervals(), k) *
                     pow(maxDepthSpinBox->value(), 2 * k);
         }
     } else if(s == wrapOnSingularitiesString){
         for(int k = 1; k <= maxInvoledSingularitiesSpinBox->value(); k++){
-            retval += balazs::choose(sepSegmentDatabase.foliation().numIntervals(), k) *
+            retval += k * balazs::choose(sepSegmentDatabase.foliation().numIntervals(), k) *
                     pow(maxDepthSpinBox->value(), k);
         }
     } else if(s == shiftToLeftSideRP2String || s == shiftToRightSideRP2String){
         for(int k = 1; k <= maxInvoledSingularitiesSpinBox->value()/2; k++){
-            retval += balazs::choose(sepSegmentDatabase.foliation().numIntervals()/2, k) *
+            retval += 2 * k * balazs::choose(sepSegmentDatabase.foliation().numIntervals()/2, k) *
                     pow(maxDepthSpinBox->value(), 2 * k);
         }
     }
-    return retval / 40000;
+    return sepSegmentDatabase.foliation().numIntervals() * retval / 800000;
 }
 
 
