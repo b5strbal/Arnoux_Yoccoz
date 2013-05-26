@@ -19,8 +19,8 @@ public:
  //   SeparatrixSegment(const SeparatrixSegment&) = delete;
     SeparatrixSegment& operator=(const SeparatrixSegment&) = delete;
 
-    bool reachedSaddleConnection() const { return m_reachedSaddleConnection; }
-    void lengthen();
+   // bool reachedSaddleConnection() const { return m_reachedSaddleConnection; }
+    void lengthen(); // strong exception guarantee
     bool isGood() const;
 
     const Foliation& foliation() const { return m_foliation; }

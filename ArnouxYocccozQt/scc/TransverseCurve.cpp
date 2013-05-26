@@ -3,7 +3,7 @@
 #include "SmallFoliation.h"
 #include "../fol/Foliation.h"
 #include <cassert>
-
+#include <QDebug>
 
 
 balazs::TransverseCurve::TransverseCurve(const SepSegmentCollection &segments, bool wrapsAroundEnds, SepSegmentDatabase &ssDatabase) :
@@ -75,10 +75,14 @@ void balazs::TransverseCurve::initTouchingSegments()
         for(VDirection vDirection : {VDirection::Down, VDirection::Up }){
             for(SepSegmentDatabase::ShiftMode shiftmode :
             {SepSegmentDatabase::Centered, SepSegmentDatabase::ShiftedEvenMore}){
-                for(std::size_t i = 0; i < foliation().numIntervals(); i++){
+                for(std::size_t i = 0; i < foliation().numIntervals(); i++){ // catch something!!
                     m_touchingSegments[hDirection][vDirection][shiftmode].push_back(
                                 &m_sepSegmentDatabase.getFirstIntersection({hDirection, vDirection, i},
                                                         m_disjointIntervals, shiftmode));
+                    if((double)m_disjointIntervals.totalLength() > 0.125 &&
+                           (double)m_disjointIntervals.totalLength() < 0.126){
+                        qDebug() << "futyi";
+                    }
                 }
 
             }

@@ -10,6 +10,7 @@ TransverseCurveTreeWidgetItem::TransverseCurveTreeWidgetItem(const balazs::Trans
 
     // length
     setText(0, QString::number(static_cast<double>(m_transverseCurve.length())));
+    setExpanded(true);
 }
 
 const balazs::TransverseCurve &TransverseCurveTreeWidgetItem::transverseCurve() const
@@ -23,7 +24,12 @@ void TransverseCurveTreeWidgetItem::generateCandidates()
     for(bool flippedOver : {false, true}){
         for(bool orientationReversing : {false, true}){
             for(std::size_t i = 0; i < m_transverseCurve.foliation().numIntervals(); i++){
-                new SmallFoliationTreeWidgetItem(m_transverseCurve, i, flippedOver, orientationReversing, this);
+                m_smallFoliations.emplace_back(m_transverseCurve, i, flippedOver, orientationReversing);
+                if(m_smallFoliations.back().isGoodCandidate() != balazs::SmallFoliation::Nothing){
+                    m_smallFoliations.pop_back();
+                } else {
+                    new SmallFoliationTreeWidgetItem(m_smallFoliations.back(), this);
+                }
             }
         }
     }

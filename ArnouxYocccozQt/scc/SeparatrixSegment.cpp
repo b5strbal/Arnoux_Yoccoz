@@ -53,25 +53,32 @@ balazs::SeparatrixSegment::SeparatrixSegment(const Foliation& foliation, const S
 
 
 
-void balazs::SeparatrixSegment::lengthen()
+void balazs::SeparatrixSegment::lengthen() // strong exception guarantee
 {
-    if(m_vDirection == VDirection::Up){
-        m_intervalIntersectionCount[containingInterval(m_foliation.topDivPoints(), m_endpoint)]++;
+    if(m_reachedSaddleConnection){
+        throw std::runtime_error("Cannot lengthen separatrix segment, there is a saddle connection.");
     }
-    m_intervalNeighborhoods.insertPoint(m_endpoint);
+
+    Mod1NumberIntExWithInfo newPoint((m_vDirection == VDirection::Up) ?
+                m_foliation.intExchange().applyTo(m_endpoint.number()) :
+                m_foliation.intExchange().applyInverseTo(m_endpoint.number()), &m_foliation);
+
+    if(newPoint.isTooCloseToADivPoint()){
+        m_reachedSaddleConnection = true;
+        throw std::runtime_error("Cannot lengthen separatrix segment, there is a saddle connection.");
+    }
 
     m_depth++;
-    Mod1NumberIntExchange newPoint = (m_vDirection == VDirection::Up) ?
-                m_foliation.intExchange().applyTo(m_endpoint.number()) :
-                m_foliation.intExchange().applyInverseTo(m_endpoint.number());
-    m_endpoint = Mod1NumberIntExWithInfo(newPoint, &m_foliation);
 
-    if(m_vDirection == VDirection::Down){
+    if(m_vDirection == VDirection::Up){
         m_intervalIntersectionCount[containingInterval(m_foliation.topDivPoints(), m_endpoint)]++;
+    } else {
+        m_intervalIntersectionCount[containingInterval(m_foliation.topDivPoints(), newPoint)]++;
     }
-    if(m_endpoint.isTooCloseToADivPoint()){
-        m_reachedSaddleConnection = true;
-    }
+
+    m_intervalNeighborhoods.insertPoint(m_endpoint);
+
+    m_endpoint = newPoint;
 }
 
 
@@ -81,7 +88,7 @@ void balazs::SeparatrixSegment::lengthen()
 
 bool balazs::SeparatrixSegment::isGood() const
 {
-    return m_intervalNeighborhoods.containsInTwoSidedInterval(m_endpoint);
+    return m_intervalNeighborhoods.contains(m_endpoint);
 }
 
 

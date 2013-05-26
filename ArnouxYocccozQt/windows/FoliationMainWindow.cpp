@@ -68,7 +68,8 @@ FoliationMainWindow::FoliationMainWindow(const WindowManager &manager, QWidget *
     for(int i = 3; i < 10; i++){
         createNewFoliation(new balazs::Foliation(i));
     }
-
+    createNewFoliation(new balazs::Foliation({0.201747, 0.0888383, 0.28177, 0.0502083, 0.281782, 0.0956547},
+                                             balazs::Permutation({1, 0, 5, 3, 2, 4}), 0.0203455));
 }
 
 

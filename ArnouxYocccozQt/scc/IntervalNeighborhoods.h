@@ -55,7 +55,7 @@ public:
     void insertPoint(const Mod1NumberIntExWithInfo& newCuttingPoint);
 
     // Decides if the point is contained in an intervals which is two sided.
-    bool containsInTwoSidedInterval(const Mod1NumberIntExWithInfo& point) const;
+    bool contains(const Mod1NumberIntExWithInfo& point) const;
 
     // Returns true if the interval between two points is contained in any of the member intervals and passes
     // through either a TopDivPoint or BottomDivPoint, whichever is specified.

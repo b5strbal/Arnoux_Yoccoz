@@ -7,12 +7,12 @@
 balazs::SmallFoliation::SmallFoliation(const balazs::TransverseCurve &tc,
                                        std::size_t referenceZeroIndex, bool flippedOver, bool orientationReversing)
     : m_transverseCurve(tc),
-      m_totalLength(tc.disjointIntervals().totalLength())
+      m_totalLength(tc.disjointIntervals().totalLength()),
+      m_movingForward((!orientationReversing && !flippedOver) || (orientationReversing && flippedOver))
 {
     assert(referenceZeroIndex < tc.foliation().numIntervals());
 
-    bool movingForward = (!orientationReversing && !flippedOver) || (orientationReversing && flippedOver);
-    const std::vector<Mod1NumberIntExchange>& bottomIntersections = movingForward ? tc.bottomRightIntersections() :
+    const std::vector<Mod1NumberIntExchange>& bottomIntersections = m_movingForward ? tc.bottomRightIntersections() :
                                                                                     tc.bottomLeftIntersections();
 
     const std::vector<Mod1NumberIntExchange>& frontIntersections = flippedOver ? bottomIntersections :
@@ -24,19 +24,18 @@ balazs::SmallFoliation::SmallFoliation(const balazs::TransverseCurve &tc,
 
 
 
-    // frontDivPoints
-    std::vector<Mod1NumberIntExchange> frontDivPoints;
-    frontDivPoints.reserve(tc.foliation().numIntervals());
+    // m_frontDivPoints
+    m_frontDivPoints.reserve(tc.foliation().numIntervals());
     {
         Mod1NumberIntExchange distance;
         for(std::size_t i = 0; i < tc.foliation().numIntervals(); i++){
-            distance = movingForward ? tc.distanceOnCurve(referenceZero, frontIntersections[i]) :
+            distance = m_movingForward ? tc.distanceOnCurve(referenceZero, frontIntersections[i]) :
                                        tc.distanceOnCurve(frontIntersections[i], referenceZero);
-            frontDivPoints.push_back(distance);
+            m_frontDivPoints.push_back(distance);
         }
     }
-    std::vector<Mod1NumberIntExchange> sortedFrontDivPoints = frontDivPoints;
-    std::sort(sortedFrontDivPoints.begin(), sortedFrontDivPoints.end());
+    m_sortedFrontDivPoints = m_frontDivPoints;
+    std::sort(m_sortedFrontDivPoints.begin(), m_sortedFrontDivPoints.end());
 
 
 
@@ -46,7 +45,7 @@ balazs::SmallFoliation::SmallFoliation(const balazs::TransverseCurve &tc,
     {
         Mod1NumberIntExchange distance;
         for(std::size_t i = 0; i < tc.foliation().numIntervals(); i++){
-            distance = movingForward ? tc.distanceOnCurve(referenceZero, backIntersections[i]) :
+            distance = m_movingForward ? tc.distanceOnCurve(referenceZero, backIntersections[i]) :
                                        tc.distanceOnCurve(backIntersections[i], referenceZero);
             backDivPoints.push_back(distance);
         }
@@ -55,94 +54,58 @@ balazs::SmallFoliation::SmallFoliation(const balazs::TransverseCurve &tc,
     std::sort(sortedBackDivPoints.begin(), sortedBackDivPoints.end());
 
 
-
-
-    // permutation, strip heights
-    for(HDirection hDirection : { HDirection::Left, HDirection::Right}){
-        m_stripHeights[hDirection].resize(tc.foliation().numIntervals());
-        for(std::size_t i = 0; i < tc.foliation().numIntervals(); i++){
-            m_stripHeights[hDirection][i].resize(tc.foliation().numIntervals());
-        }
-    }
-
-    std::vector<std::size_t> permutationInput;
-    for(std::size_t i = 0; i < tc.foliation().numIntervals(); i++){
-        std::size_t singularity = std::find(frontDivPoints.begin(), frontDivPoints.end(), sortedFrontDivPoints[i]) -
-                frontDivPoints.begin();
-        permutationInput.push_back(std::lower_bound(sortedBackDivPoints.begin(), sortedBackDivPoints.end(),
-                                               backDivPoints[singularity]) - sortedBackDivPoints.begin());
-
-        for(std::size_t j = 0; j < tc.foliation().numIntervals(); j++){
-            std::map<HDirection, HDirection> source;
-            source[HDirection::Right] = movingForward ? HDirection::Right : HDirection::Left;
-            source[HDirection::Left] = movingForward ? HDirection::Left : HDirection::Right;
-
-            for(HDirection hDirection : { HDirection::Left, HDirection::Right}){
-
-            const SeparatrixSegment& upCentered = tc.touchingSepSegment({source[hDirection], VDirection::Up, singularity},SepSegmentDatabase::Centered);
-            const SeparatrixSegment& downCentered = tc.touchingSepSegment({source[hDirection], VDirection::Down, singularity},SepSegmentDatabase::Centered);
-            const SeparatrixSegment& upShifted = tc.touchingSepSegment({source[hDirection], VDirection::Up, singularity},SepSegmentDatabase::ShiftedEvenMore);
-            const SeparatrixSegment& downShifted = tc.touchingSepSegment({source[hDirection], VDirection::Down, singularity},SepSegmentDatabase::ShiftedEvenMore);
-
-            if(upCentered.depth() < upShifted.depth()){
-                m_stripHeights[hDirection][i][j] = downCentered.intervalIntersectionCount()[j] -
-                        downShifted.intervalIntersectionCount()[j];
-            } else
-
-            if(downCentered.depth() < downShifted.depth()){
-                m_stripHeights[hDirection][i][j] = upCentered.intervalIntersectionCount()[j] -
-                        upShifted.intervalIntersectionCount()[j];
-            } else {
-                m_stripHeights[hDirection][i][j] = upShifted.intervalIntersectionCount()[j] +
-                        downShifted.intervalIntersectionCount()[j];
-            }
-
-            }
-        }
-    }
-    m_permutation = Permutation(permutationInput);
-
-
-
-    // m_lengths
-    m_lengths.reserve(tc.foliation().numIntervals());
-    for(std::size_t i = 0; i < tc.foliation().numIntervals() - 1; i++){
-        m_lengths.push_back(sortedFrontDivPoints[i + 1] - sortedFrontDivPoints[i]);
-    }
-    m_lengths.push_back(m_totalLength - sortedFrontDivPoints.back());
-
-
     // m_twist
     m_twist = sortedBackDivPoints[0];
-
-
-    // m_normalizedLengths
-    m_normalizedLengths.reserve(m_lengths.size());
-    for(const auto& x : m_lengths){
-        m_normalizedLengths.emplace_back(x / m_totalLength);
-    }
 
     // m_normalizedTwist
     m_normalizedTwist = m_twist / m_totalLength;
 
 
-    initTransitionMatrix();
+    // m_permutation
+    std::vector<std::size_t> permutationInput;
+    for(std::size_t i = 0; i < tc.foliation().numIntervals(); i++){
+        std::size_t singularity = std::find(m_frontDivPoints.begin(), m_frontDivPoints.end(),
+                                            m_sortedFrontDivPoints[i]) - m_frontDivPoints.begin();
+        permutationInput.push_back(std::lower_bound(sortedBackDivPoints.begin(), sortedBackDivPoints.end(),
+                                               backDivPoints[singularity]) - sortedBackDivPoints.begin());
+    }
+    m_permutation = Permutation(permutationInput);
 }
+
+const std::vector<balazs::Mod1NumberIntExchange> &balazs::SmallFoliation::lengths() const
+{
+    initLengths();
+    return m_lengths;
+}
+
+const std::vector<long double> &balazs::SmallFoliation::normalizedLengths() const
+{
+    initLengths();
+    return m_normalizedLengths;
+}
+
+const std::map<balazs::HDirection, std::vector<std::vector<std::size_t> > > &balazs::SmallFoliation::stripHeights() const
+{
+    initStripHeights();
+    return m_stripHeights;
+}
+
 
 
 
 const Eigen::MatrixXd &balazs::SmallFoliation::transitionMatrix() const
 {
+    initTransitionMatrix();
     return m_transitionMatrix;
 }
 
-const Eigen::EigenSolver<Eigen::MatrixXd>::EigenvalueType &balazs::SmallFoliation::eigenvalues()
+const Eigen::EigenSolver<Eigen::MatrixXd>::EigenvalueType &balazs::SmallFoliation::eigenvalues() const
 {
     initEigenSolver();
     return *m_eigenvalues;
 }
 
-const Eigen::EigenSolver<Eigen::MatrixXd>::EigenvectorsType &balazs::SmallFoliation::eigenvectors()
+const Eigen::EigenSolver<Eigen::MatrixXd>::EigenvectorsType &balazs::SmallFoliation::eigenvectors() const
 {
     initEigenSolver();
     return *m_eigenvectors;
@@ -162,9 +125,7 @@ bool allEntriesPositive(const Eigen::VectorXcd& vector){
 
 
 
-
-
-balazs::SmallFoliation::WhatIsWrong balazs::SmallFoliation::isGoodCandidate()
+balazs::SmallFoliation::WhatIsWrong balazs::SmallFoliation::isGoodCandidate() const
 {
     WhatIsWrong currentProblem = Permutation_Does_Not_Match;
 
@@ -186,10 +147,32 @@ balazs::SmallFoliation::WhatIsWrong balazs::SmallFoliation::isGoodCandidate()
     return currentProblem;
 }
 
-
-
-void balazs::SmallFoliation::initTransitionMatrix()
+void balazs::SmallFoliation::initLengths() const
 {
+    if(!m_lengths.empty()) return;
+
+    // m_lengths
+    m_lengths.reserve(m_permutation.size());
+    for(std::size_t i = 0; i < m_permutation.size() - 1; i++){
+        m_lengths.push_back(m_sortedFrontDivPoints[i + 1] - m_sortedFrontDivPoints[i]);
+    }
+    m_lengths.push_back(m_totalLength - m_sortedFrontDivPoints.back());
+
+    // m_normalizedLengths
+    m_normalizedLengths.reserve(m_lengths.size());
+    for(const auto& x : m_lengths){
+        m_normalizedLengths.emplace_back(x / m_totalLength);
+    }
+}
+
+
+
+void balazs::SmallFoliation::initTransitionMatrix() const
+{
+    if(m_transitionMatrix.cols() != 0) return;
+
+    initLengths();
+
     m_transitionMatrix.resize(m_lengths.size() + 1, m_lengths.size() + 1);
     for(std::size_t i = 0; i < m_lengths.size(); i++){
         m_lengths[i].adjustCoefficients();
@@ -205,9 +188,58 @@ void balazs::SmallFoliation::initTransitionMatrix()
     m_transitionMatrix(m_lengths.size(), m_lengths.size()) = m_twist.twistCoeff();
 }
 
-void balazs::SmallFoliation::initEigenSolver()
+
+
+void balazs::SmallFoliation::initStripHeights() const
+{
+    if(!m_stripHeights.empty()) return;
+
+    for(HDirection hDirection : { HDirection::Left, HDirection::Right}){
+        m_stripHeights[hDirection].resize(m_transverseCurve.foliation().numIntervals());
+        for(std::size_t i = 0; i < m_transverseCurve.foliation().numIntervals(); i++){
+            m_stripHeights[hDirection][i].resize(m_transverseCurve.foliation().numIntervals());
+        }
+    }
+
+    for(std::size_t i = 0; i < m_transverseCurve.foliation().numIntervals(); i++){
+        std::size_t singularity = std::find(m_frontDivPoints.begin(), m_frontDivPoints.end(),
+                                            m_sortedFrontDivPoints[i]) - m_frontDivPoints.begin();
+        for(std::size_t j = 0; j < m_transverseCurve.foliation().numIntervals(); j++){
+            std::map<HDirection, HDirection> source;
+            source[HDirection::Right] = m_movingForward ? HDirection::Right : HDirection::Left;
+            source[HDirection::Left] = m_movingForward ? HDirection::Left : HDirection::Right;
+
+            for(HDirection hDirection : { HDirection::Left, HDirection::Right}){
+
+            const SeparatrixSegment& upCentered = m_transverseCurve.touchingSepSegment({source[hDirection], VDirection::Up, singularity},SepSegmentDatabase::Centered);
+            const SeparatrixSegment& downCentered = m_transverseCurve.touchingSepSegment({source[hDirection], VDirection::Down, singularity},SepSegmentDatabase::Centered);
+            const SeparatrixSegment& upShifted = m_transverseCurve.touchingSepSegment({source[hDirection], VDirection::Up, singularity},SepSegmentDatabase::ShiftedEvenMore);
+            const SeparatrixSegment& downShifted = m_transverseCurve.touchingSepSegment({source[hDirection], VDirection::Down, singularity},SepSegmentDatabase::ShiftedEvenMore);
+
+            if(upCentered.depth() < upShifted.depth()){
+                m_stripHeights[hDirection][i][j] = downCentered.intervalIntersectionCount()[j] -
+                        downShifted.intervalIntersectionCount()[j];
+            } else
+
+            if(downCentered.depth() < downShifted.depth()){
+                m_stripHeights[hDirection][i][j] = upCentered.intervalIntersectionCount()[j] -
+                        upShifted.intervalIntersectionCount()[j];
+            } else {
+                m_stripHeights[hDirection][i][j] = upShifted.intervalIntersectionCount()[j] +
+                        downShifted.intervalIntersectionCount()[j];
+            }
+
+            }
+        }
+    }
+}
+
+
+
+void balazs::SmallFoliation::initEigenSolver() const
 {
     if(!m_eigenvalues){
+        initTransitionMatrix();
         Eigen::EigenSolver<Eigen::MatrixXd> es(m_transitionMatrix);
         if(es.info() != Eigen::Success){
             throw std::runtime_error("Eigenvalues cannot be computed.");

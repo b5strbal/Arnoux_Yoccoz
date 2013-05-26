@@ -231,7 +231,7 @@ void TransverseCurveSearchWidget::startSearch()
     tcSearch->moveToThread(thread);
 
     thread->start();
-
+    //tcDatabaseMap.at(s)->generateTransverseCurves(maxDepthSpinBox->value(), maxInvoledSingularitiesSpinBox->value(), stopSearch, mutex);
 }
 
 

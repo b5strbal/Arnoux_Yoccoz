@@ -31,20 +31,7 @@ void balazs::IntervalNeighborhoods::insertPoint(const Mod1NumberIntExWithInfo &n
 // An interval around a divpoint is two sided if the divpoint cuts the interval into
 // two intervals, both with length bigger than zero.
 //
-// The IntervalNeighborhoods corresponding to a SeparatrixSegment have the first cutting
-// point which is an infinitesimal shift of one of the divpoints. As a result, the interval
-// around that divpoint is one-sided, unless it is long enough to contain another divpoint.
-// But if it only contains that one divpoint, then a SeparatrixSegment with endpoint falling
-// into that interval can't be good no matter which side that infinitesimal shift is.
-//
-// The parameter indexOfOneSidedDivPoint tells which divpoint might have the one-sided interval.
-//
-// This little compication has the benefit that without this it would be possible that
-// a separatrix segment of certain depth is considered good when shifted to the left, and
-// bad if shifted to the right, or vica versa, and this assymetry would be inconvenient when
-// iterating over the good separatrix segments.
-//
-bool balazs::IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1NumberIntExWithInfo& point) const{
+bool balazs::IntervalNeighborhoods::contains(const Mod1NumberIntExWithInfo& point) const{
     assert(&foliation() == &point.foliation());
 
     std::size_t indexOfInterval = point.smallContainingInterval();
@@ -53,16 +40,8 @@ bool balazs::IntervalNeighborhoods::containsInTwoSidedInterval(const Mod1NumberI
         return true;
     }
 
-    std::size_t prevIndex = (indexOfInterval + (m_cuttingPoints.size() - 1)) % m_cuttingPoints.size();
-    std::size_t nextIndex = (indexOfInterval + 1) % m_cuttingPoints.size();
-    bool isLeftDivPointTwoSided = m_cuttingPoints[prevIndex].isEmpty ||
-            m_cuttingPoints[prevIndex].second.number() != m_foliation.allDivPoints()[indexOfInterval].shiftedTo(HDirection::Left);
-
-    bool isRightDivPointTwoSided = m_cuttingPoints[nextIndex].isEmpty ||
-            m_foliation.allDivPoints()[nextIndex].shiftedTo(HDirection::Right) != m_cuttingPoints[nextIndex].first.number();
-
-    if ((localLess(point, m_cuttingPoints[indexOfInterval].first) && isLeftDivPointTwoSided)
-            || (localLess(m_cuttingPoints[indexOfInterval].second, point) && isRightDivPointTwoSided))
+    if (localLess(point, m_cuttingPoints[indexOfInterval].first)
+            || localLess(m_cuttingPoints[indexOfInterval].second, point))
     {
         return true;
     }

@@ -23,14 +23,13 @@ QString string(const std::complex<double>& cd){
 }
 
 
-SmallFoliationTreeWidgetItem::SmallFoliationTreeWidgetItem(const balazs::TransverseCurve& tc,
-                                                           std::size_t referenceZeroIndex,
-                                                           bool flippedOver,
-                                                           bool orientationReversing,
+SmallFoliationTreeWidgetItem::SmallFoliationTreeWidgetItem(const balazs::SmallFoliation& sf,
                                                            QTreeWidgetItem *parent) :
     QTreeWidgetItem(parent),
-    m_smallFoliation(tc, referenceZeroIndex, flippedOver, orientationReversing)
+    m_smallFoliation(sf)
 {
+    setBackground(0, QBrush(Qt::green));
+
     std::size_t size = m_smallFoliation.lengths().size();
     for(std::size_t i = 0; i < size + 1; i++){
         new QTreeWidgetItem(this);
@@ -73,18 +72,6 @@ SmallFoliationTreeWidgetItem::SmallFoliationTreeWidgetItem(const balazs::Transve
         s.chop(1);
         child(i)->setText(4, s);
     }
-
-    QMap<balazs::SmallFoliation::WhatIsWrong, Qt::GlobalColor> color;
-    color[balazs::SmallFoliation::Permutation_Does_Not_Match] = Qt::red;
-    color[balazs::SmallFoliation::No_Appropriate_EigenValue] = Qt::magenta;
-    color[balazs::SmallFoliation::No_Positive_EigenVector] = Qt::yellow;
-    color[balazs::SmallFoliation::Nothing] = Qt::green;
-
-    balazs::SmallFoliation::WhatIsWrong problem = m_smallFoliation.isGoodCandidate();
-    setBackground(0, QBrush(color[problem]));
-    if(problem != balazs::SmallFoliation::Nothing) return;
-
-
 
 
     // inverse matrix
