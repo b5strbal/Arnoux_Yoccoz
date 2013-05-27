@@ -59,7 +59,8 @@ SOURCES += main.cpp\
     windows/foliationWidgets/TransverseCurveTreeWidgetItem.cpp \
     windows/foliationWidgets/FoliationDrawingArea.cpp \
     scc/SmallFoliation.cpp \
-    windows/foliationWidgets/SmallFoliationTreeWidgetItem.cpp
+    windows/foliationWidgets/SmallFoliationTreeWidgetItem.cpp \
+    qt.cpp
 
 HEADERS  += scc/IntervalNeighborhoods.h \
     scc/DisjointIntervals.h \

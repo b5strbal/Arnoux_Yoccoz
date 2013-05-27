@@ -11,6 +11,7 @@
 #define ArnouxYoccoz_UnitIntervalPoint_h
 
 #include "HDirection.h"
+#include <vector>
 
 namespace balazs{
 
@@ -39,7 +40,6 @@ namespace balazs{
 
 // Calculates the fractional part of a real number. E.g. fracPart(2.3) = 0.3, fracPart(-1.8) = 0.2.
 long double fracPart(long double x);
-const long double PRECISION = 0.00000000001L;
 
 
 class Mod1Number {
@@ -53,6 +53,8 @@ public:
     Mod1Number operator-() const;
     friend bool operator<(const Mod1Number& p1, const Mod1Number& p2);
     operator long double() const { return m_position; }
+
+    static const long double precision;
 private:
     long double m_position; // The position of the point.
     int m_epsilon;                  // The infinitesimal shift.
@@ -72,7 +74,15 @@ bool operator<=(const Mod1Number& p1, const Mod1Number& p2);
 bool operator>=(const Mod1Number& p1, const Mod1Number& p2);
 
 
-
+template <typename NumberType>
+bool arePointsTooClose(const std::vector<NumberType>& vec){
+    for(std::size_t i = 0; i < vec.size(); i++){
+        if(distanceBetween(vec[i], vec[(i + 1) % vec.size()]) < Mod1Number::precision){
+            return true;
+        }
+    }
+    return false;
+}
 
 
 

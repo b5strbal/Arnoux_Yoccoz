@@ -3,24 +3,8 @@
 #include "../../scc/SmallFoliation.h"
 #include "../../../Eigen/Eigenvalues"
 #include <sstream>
+#include "qt.h"
 
-QString string(const std::complex<double>& cd){
-    QString s;
-    s.append(QString::number(cd.real()));
-    if(cd.imag() == 0){
-        return s;
-    }
-    if(cd.imag() > 0){
-        s.append(" + ");
-        s.append(QString::number(cd.imag()));
-    } else {
-        s.append(" - ");
-        s.append(QString::number(-cd.imag()));
-    }
-    s.append("i");
-
-    return s;
-}
 
 
 SmallFoliationTreeWidgetItem::SmallFoliationTreeWidgetItem(const balazs::SmallFoliation& sf,
@@ -49,17 +33,7 @@ SmallFoliationTreeWidgetItem::SmallFoliationTreeWidgetItem(const balazs::SmallFo
 
 
     // permutation
-    {
-        QString s = "(";
-        for(std::size_t i = 0; i < size; i++){
-            s.append(QString::number(m_smallFoliation.permutation()[i]));
-            s.append(" ");
-        }
-        s.chop(1);
-        s.append(")");
-
-        setText(3, s);
-    }
+    setText(3, string(m_smallFoliation.permutation()));
 
     // transition matrix
     auto matrix = m_smallFoliation.transitionMatrix();
@@ -72,6 +46,21 @@ SmallFoliationTreeWidgetItem::SmallFoliationTreeWidgetItem(const balazs::SmallFo
         s.chop(1);
         child(i)->setText(4, s);
     }
+
+
+    // transpose eigenvalues and eigenvectors
+    matrix.transposeInPlace();
+    Eigen::EigenSolver<Eigen::MatrixXd> es(matrix);
+    for(int i = 0; i < matrix.rows(); i++){
+        setText(6 + i + matrix.rows(), string(es.eigenvalues()[i]));
+        setForeground(6 + i + matrix.rows(), QBrush(Qt::blue));
+
+        for(int j = 0; j < matrix.rows(); j++){
+            child(j)->setText(6 + i + matrix.rows(), string(es.eigenvectors().col(i)[j]));
+        }
+    }
+    matrix.transposeInPlace();
+
 
 
     // inverse matrix
@@ -95,8 +84,6 @@ SmallFoliationTreeWidgetItem::SmallFoliationTreeWidgetItem(const balazs::SmallFo
             child(j)->setText(6 + i, string(m_smallFoliation.eigenvectors().col(i)[j]));
         }
     }
-
-
 
 
 

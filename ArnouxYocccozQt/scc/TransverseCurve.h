@@ -14,6 +14,7 @@ class SmallFoliation;
 
 class TransverseCurve{
 public:
+    // Constructor throws if touching segments cannot be initialized
     TransverseCurve(const SepSegmentCollection& segments, bool wrapsAroundEnds, SepSegmentDatabase& ssDatabase);
     TransverseCurve(const TransverseCurve&) = delete;
     TransverseCurve& operator=(const TransverseCurve&) = delete;

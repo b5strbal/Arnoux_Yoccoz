@@ -31,6 +31,12 @@ FoliationDataTreeWidget::FoliationDataTreeWidget(const balazs::Foliation &foliat
     lengthsItem->setText(0, tr("Interval lengths"));
     lengthsItem->setText(1, tr(""));
 
+    permutationItem = new QTreeWidgetItem(this);
+    permutationItem->setText(0, tr("Permutation"));
+
+    twistItem = new QTreeWidgetItem(this);
+    twistItem->setText(0, tr("Twist"));
+
     topDivPointsItem = new QTreeWidgetItem(this);
     topDivPointsItem->setText(0, tr("Top division points"));
     topDivPointsItem->setText(1, tr(""));
@@ -42,6 +48,7 @@ FoliationDataTreeWidget::FoliationDataTreeWidget(const balazs::Foliation &foliat
     setMinimumWidth(300);
     update();
 }
+
 
 void FoliationDataTreeWidget::update()
 {
@@ -55,6 +62,10 @@ void FoliationDataTreeWidget::update()
     s.clear();
     s << m_foliation.singularityTypeProngs();
     singListProngsItem->setText(1, tr("(%1)").arg(s));
+
+    permutationItem->setText(1, string(m_foliation.intExchange().permutationWithMinimalTwist()));
+
+    twistItem->setText(1, QString::number(static_cast<double>(m_foliation.intExchange().twist())));
 
     QTreeWidgetItem* childItem;
 

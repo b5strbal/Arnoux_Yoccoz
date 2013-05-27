@@ -23,7 +23,6 @@ public:
     TwistedIntervalExchangeMap& operator=(const TwistedIntervalExchangeMap&) = delete;
 
     std::size_t size() const { return m_lengths.size(); }
-  //  const LengthsAndTwist* signature() const { return &m_lengthsAndTwist; }
     const std::vector<Mod1NumberIntExchange>& lengths() const { return m_lengths; }
     const Mod1NumberIntExchange& twist() const { return m_twist; }
     const std::vector<Mod1NumberIntExchange>& divPoints() const { return m_divPoints; }
@@ -47,13 +46,8 @@ public:
     TwistedIntervalExchangeMap(const TwistedIntervalExchangeMap& intExchange, const reverse_tag&);
     TwistedIntervalExchangeMap(const TwistedIntervalExchangeMap& intExchange, const invert_tag&);
 
-    //    std::size_t containingInterval(const Mod1Number& point) const;
-    //    std::size_t containingIntervalAfterExchange(const Mod1Number& point) const;
-
-
 
 private:
-   // LengthsAndTwist m_lengthsAndTwist;
     std::vector<Mod1NumberIntExchange> m_lengths;
     Permutation m_permutation;          // Permutation of intervals before the twist.
     Permutation m_inversePermutation;   // The inverse of the above.
@@ -64,21 +58,20 @@ private:
     std::vector<Mod1NumberIntExchange> m_divPointsAfterExchange;
     std::vector<Mod1NumberIntExchange> m_translations;
 
-
-    static std::vector<long double> newLengthsRotate(const TwistedIntervalExchangeMap& intExchange,
-                                                      int normalizedRotationAmount);
-    static std::vector<long double> newLengthsReverse(const TwistedIntervalExchangeMap& intExchange);
-    static std::vector<long double> newLengthsInvert(const TwistedIntervalExchangeMap& intExchange);
-
-    static Permutation newPermutationRotate(const TwistedIntervalExchangeMap& intExchange,
-                                                      int normalizedRotationAmount);
-    static Permutation newPermutationReverse(const TwistedIntervalExchangeMap& intExchange);
-
-
-    static long double newTwistRotate(const TwistedIntervalExchangeMap& intExchange, int normalizedRotationAmount);
-
-
 };
+
+std::vector<long double> newLengthsRotate(const TwistedIntervalExchangeMap& intExchange,
+                                                  int normalizedRotationAmount);
+std::vector<long double> newLengthsReverse(const TwistedIntervalExchangeMap& intExchange);
+std::vector<long double> newLengthsInvert(const TwistedIntervalExchangeMap& intExchange);
+
+Permutation newPermutationRotate(const TwistedIntervalExchangeMap& intExchange,
+                                                  int normalizedRotationAmount);
+Permutation newPermutationReverse(const TwistedIntervalExchangeMap& intExchange);
+
+long double newTwistRotate(const TwistedIntervalExchangeMap& intExchange, int normalizedRotationAmount);
+
+
 
 }
 

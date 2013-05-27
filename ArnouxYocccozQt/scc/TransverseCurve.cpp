@@ -14,7 +14,7 @@ balazs::TransverseCurve::TransverseCurve(const SepSegmentCollection &segments, b
     assert(&m_sepSegmentDatabase == &m_sepSegmentCollection.sepSegmentDatabase());
 
     initIntervalsInOrder();
-    initTouchingSegments();
+    initTouchingSegments(); // might throw if touching segments cannot be initialized because of saddle connection
 
     m_topIntersections.reserve(foliation().numIntervals());
     for(std::size_t i = 0; i < foliation().numIntervals(); i++){
@@ -69,20 +69,17 @@ void balazs::TransverseCurve::initIntervalsInOrder()
 }
 
 
-void balazs::TransverseCurve::initTouchingSegments()
+void balazs::TransverseCurve::initTouchingSegments() // basic guarantee
 {
     for(HDirection hDirection : {HDirection::Left, HDirection::Right}){
         for(VDirection vDirection : {VDirection::Down, VDirection::Up }){
             for(SepSegmentDatabase::ShiftMode shiftmode :
             {SepSegmentDatabase::Centered, SepSegmentDatabase::ShiftedEvenMore}){
-                for(std::size_t i = 0; i < foliation().numIntervals(); i++){ // catch something!!
+                for(std::size_t i = 0; i < foliation().numIntervals(); i++){
                     m_touchingSegments[hDirection][vDirection][shiftmode].push_back(
                                 &m_sepSegmentDatabase.getFirstIntersection({hDirection, vDirection, i},
                                                         m_disjointIntervals, shiftmode));
-                    if((double)m_disjointIntervals.totalLength() > 0.125 &&
-                           (double)m_disjointIntervals.totalLength() < 0.126){
-                        qDebug() << "futyi";
-                    }
+
                 }
 
             }

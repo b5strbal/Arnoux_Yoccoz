@@ -2,6 +2,7 @@
 #include "SepSegmentDatabase.h"
 #include "SSCMode.h"
 #include "../intex/Mod1Number.h"
+#include "fol/Foliation.h"
 #include <cassert>
 
 balazs::SepSegmentCollection::SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase,
@@ -121,5 +122,32 @@ std::vector<balazs::Mod1NumberIntExchange> balazs::getEndpoints(const SepSegment
         endpoints.push_back(collection[i]->endpoint());
     }
     return endpoints;
+}
+
+
+void balazs::assertValidCollection(const balazs::SepSegmentCollection &collection)
+{
+    assert(collection.size() % 2 == 0);
+    assert(collection.size() >= 2);
+    std::vector<char> singularities(collection.foliation().numIntervals(), 0);
+    for (std::size_t i = 0; i < collection.size(); i += 2){
+        assert(collection[i]->startingSingularity() == collection[i + 1]->startingSingularity());
+        assert(singularities[collection[i]->startingSingularity()] == 0);
+        singularities[collection[i]->startingSingularity()] = 1;
+        assert(collection[i]->vDirection() != collection[i + 1]->vDirection() ||
+               collection[i]->hDirection() != collection[i + 1]->hDirection());
+    }
+}
+
+
+bool balazs::areEndpointsTooClose(const balazs::SepSegmentCollection &collection)
+{
+    std::vector<Mod1Number> endpoints;
+    endpoints.reserve(collection.size());
+    for (std::size_t i = 0; i < collection.size(); i++){
+        endpoints.push_back(collection[i]->endpoint());
+    }
+    std::sort(endpoints.begin(), endpoints.end());
+    return arePointsTooClose(endpoints);
 }
 

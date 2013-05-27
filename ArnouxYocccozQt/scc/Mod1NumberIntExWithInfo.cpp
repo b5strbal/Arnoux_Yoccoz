@@ -15,11 +15,11 @@ balazs::Mod1NumberIntExWithInfo balazs::Mod1NumberIntExWithInfo::shiftedTo(HDire
     return Mod1NumberIntExWithInfo(m_mod1NumberIntExchange.shiftedTo(side), m_foliation);
 }
 
-bool balazs::Mod1NumberIntExWithInfo::isTooCloseToADivPoint() const
+bool balazs::isTooCloseToADivPoint(const Mod1NumberIntExWithInfo& x)
 {
-    std::size_t nextInterval = (m_smallContainingInterval + 1) % m_foliation->numSeparatrices();
-    return distanceBetween(m_foliation->allDivPoints()[m_smallContainingInterval], m_mod1NumberIntExchange) < PRECISION ||
-           distanceBetween(m_mod1NumberIntExchange, m_foliation->allDivPoints()[nextInterval]) < PRECISION;
+    std::size_t nextInterval = (x.smallContainingInterval() + 1) % x.foliation().numSeparatrices();
+    return distanceBetween(x.foliation().allDivPoints()[x.smallContainingInterval()], x.number()) < Mod1Number::precision ||
+           distanceBetween(x.number(), x.foliation().allDivPoints()[nextInterval]) < Mod1Number::precision;
 }
 
 
@@ -28,7 +28,4 @@ bool balazs::operator< (const Mod1NumberIntExWithInfo& lhs, const Mod1NumberIntE
     return lhs.number() < rhs.number();
 }
 
-//bool operator< (const Mod1Number& lhs, const Mod1NumberIntExWithInfo& rhs);
 
-
-//bool operator< (const Mod1NumberIntExWithInfo& lhs, const Mod1Number& rhs);

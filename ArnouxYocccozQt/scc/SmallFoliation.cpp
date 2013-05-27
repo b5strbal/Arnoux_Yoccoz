@@ -114,8 +114,10 @@ const Eigen::EigenSolver<Eigen::MatrixXd>::EigenvectorsType &balazs::SmallFoliat
 
 
 bool allEntriesPositive(const Eigen::VectorXcd& vector){
+    static const long double allowedError = 0.000000001L;
+
     for(int i = 0; i < vector.rows(); i++){
-        if(vector(i).imag() != 0 || vector(i).real() <= 0){
+        if(fabs(vector(i).imag()) > allowedError || vector(i).real() < allowedError){
             return false;
         }
     }
@@ -127,6 +129,10 @@ bool allEntriesPositive(const Eigen::VectorXcd& vector){
 
 balazs::SmallFoliation::WhatIsWrong balazs::SmallFoliation::isGoodCandidate() const
 {
+
+    static const long double allowedError = 0.000000001L;
+
+
     WhatIsWrong currentProblem = Permutation_Does_Not_Match;
 
     if(permutation() != m_transverseCurve.foliation().intExchange().permutationWithMinimalTwist())
@@ -137,7 +143,8 @@ balazs::SmallFoliation::WhatIsWrong balazs::SmallFoliation::isGoodCandidate() co
     initEigenSolver();
 
     for(int i = 0; i < m_eigenvalues->rows(); i++){
-        if((*m_eigenvalues)[i].imag() == 0 && (*m_eigenvalues)[i].real() > 0 && (*m_eigenvalues)[i].real() < 1){
+        if(fabs((*m_eigenvalues)[i].imag()) < allowedError && (*m_eigenvalues)[i].real() > allowedError &&
+                (*m_eigenvalues)[i].real() < 1 - allowedError){
             currentProblem = std::max(currentProblem, No_Positive_EigenVector);
 
             if(allEntriesPositive(-m_eigenvectors->col(i)) || allEntriesPositive(m_eigenvectors->col(i)))

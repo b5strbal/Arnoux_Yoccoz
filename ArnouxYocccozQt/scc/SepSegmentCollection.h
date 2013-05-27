@@ -20,8 +20,6 @@ struct end_tag {};
 class SepSegmentCollection
 {
 public:
-
-
    // SepSegmentCollection(const SepSegmentCollection&) = delete;
     SepSegmentCollection& operator=(const SepSegmentCollection&) = delete;
     SepSegmentCollection(const SepSegmentDatabase& sepSegmentDatabase,
@@ -39,7 +37,6 @@ public:
     std::vector<std::list<SeparatrixSegment>::const_iterator>::const_iterator end() const { return m_segments.end(); }
 
 
-    void setInitialSetting(const Choose &sepIndicesChoose);
 
     void advance(std::size_t maxDepth, std::size_t maxInvolvedSingularities);
 
@@ -49,6 +46,7 @@ public:
     //const SepSegmentIndex& operator[](std::size_t index) const { return *m_segments[index]; }
 
 private:
+    void setInitialSetting(const Choose &sepIndicesChoose);
     void setFirstSegments(const std::vector<SepSegmentIndex>& ssic);
     void setSegmentToFirst(std::size_t segmentIndex);
 
@@ -60,9 +58,11 @@ private:
     std::shared_ptr<SSCMode> m_sscMode;
 };
 
-
+void assertValidCollection(const SepSegmentCollection& collection);
+bool areEndpointsTooClose(const SepSegmentCollection& collection);
 
 std::vector<Mod1NumberIntExchange> getEndpoints(const SepSegmentCollection &collection);
+
 
 
 

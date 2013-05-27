@@ -89,7 +89,7 @@ void balazs::SepSegmentDatabase::findNextGoodSegment(const balazs::SepSegmentInd
 
 
 
-void balazs::SepSegmentDatabase::generateSepSegments(std::size_t maxdepth){
+void balazs::SepSegmentDatabase::generateSepSegments(std::size_t maxdepth){ // doesn't throw
     for(HDirection hDirection : {HDirection::Left, HDirection::Right}){
         for (VDirection vDirection : {VDirection::Up, VDirection::Down}) {
             for (std::size_t index = 0; index < m_foliation.numIntervals(); index++) {
@@ -97,6 +97,8 @@ void balazs::SepSegmentDatabase::generateSepSegments(std::size_t maxdepth){
                     try{
                         findNextGoodSegment({hDirection, vDirection, index});
                     } catch(const std::exception&){
+                        // even if the sepSegments cannot be generated until the required depth because of
+                        // saddle connection, the function doesn't throw, just silently ignores it
                         break;
                     }
                 }

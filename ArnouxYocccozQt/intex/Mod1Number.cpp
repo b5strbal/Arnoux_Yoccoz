@@ -12,7 +12,7 @@
 
 long double balazs::fracPart(long double x){ return x - floor(x); }
 
-
+const long double balazs::Mod1Number::precision(0.00000000001L);
 
 balazs::Mod1Number::Mod1Number(long double position, int epsilon) :
     m_position(fracPart(position)),

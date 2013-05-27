@@ -134,10 +134,9 @@ void balazs::Foliation::init()
     m_allDivPoints.reserve(numSeparatrices());
     std::merge(topDivPoints().begin(), topDivPoints().end(),
                bottomDivPoints().begin(), bottomDivPoints().end(), std::back_inserter(m_allDivPoints));
-    for(std::size_t i = 1; i < numSeparatrices(); i++){
-        if(distanceBetween(m_allDivPoints[i - 1], m_allDivPoints[i]) < PRECISION){
-            throw std::runtime_error("The foliation has a saddle connection.");
-        }
+
+    if(arePointsTooClose(m_allDivPoints)){
+        throw std::runtime_error("The foliation has a saddle connection.");
     }
 
     initSingularities();
@@ -166,7 +165,7 @@ std::vector<long double> balazs::arnouxYoccozLengths(int genus)
 {
     std::vector<long double> lengths(2 * genus);
     long double shrinkingNumber = 1/arnouxYoccozStretchFactor(genus);
-    long double currentLength = shrinkingNumber;
+    long double currentLength = shrinkingNumber / 2;
     for (int i = 0; i < genus; i++) {
         lengths[2 * i] = lengths[2 * i + 1] = currentLength;
         currentLength *= shrinkingNumber;

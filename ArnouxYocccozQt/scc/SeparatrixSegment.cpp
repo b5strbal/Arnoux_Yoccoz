@@ -63,7 +63,7 @@ void balazs::SeparatrixSegment::lengthen() // strong exception guarantee
                 m_foliation.intExchange().applyTo(m_endpoint.number()) :
                 m_foliation.intExchange().applyInverseTo(m_endpoint.number()), &m_foliation);
 
-    if(newPoint.isTooCloseToADivPoint()){
+    if(isTooCloseToADivPoint(newPoint)){
         m_reachedSaddleConnection = true;
         throw std::runtime_error("Cannot lengthen separatrix segment, there is a saddle connection.");
     }

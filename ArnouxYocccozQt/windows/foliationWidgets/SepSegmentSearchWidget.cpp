@@ -71,6 +71,7 @@ int rowIndex(const balazs::SepSegmentIndex& ssIndex)
 
 void SepSegmentSearchWidget::fillOutTable()
 {
+
     std::size_t maxDepth = depthSpinBox->value();
     m_sepSegmentDatabase.generateSepSegments(maxDepth);
 
@@ -102,14 +103,18 @@ void SepSegmentSearchWidget::fillOutTable()
                 int rowIndex = ::rowIndex(ssIndex);
                 int columnIndex = 0;
                 for(auto &segment : list){
-                    QTableWidgetItem* item = new QTableWidgetItem(QString::number(segment.depth()));
-                    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+                    if(segment.depth() <= maxDepth){
+                        QTableWidgetItem* item = new QTableWidgetItem(QString::number(segment.depth()));
+                        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
-                    resultTable->setItem(rowIndex, columnIndex++, item);
+                        resultTable->setItem(rowIndex, columnIndex++, item);
+                    }
                 }
+
             }
         }
     }
+
 }
 
 

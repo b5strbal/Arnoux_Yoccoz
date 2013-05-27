@@ -13,7 +13,6 @@ public:
     Mod1NumberIntExWithInfo() : m_foliation(nullptr) {} // Constructs uninitialized obj.
     Mod1NumberIntExWithInfo(const Mod1NumberIntExchange& number, const Foliation* parent);
     Mod1NumberIntExWithInfo shiftedTo(HDirection side) const;
-    bool isTooCloseToADivPoint() const;
 
     const Mod1NumberIntExchange& number() const { return m_mod1NumberIntExchange; }
     std::size_t smallContainingInterval() const { return m_smallContainingInterval; }
@@ -26,8 +25,8 @@ private:
 };
 
 bool operator< (const Mod1NumberIntExWithInfo& lhs, const Mod1NumberIntExWithInfo& rhs);
-//bool operator< (const Mod1Number& lhs, const Mod1NumberIntExWithInfo& rhs);
-//bool operator< (const Mod1NumberIntExWithInfo& lhs, const Mod1Number& rhs);
+bool isTooCloseToADivPoint(const Mod1NumberIntExWithInfo& x);
+
 
 
 

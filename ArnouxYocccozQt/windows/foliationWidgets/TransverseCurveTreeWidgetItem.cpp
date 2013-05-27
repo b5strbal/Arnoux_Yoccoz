@@ -2,7 +2,7 @@
 #include "fol/Foliation.h"
 #include "SmallFoliationTreeWidgetItem.h"
 //#include "../../intex/Mod1NumberIntExchange.h"
-
+#include <QDebug>
 
 TransverseCurveTreeWidgetItem::TransverseCurveTreeWidgetItem(const balazs::TransverseCurve& tc, QTreeWidgetItem *parent) :
     QTreeWidgetItem(parent), m_transverseCurve(tc)
@@ -34,3 +34,4 @@ void TransverseCurveTreeWidgetItem::generateCandidates()
         }
     }
 }
+

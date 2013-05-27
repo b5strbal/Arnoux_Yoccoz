@@ -40,6 +40,11 @@ TransverseCurveSearchWidget::TransverseCurveSearchWidget(balazs::SepSegmentDatab
     for(std::size_t i = 0; i <= sepSegmentDatabase.foliation().numIntervals(); i++){
         list << tr("Eigenvector %1").arg(i);
     }
+
+    for(std::size_t i = 0; i <= sepSegmentDatabase.foliation().numIntervals(); i++){
+        list << tr("Eigenvector %1").arg(i);
+    }
+
     tcTreeWidget->setHeaderLabels(list);
     for(std::size_t i = 0; i <= sepSegmentDatabase.foliation().numIntervals(); i++){
         tcTreeWidget->setColumnWidth(6 + i, 130);

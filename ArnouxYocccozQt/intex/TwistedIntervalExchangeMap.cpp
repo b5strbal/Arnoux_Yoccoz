@@ -56,7 +56,7 @@ balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const std::vector
 
     std::vector<Mod1Number> divPointsAfter;
     divPointsAfter.resize(lengths.size());
-    divPointsAfter[0] = twist;
+    divPointsAfter[0] = twist / total;
     int divpointsBeforeTwist = 0;
     for (std::size_t i = 1; i < lengths.size(); i++) {
         divPointsAfter[i] = divPointsAfter[i - 1] + m_lengths[m_inversePermutation[i - 1]];
@@ -104,8 +104,7 @@ balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const TwistedInte
 
 
 
-std::vector<long double>
-balazs::TwistedIntervalExchangeMap::newLengthsRotate(const balazs::TwistedIntervalExchangeMap &intExchange,
+std::vector<long double> balazs::newLengthsRotate(const TwistedIntervalExchangeMap &intExchange,
                                                      int normalizedRotationAmount)
 {
     if(normalizedRotationAmount == 0){
@@ -113,35 +112,32 @@ balazs::TwistedIntervalExchangeMap::newLengthsRotate(const balazs::TwistedInterv
     }
 
     std::vector<long double> newLengths(intExchange.size());
-    std::rotate_copy(intExchange.m_lengths.begin(), intExchange.m_lengths.end() - normalizedRotationAmount,
-                  intExchange.m_lengths.end(), newLengths.begin());
+    std::rotate_copy(intExchange.lengths().begin(), intExchange.lengths().end() - normalizedRotationAmount,
+                  intExchange.lengths().end(), newLengths.begin());
     return newLengths;
 
 }
 
 
-balazs::Permutation
-balazs::TwistedIntervalExchangeMap::newPermutationRotate(const balazs::TwistedIntervalExchangeMap &intExchange,
+balazs::Permutation balazs::newPermutationRotate(const TwistedIntervalExchangeMap &intExchange,
                                                          int normalizedRotationAmount)
 {
     // Postcomposing the original permutation by a rotation results in the same twisted interval exchange map if we modify the twist accordingly.
     // When the length vector is rotated, we must therefore precompose the original permutation by a rotation. By the previous remark,
     // postcomposing is not important as long as we choose the rigth twist.
 
-    return intExchange.m_permutation * rotatingPermutation(intExchange.size(), - normalizedRotationAmount);
+    return intExchange.permutationWithMinimalTwist() * rotatingPermutation(intExchange.size(), - normalizedRotationAmount);
 }
 
 
 
-long double
-balazs::TwistedIntervalExchangeMap::newTwistRotate(const balazs::TwistedIntervalExchangeMap &intExchange,
-                                                   int normalizedRotationAmount)
+long double balazs::newTwistRotate(const TwistedIntervalExchangeMap &intExchange, int normalizedRotationAmount)
 {
     if(normalizedRotationAmount == 0){
-        return intExchange.m_twist;
+        return intExchange.twist();
     }
-    long double rotationDistance = -intExchange.m_divPoints[intExchange.size() - normalizedRotationAmount];
-    return static_cast<long double>(intExchange.m_twist) + rotationDistance;
+    long double rotationDistance = -intExchange.divPoints()[intExchange.size() - normalizedRotationAmount];
+    return static_cast<long double>(intExchange.twist()) + rotationDistance;
 }
 
 
@@ -158,41 +154,38 @@ balazs::TwistedIntervalExchangeMap::newTwistRotate(const balazs::TwistedInterval
 
 balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const TwistedIntervalExchangeMap& intExchange,
                                                                const reverse_tag&)
-    :   TwistedIntervalExchangeMap(newLengthsReverse(intExchange), newPermutationReverse(intExchange), -intExchange.m_twist)
+    :   TwistedIntervalExchangeMap(newLengthsReverse(intExchange), newPermutationReverse(intExchange), -intExchange.twist())
 
 {
 }
 
-std::vector<long double>
-balazs::TwistedIntervalExchangeMap::newLengthsReverse(const balazs::TwistedIntervalExchangeMap &intExchange)
+std::vector<long double> balazs::newLengthsReverse(const TwistedIntervalExchangeMap &intExchange)
 {
     std::vector<long double> newLengths(intExchange.size());
-    std::reverse_copy(intExchange.m_lengths.begin(), intExchange.m_lengths.end(), newLengths.begin());
+    std::reverse_copy(intExchange.lengths().begin(), intExchange.lengths().end(), newLengths.begin());
     return newLengths;
 }
 
 
 
-balazs::Permutation
-balazs::TwistedIntervalExchangeMap::newPermutationReverse(const balazs::TwistedIntervalExchangeMap &intExchange)
+balazs::Permutation balazs::newPermutationReverse(const TwistedIntervalExchangeMap &intExchange)
 {
     // Now, in contrast to rotateBy, we have to pre- and post-compose our premutation
     Permutation reverse = reversingPermutation(intExchange.size());
-    return reverse * intExchange.m_permutation * reverse;
+    return reverse * intExchange.permutationWithMinimalTwist() * reverse;
 }
 
 
 
 balazs::TwistedIntervalExchangeMap::TwistedIntervalExchangeMap(const TwistedIntervalExchangeMap& intExchange,
                                                                const invert_tag&) :
-    TwistedIntervalExchangeMap(newLengthsInvert(intExchange), intExchange.m_inversePermutation, -intExchange.m_twist)
+    TwistedIntervalExchangeMap(newLengthsInvert(intExchange), inverse(intExchange.permutationWithMinimalTwist()), -intExchange.twist())
 {
 }
 
-std::vector<long double>
-balazs::TwistedIntervalExchangeMap::newLengthsInvert(const balazs::TwistedIntervalExchangeMap &intExchange)
+std::vector<long double> balazs::newLengthsInvert(const TwistedIntervalExchangeMap &intExchange)
 {
-    std::vector<Mod1NumberIntExchange> newLengths(intExchange.m_permutation(intExchange.m_lengths));
+    std::vector<Mod1NumberIntExchange> newLengths(intExchange.permutationWithMinimalTwist()(intExchange.lengths()));
     return std::vector<long double>(newLengths.begin(), newLengths.end());
 }
 

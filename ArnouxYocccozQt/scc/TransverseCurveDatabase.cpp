@@ -21,16 +21,7 @@ const balazs::Foliation& balazs::TransverseCurveDatabase::foliation() const
 
 std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(const SepSegmentCollection& segments){
 
-    assert(segments.size() % 2 == 0);
-    assert(segments.size() >= 2);
-    std::vector<char> singularities(foliation().numIntervals(), 0);
-    for (std::size_t i = 0; i < segments.size(); i += 2){
-        assert(segments[i]->startingSingularity() == segments[i + 1]->startingSingularity());
-        assert(singularities[segments[i]->startingSingularity()] == 0);
-        singularities[segments[i]->startingSingularity()] = 1;
-        assert(segments[i]->vDirection() != segments[i + 1]->vDirection() ||
-               segments[i]->hDirection() != segments[i + 1]->hDirection());
-    }
+    assertValidCollection(segments);
 
 
     std::array<bool, 2> isCandidateForWrapsAroundEnds = {{true, true}};
@@ -41,12 +32,6 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
         endpointsAndIndices.emplace_back(segments[i]->endpoint(), i);
     }
     std::sort(endpointsAndIndices.begin(), endpointsAndIndices.end());
-    for (auto it = endpointsAndIndices.begin() + 1; it != endpointsAndIndices.end(); it++) {
-        if (!((it - 1)->first < it->first)) {
-            throw std::runtime_error("Some points are so close that we can't distinguish them.");
-        }
-    }
-
 
 
 
@@ -64,7 +49,6 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
         }
     }
 
-    // checking that the curve is connected
 
     std::vector<Mod1Number> endpoints;
     endpoints.reserve(endpointsAndIndices.size());
@@ -72,7 +56,12 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
         endpoints.push_back(x.first);
     }
 
+    // checking that no two endpoints are too close
+    if(arePointsTooClose(endpoints)){
+        return {{false, false}};
+    }
 
+    // checking that the curve is connected
     for (short wrapsAroundEnds = 0; wrapsAroundEnds < 2; wrapsAroundEnds++){
         std::size_t index = 0;
         std::size_t length = 0;
@@ -129,19 +118,11 @@ std::array<bool, 2> balazs::TransverseCurveDatabase::whichTransverseCurvesExist(
 
 
 
-//void balazs::TransverseCurveDatabase::applyToStoredTransverseCurves(void (*function)(const TransverseCurve&)){
-//   assert(function != nullptr);
-//   for ( auto &curve : m_transverseCurves )
-//        function(curve);
-//}
-
-
 
 void balazs::TransverseCurveDatabase::generateTransverseCurves(int maxdepth,
                                                                int maxInvolvedSingularities,
                                                                const bool& quit, std::mutex& mutex)
 {
-    m_sepSegmentDatabase.generateSepSegments(maxdepth);
     SepSegmentCollectionList collections(m_sepSegmentDatabase, maxdepth, maxInvolvedSingularities,
                                       m_sscMode);
 
@@ -150,7 +131,12 @@ void balazs::TransverseCurveDatabase::generateTransverseCurves(int maxdepth,
         std::array<bool, 2> isWrapsAroundEndsGood = whichTransverseCurvesExist(sepSegmentCollection);
         for (short wrapsAroundEnds = 0; wrapsAroundEnds < 2; wrapsAroundEnds++ ) {
             if (isWrapsAroundEndsGood[wrapsAroundEnds]) {
-                m_transverseCurves.emplace(sepSegmentCollection, wrapsAroundEnds, m_sepSegmentDatabase);
+                try{
+                    m_transverseCurves.emplace(sepSegmentCollection, wrapsAroundEnds, m_sepSegmentDatabase);
+                } catch(const std::exception&) {
+                    // if touching segments cannot be generated for the transverse curve, i.e. it cannot be constructed
+                    // we silently ignore it.
+                }
             }
         }
         std::lock_guard<std::mutex> lk(mutex);

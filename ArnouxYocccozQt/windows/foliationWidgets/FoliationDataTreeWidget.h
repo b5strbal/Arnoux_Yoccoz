@@ -24,6 +24,8 @@ private:
     QTreeWidgetItem* singListAbDiffItem;
     QTreeWidgetItem* singListProngsItem;
     QTreeWidgetItem* lengthsItem;
+    QTreeWidgetItem* twistItem;
+    QTreeWidgetItem* permutationItem;
     QTreeWidgetItem* topDivPointsItem;
     QTreeWidgetItem* bottomDivPointsItem;
 };
