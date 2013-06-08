@@ -6,5 +6,5 @@ FileMenu::FileMenu(const WindowManager &manager, QWidget *parent) :
 {
     setTitle(tr("File"));
     newFoliationAct = addAction(tr("New Foliation..."));
-    connect(newFoliationAct, SIGNAL(triggered()), &manager, SLOT(newFoliationWizard()));
+    connect(newFoliationAct, SIGNAL(triggered()), &manager, SLOT(newFoliation()));
 }

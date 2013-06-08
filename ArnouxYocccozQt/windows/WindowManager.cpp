@@ -1,7 +1,7 @@
 #include "WindowManager.h"
-#include "CreateFoliationWizard.h"
 #include "DocumentationWindow.h"
-#include "FoliationMainWindow.h"
+#include "foliationWindow/FoliationMainWindow.h"
+#include "newFoliation/NewFoliationWindow.h"
 
 
 
@@ -11,8 +11,8 @@ WindowManager::WindowManager(QObject *parent) :
     foliationMainWindow = new FoliationMainWindow(*this);
     foliationMainWindow->show();
 
-    createFoliationWizard = new CreateFoliationWizard;
-    connect(createFoliationWizard, SIGNAL(foliation(balazs::Foliation*)),
+    newFoliationWindow = new NewFoliationWindow;
+    connect(newFoliationWindow, SIGNAL(foliation(balazs::Foliation*)),
             foliationMainWindow, SLOT(createNewFoliation(balazs::Foliation*)));
 
     documentationWindow = new DocumentationWindow;
@@ -22,10 +22,9 @@ WindowManager::WindowManager(QObject *parent) :
 
 
 
-void WindowManager::newFoliationWizard()
+void WindowManager::newFoliation()
 {
-    createFoliationWizard->restart();
-    createFoliationWizard->show();
+    newFoliationWindow->show();
 }
 
 

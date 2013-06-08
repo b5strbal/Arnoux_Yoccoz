@@ -9,7 +9,7 @@
 #include "Foliation.h"
 #include "../math/PerronFrobenius.h"
 #include "../scc/SmallFoliation.h"
-
+#include <random>
 
 balazs::Foliation::Foliation(const std::vector<long double>& lengths, const Permutation& permutation, long double twist) :
     m_twistedIntervalExchange(lengths, permutation, twist)
@@ -36,8 +36,33 @@ balazs::Foliation::Foliation(const Foliation& foliation, const flip_over_tag&)
     init();
 }
 
-balazs::Foliation::Foliation(int genus)
+balazs::Foliation::Foliation(int genus, const arnoux_yoccoz_tag &)
     :   Foliation(arnouxYoccozLengths(genus), arnouxYoccozPermutation(genus), 0.5)
+{
+}
+
+std::vector<long double> randomLengths(std::size_t size){
+    static std::default_random_engine generator(static_cast<int>(time(NULL)));
+    std::uniform_real_distribution<long double> realDistribution(0.00000000001, 1);
+
+    std::vector<long double> retval;
+
+    for(std::size_t i = 0; i < size; i++){
+        retval.push_back(realDistribution(generator));
+    }
+    return retval;
+}
+
+long double randomTwist(){
+    static std::default_random_engine generator(static_cast<int>(time(NULL)));
+    std::uniform_real_distribution<long double> realDistribution(0.00000000001, 1);
+
+    return realDistribution(generator);
+}
+
+
+balazs::Foliation::Foliation(int numIntervals, const balazs::random_tag &)
+    :   Foliation(randomLengths(numIntervals), Permutation(numIntervals), randomTwist())
 {
 }
 
@@ -64,7 +89,9 @@ std::vector<std::size_t> balazs::Foliation::singularityTypeOfAbelianDiff() const
 {
     std::vector<std::size_t> retval;
     for(auto vec : m_singularities){
-        retval.push_back(vec.size() - 1);
+        if(vec.size() > 1){ // otherwise it is a removable singularity
+            retval.push_back(vec.size() - 1);
+        }
     }
     std::sort(retval.begin(), retval.end(), std::greater<std::size_t>());
     return retval;
@@ -116,7 +143,6 @@ void balazs::Foliation::initSingularities()
                 m_singularities.back().push_back(j);
                 m_indexOfSingularity[j] = m_singularities.size() - 1;
                 alreadyLookedAt[j] = true;
-
 
                 j = (j + (size - 1)) % size;
                 j = m_twistedIntervalExchange.permutationWithMinimalTwist()[j];

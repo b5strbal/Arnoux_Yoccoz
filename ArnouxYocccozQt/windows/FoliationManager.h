@@ -6,7 +6,7 @@
 class FoliationDataTreeWidget;
 class SepSegmentSearchWidget;
 class TransverseCurveSearchWidget;
-class FoliationDrawingArea;
+class FoliationDrawing;
 class QDockWidget;
 class QMenu;
 class QAction;
@@ -27,7 +27,7 @@ public:
     SepSegmentSearchWidget* sepSegmentSearchWidget() const;
     TransverseCurveSearchWidget* transverseCurveSearchWidget() const;
     FoliationDataTreeWidget* foliationDataTableWidget() const;
-    FoliationDrawingArea* drawingArea() const;
+    FoliationDrawing* drawingArea() const;
     QMenu* viewMenu() const;
 
 
@@ -47,7 +47,7 @@ private:
 
     std::unique_ptr<balazs::Foliation> pFoliation;
 
-    FoliationDrawingArea* pDrawingArea;
+    FoliationDrawing* pDrawingArea;
     FoliationDataTreeWidget* pFoliationDataTableWidget;
     SepSegmentSearchWidget* pSepSegmentSearchWidget;
     TransverseCurveSearchWidget* pTransverseCurveSearchWidget;

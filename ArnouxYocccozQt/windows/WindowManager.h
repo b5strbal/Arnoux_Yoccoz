@@ -3,10 +3,9 @@
 
 #include <QObject>
 
-class CreateFoliationWizard;
 class DocumentationWindow;
 class FoliationMainWindow;
-
+class NewFoliationWindow;
 
 
 class WindowManager : public QObject
@@ -18,10 +17,10 @@ public:
 signals:
     
 public slots:
-    void newFoliationWizard();
+    void newFoliation();
     void openDocumentation();
 private:
-    CreateFoliationWizard* createFoliationWizard;
+    NewFoliationWindow* newFoliationWindow;
     DocumentationWindow* documentationWindow;
     FoliationMainWindow* foliationMainWindow;
 };

@@ -45,22 +45,24 @@ SOURCES += main.cpp\
     fol/FoliationDisk.cpp \
     fol/Foliation.cpp \
     windows/DocumentationWindow.cpp \
-    windows/CreateFoliationWizard.cpp \
-    windows/foliationWidgets/SepSegmentSearchWidget.cpp \
-    windows/FoliationMainWindow.cpp \
+    windows/foliationWindow/SepSegmentSearchWidget.cpp \
+    windows/foliationWindow/FoliationMainWindow.cpp \
     windows/WindowManager.cpp \
     windows/FileMenu.cpp \
     windows/HelpMenu.cpp \
     windows/FoliationManager.cpp \
     io.cpp \
-    windows/foliationWidgets/FoliationListWidget.cpp \
-    windows/foliationWidgets/TransverseCurveSearchWidget.cpp \
-    windows/foliationWidgets/FoliationDataTreeWidget.cpp \
-    windows/foliationWidgets/TransverseCurveTreeWidgetItem.cpp \
-    windows/foliationWidgets/FoliationDrawingArea.cpp \
+    windows/foliationWindow/FoliationListWidget.cpp \
+    windows/foliationWindow/TransverseCurveSearchWidget.cpp \
+    windows/foliationWindow/FoliationDataTreeWidget.cpp \
+    windows/foliationWindow/TransverseCurveTreeWidgetItem.cpp \
     scc/SmallFoliation.cpp \
-    windows/foliationWidgets/SmallFoliationTreeWidgetItem.cpp \
-    qt.cpp
+    windows/foliationWindow/SmallFoliationTreeWidgetItem.cpp \
+    qt.cpp \
+    windows/newFoliation/NewFoliationWindow.cpp \
+    windows/newFoliation/ParameterWidgets.cpp \
+    windows/drawing/FoliationDrawing.cpp \
+    windows/drawing/EmptyDrawing.cpp
 
 HEADERS  += scc/IntervalNeighborhoods.h \
     scc/DisjointIntervals.h \
@@ -90,10 +92,9 @@ HEADERS  += scc/IntervalNeighborhoods.h \
     fol/FoliationDisk.h \
     fol/Foliation.h \
     windows/DocumentationWindow.h \
-    windows/CreateFoliationWizard.h \
     qt.h \
-    windows/foliationWidgets/SepSegmentSearchWidget.h \
-    windows/FoliationMainWindow.h \
+    windows/foliationWindow/SepSegmentSearchWidget.h \
+    windows/foliationWindow/FoliationMainWindow.h \
     windows/WindowManager.h \
     windows/FileMenu.h \
     windows/HelpMenu.h \
@@ -102,18 +103,22 @@ HEADERS  += scc/IntervalNeighborhoods.h \
     fol/VDirection.h \
     intex/HDirection.h \
     io.h \
-    windows/foliationWidgets/FoliationListWidget.h \
-    windows/foliationWidgets/TransverseCurveSearchWidget.h \
-    windows/foliationWidgets/FoliationDataTreeWidget.h \
-    windows/foliationWidgets/TransverseCurveTreeWidgetItem.h \
-    windows/foliationWidgets/FoliationDrawingArea.h \
+    windows/foliationWindow/FoliationListWidget.h \
+    windows/foliationWindow/TransverseCurveSearchWidget.h \
+    windows/foliationWindow/FoliationDataTreeWidget.h \
+    windows/foliationWindow/TransverseCurveTreeWidgetItem.h \
     scc/SmallFoliation.h \
-    windows/foliationWidgets/SmallFoliationTreeWidgetItem.h
+    windows/foliationWindow/SmallFoliationTreeWidgetItem.h \
+    windows/newFoliation/NewFoliationWindow.h \
+    windows/newFoliation/ParameterWidgets.h \
+    windows/drawing/FoliationDrawing.h \
+    windows/drawing/EmptyDrawing.h
 
 
 FORMS    += \
     mainwindow.ui
 
 OTHER_FILES += FoliationRP2old.cpp \
-    FoliationRP2old.h
+    FoliationRP2old.h \
+
 

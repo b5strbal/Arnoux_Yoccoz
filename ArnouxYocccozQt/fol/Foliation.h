@@ -7,6 +7,9 @@
 namespace balazs{
 
 struct flip_over_tag {};
+struct random_tag {};
+struct arnoux_yoccoz_tag {};
+
 class SmallFoliation;
 
 /*!
@@ -23,7 +26,8 @@ public:
     Foliation(const Foliation& foliation, int rotationAmount, const rotate_tag&) ;
     Foliation(const Foliation& foliation, const reverse_tag&);
     Foliation(const Foliation& foliation, const flip_over_tag&);
-    Foliation(int genus); // the Arnoux-Yoccoz foliations
+    Foliation(int genus, const arnoux_yoccoz_tag&); // the Arnoux-Yoccoz foliations
+    Foliation(int numIntervals, const random_tag&); // random foliation
     Foliation(const SmallFoliation& smallFoliation);
     Foliation(const Foliation&) = delete;
     Foliation& operator=(const Foliation&) = delete;

@@ -26,6 +26,7 @@ class Permutation{
 public:
     Permutation(); // Constructs the permutation on a 1-element set.
     Permutation(const std::vector<std::size_t> &functionValues);
+    Permutation(std::size_t size); // random permutation
     std::size_t size() const;
     std::size_t operator[](std::size_t index) const { return m_functionValues[index]; }
 

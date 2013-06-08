@@ -1,6 +1,6 @@
 #include "Permutation.h"
-
-
+#include <random>
+#include <cassert>
 
 balazs::Permutation::Permutation() : m_functionValues(1, 0)
 {
@@ -17,6 +17,20 @@ balazs::Permutation::Permutation(const std::vector<std::size_t> &functionValues)
         if (isInTheRange[m_functionValues[i]] == 1)
             throw std::runtime_error("A permutation should be a one-to-one map.");
         isInTheRange[m_functionValues[i]] = 1;
+    }
+}
+
+
+balazs::Permutation::Permutation(std::size_t size)
+{
+    assert(size > 0);
+
+    for(std::size_t i = 0; i < size; i++){
+        m_functionValues.push_back(i);
+    }
+
+    while(!isMinimal(*this)){
+        std::random_shuffle(m_functionValues.begin(), m_functionValues.end());
     }
 }
 

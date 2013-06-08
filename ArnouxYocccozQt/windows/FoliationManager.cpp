@@ -1,9 +1,9 @@
 #include "FoliationManager.h"
 #include "../fol/Foliation.h"
-#include "foliationWidgets/FoliationDrawingArea.h"
-#include "foliationWidgets/SepSegmentSearchWidget.h"
-#include "foliationWidgets/FoliationDataTreeWidget.h"
-#include "foliationWidgets/TransverseCurveSearchWidget.h"
+#include "drawing/FoliationDrawing.h"
+#include "foliationWindow/SepSegmentSearchWidget.h"
+#include "foliationWindow/FoliationDataTreeWidget.h"
+#include "foliationWindow/TransverseCurveSearchWidget.h"
 
 #include <QMenu>
 
@@ -11,7 +11,7 @@ FoliationManager::FoliationManager(std::unique_ptr<balazs::Foliation> foliation,
     QObject(parent),
     pFoliation(std::move(foliation))
 {
-    pDrawingArea = new FoliationDrawingArea(*pFoliation);
+    pDrawingArea = new FoliationDrawing(pFoliation.get());
     pFoliationDataTableWidget = new FoliationDataTreeWidget(*pFoliation);
     pSepSegmentSearchWidget = new SepSegmentSearchWidget(*pFoliation);
     pTransverseCurveSearchWidget = new TransverseCurveSearchWidget(pSepSegmentSearchWidget->sepSegmentDatabase());
@@ -41,7 +41,7 @@ TransverseCurveSearchWidget *FoliationManager::transverseCurveSearchWidget() con
     return pTransverseCurveSearchWidget;
 }
 
-FoliationDrawingArea *FoliationManager::drawingArea() const
+FoliationDrawing *FoliationManager::drawingArea() const
 {
     return pDrawingArea;
 }
