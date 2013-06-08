@@ -62,7 +62,10 @@ SOURCES += main.cpp\
     windows/newFoliation/NewFoliationWindow.cpp \
     windows/newFoliation/ParameterWidgets.cpp \
     windows/drawing/FoliationDrawing.cpp \
-    windows/drawing/EmptyDrawing.cpp
+    windows/drawing/EmptyDrawing.cpp \
+    windows/drawing/FoliationRP2Drawing.cpp \
+    windows/drawing/FoliationSphereDrawing.cpp \
+    windows/drawing/FoliationDiskDrawing.cpp
 
 HEADERS  += scc/IntervalNeighborhoods.h \
     scc/DisjointIntervals.h \
@@ -112,11 +115,11 @@ HEADERS  += scc/IntervalNeighborhoods.h \
     windows/newFoliation/NewFoliationWindow.h \
     windows/newFoliation/ParameterWidgets.h \
     windows/drawing/FoliationDrawing.h \
-    windows/drawing/EmptyDrawing.h
+    windows/drawing/EmptyDrawing.h \
+    windows/drawing/FoliationRP2Drawing.h \
+    windows/drawing/FoliationSphereDrawing.h \
+    windows/drawing/FoliationDiskDrawing.h
 
-
-FORMS    += \
-    mainwindow.ui
 
 OTHER_FILES += FoliationRP2old.cpp \
     FoliationRP2old.h \

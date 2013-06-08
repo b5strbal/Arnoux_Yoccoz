@@ -7,13 +7,14 @@
 #include <QPainter>
 //#include <QFont>
 
-FoliationDrawing::FoliationDrawing(const balazs::Foliation *foliation, QWidget *parent) :
+FoliationDrawing::FoliationDrawing(const balazs::Foliation& foliation, const QSize &sizehint, QWidget *parent) :
     QWidget(parent),
-    coloredFillingShown(true),
+    m_sizeHint(sizehint),
     permutationLabelsShown(true),
+    coloredFillingShown(true),
     pSepSegment(nullptr),
     pTransverseCurve(nullptr),
-    pFoliation(foliation)
+    m_foliation(foliation)
 {
     permFontSize = lengthsFontSize = 10;
     setBackgroundRole(QPalette::Base);
@@ -62,18 +63,6 @@ void FoliationDrawing::drawTransverseCurve(const balazs::TransverseCurve *ptc)
 
 
 
-
-void FoliationDrawing::paintEvent(QPaintEvent *)
-{
-    if(!pFoliation){
-        return;
-    }
-    QPainter painter(this);
-    paint(painter, width(), height());
-  //  painter.setRenderHint(QPainter::Antialiasing);
-
-
-}
 
 
 
@@ -258,29 +247,32 @@ void paintTouchingSepSegments(const balazs::TransverseCurve& tc, QPainter &paint
 
 
 
-void FoliationDrawing::paint(QPainter &painter, int w, int h)
-{
-    painter.resetTransform();
-    painter.translate(w / 10.0, h / 10.0);
 
-    double folW = w * 8 / 10.0;
-    double folH = h * 8 / 10.0;
+
+
+void FoliationDrawing::paintEvent(QPaintEvent *)
+{
+    QPainter painter(this);
+    painter.translate(width() / 10.0, height() / 10.0);
+
+    double folW = width() * 8 / 10.0;
+    double folH = height() * 8 / 10.0;
 
     if(coloredFillingShown){
-        paintFilling(*pFoliation, painter, folW, folH);
+        paintFilling(m_foliation, painter, folW, folH);
     }
 
     painter.setPen(Qt::SolidLine);
-    paintFoliation(*pFoliation, painter, folW, folH);
+    paintFoliation(m_foliation, painter, folW, folH);
 
     if(lengthsLabelsShown){
         painter.setFont(QFont("Times", lengthsFontSize));
-        paintLengthLabels(*pFoliation, painter, folW, folH);
+        paintLengthLabels(m_foliation, painter, folW, folH);
     }
 
     if(permutationLabelsShown){
         painter.setFont(QFont("Times", permFontSize));
-        paintPermutationLabels(*pFoliation, painter, folW, folH);
+        paintPermutationLabels(m_foliation, painter, folW, folH);
     }
 
     if(pSepSegment){
@@ -297,5 +289,4 @@ void FoliationDrawing::paint(QPainter &painter, int w, int h)
             paintTouchingSepSegments(*pTransverseCurve, painter, folW, folH);
         }
     }
-
 }

@@ -191,6 +191,17 @@ std::vector<long double> balazs::newLengthsInvert(const TwistedIntervalExchangeM
 
 
 
+balazs::Permutation balazs::singularityPermutation(const TwistedIntervalExchangeMap& intExchange){
+    std::size_t size = intExchange.size();
+    std::vector<std::size_t> permutationInput(size);
+    for(std::size_t i = 0; i < size; i++){
+        permutationInput[i] = (i + (size - 1)) % size;
+        permutationInput[i] = intExchange.permutationWithMinimalTwist()[permutationInput[i]];
+        permutationInput[i] = (permutationInput[i] + 1) % size;
+        permutationInput[i] = intExchange.inversePermutationWithMinimalTwist()[permutationInput[i]];
+    }
+    return Permutation(permutationInput);
+}
 
 
 

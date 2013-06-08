@@ -4,6 +4,8 @@
 #include "math/WeighedTree.h"
 #include "fol/FoliationRP2.h"
 #include "windows/drawing/FoliationDrawing.h"
+#include "windows/drawing/FoliationRP2Drawing.h"
+#include "windows/drawing/FoliationSphereDrawing.h"
 
 #include <QLabel>
 #include <QLineEdit>
@@ -15,27 +17,55 @@
 #include <QStackedWidget>
 
 
-void NewFoliationIntExchangeWidget2::onHelpButtonClickedSlot()
-{
-    onHelpButtonClicked();
-}
 
-void NewFoliationIntExchangeWidget2::onOkButtonClickedSlot()
-{
-    onOkButtonClicked();
-}
 
-void NewFoliationIntExchangeWidget2::onPreviewButtomClickedSlot()
+PreviewPageFoliation::PreviewPageFoliation(QWidget *parent)
+    :   PreviewPage<balazs::Foliation>(parent)
 {
-    onPreviewButtomClicked();
-}
-
-void NewFoliationIntExchangeWidget2::disableOkButton(QString)
-{
-    okButton->setEnabled(false);
+    connect(helpButton, SIGNAL(clicked()), this, SLOT(onHelpButtonClickedSlot()));
+    connect(previewButton, SIGNAL(clicked()), this, SLOT(onPreviewButtomClickedSlot()));
+    connect(okButton, SIGNAL(clicked()), this, SLOT(onOkButtonClickedSlot()));
 }
 
 
+
+
+
+QWidget *PreviewPageFoliation::createDrawing(const balazs::Foliation &fol)
+{
+    return new FoliationDrawing(fol, QSize(500, 500));
+}
+
+
+
+PreviewPageFoliationSphere::PreviewPageFoliationSphere(QWidget *parent)
+    :   PreviewPage<balazs::FoliationSphere>(parent)
+{
+    connect(helpButton, SIGNAL(clicked()), this, SLOT(onHelpButtonClickedSlot()));
+    connect(previewButton, SIGNAL(clicked()), this, SLOT(onPreviewButtomClickedSlot()));
+    connect(okButton, SIGNAL(clicked()), this, SLOT(onOkButtonClickedSlot()));
+}
+
+
+QWidget *PreviewPageFoliationSphere::createDrawing(const balazs::FoliationSphere &fol)
+{
+    return new FoliationSphereDrawing(fol);
+}
+
+
+PreviewPageFoliationRP2::PreviewPageFoliationRP2(QWidget *parent)
+    :   PreviewPage<balazs::FoliationRP2>(parent)
+{
+     connect(helpButton, SIGNAL(clicked()), this, SLOT(onHelpButtonClickedSlot()));
+     connect(previewButton, SIGNAL(clicked()), this, SLOT(onPreviewButtomClickedSlot()));
+     connect(okButton, SIGNAL(clicked()), this, SLOT(onOkButtonClickedSlot()));
+}
+
+
+QWidget *PreviewPageFoliationRP2::createDrawing(const balazs::FoliationRP2 &fol)
+{
+    return new FoliationRP2Drawing(fol, 500);
+}
 
 
 
@@ -44,8 +74,7 @@ void NewFoliationIntExchangeWidget2::disableOkButton(QString)
 
 
 NewFoliationIntExchangeWidget::NewFoliationIntExchangeWidget(QWidget *parent) :
-    QWidget(parent),
-    pFoliation(nullptr)
+    PreviewPageFoliation(parent)
 {
     permutationLabel = new QLabel(tr("Permutation (e.g. 3 2 1 0):"));
     lengthsLabel = new QLabel(tr("Lengths (e.g. 1.2 0.3 0.43 0.12):"));
@@ -54,10 +83,6 @@ NewFoliationIntExchangeWidget::NewFoliationIntExchangeWidget(QWidget *parent) :
     permutationLineEdit = new QLineEdit;
     lengthsLineEdit = new QLineEdit;
     twistLineEdit = new QLineEdit;
-
-    previewStackedWidget = new QStackedWidget;
-    previewStackedWidget->addWidget(new FoliationDrawing(nullptr));
-    previewStackedWidget->setCurrentIndex(0);
 
     QHBoxLayout* permutationLayout = new QHBoxLayout;
     permutationLayout->addWidget(permutationLabel);
@@ -75,69 +100,33 @@ NewFoliationIntExchangeWidget::NewFoliationIntExchangeWidget(QWidget *parent) :
     connect(lengthsLineEdit, SIGNAL(textEdited(QString)), this, SLOT(disableOkButton(QString)));
     connect(twistLineEdit, SIGNAL(textEdited(QString)), this, SLOT(disableOkButton(QString)));
 
-    helpButton = new QPushButton(tr("Help"));
-    previewButton = new QPushButton(tr("Preview"));
-    okButton = new QPushButton(tr("OK"));
-    okButton->setEnabled(false);
+    insertOnTop(twistLayout);
+    insertOnTop(lengthsLayout);
+    insertOnTop(permutationLayout);
 
-    QHBoxLayout* buttonLayout = new QHBoxLayout;
-    buttonLayout->addWidget(helpButton);
-    buttonLayout->addSpacing(20);
-    buttonLayout->addWidget(previewButton);
-    buttonLayout->addStretch(1);
-
-    QHBoxLayout* okLayout = new QHBoxLayout;
-    okLayout->addStretch(1);
-    okLayout->addWidget(okButton);
-
-    connect(helpButton, SIGNAL(clicked()), this, SLOT(onHelpButtonClicked()));
-    connect(previewButton, SIGNAL(clicked()), this, SLOT(onPreviewButtomClicked()));
-    connect(okButton, SIGNAL(clicked()), this, SLOT(onOkButtonClicked()));
-
-    QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addLayout(permutationLayout);
-    mainLayout->addLayout(lengthsLayout);
-    mainLayout->addLayout(twistLayout);
-    mainLayout->addLayout(buttonLayout);
-    mainLayout->addWidget(previewStackedWidget);
-    mainLayout->addLayout(okLayout);
-    mainLayout->addStretch(1);
-
-    setLayout(mainLayout);
+    setTabOrder(permutationLineEdit, lengthsLineEdit);
+    setTabOrder(lengthsLineEdit, twistLineEdit);
 }
 
-
-
-
-
-void NewFoliationIntExchangeWidget::onHelpButtonClicked()
+void NewFoliationIntExchangeWidget::disableOkButton(QString)
 {
-    QMessageBox msg;
-    QString s;
-    s = tr("A twisted interval exchange map on the unit interval is defined by the lengths of the intervals, "
-         "a permutation on the same number of elements, and the twist.\n\n"
-         "You can specify a permutation on n elements as a permutation of "
-         "0, 1, ..., n-1, spearated by spaces.\n\n"
-         "To specify the lengths of the intervals, list n positive real numbers "
-         "separated by spaces. The sum of the lengths doesn't have to be 1, but "
-         "they will be normalized to get an interval exchange of the unit interval.\n\n"
-         "The twist may be any real number, will be normalized by the same factor as the lengths and taken modulo 1.");
-
-    msg.setText(s);
-    msg.exec();
-}
-
-void NewFoliationIntExchangeWidget::onOkButtonClicked()
-{
-    emit(foliation(pFoliation));
-    pFoliation = nullptr;
-    QWidget* lastWidget = previewStackedWidget->widget(1);
-    previewStackedWidget->removeWidget(lastWidget);
-    delete lastWidget;
     okButton->setEnabled(false);
 }
 
-void NewFoliationIntExchangeWidget::onPreviewButtomClicked()
+QString NewFoliationIntExchangeWidget::helpText()
+{
+    return tr("A twisted interval exchange map on the unit interval is defined by the lengths of the intervals, "
+              "a permutation on the same number of elements, and the twist.\n\n"
+              "You can specify a permutation on n elements as a permutation of "
+              "0, 1, ..., n-1, spearated by spaces.\n\n"
+              "To specify the lengths of the intervals, list n positive real numbers "
+              "separated by spaces. The sum of the lengths doesn't have to be 1, but "
+              "they will be normalized to get an interval exchange of the unit interval.\n\n"
+              "The twist may be any real number, will be normalized by the same factor as the lengths and taken modulo 1.");
+}
+
+
+balazs::Foliation *NewFoliationIntExchangeWidget::createFoliation()
 {
     QStringList permutationStringList = permutationLineEdit->text().split(" ", QString::SkipEmptyParts);
     QStringList lengthsStringList = lengthsLineEdit->text().split(" ", QString::SkipEmptyParts);
@@ -148,10 +137,7 @@ void NewFoliationIntExchangeWidget::onPreviewButtomClicked()
     for(QString s : lengthsStringList){
         lengths.push_back(s.toDouble(&ok));
         if(!ok){
-            QMessageBox msg;
-            msg.setText(tr("The lengths should be real numbers, you MORON!"));
-            msg.exec();
-            return;
+            throw(std::runtime_error("The lengths should be real numbers, you MORON!"));
         }
     }
 
@@ -159,47 +145,18 @@ void NewFoliationIntExchangeWidget::onPreviewButtomClicked()
     for(QString s : permutationStringList){
         permutationInput.push_back(s.toUInt(&ok));
         if(!ok){
-            QMessageBox msg;
-            msg.setText(tr("The numbers in the permutation list should be non-negative integers."));
-            msg.exec();
-            return;
+            throw(std::runtime_error("The numbers in the permutation list should be non-negative integers."));
         }
     }
 
     long double twist = twistLineEdit->text().toDouble(&ok);
     if(!ok){
         QMessageBox msg;
-        msg.setText(tr("The twist should be a single real number."));
-        msg.exec();
-        return;
+        throw(std::runtime_error("The twist should be a single real number."));
     }
 
-
-    try{
-        balazs::Foliation* newFoliation = new balazs::Foliation(lengths, balazs::Permutation(permutationInput), twist);
-        if(pFoliation){
-            QWidget* lastWidget = previewStackedWidget->widget(1);
-            previewStackedWidget->removeWidget(lastWidget);
-            delete lastWidget;
-            delete pFoliation;
-        }
-        pFoliation = newFoliation;
-        previewStackedWidget->addWidget(new FoliationDrawing(newFoliation));
-        previewStackedWidget->setCurrentIndex(1);
-        okButton->setEnabled(true);
-    }
-    catch (const std::exception& e){
-        QMessageBox msg;
-        msg.setText(tr(e.what()));
-        msg.exec();
-    }
+    return new balazs::Foliation(lengths, balazs::Permutation(permutationInput), twist);
 }
-
-void NewFoliationIntExchangeWidget::disableOkButton(QString)
-{
-    okButton->setEnabled(false);
-}
-
 
 
 
@@ -216,83 +173,34 @@ void NewFoliationIntExchangeWidget::disableOkButton(QString)
 
 
 NewFoliationRandomWidget::NewFoliationRandomWidget(QWidget *parent) :
-    QWidget(parent)
+    PreviewPageFoliation(parent)
 {
-    instructions = new QLabel(tr("Number of intervals:"));
+    numIntervalLabel = new QLabel(tr("Number of intervals:"));
     numIntervalSpinBox = new QSpinBox;
     numIntervalSpinBox->setMinimum(3);
     numIntervalSpinBox->setValue(6);
 
-    generateButton = new QPushButton(tr("Generate"));
-
-    previewStackedWidget = new QStackedWidget;
-    previewStackedWidget->addWidget(new FoliationDrawing(nullptr));
-    previewStackedWidget->setCurrentIndex(0);
-
-    okButton = new QPushButton(tr("OK"));
-    okButton->setEnabled(false);
-
-    connect(generateButton, SIGNAL(clicked()), this, SLOT(onGenerateButtonClicked()));
-    connect(okButton, SIGNAL(clicked()), this, SLOT(onOkButtonClicked()));
     connect(numIntervalSpinBox, SIGNAL(valueChanged(int)), this, SLOT(disableOkButton(int)));
 
-
     QHBoxLayout* rowLayout = new QHBoxLayout;
-    rowLayout->addWidget(instructions);
+    rowLayout->addWidget(numIntervalLabel);
     rowLayout->addWidget(numIntervalSpinBox);
-    rowLayout->addSpacing(10);
-    rowLayout->addWidget(generateButton);
     rowLayout->addStretch(1);
 
-    QHBoxLayout* bottomLayout = new QHBoxLayout;
-    bottomLayout->addStretch(1);
-    bottomLayout->addWidget(okButton);
-
-    QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addLayout(rowLayout);
-    mainLayout->addWidget(previewStackedWidget);
-    mainLayout->addLayout(bottomLayout);
-    mainLayout->addStretch(1);
-
-    setLayout(mainLayout);
+    insertOnTop(rowLayout);
+    helpButton->hide();
 }
 
 
-void NewFoliationRandomWidget::onGenerateButtonClicked()
-{
-    try{
-        balazs::Foliation* newFoliation = new balazs::Foliation(numIntervalSpinBox->value(), balazs::random_tag());
-        if(pFoliation){
-            QWidget* lastWidget = previewStackedWidget->widget(1);
-            previewStackedWidget->removeWidget(lastWidget);
-            delete lastWidget;
-            delete pFoliation;
-        }
-        pFoliation = newFoliation;
-        previewStackedWidget->addWidget(new FoliationDrawing(newFoliation));
-        previewStackedWidget->setCurrentIndex(1);
-        okButton->setEnabled(true);
-    }
-    catch (const std::exception& e){
-        QMessageBox msg;
-        msg.setText(tr(e.what()));
-        msg.exec();
-    }
-}
-
-void NewFoliationRandomWidget::onOkButtonClicked()
-{
-    emit(foliation(pFoliation));
-    pFoliation = nullptr;
-    QWidget* lastWidget = previewStackedWidget->widget(1);
-    previewStackedWidget->removeWidget(lastWidget);
-    delete lastWidget;
-    okButton->setEnabled(false);
-}
 
 void NewFoliationRandomWidget::disableOkButton(int)
 {
     okButton->setEnabled(false);
+}
+
+balazs::Foliation *NewFoliationRandomWidget::createFoliation()
+{
+    return new balazs::Foliation(numIntervalSpinBox->value(), balazs::random_tag());
 }
 
 
@@ -302,38 +210,42 @@ void NewFoliationRandomWidget::disableOkButton(int)
 
 
 NewFoliationAYWidget::NewFoliationAYWidget(QWidget *parent) :
-    QWidget(parent)
+    PreviewPageFoliation(parent)
 {
-    instructions = new QLabel(tr("Genus of the foliation:"));
+    genusLabel = new QLabel(tr("Genus of the foliation:"));
     genusSpinBox = new QSpinBox;
     genusSpinBox->setMinimum(3);
     genusSpinBox->setValue(3);
 
     QHBoxLayout* genusLayout = new QHBoxLayout;
-    genusLayout->addWidget(instructions);
+    genusLayout->addWidget(genusLabel);
     genusLayout->addWidget(genusSpinBox);
     genusLayout->addStretch(1);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addLayout(genusLayout);
-    mainLayout->addStretch(1);
+    connect(genusSpinBox, SIGNAL(valueChanged(int)), this, SLOT(disableOkButton(int)));
 
-    setLayout(mainLayout);
+    insertOnTop(genusLayout);
+    helpButton->hide();
 }
 
-//bool NewFoliationAYWidget::validate()
-//{
-//    try{
-//        emit(foliation(new balazs::Foliation(genusSpinBox->value())));
-//        return true;
-//    }
-//    catch (const std::exception& e){
-//        QMessageBox msg;
-//        msg.setText(tr(e.what()));
-//        msg.exec();
-//        return false;
-//    }
-//}
+void NewFoliationAYWidget::disableOkButton(int)
+{
+    okButton->setEnabled(false);
+}
+
+QString NewFoliationAYWidget::helpText()
+{
+    return tr("");
+}
+
+balazs::Foliation *NewFoliationAYWidget::createFoliation()
+{
+    return new balazs::Foliation(genusSpinBox->value(), balazs::arnoux_yoccoz_tag());
+}
+
+
+
+
 
 
 
@@ -342,56 +254,55 @@ NewFoliationAYWidget::NewFoliationAYWidget(QWidget *parent) :
 
 
 NewFoliationRP2WeighedTreeWidget::NewFoliationRP2WeighedTreeWidget(QWidget *parent) :
-    QWidget(parent)
+    PreviewPageFoliationRP2(parent)
 {
-    instructions = new QLabel(tr("Weighed trees can be specified by a sequence of non-negative numbers. "
-                                 "Pick a root for the tree, and draw it \"hanging down\" from the root. "
-                                 "First, enter the weights of the edges hanging down from root from left to right, "
-                                 "then enter 0. Proceed to the next generation, enter the weights hanging from the "
-                                 "first vertex in the generation and enter 0, and so on until all weights are entered.\n"
-                                 "E.g. the sequence 0.1 0.2 0.3 0 0.1 0.2 0.3 0 0.5 0.6 0 0.9 0.5 encodes a weighed "
-                                 "tree with 11 vertices, 7 of them are leaves, 3 vertices are of degree 3, "
-                                 "one vertex is of degree 4."));
-    instructions->setWordWrap(true);
     weighedTreeLabel = new QLabel(tr("Weighed Tree defining sequence:"));
     weighedTreeLineEdit = new QLineEdit;
 
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(instructions);
-    mainLayout->addWidget(weighedTreeLabel);
-    mainLayout->addWidget(weighedTreeLineEdit);
+    QHBoxLayout* rowLayout = new QHBoxLayout;
+    rowLayout->addWidget(weighedTreeLabel);
+    rowLayout->addWidget(weighedTreeLineEdit);
 
-    setLayout(mainLayout);
+    connect(weighedTreeLineEdit, SIGNAL(textEdited(QString)), this, SLOT(disableOkButton(QString)));
+
+    insertOnTop(rowLayout);
 }
 
-//bool NewFoliationRP2WeighedTreeWidget::validate()
-//{
-//    QStringList stringList = weighedTreeLineEdit->text().split(" ", QString::SkipEmptyParts);
+void NewFoliationRP2WeighedTreeWidget::disableOkButton(QString)
+{
+    okButton->setEnabled(false);
+}
 
-//    bool ok;
+QString NewFoliationRP2WeighedTreeWidget::helpText()
+{
+    return tr("Weighed trees can be specified by a sequence of non-negative numbers. "
+              "Pick a root for the tree, and draw it \"hanging down\" from the root. "
+              "First, enter the weights of the edges hanging down from root from left to right, "
+              "then enter 0. Proceed to the next generation, enter the weights hanging from the "
+              "first vertex in the generation and enter 0, and so on until all weights are entered.\n"
+              "E.g. the sequence 0.1 0.2 0.3 0 0.1 0.2 0.3 0 0.5 0.6 0 0.9 0.5 encodes a weighed "
+              "tree with 11 vertices, 7 of them are leaves, 3 vertices are of degree 3, "
+              "one vertex is of degree 4.");
+}
 
-//    std::vector<long double> weights;
-//    for(QString s : stringList){
-//        weights.push_back(s.toDouble(&ok));
-//        if(!ok){
-//            QMessageBox msg;
-//            msg.setText(tr("The weights should be real numbers."));
-//            msg.exec();
-//            return false;
-//        }
-//    }
+balazs::FoliationRP2 *NewFoliationRP2WeighedTreeWidget::createFoliation()
+{
+    QStringList stringList = weighedTreeLineEdit->text().split(" ", QString::SkipEmptyParts);
 
-//    try{
-//        emit(foliationRP2(new balazs::FoliationRP2(balazs::WeighedTree(weights))));
-//        return true;
-//    }
-//    catch (const std::exception& e){
-//        QMessageBox msg;
-//        msg.setText(tr(e.what()));
-//        msg.exec();
-//        return false;
-//    }
-//}
+    bool ok;
+
+    std::vector<long double> weights;
+    for(QString s : stringList){
+        weights.push_back(s.toDouble(&ok));
+        if(!ok){
+            throw(std::runtime_error("The weights should be real numbers."));
+        }
+    }
+
+    return new balazs::FoliationRP2(balazs::WeighedTree(weights));
+}
+
+
 
 
 
@@ -404,35 +315,38 @@ NewFoliationRP2WeighedTreeWidget::NewFoliationRP2WeighedTreeWidget(QWidget *pare
 
 
 NewFoliationRP2RandomWidget::NewFoliationRP2RandomWidget(QWidget *parent) :
-    QWidget(parent)
+    PreviewPageFoliationRP2(parent)
 {
-    instructions = new QLabel(tr("A random foliation on RP2 is constructed from a random Weighed Tree. "
-                                 "Specify the number of edges of the Weighed Tree."));
-    instructions->setWordWrap(true);
-    instructions->setAlignment(Qt::AlignJustify);
-
+    numEdgesLabel = new QLabel(tr("Number of edges of weighed tree:"));
     numEdgesSpinBox = new QSpinBox;
     numEdgesSpinBox->setMinimum(3);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(instructions);
-    mainLayout->addWidget(numEdgesSpinBox);
-    setLayout(mainLayout);
+    QHBoxLayout* rowLayout = new QHBoxLayout;
+    rowLayout->addWidget(numEdgesLabel);
+    rowLayout->addWidget(numEdgesSpinBox);
+    rowLayout->addStretch(1);
+
+    connect(numEdgesSpinBox, SIGNAL(valueChanged(int)), this, SLOT(disableOkButton(int)));
+
+    insertOnTop(rowLayout);
 }
 
-//bool NewFoliationRP2RandomWidget::validate()
-//{
-//    try{
-//        emit(foliationRP2(new balazs::FoliationRP2(numEdgesSpinBox->value())));
-//        return true;
-//    }
-//    catch (const std::exception& e){
-//        QMessageBox msg;
-//        msg.setText(tr(e.what()));
-//        msg.exec();
-//        return false;
-//    }
-//}
+void NewFoliationRP2RandomWidget::disableOkButton(int)
+{
+    okButton->setEnabled(false);
+}
+
+QString NewFoliationRP2RandomWidget::helpText()
+{
+    return tr("A random foliation on RP2 is constructed from a random Weighed Tree. "
+              "Specify the number of edges of the Weighed Tree.");
+}
+
+balazs::FoliationRP2 *NewFoliationRP2RandomWidget::createFoliation()
+{
+    return new balazs::FoliationRP2(numEdgesSpinBox->value());
+}
+
 
 
 
@@ -447,29 +361,51 @@ NewFoliationRP2RandomWidget::NewFoliationRP2RandomWidget(QWidget *parent) :
 
 
 NewFoliationRP2AYWidget::NewFoliationRP2AYWidget(QWidget *parent) :
-    QWidget(parent)
+    PreviewPageFoliationRP2(parent)
 {
     instructions = new QLabel(tr("The classical Arnoux-Yoccoz foliation on the projective plane, which lifts to a "
-                                 "foliation on the genus 3 orientable surface, will be constructed."), this);
+                                 "foliation on the genus 3 orientable surface:"));
     instructions->setWordWrap(true);
+    QHBoxLayout* rowLayout = new QHBoxLayout;
+    rowLayout->addWidget(instructions);
+
+    insertOnTop(rowLayout);
+    helpButton->hide();
+
+    onPreviewButtomClicked(); // display the foliation right away
 }
 
-//bool NewFoliationRP2AYWidget::validate()
-//{
-//    try{
-//        emit(foliationRP2(new balazs::FoliationRP2()));
-//        return true;
-//    }
-//    catch (const std::exception& e){
-//        QMessageBox msg;
-//        msg.setText(tr(e.what()));
-//        msg.exec();
-//        return false;
-//    }
-//}
+QString NewFoliationRP2AYWidget::helpText()
+{
+    return tr("");
+}
+
+balazs::FoliationRP2 *NewFoliationRP2AYWidget::createFoliation()
+{
+    return new balazs::FoliationRP2();
+}
+
+
+
+
+
+
 
 NewFoliationSphereDiskWidget::NewFoliationSphereDiskWidget(QWidget *parent) :
-    QWidget(parent)
+    PreviewPageFoliationSphere(parent)
+{
+}
+
+void NewFoliationSphereDiskWidget::disableOkButton()
+{
+}
+
+QString NewFoliationSphereDiskWidget::helpText()
+{
+    return tr("");
+}
+
+balazs::FoliationSphere *NewFoliationSphereDiskWidget::createFoliation()
 {
 }
 
@@ -479,7 +415,16 @@ NewFoliationSphereDiskWidget::NewFoliationSphereDiskWidget(QWidget *parent) :
 
 
 NewFoliationSphereHLMWidget::NewFoliationSphereHLMWidget(QWidget *parent) :
-    QWidget(parent)
+    PreviewPageFoliationSphere(parent)
+{
+}
+
+QString NewFoliationSphereHLMWidget::helpText()
+{
+    return tr("");
+}
+
+balazs::FoliationSphere *NewFoliationSphereHLMWidget::createFoliation()
 {
 }
 
@@ -487,9 +432,23 @@ NewFoliationSphereHLMWidget::NewFoliationSphereHLMWidget(QWidget *parent) :
 
 
 NewFoliationSphereRandomWidget::NewFoliationSphereRandomWidget(QWidget *parent) :
-    QWidget(parent)
+    PreviewPageFoliationSphere(parent)
 {
 }
+
+void NewFoliationSphereRandomWidget::disableOkButton()
+{
+}
+
+QString NewFoliationSphereRandomWidget::helpText()
+{
+    return tr("");
+}
+
+balazs::FoliationSphere *NewFoliationSphereRandomWidget::createFoliation()
+{
+}
+
 
 
 

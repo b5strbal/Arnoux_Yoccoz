@@ -140,3 +140,27 @@ bool balazs::operator !=(const balazs::Permutation &lhs, const balazs::Permutati
 {
     return !(lhs == rhs);
 }
+
+
+
+std::vector<std::vector<std::size_t> > balazs::partition(const Permutation& perm)
+{
+    std::vector<std::vector<std::size_t> > retval;
+
+    std::vector<char> alreadyLookedAt(perm.size(), false);
+    for(std::size_t i = 0; i < perm.size(); i++){
+        if(!alreadyLookedAt[i]){
+            retval.push_back(std::vector<std::size_t>(0));
+
+            std::size_t j = i;
+            do {
+                retval.back().push_back(j);
+                alreadyLookedAt[j] = true;
+
+                j = perm[j];
+            } while(j != i);
+        }
+    }
+    return retval;
+}
+

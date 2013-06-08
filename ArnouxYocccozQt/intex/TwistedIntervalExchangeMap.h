@@ -68,9 +68,9 @@ std::vector<long double> newLengthsInvert(const TwistedIntervalExchangeMap& intE
 Permutation newPermutationRotate(const TwistedIntervalExchangeMap& intExchange,
                                                   int normalizedRotationAmount);
 Permutation newPermutationReverse(const TwistedIntervalExchangeMap& intExchange);
-
 long double newTwistRotate(const TwistedIntervalExchangeMap& intExchange, int normalizedRotationAmount);
 
+Permutation singularityPermutation(const TwistedIntervalExchangeMap& intExchange);
 
 
 }

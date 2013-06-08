@@ -3,6 +3,9 @@
 
 #include <QWidget>
 #include "windows/drawing/EmptyDrawing.h"
+#include "fol/Foliation.h"
+#include "fol/FoliationSphere.h"
+#include "fol/FoliationRP2.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -33,18 +36,19 @@ protected:
     void onHelpButtonClicked();
     void onOkButtonClicked();
     void onPreviewButtomClicked();
-
-private:
-    virtual QString helpText() = 0;
-    virtual FoliationType* createFoliation() = 0;
-    virtual QWidget* createDrawing(const FoliationType*) = 0;
-    virtual void emitFoliation(const FoliationType*) = 0;
+    void insertOnTop(QLayout *layout);
 
     QPushButton* helpButton;
     QPushButton* previewButton;
     QPushButton* okButton;
+private:
+    virtual QString helpText() = 0;
+    virtual FoliationType* createFoliation() = 0;
+    virtual QWidget* createDrawing(const FoliationType&) = 0;
+    virtual void emitFoliation(FoliationType*) = 0;
 
     QStackedWidget* previewStackedWidget;
+    QVBoxLayout* mainLayout;
 
     FoliationType* pFoliation;
 };
@@ -75,11 +79,7 @@ PreviewPage<FoliationType>::PreviewPage(QWidget *parent) :
     okLayout->addStretch(1);
     okLayout->addWidget(okButton);
 
- //   connect(helpButton, SIGNAL(clicked()), this, SLOT(onHelpButtonClicked()));
- //   connect(previewButton, SIGNAL(clicked()), this, SLOT(onPreviewButtomClicked()));
- //   connect(okButton, SIGNAL(clicked()), this, SLOT(onOkButtonClicked()));
-
-    QVBoxLayout* mainLayout = new QVBoxLayout;
+    mainLayout = new QVBoxLayout;
     mainLayout->addLayout(buttonLayout);
     mainLayout->addWidget(previewStackedWidget);
     mainLayout->addLayout(okLayout);
@@ -120,7 +120,7 @@ void PreviewPage<FoliationType>::onPreviewButtomClicked()
             delete pFoliation;
         }
         pFoliation = newFoliation;
-        previewStackedWidget->addWidget(createDrawing(pFoliation));
+        previewStackedWidget->addWidget(createDrawing(*pFoliation));
         previewStackedWidget->setCurrentIndex(1);
         okButton->setEnabled(true);
     }
@@ -131,41 +131,69 @@ void PreviewPage<FoliationType>::onPreviewButtomClicked()
     }
 }
 
+template <class FoliationType>
+void PreviewPage<FoliationType>::insertOnTop(QLayout *layout)
+{
+    mainLayout->insertLayout(0, layout);
+}
 
 
 
 
 
 
-class NewFoliationIntExchangeWidget2 : public PreviewPage<balazs::Foliation>
+class PreviewPageFoliation : public PreviewPage<balazs::Foliation>
 {
     Q_OBJECT
 public:
-    explicit NewFoliationIntExchangeWidget2(QWidget *parent = 0);
+    explicit PreviewPageFoliation(QWidget *parent = 0);
 signals:
     void foliation(balazs::Foliation*);
 private slots:
-    void onHelpButtonClickedSlot();
-    void onOkButtonClickedSlot();
-    void onPreviewButtomClickedSlot();
-    void disableOkButton(QString);
+    void onHelpButtonClickedSlot() { onHelpButtonClicked(); }
+    void onOkButtonClickedSlot() { onOkButtonClicked(); }
+    void onPreviewButtomClickedSlot() { onPreviewButtomClicked(); }
 private:
-    void updateOkButton();
+    virtual void emitFoliation(balazs::Foliation* fol) { emit(foliation(fol)); }
+    virtual QWidget* createDrawing(const balazs::Foliation& fol);
+};
 
-    QLabel* permutationLabel;
-    QLabel* lengthsLabel;
-    QLabel* twistLabel;
-    QLineEdit* permutationLineEdit;
-    QLineEdit* lengthsLineEdit;
-    QLineEdit* twistLineEdit;
 
-    QPushButton* helpButton;
-    QPushButton* previewButton;
-    QPushButton* okButton;
 
-    QStackedWidget* previewStackedWidget;
 
-    balazs::Foliation* pFoliation;
+
+class PreviewPageFoliationSphere : public PreviewPage<balazs::FoliationSphere>
+{
+    Q_OBJECT
+public:
+    explicit PreviewPageFoliationSphere(QWidget *parent = 0);
+signals:
+    void foliationSphere(balazs::FoliationSphere*);
+private slots:
+    void onHelpButtonClickedSlot() { onHelpButtonClicked(); }
+    void onOkButtonClickedSlot() { onOkButtonClicked(); }
+    void onPreviewButtomClickedSlot() { onPreviewButtomClicked(); }
+private:
+    virtual void emitFoliation(balazs::FoliationSphere* fol) { emit(foliationSphere(fol)); }
+    virtual QWidget* createDrawing(const balazs::FoliationSphere& fol);
+};
+
+
+
+class PreviewPageFoliationRP2 : public PreviewPage<balazs::FoliationRP2>
+{
+    Q_OBJECT
+public:
+    explicit PreviewPageFoliationRP2(QWidget *parent = 0);
+signals:
+    void foliationRP2(balazs::FoliationRP2*);
+private slots:
+    void onHelpButtonClickedSlot() { onHelpButtonClicked(); }
+    void onOkButtonClickedSlot() { onOkButtonClicked(); }
+    void onPreviewButtomClickedSlot() { onPreviewButtomClicked(); }
+private:
+    virtual void emitFoliation(balazs::FoliationRP2* fol) { emit(foliationRP2(fol)); }
+    virtual QWidget* createDrawing(const balazs::FoliationRP2& fol);
 };
 
 
@@ -173,20 +201,17 @@ private:
 
 
 
-class NewFoliationIntExchangeWidget : public QWidget
+
+class NewFoliationIntExchangeWidget : public PreviewPageFoliation
 {
     Q_OBJECT
 public:
     explicit NewFoliationIntExchangeWidget(QWidget *parent = 0);
-signals:
-    void foliation(balazs::Foliation*);
 private slots:
-    void onHelpButtonClicked();
-    void onOkButtonClicked();
-    void onPreviewButtomClicked();
     void disableOkButton(QString);
 private:
-    void updateOkButton();
+    virtual QString helpText();
+    virtual balazs::Foliation* createFoliation();
 
     QLabel* permutationLabel;
     QLabel* lengthsLabel;
@@ -194,131 +219,142 @@ private:
     QLineEdit* permutationLineEdit;
     QLineEdit* lengthsLineEdit;
     QLineEdit* twistLineEdit;
-
-    QPushButton* helpButton;
-    QPushButton* previewButton;
-    QPushButton* okButton;
-
-    QStackedWidget* previewStackedWidget;
-
-    balazs::Foliation* pFoliation;
 };
 
 
 
 
-class NewFoliationRandomWidget : public QWidget
+
+
+
+
+
+
+
+
+class NewFoliationRandomWidget : public PreviewPageFoliation
 {
     Q_OBJECT
 public:
     explicit NewFoliationRandomWidget(QWidget *parent = 0);
-signals:
-    void foliation(balazs::Foliation*);
 private slots:
-    void onGenerateButtonClicked();
-    void onOkButtonClicked();
     void disableOkButton(int);
 private:
-    QLabel* instructions;
+    virtual QString helpText() { return "";}
+    virtual balazs::Foliation* createFoliation();
+
+    QLabel* numIntervalLabel;
     QSpinBox* numIntervalSpinBox;
-    QPushButton* generateButton;
-    QPushButton* okButton;
-
-    QStackedWidget* previewStackedWidget;
-
-    balazs::Foliation* pFoliation;
 };
 
 
 
 
-class NewFoliationAYWidget : public QWidget
+
+
+class NewFoliationAYWidget : public PreviewPageFoliation
 {
     Q_OBJECT
 public:
     explicit NewFoliationAYWidget(QWidget *parent = 0);
-signals:
-    void foliation(balazs::Foliation*);
+private slots:
+    void disableOkButton(int);
 private:
-    QLabel* instructions;
+    virtual QString helpText();
+    virtual balazs::Foliation* createFoliation();
+
+    QLabel* genusLabel;
     QSpinBox* genusSpinBox;
 };
 
 
 
-class NewFoliationRP2WeighedTreeWidget : public QWidget
+class NewFoliationRP2WeighedTreeWidget : public PreviewPageFoliationRP2
 {
     Q_OBJECT
 public:
     explicit NewFoliationRP2WeighedTreeWidget(QWidget *parent = 0);
-signals:
-    void foliationRP2(balazs::FoliationRP2*);
+private slots:
+    void disableOkButton(QString);
 private:
-    QLabel* instructions;
+    virtual QString helpText();
+    virtual balazs::FoliationRP2* createFoliation();
+
     QLabel* weighedTreeLabel;
     QLineEdit* weighedTreeLineEdit;
 };
 
 
-class NewFoliationRP2RandomWidget : public QWidget
+class NewFoliationRP2RandomWidget : public PreviewPageFoliationRP2
 {
     Q_OBJECT
 public:
     explicit NewFoliationRP2RandomWidget(QWidget *parent = 0);
-signals:
-    void foliationRP2(balazs::FoliationRP2*);
+private slots:
+    void disableOkButton(int);
 private:
-    QLabel* instructions;
+    virtual QString helpText();
+    virtual balazs::FoliationRP2* createFoliation();
+
+    QLabel* numEdgesLabel;
     QSpinBox* numEdgesSpinBox;
 };
 
 
-class NewFoliationRP2AYWidget : public QWidget
+class NewFoliationRP2AYWidget : public PreviewPageFoliationRP2
 {
     Q_OBJECT
 public:
     explicit NewFoliationRP2AYWidget(QWidget *parent = 0);
-signals:
-    void foliationRP2(balazs::FoliationRP2*);
 private:
+    virtual QString helpText();
+    virtual balazs::FoliationRP2* createFoliation();
+
     QLabel* instructions;
 };
 
 
-class NewFoliationSphereDiskWidget : public QWidget
+class NewFoliationSphereDiskWidget : public PreviewPageFoliationSphere
 {
     Q_OBJECT
 public:
     explicit NewFoliationSphereDiskWidget(QWidget *parent = 0);
-signals:
-    void foliationSphere(balazs::FoliationSphere*);
+private slots:
+    void disableOkButton();
 private:
+    virtual QString helpText();
+    virtual balazs::FoliationSphere* createFoliation();
+
     QLabel* instructions;
 };
 
 
 
-class NewFoliationSphereHLMWidget : public QWidget
+class NewFoliationSphereHLMWidget : public PreviewPageFoliationSphere
 {
     Q_OBJECT
 public:
     explicit NewFoliationSphereHLMWidget(QWidget *parent = 0);
-signals:
-    void foliationSphere(balazs::FoliationSphere*);
 private:
+    virtual QString helpText();
+    virtual balazs::FoliationSphere* createFoliation();
+
     QLabel* instructions;
 };
 
 
 
-class NewFoliationSphereRandomWidget : public QWidget
+class NewFoliationSphereRandomWidget : public PreviewPageFoliationSphere
 {
     Q_OBJECT
 public:
     explicit NewFoliationSphereRandomWidget(QWidget *parent = 0);
-signals:
-    void foliationSphere(balazs::FoliationSphere*);
+private slots:
+    void disableOkButton();
 private:
+    virtual QString helpText();
+    virtual balazs::FoliationSphere* createFoliation();
+
     QLabel* instructions;
 };
 

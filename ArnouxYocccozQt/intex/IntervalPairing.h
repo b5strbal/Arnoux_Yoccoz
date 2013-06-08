@@ -13,8 +13,9 @@ class IntervalPairing
 public:
     IntervalPairing(const WeighedTree& wt);
     std::size_t size() const { return m_intExchange.size(); }
-    std::vector<Mod1NumberIntExchange> divPoints() const { return m_intExchange.divPoints(); }
+    const std::vector<Mod1NumberIntExchange>& divPoints() const { return m_intExchange.divPoints(); }
     const Permutation& permutation() const { return m_intExchange.permutationWithMinimalTwist(); }
+    const std::vector<Mod1NumberIntExchange>& lengths() const { return m_intExchange.lengths(); }
 
     template <typename Mod1NumberType>
     Mod1NumberType applyTo(const Mod1NumberType& point) const{
@@ -24,12 +25,16 @@ public:
     }
 
 private:
-
-
     TwistedIntervalExchangeMap m_intExchange;
 };
 
+
+Permutation singularityPermutation(const IntervalPairing& ip);
+
+
 }
+
+
 
 
 #endif // INTERVALPAIRING_H

@@ -57,7 +57,7 @@ Permutation inverse(const Permutation& perm);
 Permutation rotatingPermutation(int size, int rotationAmount);
 Permutation reversingPermutation(int size);
 
-
+std::vector<std::vector<std::size_t> > partition(const Permutation& perm);
 
 
 

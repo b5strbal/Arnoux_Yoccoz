@@ -11,6 +11,9 @@
 #include "../scc/SmallFoliation.h"
 #include <random>
 
+static std::default_random_engine generator(static_cast<int>(time(NULL)));
+
+
 balazs::Foliation::Foliation(const std::vector<long double>& lengths, const Permutation& permutation, long double twist) :
     m_twistedIntervalExchange(lengths, permutation, twist)
 {
@@ -42,7 +45,6 @@ balazs::Foliation::Foliation(int genus, const arnoux_yoccoz_tag &)
 }
 
 std::vector<long double> randomLengths(std::size_t size){
-    static std::default_random_engine generator(static_cast<int>(time(NULL)));
     std::uniform_real_distribution<long double> realDistribution(0.00000000001, 1);
 
     std::vector<long double> retval;
@@ -54,7 +56,6 @@ std::vector<long double> randomLengths(std::size_t size){
 }
 
 long double randomTwist(){
-    static std::default_random_engine generator(static_cast<int>(time(NULL)));
     std::uniform_real_distribution<long double> realDistribution(0.00000000001, 1);
 
     return realDistribution(generator);
@@ -128,28 +129,15 @@ bool balazs::Foliation::isTopDivPoint(int divPointIndex) const{
 
 
 
-void balazs::Foliation::initSingularities()
+void balazs::Foliation::initIndexOfSingularity()
 {
-    std::size_t size = m_twistedIntervalExchange.size();
-    m_indexOfSingularity.resize(size);
-
-    std::vector<char> alreadyLookedAt(size, false);
-    for(std::size_t i = 0; i < size; i++){
-        if(!alreadyLookedAt[i]){
-            m_singularities.push_back(std::vector<std::size_t>(0));
-
-            std::size_t j = i;
-            do {
-                m_singularities.back().push_back(j);
-                m_indexOfSingularity[j] = m_singularities.size() - 1;
-                alreadyLookedAt[j] = true;
-
-                j = (j + (size - 1)) % size;
-                j = m_twistedIntervalExchange.permutationWithMinimalTwist()[j];
-                j = (j + 1) % size;
-                j = m_twistedIntervalExchange.inversePermutationWithMinimalTwist()[j];
-            } while(j != i);
+    m_indexOfSingularity.reserve(numIntervals());
+    for(std::size_t i = 0; i < numIntervals(); i++){
+        int j = 0;
+        while(std::find(m_singularities[j].begin(), m_singularities[j].end(), i) == m_singularities[j].end()){
+            j++;
         }
+        m_indexOfSingularity.push_back(j);
     }
 }
 
@@ -165,7 +153,9 @@ void balazs::Foliation::init()
         throw std::runtime_error("The foliation has a saddle connection.");
     }
 
-    initSingularities();
+    m_singularities = partition(singularityPermutation(m_twistedIntervalExchange));
+
+    initIndexOfSingularity();
 }
 
 

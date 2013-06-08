@@ -11,7 +11,7 @@ FoliationManager::FoliationManager(std::unique_ptr<balazs::Foliation> foliation,
     QObject(parent),
     pFoliation(std::move(foliation))
 {
-    pDrawingArea = new FoliationDrawing(pFoliation.get());
+    pDrawingArea = new FoliationDrawing(*pFoliation, QSize(500, 500));
     pFoliationDataTableWidget = new FoliationDataTreeWidget(*pFoliation);
     pSepSegmentSearchWidget = new SepSegmentSearchWidget(*pFoliation);
     pTransverseCurveSearchWidget = new TransverseCurveSearchWidget(pSepSegmentSearchWidget->sepSegmentDatabase());

@@ -54,7 +54,7 @@ public:
 
 
 private:
-    void initSingularities();
+    void initIndexOfSingularity();
     void init();
 
 private:

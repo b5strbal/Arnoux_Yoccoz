@@ -52,12 +52,14 @@ public:
 
     const WeighedTree& weighedTree() const { return m_weighedTree; }
     const IntervalPairing& intervalPairing() const { return m_intervalPairing; }
-    int numSeparatrices() const { return m_intervalPairing.size(); }
+    std::size_t numSeparatrices() const { return m_intervalPairing.size(); }
+    const std::vector<std::vector<std::size_t> >& singularities() const { return m_singularities; }
    // const std::vector<Mod1NumberIntExchange>& divPoints() const { return m_intervalPairing.divPoints(); }
 
 private:
     IntervalPairing m_intervalPairing; // the interval exchange representation
-    WeighedTree m_weighedTree;                       // the WeighedTree representation
+    WeighedTree m_weighedTree;         // the WeighedTree representation
+    std::vector<std::vector<std::size_t> > m_singularities;
 };
 
 }
