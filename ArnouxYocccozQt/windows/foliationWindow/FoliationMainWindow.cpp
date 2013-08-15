@@ -68,8 +68,19 @@ FoliationMainWindow::FoliationMainWindow(const WindowManager &manager, QWidget *
     for(int i = 3; i < 10; i++){
         createNewFoliation(new balazs::Foliation(i, balazs::arnoux_yoccoz_tag()));
     }
-    createNewFoliation(new balazs::Foliation({0.866258, 0.494918, 0.0543639, 0.00142665, 0.0372015, 0.000463471},
-                                             balazs::Permutation({1, 0, 5, 3, 2, 4}), 0.0176439));
+    createNewFoliation(new balazs::Foliation({0.586804, 0.586804, 0.347449, 0.347449, 0.182559, 0.182559},
+                                             balazs::Permutation({5, 4, 1, 0, 3, 2}), 0.0567956)); // 2nd AY (3.21432)
+    createNewFoliation(new balazs::Foliation({0.600943, 0.600943, 0.315911, 0.315911, 0.184405, 0.184405},
+                                             balazs::Permutation({5, 4, 1, 0, 3, 2}), 0.100627)); // 3nd AY (5.97196)
+    createNewFoliation(new balazs::Foliation({0.601159, 0.601159, 0.315031, 0.315031, 0.185092, 0.185092},
+                                             balazs::Permutation({5, 4, 1, 0, 3, 2}), 0.101037)); // 4nd AY (10.8998)
+    createNewFoliation(new balazs::Foliation({0.598914, 0.598914, 0.326931, 0.326931, 0.171324, 0.171324},
+                                             balazs::Permutation({5, 4, 1, 0, 3, 2}), 0.100659)); // 4nd AY (10.8998)
+    createNewFoliation(new balazs::Foliation({0.602998, 0.602998, 0.315054, 0.315054, 0.184819, 0.184819},
+                                             balazs::Permutation({5, 4, 1, 0, 3, 2}), 0.107625)); // 4nd AY (10.2056)
+    createNewFoliation(new balazs::Foliation({0.597853, 0.597853, 0.32635, 0.32635, 0.178049, 0.178049},
+                                             balazs::Permutation({5, 4, 1, 0, 3, 2}), 0.0934549)); // 5nd AY (20.097)
+
 }
 
 

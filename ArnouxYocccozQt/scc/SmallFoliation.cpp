@@ -253,6 +253,15 @@ void balazs::SmallFoliation::initEigenSolver() const
         }
         m_eigenvalues.reset(new Eigen::EigenSolver<Eigen::MatrixXd>::EigenvalueType(es.eigenvalues()));
         m_eigenvectors.reset(new Eigen::EigenSolver<Eigen::MatrixXd>::EigenvectorsType(es.eigenvectors()));
+        for(int i = 0; i < m_eigenvalues->size(); i++){
+            double sum = 0;
+            for(int j = 0; j < m_eigenvalues->size()-1; j++){
+                sum += abs(m_eigenvectors->col(i)[j]);
+            }
+            for(int j = 0; j < m_eigenvalues->size(); j++){
+                m_eigenvectors->col(i)[j] /= sum;
+            }
+        }
     }
 }
 
